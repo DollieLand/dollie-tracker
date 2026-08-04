@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>DollieLand Трекер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css?v=13" />
+    <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body>
     <div id="app">
@@ -13,49 +13,63 @@
         <header>
             <div class="header-top">
                 <div class="logo">
-                    <span class="logo-icon">🌸</span>
+                    <span class="logo-icon">
+                        <tg-emoji emoji-id="5197659195578541689">🌸</tg-emoji>
+                    </span>
                     <h1>DollieLand</h1>
+                    <span class="logo-icon">
+                        <tg-emoji emoji-id="5197336179678146423">✨</tg-emoji>
+                    </span>
                 </div>
                 <button class="profile-btn" onclick="showProfile()">
-                    <span class="profile-avatar-small">👤</span>
+                    <span class="profile-avatar-small">
+                        <tg-emoji emoji-id="5195385478546747284">👤</tg-emoji>
+                    </span>
                 </button>
             </div>
-            <p class="subtitle">✨ Трекер заказов ✨</p>
+            <p class="subtitle">
+                <tg-emoji emoji-id="5195337293308652456">⭐</tg-emoji>
+                Трекер заказов
+                <tg-emoji emoji-id="5195337293308652456">⭐</tg-emoji>
+            </p>
         </header>
 
         <!-- ===== ВКЛАДКИ ===== -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">
-                <span class="tab-icon">📦</span>
+                <span class="tab-icon">
+                    <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
+                </span>
                 Заказы
             </button>
             <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">
-                <span class="tab-icon">📊</span>
+                <span class="tab-icon">
+                    <tg-emoji emoji-id="5195283816670850617">📊</tg-emoji>
+                </span>
                 Статистика
-            </button>
-            <button class="tab-btn" data-tab="faq" onclick="switchTab('faq')">
-                <span class="tab-icon">💡</span>
-                FAQ
             </button>
         </div>
 
         <!-- ===== ВКЛАДКА: ЗАКАЗЫ ===== -->
         <div id="tab-orders" class="tab-content active">
-            <!-- Поиск -->
             <div class="search-box">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon">
+                    <tg-emoji emoji-id="5195319499441115700">🔍</tg-emoji>
+                </span>
                 <input type="text" id="searchInput" placeholder="Поиск по ID или названию..." oninput="filterOrders(this.value)">
                 <button class="search-clear" onclick="clearSearch()">✕</button>
             </div>
 
-            <!-- Список заказов -->
             <div id="orders-list">
                 <div class="card empty-state">
-                    <div class="empty-icon">📭</div>
+                    <div class="empty-icon">
+                        <tg-emoji emoji-id="5197199582538263659">📭</tg-emoji>
+                    </div>
                     <p class="empty-title">Здесь пока пусто</p>
                     <p class="empty-sub">Нажмите «Обновить», чтобы загрузить</p>
                     <button class="btn-primary" onclick="loadOrders()" style="margin-top:16px;width:100%;">
-                        🔄 Обновить
+                        <tg-emoji emoji-id="5197336179678146423">🔄</tg-emoji>
+                        Обновить
                     </button>
                 </div>
             </div>
@@ -68,26 +82,40 @@
                     <div class="stats-grid">
                         <div class="stat-item">
                             <span class="stat-number" id="statTotal">0</span>
-                            <span class="stat-label">Всего заказов</span>
+                            <span class="stat-label">
+                                <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
+                                Всего
+                            </span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-number" id="statDelivered">0</span>
-                            <span class="stat-label">Доставлено</span>
+                            <span class="stat-label">
+                                <tg-emoji emoji-id="5197336179678146423">✅</tg-emoji>
+                                Доставлено
+                            </span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-number" id="statInTransit">0</span>
-                            <span class="stat-label">В пути</span>
+                            <span class="stat-label">
+                                <tg-emoji emoji-id="5195019659002275787">✈️</tg-emoji>
+                                В пути
+                            </span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-number" id="statAvgDays">—</span>
-                            <span class="stat-label">Ср. дней</span>
+                            <span class="stat-label">
+                                <tg-emoji emoji-id="5195283816670850617">📅</tg-emoji>
+                                Ср. дней
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 <div class="card level-card">
                     <div class="level-display">
-                        <span class="level-emoji" id="levelEmoji">🌟</span>
+                        <span class="level-emoji" id="levelEmoji">
+                            <tg-emoji emoji-id="5195337293308652456">🌟</tg-emoji>
+                        </span>
                         <div>
                             <p class="level-title">Ваш уровень</p>
                             <p class="level-name" id="levelName">Новичок</p>
@@ -103,63 +131,14 @@
             </div>
         </div>
 
-        <!-- ===== ВКЛАДКА: FAQ ===== -->
-        <div id="tab-faq" class="tab-content">
-            <div class="card faq-card">
-                <div class="faq-item" onclick="showFaqDetail('delivery-us')">
-                    <span class="faq-icon">✈️</span>
-                    <div>
-                        <p class="faq-question">Доставка из США</p>
-                        <p class="faq-answer">4-5 недель, стоимость от 500 ₽</p>
-                    </div>
-                    <span class="faq-arrow">›</span>
-                </div>
-                <div class="faq-divider"></div>
-                <div class="faq-item" onclick="showFaqDetail('delivery-china')">
-                    <span class="faq-icon">📦</span>
-                    <div>
-                        <p class="faq-question">Доставка из Китая</p>
-                        <p class="faq-answer">3-4 недели, стоимость от 500 ₽</p>
-                    </div>
-                    <span class="faq-arrow">›</span>
-                </div>
-                <div class="faq-divider"></div>
-                <div class="faq-item" onclick="showFaqDetail('payment')">
-                    <span class="faq-icon">💳</span>
-                    <div>
-                        <p class="faq-question">Оплата веса</p>
-                        <p class="faq-answer">После прибытия на склад</p>
-                    </div>
-                    <span class="faq-arrow">›</span>
-                </div>
-                <div class="faq-divider"></div>
-                <div class="faq-item" onclick="showFaqDetail('hold')">
-                    <span class="faq-icon">🔐</span>
-                    <div>
-                        <p class="faq-question">Бронь и рассрочка</p>
-                        <p class="faq-answer">Бесплатно 24 часа</p>
-                    </div>
-                    <span class="faq-arrow">›</span>
-                </div>
-                <div class="faq-divider"></div>
-                <div class="faq-item" onclick="showFaqDetail('return')">
-                    <span class="faq-icon">🔄</span>
-                    <div>
-                        <p class="faq-question">Политика возвратов</p>
-                        <p class="faq-answer">Подробности внутри</p>
-                    </div>
-                    <span class="faq-arrow">›</span>
-                </div>
-            </div>
-            <button class="btn-secondary" onclick="contactSupport()" style="width:100%;margin-top:8px;">
-                💌 Связаться с поддержкой
-            </button>
-        </div>
-
         <!-- ===== ПОДВАЛ ===== -->
         <footer>
             <div class="divider">•.¸♡ ♡¸.•</div>
-            <p class="footer-text">♡ С любовью, DollieLand ♡</p>
+            <p class="footer-text">
+                <tg-emoji emoji-id="5195385478546747284">♡</tg-emoji>
+                С любовью, DollieLand
+                <tg-emoji emoji-id="5195385478546747284">♡</tg-emoji>
+            </p>
         </footer>
     </div>
 
@@ -168,7 +147,9 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeProfile()">✕</button>
             <div class="profile-modal-header">
-                <div class="profile-modal-avatar">👤</div>
+                <div class="profile-modal-avatar">
+                    <tg-emoji emoji-id="5195385478546747284">👤</tg-emoji>
+                </div>
                 <div>
                     <p class="profile-modal-name" id="modalName">Добро пожаловать!</p>
                     <p class="profile-modal-id" id="modalId">ID: —</p>
@@ -176,24 +157,34 @@
             </div>
             <div class="profile-modal-info">
                 <div class="info-row">
-                    <span class="info-label">📦 Всего заказов</span>
+                    <span class="info-label">
+                        <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
+                        Всего заказов
+                    </span>
                     <span class="info-value" id="modalTotal">0</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">🎯 Уровень</span>
+                    <span class="info-label">
+                        <tg-emoji emoji-id="5195337293308652456">⭐</tg-emoji>
+                        Уровень
+                    </span>
                     <span class="info-value" id="modalLevel">🌟 Новичок</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">📅 В системе с</span>
+                    <span class="info-label">
+                        <tg-emoji emoji-id="5195283816670850617">📅</tg-emoji>
+                        В системе с
+                    </span>
                     <span class="info-value" id="modalSince">—</span>
                 </div>
             </div>
             <button class="btn-primary" onclick="closeProfile();loadOrders();" style="width:100%;margin-top:12px;">
-                🔄 Обновить заказы
+                <tg-emoji emoji-id="5197336179678146423">🔄</tg-emoji>
+                Обновить заказы
             </button>
         </div>
     </div>
 
-    <script src="script.js?v=13"></script>
+    <script src="script.js?v=14"></script>
 </body>
 </html>
