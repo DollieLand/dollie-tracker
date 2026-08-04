@@ -5,21 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DollieLand Трекер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css?v=8" />
+    <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
     <div id="app">
+        <!-- ===== ШАПКА ===== -->
         <header>
             <div class="header-bg"></div>
             <div class="header-content">
                 <div class="logo">
                     <span class="logo-icon">🌸</span>
                     <h1>DollieLand</h1>
+                    <span class="logo-icon">✨</span>
                 </div>
-                <p class="subtitle">✨ Трекер заказов ✨</p>
+                <p class="subtitle">Ваш волшебный мир кукол</p>
+                <div class="divider">•.¸♡ ♡¸.•</div>
+                <p class="subtitle-small">✨ Трекер заказов ✨</p>
             </div>
         </header>
 
+        <!-- ===== ПРОФИЛЬ ===== -->
         <div id="user-info" class="card profile-card">
             <div class="profile-avatar">👤</div>
             <div class="profile-text">
@@ -28,29 +33,38 @@
             </div>
         </div>
 
+        <!-- ===== КНОПКИ ===== -->
         <div class="actions">
             <button class="btn-primary" onclick="loadOrders()">
                 <span class="btn-icon">📦</span>
                 Мои заказы
             </button>
             <button class="btn-secondary" onclick="showFaq()">
-                <span class="btn-icon">❓</span>
+                <span class="btn-icon">💡</span>
                 FAQ
             </button>
         </div>
 
+        <!-- ===== СПИСОК ЗАКАЗОВ ===== -->
         <div id="orders-list">
             <div class="card empty-state">
                 <div class="empty-icon">📭</div>
-                <p class="empty-title">Нет заказов</p>
+                <p class="empty-title">Здесь пока пусто</p>
                 <p class="empty-sub">Нажмите «Мои заказы», чтобы загрузить</p>
             </div>
         </div>
 
+        <!-- ===== ПОДВАЛ ===== -->
+        <footer>
+            <div class="divider">•.¸♡ ♡¸.•</div>
+            <p class="footer-text">♡ С любовью, DollieLand ♡</p>
+        </footer>
+
+        <!-- ===== КНОПКА ЗАКРЫТЬ ===== -->
         <button class="btn-close" onclick="closeApp()">
             ✕ Закрыть
         </button>
     </div>
-    <script src="script.js?v=8"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>
