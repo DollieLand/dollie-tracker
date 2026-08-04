@@ -3,10 +3,8 @@
 const tg = window.Telegram.WebApp;
 const user = tg.initDataUnsafe?.user;
 
-// Сообщаем Telegram, что приложение готово
 tg.ready();
 
-// Показываем информацию о пользователе
 if (user) {
     document.getElementById('user-info').innerHTML = `
         <p>👋 Привет, <strong>${user.first_name}</strong>!</p>
@@ -38,44 +36,14 @@ async function loadOrders() {
     }
     
     try {
-        // ===== ЗАПРОС К БОТУ ЧЕРЕЗ TELEGRAM API =====
-        // Мы не можем вызвать команду бота напрямую из браузера,
-        // поэтому используем обходной путь — отправляем сообщение боту
+        // ===== ЗАПРОС К ВАШЕМУ API С ТОКЕНОМ =====
+        const response = await fetch('https://dollieland.pythonanywhere.com/api/get_orders?token=dollie_secret_2024');
         
-        const BOT_TOKEN = '8259429897:AAGTeBfUBxrQjKfLO7paqHuJrFTNZxemltE';
+        if (!response.ok) throw new Error('Сервер не отвечает');
         
-        // Отправляем команду боту от имени пользователя
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                chat_id: userId,
-                text: `/api_my_orders ${userId}`
-            })
-        });
-        
-        // Ждём ответа от бота (это сложно сделать напрямую, поэтому используем другой подход)
-        // Вместо этого будем получать данные через ваш сервер
-        
-        // ===== АЛЬТЕРНАТИВНЫЙ СПОСОБ: ЧЕРЕЗ ВАШ СЕРВЕР =====
-        // Ваш бот сохраняет данные в bot_data.json, который доступен по ссылке:
-        // https://dollieland.pythonanywhere.com/api/get_orders?token=dollie_secret_2024
-        
-        const serverResponse = await fetch('https://dollieland.pythonanywhere.com/api/get_orders', {
-            method: 'GET',
-            headers: {
-                'X-Admin-Token': 'dollie_secret_2024'
-            }
-        });
-        
-        if (!serverResponse.ok) throw new Error('Сервер не отвечает');
-        
-        const data = await serverResponse.json();
+        const data = await response.json();
         
         if (data.ok && data.data) {
-            // Фильтруем заказы только этого пользователя
             const allOrders = data.data.orders || {};
             const orderRequests = data.data.order_requests || {};
             
@@ -99,13 +67,12 @@ async function loadOrders() {
             }
         }
         
-        // Если ничего не найдено — показываем сообщение
         renderOrders([]);
         
     } catch (error) {
         console.error('❌ Ошибка загрузки:', error);
         
-        // ===== ЕСЛИ НЕ УДАЛОСЬ — ПОКАЗЫВАЕМ ДЕМО =====
+        // ===== ДЕМО-ДАННЫЕ ПРИ ОШИБКЕ =====
         const demoOrders = [
             { 
                 id: '12345', 
@@ -120,13 +87,6 @@ async function loadOrders() {
                 title: 'Barbie',
                 delivery_date: '01.02.2026',
                 created_date: '10.01.2026'
-            },
-            { 
-                id: '11111', 
-                status: 'Заказ оформлен', 
-                title: 'Ever After High',
-                delivery_date: '—',
-                created_date: '05.01.2026'
             },
         ];
         
@@ -200,7 +160,7 @@ function renderOrders(orders, isDemo = false) {
     container.innerHTML = html;
 }
 
-// ==================== ДЕТАЛИ ЗАКАЗА ====================
+// ==================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
 
 function showOrderDetails(orderId) {
     tg.showAlert(
@@ -210,8 +170,6 @@ function showOrderDetails(orderId) {
         `Или напишите @Darielune`
     );
 }
-
-// ==================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
 
 function showFaq() {
     tg.showAlert(
@@ -230,10 +188,8 @@ function closeApp() {
 
 // ==================== АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ====================
 
-// Загружаем заказы сразу при открытии приложения
 loadOrders();
 
-// Обновляем при возвращении на вкладку
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
         loadOrders();
