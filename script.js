@@ -1,5 +1,5 @@
 // ============================================================
-// DOLLIELAND — НЕЖНО-РОЗОВАЯ ВЕРСИЯ
+// DOLLIELAND — НЕЖНО-РОЗОВАЯ ВЕРСИЯ С ПРЕМИУМ-ЭМОДЗИ
 // ============================================================
 
 const tg = window.Telegram.WebApp;
@@ -20,15 +20,12 @@ if (user) {
 
 // ---------- ВКЛАДКИ ----------
 function switchTab(tab) {
-    // Кнопки
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
     
-    // Контент
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.getElementById(`tab-${tab}`).classList.add('active');
     
-    // Если переключились на статистику — обновить
     if (tab === 'stats') {
         updateStats(allOrders);
         updateLevel(allOrders);
@@ -59,7 +56,7 @@ function updateLevel(orders) {
     else if (count >= 5) { level = 'Серебряный'; emoji = '⭐'; next = 10; }
     else if (count >= 1) { level = 'Бронзовый'; emoji = '🌟'; next = 5; }
     
-    document.getElementById('levelEmoji').textContent = emoji;
+    document.getElementById('levelEmoji').innerHTML = `<tg-emoji emoji-id="5195337293308652456">${emoji}</tg-emoji>`;
     document.getElementById('levelName').textContent = level;
     document.getElementById('modalLevel').textContent = `${emoji} ${level}`;
     
@@ -115,7 +112,7 @@ async function loadOrders() {
     if (!userId) {
         container.innerHTML = `
             <div class="card empty-state">
-                <div class="empty-icon">🔒</div>
+                <div class="empty-icon"><tg-emoji emoji-id="5197199582538263659">🔒</tg-emoji></div>
                 <p class="empty-title">Откройте бота</p>
                 <p class="empty-sub">@DollieHelper_bot</p>
             </div>
@@ -200,11 +197,12 @@ function renderOrders(orders, isDemo = false) {
     if (!orders || orders.length === 0) {
         container.innerHTML = `
             <div class="card empty-state">
-                <div class="empty-icon">📭</div>
+                <div class="empty-icon"><tg-emoji emoji-id="5197199582538263659">📭</tg-emoji></div>
                 <p class="empty-title">У вас пока нет заказов</p>
                 <p class="empty-sub">Оформите заказ через @Darielune</p>
                 <button class="btn-primary" onclick="loadOrders()" style="margin-top:16px;width:100%;">
-                    🔄 Обновить
+                    <tg-emoji emoji-id="5197336179678146423">🔄</tg-emoji>
+                    Обновить
                 </button>
             </div>
         `;
@@ -221,7 +219,10 @@ function renderOrders(orders, isDemo = false) {
     }
     
     html += `<div class="card" style="padding-bottom:12px;">
-        <p style="font-size:13px;color:#b88aa0;font-weight:500;">📦 Ваши заказы (${orders.length})</p>
+        <p style="font-size:13px;color:#b88aa0;font-weight:500;">
+            <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
+            Ваши заказы (${orders.length})
+        </p>
     </div>`;
     
     orders.forEach(order => {
@@ -241,8 +242,8 @@ function renderOrders(orders, isDemo = false) {
             <div class="order-item ${statusClass}" onclick="toggleOrderDetails('${order.id}')" id="order-${order.id}">
                 <div class="order-id">🆔 ${order.id}</div>
                 ${order.title ? `<div class="order-title">🏷️ ${order.title}</div>` : ''}
-                <div class="order-status">${statusIcon} ${statusText}</div>
-                ${order.delivery_date ? `<div class="order-delivery">📅 ${order.delivery_date}</div>` : ''}
+                <div class="order-status"><tg-emoji emoji-id="5195385478546747284">${statusIcon}</tg-emoji> ${statusText}</div>
+                ${order.delivery_date ? `<div class="order-delivery"><tg-emoji emoji-id="5195283816670850617">📅</tg-emoji> ${order.delivery_date}</div>` : ''}
                 
                 <div class="progress-container">
                     <div class="progress-bar">
@@ -254,9 +255,18 @@ function renderOrders(orders, isDemo = false) {
                 <div class="order-expanded" id="details-${order.id}" style="display:none;">
                     ${buildTimeline(order)}
                     <div class="order-actions">
-                        <button class="order-btn order-btn-remind" onclick="event.stopPropagation();sendRemind('${order.id}')">🔔 Напомнить</button>
-                        <button class="order-btn order-btn-chat" onclick="event.stopPropagation();askAboutOrder('${order.id}')">💬 Спросить</button>
-                        <button class="order-btn order-btn-photo" onclick="event.stopPropagation();viewPhoto('${order.id}')">📸 Фото</button>
+                        <button class="order-btn order-btn-remind" onclick="event.stopPropagation();sendRemind('${order.id}')">
+                            <tg-emoji emoji-id="5197336179678146423">🔔</tg-emoji>
+                            Напомнить
+                        </button>
+                        <button class="order-btn order-btn-chat" onclick="event.stopPropagation();askAboutOrder('${order.id}')">
+                            <tg-emoji emoji-id="5195019659002275787">💬</tg-emoji>
+                            Спросить
+                        </button>
+                        <button class="order-btn order-btn-photo" onclick="event.stopPropagation();viewPhoto('${order.id}')">
+                            <tg-emoji emoji-id="5197300467025079106">📸</tg-emoji>
+                            Фото
+                        </button>
                     </div>
                 </div>
             </div>
@@ -347,21 +357,6 @@ function askAboutOrder(orderId) {
 
 function viewPhoto(orderId) {
     tg.showAlert(`📸 Фото для заказа #${orderId} пока нет`);
-}
-
-function showFaqDetail(type) {
-    const texts = {
-        'delivery-us': '✈️ Доставка из США\n\nОбычно занимает 4-5 недель.\nСтоимость от 500 ₽ за кг.',
-        'delivery-china': '📦 Доставка из Китая\n\nОбычно занимает 3-4 недели.\nСтоимость от 500 ₽ за кг.',
-        'payment': '💳 Оплата веса\n\nОплата производится после прибытия на склад и взвешивания.',
-        'hold': '🔐 Бронь и рассрочка\n\nБесплатная бронь — 24 часа.\nРассрочка от 7% в месяц.',
-        'return': '🔄 Политика возвратов\n\nВозврат возможен до отправки клиенту.\nПодробности уточняйте у @Darielune.'
-    };
-    tg.showAlert(texts[type] || 'Информация недоступна');
-}
-
-function contactSupport() {
-    tg.openTelegramLink('https://t.me/Darielune');
 }
 
 // ---------- ПОИСК ----------
