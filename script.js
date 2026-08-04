@@ -28,7 +28,6 @@ async function loadOrders() {
     }
     
     try {
-        // ===== ЗАПРОС К ТВОЕМУ API =====
         const response = await fetch('https://api-DollieLand.pythonanywhere.com/api/my-orders?token=dollie_secret_2024', {
             method: 'POST',
             headers: {
@@ -51,7 +50,6 @@ async function loadOrders() {
         
     } catch (error) {
         console.error('Ошибка:', error);
-        // Если ошибка — показываем демо
         const demoOrders = [
             { id: '12345', status: 'Прибыла в Россию', title: 'Monster High', delivery_date: '25.01.2026' },
             { id: '67890', status: 'Отправлена из США', title: 'Barbie', delivery_date: '01.02.2026' },
