@@ -42,6 +42,7 @@ header h1 {
     padding: 16px 20px;
     margin-bottom: 16px;
     border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
 }
 
 .actions {
@@ -78,6 +79,7 @@ header h1 {
     cursor: pointer;
     background: transparent;
     color: #c084e0;
+    transition: background 0.15s;
 }
 
 .btn-secondary:active {
@@ -91,6 +93,7 @@ header h1 {
     margin-bottom: 10px;
     border-left: 3px solid #a855f7;
     cursor: pointer;
+    transition: background 0.15s;
 }
 
 .order-item:active {
@@ -102,9 +105,21 @@ header h1 {
     font-size: 15px;
 }
 
+.order-title {
+    font-size: 13px;
+    color: #f5a8d3;
+    margin-top: 2px;
+}
+
 .order-status {
     font-size: 13px;
     color: #a882b5;
+    margin-top: 4px;
+}
+
+.order-delivery {
+    font-size: 12px;
+    color: #6b5a7a;
     margin-top: 4px;
 }
 
@@ -131,4 +146,40 @@ header h1 {
     color: #6b5a7a;
     font-size: 14px;
     cursor: pointer;
+    transition: background 0.15s;
 }
+
+.btn-close:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Анимация загрузки */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+}
+
+/* Цвета статусов */
+.status-delivered { border-left-color: #34d399 !important; }
+.status-delivered .order-status { color: #34d399; }
+
+.status-russia { border-left-color: #fbbf24 !important; }
+.status-russia .order-status { color: #fbbf24; }
+
+.status-payment { border-left-color: #fb923c !important; }
+.status-payment .order-status { color: #fb923c; }
+
+.status-us { border-left-color: #60a5fa !important; }
+.status-us .order-status { color: #60a5fa; }
