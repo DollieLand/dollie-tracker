@@ -28,19 +28,12 @@ async function loadOrders() {
     }
     
     try {
-        const response = await fetch('https://api-DollieLand.pythonanywhere.com/api/my-orders?token=dollie_secret_2024', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                telegram_id: userId
-            })
-        });
+        const response = await fetch(`https://api-DollieLand.pythonanywhere.com/api/my-orders?telegram_id=${userId}`);
         
         if (!response.ok) throw new Error('Сервер не отвечает');
         
         const data = await response.json();
+        console.log('Заказы:', data);
         
         if (data.ok && data.orders && data.orders.length > 0) {
             renderOrders(data.orders);
@@ -74,24 +67,18 @@ function renderOrders(orders, isDemo = false) {
         return;
     }
     
-    let html = '';
-    if (isDemo) {
-        html += `
-            <div class="card" style="border: 1px solid #fbbf24; background: rgba(251, 191, 36, 0.1);">
-                <p style="color: #fbbf24; font-size: 13px;">⚠️ Демо-режим</p>
-            </div>
-        `;
-    }
-    
-    html += `<div class="card"><p style="margin-bottom: 12px; font-weight: 500;">📦 Ваши заказы:</p>`;
+    let html = '<div class="card"><p style="margin-bottom: 12px; font-weight: 500;">📦 Ваши заказы (' + orders.length + '):</p>';
     
     orders.forEach(order => {
+        const statusText = order.status || 'не определён';
+        
         html += `
             <div class="order-item">
                 <div class="order-id">🆔 ${order.id}</div>
                 ${order.title ? `<div class="order-title">🏷️ ${order.title}</div>` : ''}
-                <div class="order-status">${order.status || 'не определён'}</div>
+                <div class="order-status">${statusText}</div>
                 ${order.delivery_date ? `<div class="order-delivery">📅 ${order.delivery_date}</div>` : ''}
+                ${order.created_date ? `<div class="order-date">📆 Создан: ${order.created_date}</div>` : ''}
             </div>
         `;
     });
