@@ -1,4 +1,8 @@
-/* ========== ОБЩИЕ СТИЛИ ========== */
+/* ============================================================
+   DOLLIELAND STYLE — нежный, магический, кукольный
+   ============================================================ */
+
+/* ---------- ОБЩИЕ СТИЛИ ---------- */
 * {
     margin: 0;
     padding: 0;
@@ -21,12 +25,12 @@ body {
     margin: 0 auto;
 }
 
-/* ========== ШАПКА ========== */
+/* ---------- ШАПКА ---------- */
 header {
     position: relative;
     text-align: center;
-    padding: 24px 0 20px;
-    margin-bottom: 16px;
+    padding: 20px 0 16px;
+    margin-bottom: 12px;
 }
 
 .header-bg {
@@ -54,11 +58,11 @@ header {
 }
 
 .logo-icon {
-    font-size: 32px;
+    font-size: 28px;
 }
 
 header h1 {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 700;
     background: linear-gradient(135deg, #f5a8d3, #c084e0, #a855f7);
     -webkit-background-clip: text;
@@ -67,13 +71,30 @@ header h1 {
 }
 
 .subtitle {
-    color: #8a7a9a;
-    font-size: 13px;
+    color: #b8a8c8;
+    font-size: 14px;
     margin-top: 2px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.subtitle-small {
+    color: #8a7a9a;
+    font-size: 12px;
+    margin-top: 4px;
     letter-spacing: 2px;
 }
 
-/* ========== КАРТОЧКИ ========== */
+/* ---------- РАЗДЕЛИТЕЛЬ ---------- */
+.divider {
+    color: #6a5a7a;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin: 6px 0 4px;
+    opacity: 0.6;
+}
+
+/* ---------- КАРТОЧКИ ---------- */
 .card {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
@@ -84,12 +105,13 @@ header h1 {
     transition: background 0.2s;
 }
 
-/* ========== ПРОФИЛЬ ========== */
+/* ---------- ПРОФИЛЬ ---------- */
 .profile-card {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .profile-avatar {
@@ -120,7 +142,7 @@ header h1 {
     margin-top: 1px;
 }
 
-/* ========== КНОПКИ ========== */
+/* ---------- КНОПКИ ---------- */
 .actions {
     display: flex;
     gap: 10px;
@@ -169,7 +191,7 @@ header h1 {
     font-size: 16px;
 }
 
-/* ========== СПИСОК ЗАКАЗОВ ========== */
+/* ---------- СПИСОК ЗАКАЗОВ ---------- */
 .order-item {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
@@ -188,6 +210,13 @@ header h1 {
 .order-item:last-child {
     margin-bottom: 0;
 }
+
+/* Цвета статусов */
+.order-item.status-delivered { border-left-color: #34d399; }
+.order-item.status-russia    { border-left-color: #fbbf24; }
+.order-item.status-payment   { border-left-color: #fb923c; }
+.order-item.status-us        { border-left-color: #60a5fa; }
+.order-item.status-initial   { border-left-color: #a855f7; }
 
 .order-id {
     font-weight: 600;
@@ -219,21 +248,7 @@ header h1 {
     margin-top: 2px;
 }
 
-/* ========== СТАТУСЫ (цвета) ========== */
-.order-item.status-delivered {
-    border-left-color: #34d399;
-}
-.order-item.status-russia {
-    border-left-color: #fbbf24;
-}
-.order-item.status-payment {
-    border-left-color: #fb923c;
-}
-.order-item.status-us {
-    border-left-color: #60a5fa;
-}
-
-/* ========== ПУСТОЕ СОСТОЯНИЕ ========== */
+/* ---------- ПУСТОЕ СОСТОЯНИЕ ---------- */
 .empty-state {
     text-align: center;
     padding: 40px 20px;
@@ -256,7 +271,20 @@ header h1 {
     margin-top: 6px;
 }
 
-/* ========== ЗАГРУЗЧИК ========== */
+/* ---------- ПОДВАЛ ---------- */
+footer {
+    text-align: center;
+    margin: 8px 0 16px;
+}
+
+.footer-text {
+    color: #5a4a6a;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+/* ---------- ЗАГРУЗЧИК ---------- */
 .loader {
     text-align: center;
     padding: 30px 0;
@@ -279,12 +307,12 @@ header h1 {
     to { transform: rotate(360deg); }
 }
 
-/* ========== КНОПКА ЗАКРЫТЬ ========== */
+/* ---------- КНОПКА ЗАКРЫТЬ ---------- */
 .btn-close {
     display: block;
     width: 100%;
     padding: 12px;
-    margin-top: 8px;
+    margin-top: 4px;
     border: none;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.04);
@@ -298,7 +326,7 @@ header h1 {
     background: rgba(255, 255, 255, 0.08);
 }
 
-/* ========== АДАПТИВНОСТЬ ========== */
+/* ---------- АДАПТИВ ---------- */
 @media (max-width: 380px) {
     body {
         padding: 10px;
