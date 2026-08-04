@@ -1,3 +1,4 @@
+/* ========== ОБЩИЕ СТИЛИ ========== */
 * {
     margin: 0;
     padding: 0;
@@ -6,103 +7,192 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-    background: #1a1025;
+    background: #0f0a1a;
     color: #fff;
     min-height: 100vh;
-    padding: 20px;
+    padding: 16px;
+    background-image: 
+        radial-gradient(ellipse at 20% 0%, rgba(192, 132, 224, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(245, 168, 211, 0.06) 0%, transparent 60%);
 }
 
 #app {
-    max-width: 400px;
+    max-width: 420px;
     margin: 0 auto;
 }
 
+/* ========== ШАПКА ========== */
 header {
+    position: relative;
     text-align: center;
-    padding: 20px 0 30px;
+    padding: 24px 0 20px;
+    margin-bottom: 16px;
+}
+
+.header-bg {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(192, 132, 224, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    font-size: 32px;
 }
 
 header h1 {
     font-size: 28px;
     font-weight: 700;
-    background: linear-gradient(135deg, #f5a8d3, #c084e0);
+    background: linear-gradient(135deg, #f5a8d3, #c084e0, #a855f7);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
 }
 
 .subtitle {
-    color: #a882b5;
-    font-size: 14px;
-    margin-top: 4px;
+    color: #8a7a9a;
+    font-size: 13px;
+    margin-top: 2px;
+    letter-spacing: 2px;
 }
 
+/* ========== КАРТОЧКИ ========== */
 .card {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 16px;
-    padding: 16px 20px;
-    margin-bottom: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(10px);
+    transition: background 0.2s;
 }
 
+/* ========== ПРОФИЛЬ ========== */
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+}
+
+.profile-avatar {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, rgba(192, 132, 224, 0.25), rgba(245, 168, 211, 0.15));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.profile-text {
+    flex: 1;
+}
+
+.profile-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+}
+
+.profile-id {
+    font-size: 12px;
+    color: #6a5a7a;
+    margin-top: 1px;
+}
+
+/* ========== КНОПКИ ========== */
 .actions {
     display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
-.btn-primary {
+.btn-primary,
+.btn-secondary {
     flex: 1;
     padding: 14px;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: 14px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
     background: linear-gradient(135deg, #c084e0, #a855f7);
     color: #fff;
-    transition: transform 0.15s, opacity 0.15s;
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25);
 }
 
 .btn-primary:active {
     transform: scale(0.96);
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 .btn-secondary {
-    flex: 1;
-    padding: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.06);
     color: #c084e0;
-    transition: background 0.15s;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .btn-secondary:active {
-    background: rgba(255, 255, 255, 0.05);
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.1);
 }
 
+.btn-icon {
+    font-size: 16px;
+}
+
+/* ========== СПИСОК ЗАКАЗОВ ========== */
 .order-item {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 10px;
     border-left: 3px solid #a855f7;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, transform 0.1s;
 }
 
 .order-item:active {
-    background: rgba(255, 255, 255, 0.08);
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.order-item:last-child {
+    margin-bottom: 0;
 }
 
 .order-id {
     font-weight: 600;
     font-size: 15px;
+    color: #fff;
 }
 
 .order-title {
@@ -119,67 +209,106 @@ header h1 {
 
 .order-delivery {
     font-size: 12px;
-    color: #6b5a7a;
+    color: #6a5a7a;
     margin-top: 4px;
 }
 
 .order-date {
     font-size: 12px;
-    color: #6b5a7a;
-    margin-top: 4px;
+    color: #5a4a6a;
+    margin-top: 2px;
 }
 
+/* ========== СТАТУСЫ (цвета) ========== */
+.order-item.status-delivered {
+    border-left-color: #34d399;
+}
+.order-item.status-russia {
+    border-left-color: #fbbf24;
+}
+.order-item.status-payment {
+    border-left-color: #fb923c;
+}
+.order-item.status-us {
+    border-left-color: #60a5fa;
+}
+
+/* ========== ПУСТОЕ СОСТОЯНИЕ ========== */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.empty-sub {
+    font-size: 13px;
+    color: #6a5a7a;
+    margin-top: 6px;
+}
+
+/* ========== ЗАГРУЗЧИК ========== */
 .loader {
     text-align: center;
     padding: 30px 0;
-    color: #6b5a7a;
+    color: #6a5a7a;
 }
 
+.loader::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(192, 132, 224, 0.2);
+    border-top-color: #a855f7;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-top: 12px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========== КНОПКА ЗАКРЫТЬ ========== */
 .btn-close {
     display: block;
     width: 100%;
     padding: 12px;
-    margin-top: 20px;
+    margin-top: 8px;
     border: none;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    color: #6b5a7a;
+    background: rgba(255, 255, 255, 0.04);
+    color: #5a4a6a;
     font-size: 14px;
     cursor: pointer;
     transition: background 0.15s;
 }
 
 .btn-close:active {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
 }
 
-/* Анимация загрузки */
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 380px) {
+    body {
+        padding: 10px;
+    }
+    header h1 {
+        font-size: 22px;
+    }
+    .btn-primary,
+    .btn-secondary {
+        font-size: 13px;
+        padding: 12px;
+    }
 }
-
-.loading-dots::after {
-    content: '';
-    animation: dots 1.5s steps(4, end) infinite;
-}
-
-@keyframes dots {
-    0% { content: ''; }
-    25% { content: '.'; }
-    50% { content: '..'; }
-    75% { content: '...'; }
-}
-
-/* Цвета статусов */
-.status-delivered { border-left-color: #34d399 !important; }
-.status-delivered .order-status { color: #34d399; }
-
-.status-russia { border-left-color: #fbbf24 !important; }
-.status-russia .order-status { color: #fbbf24; }
-
-.status-payment { border-left-color: #fb923c !important; }
-.status-payment .order-status { color: #fb923c; }
-
-.status-us { border-left-color: #60a5fa !important; }
-.status-us .order-status { color: #60a5fa; }
