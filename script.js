@@ -1,8 +1,5 @@
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
-
 const tg = window.Telegram.WebApp;
 const user = tg.initDataUnsafe?.user;
-
 tg.ready();
 
 if (user) {
@@ -13,8 +10,6 @@ if (user) {
         </p>
     `;
 }
-
-// ==================== ЗАГРУЗКА ЗАКАЗОВ ====================
 
 async function loadOrders() {
     const container = document.getElementById('orders-list');
@@ -36,43 +31,29 @@ async function loadOrders() {
     }
     
     try {
-        // ===== ЗАПРОС К ВАШЕМУ API С ТОКЕНОМ =====
-        const response = await fetch('https://dollieland.pythonanywhere.com/api/get_orders?token=dollie_secret_2024');
+        // ===== НОВЫЙ РАБОЧИЙ АДРЕС API =====
+        const response = await fetch('https://api-DollieLand.pythonanywhere.com/api/my-orders?token=dollie_secret_2024', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                telegram_id: userId
+            })
+        });
         
         if (!response.ok) throw new Error('Сервер не отвечает');
         
         const data = await response.json();
         
-        if (data.ok && data.data) {
-            const allOrders = data.data.orders || {};
-            const orderRequests = data.data.order_requests || {};
-            
-            const userOrders = [];
-            for (const [orderId, ownerId] of Object.entries(orderRequests)) {
-                if (ownerId == userId) {
-                    userOrders.push({
-                        id: orderId,
-                        status: allOrders[orderId] || 'не определён',
-                        title: data.data.order_titles?.[orderId] || '',
-                        delivery_date: data.data.estimated_delivery_dates?.[orderId] || '',
-                        created_date: data.data.order_dates?.[orderId] ? 
-                            new Date(data.data.order_dates[orderId]).toLocaleDateString('ru-RU') : ''
-                    });
-                }
-            }
-            
-            if (userOrders.length > 0) {
-                renderOrders(userOrders);
-                return;
-            }
+        if (data.ok && data.orders) {
+            renderOrders(data.orders);
+        } else {
+            renderOrders([]);
         }
         
-        renderOrders([]);
-        
     } catch (error) {
-        console.error('❌ Ошибка загрузки:', error);
-        
-        // ===== ДЕМО-ДАННЫЕ ПРИ ОШИБКЕ =====
+        console.error('❌ Ошибка:', error);
         const demoOrders = [
             { 
                 id: '12345', 
@@ -89,12 +70,9 @@ async function loadOrders() {
                 created_date: '10.01.2026'
             },
         ];
-        
         renderOrders(demoOrders, true);
     }
 }
-
-// ==================== ОТРИСОВКА ЗАКАЗОВ ====================
 
 function renderOrders(orders, isDemo = false) {
     const container = document.getElementById('orders-list');
@@ -160,8 +138,6 @@ function renderOrders(orders, isDemo = false) {
     container.innerHTML = html;
 }
 
-// ==================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
-
 function showOrderDetails(orderId) {
     tg.showAlert(
         `📦 Заказ #${orderId}\n\n` +
@@ -185,8 +161,6 @@ function showFaq() {
 function closeApp() {
     tg.close();
 }
-
-// ==================== АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ====================
 
 loadOrders();
 
