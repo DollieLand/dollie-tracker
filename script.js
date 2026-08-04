@@ -14,20 +14,10 @@ if (user) {
             Ваш ID: ${user.id}
         </p>
     `;
-} else {
-    document.getElementById('user-info').innerHTML = `
-        <p>👋 Добро пожаловать в DollieLand!</p>
-        <p style="font-size: 13px; color: #6b5a7a; margin-top: 4px;">
-            Авторизуйтесь в боте, чтобы увидеть заказы
-        </p>
-    `;
 }
 
 // ==================== ЗАГРУЗКА ЗАКАЗОВ ====================
 
-/**
- * Загружает реальные заказы пользователя
- */
 async function loadOrders() {
     const container = document.getElementById('orders-list');
     container.innerHTML = '<div class="loader">⏳ Загрузка заказов...</div>';
@@ -48,37 +38,74 @@ async function loadOrders() {
     }
     
     try {
-        // ===== ПЫТАЕМСЯ ПОЛУЧИТЬ РЕАЛЬНЫЕ ЗАКАЗЫ =====
-        // Вариант 1: Через ваш API на PythonAnywhere
-        const response = await fetch('https://dollieland.pythonanywhere.com/api/my-orders', {
+        // ===== ЗАПРОС К БОТУ ЧЕРЕЗ TELEGRAM API =====
+        // Мы не можем вызвать команду бота напрямую из браузера,
+        // поэтому используем обходной путь — отправляем сообщение боту
+        
+        const BOT_TOKEN = '8259429897:AAGTeBfUBxrQjKfLO7paqHuJrFTNZxemltE';
+        
+        // Отправляем команду боту от имени пользователя
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                telegram_id: userId,
-                token: 'dollie_secret_2024'
+                chat_id: userId,
+                text: `/api_my_orders ${userId}`
             })
         });
         
-        if (!response.ok) throw new Error('Сервер не отвечает');
+        // Ждём ответа от бота (это сложно сделать напрямую, поэтому используем другой подход)
+        // Вместо этого будем получать данные через ваш сервер
         
-        const data = await response.json();
+        // ===== АЛЬТЕРНАТИВНЫЙ СПОСОБ: ЧЕРЕЗ ВАШ СЕРВЕР =====
+        // Ваш бот сохраняет данные в bot_data.json, который доступен по ссылке:
+        // https://dollieland.pythonanywhere.com/api/get_orders?token=dollie_secret_2024
         
-        if (data.ok && data.orders) {
-            // ✅ Реальные заказы получены!
-            renderOrders(data.orders);
-        } else {
-            throw new Error('Нет заказов');
+        const serverResponse = await fetch('https://dollieland.pythonanywhere.com/api/get_orders', {
+            method: 'GET',
+            headers: {
+                'X-Admin-Token': 'dollie_secret_2024'
+            }
+        });
+        
+        if (!serverResponse.ok) throw new Error('Сервер не отвечает');
+        
+        const data = await serverResponse.json();
+        
+        if (data.ok && data.data) {
+            // Фильтруем заказы только этого пользователя
+            const allOrders = data.data.orders || {};
+            const orderRequests = data.data.order_requests || {};
+            
+            const userOrders = [];
+            for (const [orderId, ownerId] of Object.entries(orderRequests)) {
+                if (ownerId == userId) {
+                    userOrders.push({
+                        id: orderId,
+                        status: allOrders[orderId] || 'не определён',
+                        title: data.data.order_titles?.[orderId] || '',
+                        delivery_date: data.data.estimated_delivery_dates?.[orderId] || '',
+                        created_date: data.data.order_dates?.[orderId] ? 
+                            new Date(data.data.order_dates[orderId]).toLocaleDateString('ru-RU') : ''
+                    });
+                }
+            }
+            
+            if (userOrders.length > 0) {
+                renderOrders(userOrders);
+                return;
+            }
         }
+        
+        // Если ничего не найдено — показываем сообщение
+        renderOrders([]);
         
     } catch (error) {
         console.error('❌ Ошибка загрузки:', error);
         
-        // ===== ЕСЛИ API НЕ РАБОТАЕТ — ПОКАЗЫВАЕМ ДЕМО =====
-        // 🔴 ВНИМАНИЕ: Это демо-данные. 
-        // Когда API заработает — они исчезнут!
-        
+        // ===== ЕСЛИ НЕ УДАЛОСЬ — ПОКАЗЫВАЕМ ДЕМО =====
         const demoOrders = [
             { 
                 id: '12345', 
@@ -103,16 +130,12 @@ async function loadOrders() {
             },
         ];
         
-        // Показываем демо-данные + подсказку
         renderOrders(demoOrders, true);
     }
 }
 
 // ==================== ОТРИСОВКА ЗАКАЗОВ ====================
 
-/**
- * Отрисовывает список заказов
- */
 function renderOrders(orders, isDemo = false) {
     const container = document.getElementById('orders-list');
     
@@ -124,19 +147,23 @@ function renderOrders(orders, isDemo = false) {
                 <p style="font-size: 13px; color: #6b5a7a; margin-top: 8px;">
                     Оформите заказ через @Darielune
                 </p>
+                <button class="btn-primary" onclick="loadOrders()" style="margin-top: 15px; width: 100%;">
+                    🔄 Обновить
+                </button>
             </div>
         `;
         return;
     }
     
-    // Подсказка, если показываются демо-данные
     let html = '';
     if (isDemo) {
         html += `
             <div class="card" style="border: 1px solid #fbbf24; background: rgba(251, 191, 36, 0.1);">
                 <p style="color: #fbbf24; font-size: 13px;">
                     ⚠️ Демо-режим. 
-                    <a href="#" onclick="loadOrders()" style="color: #c084e0;">Обновить</a>
+                    <button onclick="loadOrders()" style="background: none; border: none; color: #c084e0; cursor: pointer; text-decoration: underline;">
+                        Обновить
+                    </button>
                 </p>
             </div>
         `;
@@ -145,7 +172,6 @@ function renderOrders(orders, isDemo = false) {
     html += '<div class="card"><p style="margin-bottom: 12px; font-weight: 500;">📦 Ваши заказы:</p>';
     
     orders.forEach(order => {
-        // Определяем цвет статуса
         let statusClass = '';
         let statusText = order.status || 'не определён';
         
@@ -176,11 +202,7 @@ function renderOrders(orders, isDemo = false) {
 
 // ==================== ДЕТАЛИ ЗАКАЗА ====================
 
-/**
- * Показывает детали заказа в отдельном окне
- */
 function showOrderDetails(orderId) {
-    // Показываем информацию в стандартном окне Telegram
     tg.showAlert(
         `📦 Заказ #${orderId}\n\n` +
         `Для получения полной информации отправьте номер заказа в бот:\n` +
@@ -191,9 +213,6 @@ function showOrderDetails(orderId) {
 
 // ==================== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
 
-/**
- * Показывает FAQ
- */
 function showFaq() {
     tg.showAlert(
         '🌸 Частые вопросы\n\n' +
@@ -205,9 +224,6 @@ function showFaq() {
     );
 }
 
-/**
- * Закрывает приложение
- */
 function closeApp() {
     tg.close();
 }
