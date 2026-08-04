@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DollieLand Трекер</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>🌸 DollieLand</h1>
+            <p class="subtitle">Трекер заказов</p>
+        </header>
+
+        <div id="user-info" class="card">
+            <p>👋 Добро пожаловать!</p>
+        </div>
+
+        <div class="actions">
+            <button class="btn-primary" onclick="loadOrders()">📦 Мои заказы</button>
+            <button class="btn-secondary" onclick="showFaq()">❓ FAQ</button>
+        </div>
+
+        <div id="orders-list"></div>
+
+        <button class="btn-close" onclick="closeApp()">✕ Закрыть</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
