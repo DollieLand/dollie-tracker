@@ -4,7 +4,7 @@ tg.ready();
 
 if (user) {
     document.querySelector('.profile-name').textContent = `👋 Привет, ${user.first_name}`;
-    document.querySelector('.profile-id').textContent = `ID: ${user.id}`;
+    document.querySelector('.profile-id').textContent = `🆔 ID: ${user.id}`;
 }
 
 async function loadOrders() {
@@ -83,6 +83,7 @@ function renderOrders(orders, isDemo = false) {
         else if (statusText.includes('Россию') || statusText.includes('Таможня')) statusClass = 'status-russia';
         else if (statusText.includes('Оплата')) statusClass = 'status-payment';
         else if (statusText.includes('США') || statusText.includes('Отправлен')) statusClass = 'status-us';
+        else statusClass = 'status-initial';
         
         html += `
             <div class="order-item ${statusClass}">
@@ -102,7 +103,7 @@ function renderOrders(orders, isDemo = false) {
 function showFaq() {
     tg.showAlert(
         '🌸 Частые вопросы\n\n' +
-        '📦 Доставка из США — 4-5 недель\n' +
+        '✈️ Доставка из США — 4-5 недель\n' +
         '📦 Доставка из Китая — 3-4 недели\n' +
         '💳 Оплата веса — после прибытия на склад\n\n' +
         '📱 Бот: @DollieHelper_bot\n' +
