@@ -5,89 +5,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>DollieLand Трекер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css?v=12" />
+    <link rel="stylesheet" href="style.css?v=13" />
 </head>
 <body>
     <div id="app">
         <!-- ===== ШАПКА ===== -->
         <header>
-            <div class="header-bg"></div>
-            <div class="header-content">
-                <div class="header-top">
-                    <div class="logo">
-                        <span class="logo-icon">🌸</span>
-                        <h1>DollieLand</h1>
-                        <span class="logo-icon">✨</span>
-                    </div>
-                    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+            <div class="header-top">
+                <div class="logo">
+                    <span class="logo-icon">🌸</span>
+                    <h1>DollieLand</h1>
                 </div>
-                <p class="subtitle">Ваш волшебный мир кукол</p>
-                <div class="divider">•.¸♡ ♡¸.•</div>
-                <p class="subtitle-small">✨ Трекер заказов ✨</p>
+                <button class="profile-btn" onclick="showProfile()">
+                    <span class="profile-avatar-small">👤</span>
+                </button>
             </div>
+            <p class="subtitle">✨ Трекер заказов ✨</p>
         </header>
 
-        <!-- ===== ПРОФИЛЬ ===== -->
-        <div id="user-info" class="card profile-card">
-            <div class="profile-avatar">👤</div>
-            <div class="profile-text">
-                <p class="profile-name">Добро пожаловать!</p>
-                <p class="profile-id">ID: —</p>
-            </div>
-            <div class="profile-level" id="userLevel">🌟 Новичок</div>
-        </div>
-
-        <!-- ===== СТАТИСТИКА ===== -->
-        <div id="stats-bar" class="card stats-bar" style="display:none;">
-            <div class="stat-item">
-                <span class="stat-number" id="statTotal">0</span>
-                <span class="stat-label">Всего</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number" id="statDelivered">0</span>
-                <span class="stat-label">Доставлено</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number" id="statInTransit">0</span>
-                <span class="stat-label">В пути</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number" id="statAvgDays">0</span>
-                <span class="stat-label">Ср. дней</span>
-            </div>
-        </div>
-
-        <!-- ===== КНОПКИ ===== -->
-        <div class="actions">
-            <button class="btn-primary" onclick="loadOrders()">
-                <span class="btn-icon">📦</span>
-                Мои заказы
+        <!-- ===== ВКЛАДКИ ===== -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">
+                <span class="tab-icon">📦</span>
+                Заказы
             </button>
-            <button class="btn-secondary" onclick="showFaq()">
-                <span class="btn-icon">💡</span>
+            <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">
+                <span class="tab-icon">📊</span>
+                Статистика
+            </button>
+            <button class="tab-btn" data-tab="faq" onclick="switchTab('faq')">
+                <span class="tab-icon">💡</span>
                 FAQ
             </button>
         </div>
 
-        <!-- ===== ПОИСК ===== -->
-        <div id="search-container" style="display:none;">
+        <!-- ===== ВКЛАДКА: ЗАКАЗЫ ===== -->
+        <div id="tab-orders" class="tab-content active">
+            <!-- Поиск -->
             <div class="search-box">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="searchInput" placeholder="Поиск по ID или названию..." oninput="filterOrders(this.value)">
                 <button class="search-clear" onclick="clearSearch()">✕</button>
             </div>
+
+            <!-- Список заказов -->
+            <div id="orders-list">
+                <div class="card empty-state">
+                    <div class="empty-icon">📭</div>
+                    <p class="empty-title">Здесь пока пусто</p>
+                    <p class="empty-sub">Нажмите «Обновить», чтобы загрузить</p>
+                    <button class="btn-primary" onclick="loadOrders()" style="margin-top:16px;width:100%;">
+                        🔄 Обновить
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- ===== СПИСОК ЗАКАЗОВ ===== -->
-        <div id="orders-list">
-            <div class="card empty-state">
-                <div class="empty-icon">📭</div>
-                <p class="empty-title">Здесь пока пусто</p>
-                <p class="empty-sub">Нажмите «Мои заказы», чтобы загрузить</p>
+        <!-- ===== ВКЛАДКА: СТАТИСТИКА ===== -->
+        <div id="tab-stats" class="tab-content">
+            <div id="stats-container">
+                <div class="card stats-card">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="statTotal">0</span>
+                            <span class="stat-label">Всего заказов</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="statDelivered">0</span>
+                            <span class="stat-label">Доставлено</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="statInTransit">0</span>
+                            <span class="stat-label">В пути</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="statAvgDays">—</span>
+                            <span class="stat-label">Ср. дней</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card level-card">
+                    <div class="level-display">
+                        <span class="level-emoji" id="levelEmoji">🌟</span>
+                        <div>
+                            <p class="level-title">Ваш уровень</p>
+                            <p class="level-name" id="levelName">Новичок</p>
+                        </div>
+                    </div>
+                    <div class="level-progress">
+                        <div class="level-bar">
+                            <div class="level-fill" id="levelFill" style="width:0%;"></div>
+                        </div>
+                        <p class="level-next" id="levelNext">До следующего уровня: 5 заказов</p>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <!-- ===== ВКЛАДКА: FAQ ===== -->
+        <div id="tab-faq" class="tab-content">
+            <div class="card faq-card">
+                <div class="faq-item" onclick="showFaqDetail('delivery-us')">
+                    <span class="faq-icon">✈️</span>
+                    <div>
+                        <p class="faq-question">Доставка из США</p>
+                        <p class="faq-answer">4-5 недель, стоимость от 500 ₽</p>
+                    </div>
+                    <span class="faq-arrow">›</span>
+                </div>
+                <div class="faq-divider"></div>
+                <div class="faq-item" onclick="showFaqDetail('delivery-china')">
+                    <span class="faq-icon">📦</span>
+                    <div>
+                        <p class="faq-question">Доставка из Китая</p>
+                        <p class="faq-answer">3-4 недели, стоимость от 500 ₽</p>
+                    </div>
+                    <span class="faq-arrow">›</span>
+                </div>
+                <div class="faq-divider"></div>
+                <div class="faq-item" onclick="showFaqDetail('payment')">
+                    <span class="faq-icon">💳</span>
+                    <div>
+                        <p class="faq-question">Оплата веса</p>
+                        <p class="faq-answer">После прибытия на склад</p>
+                    </div>
+                    <span class="faq-arrow">›</span>
+                </div>
+                <div class="faq-divider"></div>
+                <div class="faq-item" onclick="showFaqDetail('hold')">
+                    <span class="faq-icon">🔐</span>
+                    <div>
+                        <p class="faq-question">Бронь и рассрочка</p>
+                        <p class="faq-answer">Бесплатно 24 часа</p>
+                    </div>
+                    <span class="faq-arrow">›</span>
+                </div>
+                <div class="faq-divider"></div>
+                <div class="faq-item" onclick="showFaqDetail('return')">
+                    <span class="faq-icon">🔄</span>
+                    <div>
+                        <p class="faq-question">Политика возвратов</p>
+                        <p class="faq-answer">Подробности внутри</p>
+                    </div>
+                    <span class="faq-arrow">›</span>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="contactSupport()" style="width:100%;margin-top:8px;">
+                💌 Связаться с поддержкой
+            </button>
         </div>
 
         <!-- ===== ПОДВАЛ ===== -->
@@ -95,12 +161,39 @@
             <div class="divider">•.¸♡ ♡¸.•</div>
             <p class="footer-text">♡ С любовью, DollieLand ♡</p>
         </footer>
-
-        <!-- ===== КНОПКА ЗАКРЫТЬ ===== -->
-        <button class="btn-close" onclick="closeApp()">
-            ✕ Закрыть
-        </button>
     </div>
-    <script src="script.js?v=12"></script>
+
+    <!-- ===== МОДАЛКА ПРОФИЛЯ ===== -->
+    <div id="profile-modal" class="modal" onclick="closeProfile(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeProfile()">✕</button>
+            <div class="profile-modal-header">
+                <div class="profile-modal-avatar">👤</div>
+                <div>
+                    <p class="profile-modal-name" id="modalName">Добро пожаловать!</p>
+                    <p class="profile-modal-id" id="modalId">ID: —</p>
+                </div>
+            </div>
+            <div class="profile-modal-info">
+                <div class="info-row">
+                    <span class="info-label">📦 Всего заказов</span>
+                    <span class="info-value" id="modalTotal">0</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🎯 Уровень</span>
+                    <span class="info-value" id="modalLevel">🌟 Новичок</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📅 В системе с</span>
+                    <span class="info-value" id="modalSince">—</span>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="closeProfile();loadOrders();" style="width:100%;margin-top:12px;">
+                🔄 Обновить заказы
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js?v=13"></script>
 </body>
 </html>
