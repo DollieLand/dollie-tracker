@@ -241,4 +241,204 @@ function renderOrders(orders, isDemo = false) {
         html += `
             <div class="order-item ${statusClass}" onclick="toggleOrderDetails('${order.id}')" id="order-${order.id}">
                 <div class="order-id">🆔 ${order.id}</div>
-                ${order.title ? `<div
+                ${order.title ? `<div class="order-title">🏷️ ${order.title}</div>` : ''}
+                <div class="order-status">${statusIcon} ${statusText}</div>
+                ${order.delivery_date ? `<div class="order-delivery">📅 ${order.delivery_date}</div>` : ''}
+                ${order.created_date ? `<div class="order-date">📆 Создан: ${order.created_date}</div>` : ''}
+                
+                <!-- Прогресс-бар -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%;"></div>
+                    </div>
+                    <div class="progress-text">${progress}% пути</div>
+                </div>
+                
+                <!-- Детали (скрыты по умолчанию) -->
+                <div class="order-expanded" id="details-${order.id}" style="display:none;">
+                    ${buildTimeline(order)}
+                    ${buildOrderActions(order)}
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// ---------- ПРОГРЕСС ----------
+function getProgress(statusText) {
+    const stages = [
+        'Заказ оформлен', 'Продавец подготовил', 'Отправлен продавцом',
+        'Прибыл на склад в США', 'Требуется оплата', 'Вес оплачен',
+        'Обработка на складе', 'Отправлена из США',
+        'Прибыла в Россию', 'Таможня РФ', 'Таможня выпустила',
+        'Распределительный центр', 'Прибыла в Москву',
+        'Передано посреднику', 'Отправлено посредником',
+        'В пути к клиенту', 'Доставлено клиенту'
+    ];
+    
+    const idx = stages.findIndex(s => statusText.includes(s));
+    if (idx === -1) return 0;
+    return Math.round(((idx + 1) / stages.length) * 100);
+}
+
+// ---------- ТАЙМЛАЙН ----------
+function buildTimeline(order) {
+    const stages = [
+        { icon: '📝', label: 'Заказ оформлен' },
+        { icon: '🎁', label: 'Подготовка к отправке' },
+        { icon: '📦', label: 'Отправлен продавцом' },
+        { icon: '🇺🇸', label: 'Прибыл на склад в США' },
+        { icon: '💳', label: 'Оплата веса' },
+        { icon: '✅', label: 'Вес оплачен' },
+        { icon: '🔍', label: 'Обработка на складе' },
+        { icon: '✈️', label: 'Отправлен из США' },
+        { icon: '🇷🇺', label: 'Прибыл в Россию' },
+        { icon: '🛃', label: 'Таможня РФ' },
+        { icon: '✔️', label: 'Таможня выпустила' },
+        { icon: '🏢', label: 'Распределительный центр' },
+        { icon: '🏙️', label: 'Прибыл в Москву' },
+        { icon: '🤝', label: 'Передан посреднику' },
+        { icon: '🚚', label: 'Отправлен посредником' },
+        { icon: '🚚', label: 'В пути к клиенту' },
+        { icon: '🎉', label: 'Доставлен!' }
+    ];
+    
+    const currentIdx = stages.findIndex(s => order.status && order.status.includes(s.label));
+    const displayStages = currentIdx === -1 ? stages.slice(0, 3) : stages.slice(0, currentIdx + 2);
+    
+    let html = '<div class="timeline">';
+    displayStages.forEach((stage, idx) => {
+        const isCompleted = idx < currentIdx;
+        const isCurrent = idx === currentIdx;
+        const iconClass = isCompleted ? 'completed' : (isCurrent ? 'current' : '');
+        
+        html += `
+            <div class="timeline-item ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
+                <div class="timeline-icon ${iconClass}">${stage.icon}</div>
+                <div class="timeline-text">
+                    <div class="timeline-status">${stage.label}</div>
+                    <div class="timeline-date">${isCompleted ? '✅ Завершено' : (isCurrent ? '⏳ Текущий' : '⏳ Ожидается')}</div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    return html;
+}
+
+// ---------- КНОПКИ ЗАКАЗА ----------
+function buildOrderActions(order) {
+    return `
+        <div class="order-actions">
+            <button class="order-btn order-btn-remind" onclick="sendRemind('${order.id}')">
+                🔔 Напомнить
+            </button>
+            <button class="order-btn order-btn-chat" onclick="askAboutOrder('${order.id}')">
+                💬 Спросить
+            </button>
+            <button class="order-btn order-btn-photo" onclick="viewPhoto('${order.id}')">
+                📸 Фото
+            </button>
+        </div>
+    `;
+}
+
+// ---------- ТОГГЛ ДЕТАЛЕЙ ----------
+function toggleOrderDetails(orderId) {
+    const details = document.getElementById(`details-${orderId}`);
+    if (details) {
+        details.style.display = details.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+// ---------- ДЕЙСТВИЯ С ЗАКАЗАМИ ----------
+function sendRemind(orderId) {
+    tg.showAlert(`🔔 Напоминание по заказу #${orderId} отправлено администратору!`);
+    // Здесь можно отправить уведомление в бот
+}
+
+function askAboutOrder(orderId) {
+    tg.showAlert(`💬 Напишите вопрос по заказу #${orderId} в бот @DollieHelper_bot`);
+    tg.openTelegramLink(`https://t.me/DollieHelper_bot`);
+}
+
+function viewPhoto(orderId) {
+    tg.showAlert(`📸 Фото для заказа #${orderId} пока нет`);
+    // Здесь можно будет показывать фото
+}
+
+// ---------- ПОИСК ----------
+function filterOrders(query) {
+    if (!query || query.trim() === '') {
+        renderOrders(allOrders);
+        return;
+    }
+    const q = query.toLowerCase().trim();
+    const filtered = allOrders.filter(o => 
+        o.id.toLowerCase().includes(q) || 
+        (o.title && o.title.toLowerCase().includes(q))
+    );
+    renderOrders(filtered);
+}
+
+function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    renderOrders(allOrders);
+}
+
+// ---------- FAQ ----------
+function showFaq() {
+    tg.showAlert(
+        '🌸 Частые вопросы\n\n' +
+        '✈️ Доставка из США — 4-5 недель\n' +
+        '📦 Доставка из Китая — 3-4 недели\n' +
+        '💳 Оплата веса — после прибытия на склад\n' +
+        '🔐 Бронь — 24 часа бесплатно\n\n' +
+        '📱 Бот: @DollieHelper_bot\n' +
+        '💌 Связь: @Darielune'
+    );
+}
+
+// ---------- ЗАКРЫТЬ ----------
+function closeApp() {
+    tg.close();
+}
+
+// ---------- PULL-TO-REFRESH ----------
+let startY = 0;
+let isDragging = false;
+
+document.addEventListener('touchstart', function(e) {
+    if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        isDragging = true;
+    }
+});
+
+document.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    const diff = e.touches[0].clientY - startY;
+    if (diff > 60 && !isRefreshing) {
+        isRefreshing = true;
+        const indicator = document.createElement('div');
+        indicator.className = 'pull-indicator';
+        indicator.id = 'pullIndicator';
+        indicator.textContent = '🔄 Обновление...';
+        document.getElementById('orders-list').prepend(indicator);
+        loadOrders().then(() => {
+            const el = document.getElementById('pullIndicator');
+            if (el) el.remove();
+            isRefreshing = false;
+        });
+    }
+});
+
+document.addEventListener('touchend', function() {
+    isDragging = false;
+});
+
+// ---------- АВТОЗАГРУЗКА ----------
+loadOrders();
