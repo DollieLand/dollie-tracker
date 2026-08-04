@@ -5,33 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DollieLand Трекер</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css?v=3" />
+    <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
     <div id="app">
+        <!-- Шапка -->
         <header>
-            <h1>🌸 DollieLand</h1>
-            <p class="subtitle">Трекер заказов</p>
+            <div class="header-bg"></div>
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🌸</span>
+                    <h1>DollieLand</h1>
+                </div>
+                <p class="subtitle">✨ Трекер заказов ✨</p>
+            </div>
         </header>
 
-        <div id="user-info" class="card">
-            <p>👋 Добро пожаловать!</p>
-        </div>
-
-        <div class="actions">
-            <button class="btn-primary" onclick="loadOrders()">📦 Мои заказы</button>
-            <button class="btn-secondary" onclick="showFaq()">❓ FAQ</button>
-        </div>
-
-        <div id="orders-list">
-            <div class="card" style="text-align: center; padding: 30px;">
-                <p style="font-size: 32px;">📭</p>
-                <p>Нажмите «Мои заказы», чтобы загрузить</p>
+        <!-- Профиль -->
+        <div id="user-info" class="card profile-card">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-text">
+                <p class="profile-name">Добро пожаловать!</p>
+                <p class="profile-id">ID: —</p>
             </div>
         </div>
 
-        <button class="btn-close" onclick="closeApp()">✕ Закрыть</button>
+        <!-- Кнопки -->
+        <div class="actions">
+            <button class="btn-primary" onclick="loadOrders()">
+                <span class="btn-icon">📦</span>
+                Мои заказы
+            </button>
+            <button class="btn-secondary" onclick="showFaq()">
+                <span class="btn-icon">❓</span>
+                FAQ
+            </button>
+        </div>
+
+        <!-- Список заказов -->
+        <div id="orders-list">
+            <div class="card empty-state">
+                <div class="empty-icon">📭</div>
+                <p class="empty-title">Нет заказов</p>
+                <p class="empty-sub">Нажмите «Мои заказы», чтобы загрузить</p>
+            </div>
+        </div>
+
+        <!-- Кнопка закрыть -->
+        <button class="btn-close" onclick="closeApp()">
+            ✕ Закрыть
+        </button>
     </div>
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>
