@@ -686,14 +686,58 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
-  /* Подстраховка: если WebView всё же оборачивает номера/даты в свою ссылку,
-     принудительно возвращаем обычный цвет текста и убираем подчёркивание */
+  /* =========================================================
+     АНТИ-АВТОДЕТЕКТ (iOS/Android WebView)
+     WebView автоматически распознаёт номера заказов, даты, ID
+     и оборачивает их в <a href="tel:..."> / <a x-apple-data-detectors>.
+     Принудительно возвращаем им цвет родителя и убираем подчёркивание.
+     Важно: используем -webkit-text-fill-color, потому что многие
+     WebView красят текст именно через него, а не через color.
+     ========================================================= */
   a[x-apple-data-detectors],
+  a[x-apple-data-detectors-type],
+  a[href^="tel:"],
+  a[href^="mailto:"],
+  a[href^="date:"],
+  a[href^="address:"],
+  .app a,
+  .app a:visited,
+  .app a:hover,
+  .app a:active,
+  .app [href],
   .order-title a,
+  .order-id a,
   .hero-title a,
-  .order-id a {
+  .timeline-label a,
+  .timeline-date a,
+  .tx-title a,
+  .tx-subtitle a,
+  .tx-date a,
+  .order-meta a,
+  .info-row a,
+  .banner-title a,
+  .banner-subtitle a,
+  .dollie-balance-num a,
+  .dollie-hero-num a {
     color: inherit !important;
-    text-decoration: inherit !important;
+    text-decoration: none !important;
+    -webkit-text-decoration: none !important;
+    -webkit-text-fill-color: inherit !important;
+    background: transparent !important;
+    cursor: inherit !important;
+  }
+
+  /* Точечная страховка для текстовых элементов — чтобы никакой автодетект
+     не перебил цвет обводкой/заливкой текста */
+  .order-title, .order-id, .order-meta, .order-status-line,
+  .timeline-label, .timeline-date,
+  .tx-title, .tx-subtitle, .tx-date, .tx-amount,
+  .info-row, .info-row b,
+  .hero-title, .hero-next, .hero-next b,
+  .banner-title, .banner-subtitle,
+  .dollie-balance-num, .dollie-hero-num, .dollie-value-rub,
+  .profile-name, .profile-sub {
+    -webkit-text-fill-color: currentColor;
   }
 
   @media (prefers-reduced-motion: reduce) {
