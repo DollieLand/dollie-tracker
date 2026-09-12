@@ -203,6 +203,219 @@
   .pill-btn.spinning .icon { animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ===================== DOLLIE CLUB — превью (Главная / Профиль) ===================== */
+  .dollie-card {
+    background: linear-gradient(150deg, #FDF1F5 0%, #FFF9FB 60%, #FFFFFF 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 18px 20px;
+    box-shadow: 0 8px 30px rgba(231, 142, 173, 0.08);
+    margin-bottom: 4px;
+    width: 100%;
+    text-align: left;
+    transition: transform 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .dollie-card:active { transform: scale(0.98); }
+
+  .dollie-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .dollie-card-top .dollie-label { font-size: 12px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.4px; text-transform: uppercase; }
+  .dollie-card-top .icon { color: var(--pink-accent); width: 18px; height: 18px; }
+
+  .dollie-balance-row { display: flex; align-items: baseline; gap: 6px; }
+  .dollie-balance-num { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; font-variant-numeric: tabular-nums; }
+  .dollie-balance-unit { font-size: 12px; font-weight: 600; color: var(--text-secondary); letter-spacing: 0.3px; text-transform: uppercase; }
+
+  .dollie-value-rub { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; }
+
+  .dollie-history-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    margin-top: 10px;
+    background: none; border: none; padding: 0;
+  }
+  .dollie-history-link .icon { width: 14px; height: 14px; }
+
+  .dollie-card.compact { padding: 16px 18px; margin-bottom: 14px; }
+  .dollie-card.compact .dollie-balance-num { font-size: 26px; }
+
+  /* ===================== DOLLIE CLUB — полный экран (bottom sheet) ===================== */
+  .dollie-sheet-page { display: none; }
+  .dollie-sheet-page.active { display: block; }
+
+  .dollie-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: -8px 0 16px;
+  }
+
+  /* Премиальная карточка баланса — главный экран Dollie Club */
+  .dollie-hero {
+    background: linear-gradient(160deg, #FDF1F5 0%, #FFFCFD 55%, #FFFFFF 100%);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 26px 24px 22px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+
+  /* тончайший декоративный монограмм-акцент, почти незаметный */
+  .dollie-hero::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 140px; height: 140px;
+    border: 1.5px solid var(--pink-accent);
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+  .dollie-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -46px; left: -20px;
+    width: 110px; height: 110px;
+    border: 1.5px solid var(--pink-accent);
+    border-radius: 50%;
+    opacity: 0.06;
+  }
+
+  .dollie-hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 700; color: var(--pink-accent);
+    letter-spacing: 0.6px; text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+  .dollie-hero-eyebrow .icon { width: 13px; height: 13px; }
+
+  .dollie-hero-num {
+    font-size: 52px; font-weight: 800; color: var(--text);
+    line-height: 1; margin-top: 14px; letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+    position: relative; z-index: 1;
+  }
+  .dollie-hero-unit {
+    font-size: 13px; font-weight: 700; color: var(--text-secondary);
+    letter-spacing: 2px; text-transform: uppercase; margin-top: 2px;
+    position: relative; z-index: 1;
+  }
+  .dollie-hero-rub {
+    font-size: 13.5px; color: var(--text-secondary); margin-top: 10px;
+    position: relative; z-index: 1;
+  }
+
+  .dollie-hero-footer {
+    display: flex; justify-content: center; margin-top: 18px;
+    position: relative; z-index: 1;
+  }
+  .dollie-hero-footer .text-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13.5px; font-weight: 700; color: var(--pink-accent);
+    background: none; border: none; padding: 6px 4px;
+  }
+  .dollie-hero-footer .icon { width: 15px; height: 15px; }
+
+  /* "Как это работает" — editorial mini-cards */
+  .dollie-section-title {
+    font-size: 14.5px; font-weight: 700; color: var(--text);
+    margin: 0 0 12px;
+  }
+  .dollie-section-title.with-link { display: flex; justify-content: space-between; align-items: center; }
+  .dollie-section-title .text-link {
+    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    background: none; border: none; padding: 0;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .dollie-section-title .text-link .icon { width: 13px; height: 13px; }
+
+  .howitworks-card {
+    flex: 0 0 auto; scroll-snap-align: start;
+    width: 148px;
+    background: var(--card, #FFFFFF);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 14px;
+  }
+  .howitworks-index { font-size: 11px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.5px; }
+  .howitworks-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-top: 8px; }
+  .howitworks-desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.4; }
+
+  .dollie-section { margin-bottom: 24px; }
+
+  /* Строки операций — fashion-style, не бухгалтерская таблица */
+  .tx-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    text-align: left;
+    background: none; border-left: none; border-right: none; border-top: none;
+    transition: opacity 0.15s ease;
+  }
+  .tx-row:active { opacity: 0.6; }
+  .tx-row:last-child { border-bottom: none; }
+
+  .tx-icon {
+    width: 38px; height: 38px; border-radius: var(--r-pill);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .tx-icon .icon { width: 16px; height: 16px; }
+  .tx-icon.pos { background: var(--pink-soft); color: var(--pink-accent); }
+  .tx-icon.neg { background: var(--border); color: var(--text-secondary); }
+
+  .tx-main { flex: 1; min-width: 0; }
+  .tx-title { font-size: 13.5px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tx-subtitle { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .tx-side { text-align: right; flex-shrink: 0; padding-left: 6px; }
+  .tx-amount { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tx-amount.pos { color: var(--pink-accent); }
+  .tx-amount.neg { color: var(--text-secondary); }
+  .tx-date { font-size: 10.5px; color: var(--text-secondary); margin-top: 2px; }
+
+  .tx-load-more { margin-top: 14px; }
+
+  /* Фильтры истории — компактные pills */
+  .dollie-filters { display: flex; gap: 8px; margin-bottom: 14px; }
+  .dollie-filter-pill {
+    padding: 7px 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    background: var(--card, #FFFFFF);
+    font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
+  }
+  .dollie-filter-pill.active { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
+
+  /* Заголовок экрана истории с кнопкой "назад" */
+  .dollie-history-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .dollie-back-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    background: none; border: none; padding: 4px 0; margin-bottom: 10px;
+  }
+  .dollie-back-btn .icon { width: 15px; height: 15px; transform: rotate(180deg); }
+
+  .dollie-history-balance-line { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+  .dollie-history-balance-line b { color: var(--text); font-weight: 700; }
+
+  /* Детали транзакции (маленький bottom sheet) */
+  .tx-detail-amount { text-align: center; padding: 6px 0 18px; }
+  .tx-detail-amount .num { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .tx-detail-amount .num.pos { color: var(--pink-accent); }
+  .tx-detail-amount .num.neg { color: var(--text); }
+  .tx-detail-amount .sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; }
+
+  /* skeleton для баланса Dollie Club */
+  .dollie-skeleton-num {
+    width: 120px; height: 44px; border-radius: 10px; margin: 6px auto 0;
+    background: linear-gradient(90deg, #FCE5ED 25%, #FFF6F9 37%, #FCE5ED 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+
   /* ===================== SCREEN HEADER ===================== */
   .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; }
@@ -425,6 +638,10 @@
   <symbol id="icon-layers" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
   <symbol id="icon-heart" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></symbol>
   <symbol id="icon-gift" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/></symbol>
+  <symbol id="icon-gem" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M8 3l4 6 4-6M12 9v12"/></symbol>
+  <symbol id="icon-plus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
+  <symbol id="icon-minus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
+  <symbol id="icon-minus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
 </svg>
 
 <div class="app">
@@ -443,6 +660,19 @@
       <h1 id="greeting-title">Привет</h1>
       <p>Ваши заказы всегда под рукой</p>
     </div>
+
+    <button class="dollie-card" onclick="openDolliesSheet()">
+      <div class="dollie-card-top">
+        <span class="dollie-label">Dollie Club</span>
+        <svg class="icon"><use href="#icon-heart"/></svg>
+      </div>
+      <div class="dollie-balance-row">
+        <span class="dollie-balance-num" id="dollie-balance-home">—</span>
+        <span class="dollie-balance-unit">Dollies</span>
+      </div>
+      <div class="dollie-value-rub" id="dollie-value-home">≈ — ₽ скидки</div>
+      <div class="dollie-history-link">История <svg class="icon"><use href="#icon-chevron-right"/></svg></div>
+    </button>
 
     <div id="home-content">
       <!-- заполняется скриптом: hero-card / список / empty / error -->
@@ -491,6 +721,19 @@
         <div class="profile-sub" id="profile-username">DollieLand</div>
       </div>
     </div>
+
+    <button class="dollie-card compact" onclick="openDolliesSheet()">
+      <div class="dollie-card-top">
+        <span class="dollie-label">Dollie Club</span>
+        <svg class="icon"><use href="#icon-heart"/></svg>
+      </div>
+      <div class="dollie-balance-row">
+        <span class="dollie-balance-num" id="dollie-balance-profile">—</span>
+        <span class="dollie-balance-unit">Dollies</span>
+      </div>
+      <div class="dollie-value-rub" id="dollie-value-profile">≈ — ₽ скидки</div>
+      <div class="dollie-history-link">История Dollies <svg class="icon"><use href="#icon-chevron-right"/></svg></div>
+    </button>
 
     <div class="stat-row">
       <div class="stat-box"><div class="num" id="stat-active">0</div><div class="label">Активных</div></div>
@@ -573,6 +816,84 @@
     <h2>Уведомления</h2>
     <div id="notifications-content"></div>
   </div>
+</div>
+
+<div class="bottom-sheet" id="sheet-dollies">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content">
+
+    <!-- ===== СТРАНИЦА 1: ОБЗОР ===== -->
+    <div class="dollie-sheet-page active" id="dollie-page-overview">
+      <h2 style="margin-bottom:2px">Dollie Club</h2>
+      <p class="dollie-subtitle">Твои Dollies — твоя маленькая привилегия ♡</p>
+
+      <div class="dollie-hero">
+        <span class="dollie-hero-eyebrow"><svg class="icon"><use href="#icon-heart"/></svg>Dollie Club</span>
+        <div class="dollie-hero-num" id="dollie-hero-balance">—</div>
+        <div class="dollie-hero-unit">Dollies</div>
+        <div class="dollie-hero-rub" id="dollie-hero-rub">≈ — ₽ скидки</div>
+        <div class="dollie-hero-footer">
+          <button class="text-link" onclick="switchDolliePage('history')">
+            История <svg class="icon"><use href="#icon-chevron-right"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="dollie-section">
+        <div class="dollie-section-title">Как работают Dollies</div>
+        <div class="scroll-row">
+          <div class="howitworks-card">
+            <div class="howitworks-index">01</div>
+            <div class="howitworks-title">Получай</div>
+            <div class="howitworks-desc">Dollies за завершённые заказы</div>
+          </div>
+          <div class="howitworks-card">
+            <div class="howitworks-index">02</div>
+            <div class="howitworks-title">Храни</div>
+            <div class="howitworks-desc">их до следующей покупки</div>
+          </div>
+          <div class="howitworks-card">
+            <div class="howitworks-index">03</div>
+            <div class="howitworks-title">Используй</div>
+            <div class="howitworks-desc">как небольшую скидку</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dollie-section">
+        <div class="dollie-section-title with-link">
+          <span>Последние операции</span>
+        </div>
+        <div id="dollie-recent-content"></div>
+        <button class="text-link" style="margin-top:10px" onclick="switchDolliePage('history')">
+          Посмотреть всю историю <svg class="icon"><use href="#icon-chevron-right"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== СТРАНИЦА 2: ПОЛНАЯ ИСТОРИЯ ===== -->
+    <div class="dollie-sheet-page" id="dollie-page-history">
+      <button class="dollie-back-btn" onclick="switchDolliePage('overview')">
+        <svg class="icon"><use href="#icon-chevron-right"/></svg> Dollie Club
+      </button>
+      <h2 style="margin-bottom:6px">История Dollies</h2>
+      <div class="dollie-history-balance-line">Баланс: <b id="dollie-history-balance">— Dollies</b></div>
+
+      <div class="dollie-filters">
+        <button class="dollie-filter-pill active" data-filter="all" onclick="setDollieFilter('all')">Все</button>
+        <button class="dollie-filter-pill" data-filter="earn" onclick="setDollieFilter('earn')">Начисления</button>
+        <button class="dollie-filter-pill" data-filter="spend" onclick="setDollieFilter('spend')">Использование</button>
+      </div>
+
+      <div id="dollies-history-content"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="bottom-sheet" id="sheet-tx-detail">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content" id="sheet-tx-detail-content"></div>
 </div>
 
 <div class="bottom-sheet" id="sheet-help">
@@ -762,7 +1083,14 @@ function progressPercent(step) {
 let ordersCache = [];
 let lastUpdatedAt = null;
 
-function orderTitle(order) { return order.title || `Заказ №${order.id}`; }
+/* ---------- Экранирование HTML (защита от XSS в данных с backend) ---------- */
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+function orderTitle(order) { return escapeHtml(order.title || `Заказ №${order.id}`); }
 
 function orderCardHTML(order) {
   const step = matchStep(order.status);
@@ -966,6 +1294,325 @@ function updateProfileStats() {
   activeEl.textContent = active;
 }
 
+/* ============================================================
+   DOLLIE CLUB — баланс, превью, полная история, деталь операции
+   ============================================================ */
+
+let loyaltyBalance = null;
+let loyaltyHistoryOffset = 0;
+let loyaltyHistoryTotal = 0;
+let loyaltyHistoryLoading = false;
+let loyaltyTxCache = [];        // все загруженные транзакции (для экрана "История")
+let dollieRecentCache = [];     // последние 3 транзакции (для превью на обзорном экране)
+let dollieHistoryLoadedOnce = false;
+let dollieFilter = 'all';       // all | earn | spend
+const LOYALTY_HISTORY_PAGE_SIZE = 20;
+
+const FILTER_TYPE_GROUPS = {
+  earn: ['earn', 'manual_add', 'refund'],
+  spend: ['spend', 'manual_remove'],
+};
+
+const RU_MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+function formatTxDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]}`;
+}
+
+function formatFullDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/* ---------- Плавная смена числа баланса (уважает prefers-reduced-motion) ---------- */
+function animateNumber(el, to) {
+  if (!el) return;
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const from = parseInt(el.textContent, 10);
+  if (prefersReduced || isNaN(from) || from === to) {
+    el.textContent = to;
+    return;
+  }
+  const duration = 500;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = to;
+  }
+  requestAnimationFrame(step);
+}
+
+/* ---------- Баланс: подтягиваем один раз при старте, используем везде ---------- */
+async function loadLoyalty() {
+  if (!userId) return;
+  try {
+    const data = await apiFetch('/api/me/loyalty', {});
+    if (data.ok) {
+      loyaltyBalance = data.balance;
+      updateLoyaltyBalanceUI();
+    }
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить баланс Dollies —', e);
+    // Тихо игнорируем — баланс не критичен для остального интерфейса,
+    // на месте цифры останется "—", а полноценная ошибка покажется
+    // только если пользователь откроет сам экран истории.
+  }
+}
+
+function updateLoyaltyBalanceUI() {
+  const balance = loyaltyBalance ?? 0;
+
+  animateNumber(document.getElementById('dollie-balance-home'), balance);
+  animateNumber(document.getElementById('dollie-balance-profile'), balance);
+  animateNumber(document.getElementById('dollie-hero-balance'), balance);
+
+  const rubText = `≈ ${balance} ₽ скидки`;
+  ['dollie-value-home', 'dollie-value-profile', 'dollie-hero-rub'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = rubText;
+  });
+
+  const historyBalanceEl = document.getElementById('dollie-history-balance');
+  if (historyBalanceEl) historyBalanceEl.textContent = `${balance} Dollies`;
+}
+
+/* ---------- Открытие Dollie Club: всегда начинаем с обзорной страницы ---------- */
+function openDolliesSheet() {
+  openSheet('dollies');
+  switchDolliePage('overview');
+  loadDollieRecent();
+}
+
+function switchDolliePage(page) {
+  document.getElementById('dollie-page-overview').classList.toggle('active', page === 'overview');
+  document.getElementById('dollie-page-history').classList.toggle('active', page === 'history');
+  hapticSelection();
+  if (page === 'history' && !dollieHistoryLoadedOnce) {
+    dollieHistoryLoadedOnce = true;
+    loadLoyaltyHistory(true);
+  }
+}
+
+function setDollieFilter(filter) {
+  dollieFilter = filter;
+  document.querySelectorAll('.dollie-filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
+  renderHistoryList();
+  hapticSelection();
+}
+
+function filteredTxCache() {
+  if (dollieFilter === 'all') return loyaltyTxCache;
+  const group = FILTER_TYPE_GROUPS[dollieFilter] || [];
+  return loyaltyTxCache.filter(tx => group.includes(tx.type));
+}
+
+/* ---------- Состояния загрузки/пусто/ошибка ---------- */
+function dollieHistorySkeletonHTML(count) {
+  let html = '';
+  for (let i = 0; i < (count || 3); i++) {
+    html += `
+      <div class="tx-row" style="border-bottom:1px solid var(--border)">
+        <div class="skeleton-thumb" style="width:38px;height:38px;border-radius:999px;"></div>
+        <div style="flex:1">
+          <div class="skeleton-line w-40"></div>
+          <div class="skeleton-line w-70"></div>
+        </div>
+      </div>`;
+  }
+  return html;
+}
+
+function dollieHistoryEmptyHTML() {
+  const balance = loyaltyBalance ?? 0;
+  if (balance === 0) {
+    return `
+      <div class="empty-state">
+        ${emptyIllustration()}
+        <h3>0 Dollies</h3>
+        <p>Здесь будут появляться твои Dollies после завершённых заказов.</p>
+      </div>`;
+  }
+  return `
+    <div class="empty-state">
+      ${emptyIllustration()}
+      <h3>Пока нет операций</h3>
+      <p>Здесь появится история начислений и использования Dollies.</p>
+    </div>`;
+}
+
+function dollieHistoryErrorHTML() {
+  return `
+    <div class="empty-state">
+      <h3>Не удалось загрузить историю</h3>
+      <p>Проверьте соединение и попробуйте ещё раз.</p>
+      <button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button>
+    </div>`;
+}
+
+/* ---------- Человекочитаемые название/подпись/иконка операции ---------- */
+function txMeta(tx) {
+  const isPositive = tx.amount > 0;
+  const orderPart = tx.order_id ? `Заказ №${escapeHtml(tx.order_id)}` : null;
+  let title, subtitle, icon;
+
+  switch (tx.type) {
+    case 'earn':
+      title = orderPart || 'Начисление';
+      subtitle = 'Завершённый заказ';
+      icon = 'heart';
+      break;
+    case 'spend':
+      title = orderPart || 'Списание';
+      subtitle = 'Использованы Dollies';
+      icon = 'minus';
+      break;
+    case 'refund':
+      title = orderPart || 'Возврат';
+      subtitle = 'Возврат Dollies';
+      icon = 'heart';
+      break;
+    case 'manual_add':
+      title = 'Начисление';
+      subtitle = escapeHtml(tx.description || 'От администратора');
+      icon = 'heart';
+      break;
+    case 'manual_remove':
+      title = 'Списание';
+      subtitle = escapeHtml(tx.description || 'От администратора');
+      icon = 'minus';
+      break;
+    default:
+      title = 'Корректировка';
+      subtitle = escapeHtml(tx.description || '');
+      icon = isPositive ? 'heart' : 'minus';
+  }
+  return { title, subtitle, icon, isPositive };
+}
+
+/* ---------- Строка операции — fashion-стиль, не бухгалтерская таблица ---------- */
+function txRowHTML(tx, idx, source) {
+  const meta = txMeta(tx);
+  const sign = tx.amount > 0 ? '+' : '';
+  const colorClass = meta.isPositive ? 'pos' : 'neg';
+  return `
+    <button class="tx-row" onclick="openTxDetail(${idx}, '${source || 'history'}')">
+      <div class="tx-icon ${colorClass}"><svg class="icon"><use href="#icon-${meta.icon}"/></svg></div>
+      <div class="tx-main">
+        <div class="tx-title">${meta.title}</div>
+        <div class="tx-subtitle">${meta.subtitle}</div>
+      </div>
+      <div class="tx-side">
+        <div class="tx-amount ${colorClass}">${sign}${tx.amount}</div>
+        <div class="tx-date">${formatTxDate(tx.created_at)}</div>
+      </div>
+    </button>`;
+}
+
+/* ---------- Превью последних 3 операций (обзорная страница) ---------- */
+async function loadDollieRecent() {
+  const container = document.getElementById('dollie-recent-content');
+  if (!container) return;
+  container.innerHTML = dollieHistorySkeletonHTML(3);
+  try {
+    const data = await apiFetch('/api/me/loyalty/history', { limit: 3, offset: 0 });
+    if (!data.ok) throw new Error('bad response');
+    dollieRecentCache = data.transactions || [];
+    container.innerHTML = dollieRecentCache.length
+      ? dollieRecentCache.map((tx, i) => txRowHTML(tx, i, 'recent')).join('')
+      : dollieHistoryEmptyHTML();
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить последние операции —', e);
+    container.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить операции</p>`;
+  }
+}
+
+/* ---------- Полная история (ленивая пагинация + клиентская фильтрация) ---------- */
+function renderHistoryList() {
+  const container = document.getElementById('dollies-history-content');
+  if (!container) return;
+
+  const list = filteredTxCache();
+  container.innerHTML = list.length
+    ? list.map(tx => txRowHTML(tx, loyaltyTxCache.indexOf(tx), 'history')).join('')
+    : dollieHistoryEmptyHTML();
+
+  if (loyaltyHistoryOffset < loyaltyHistoryTotal) {
+    container.insertAdjacentHTML('beforeend', `
+      <button class="btn btn-secondary btn-block tx-load-more" onclick="loadLoyaltyHistory(false)">Показать ещё</button>
+    `);
+  }
+}
+
+async function loadLoyaltyHistory(reset) {
+  if (loyaltyHistoryLoading) return;
+  const container = document.getElementById('dollies-history-content');
+
+  if (reset) {
+    loyaltyHistoryOffset = 0;
+    loyaltyHistoryTotal = 0;
+    loyaltyTxCache = [];
+    if (container) container.innerHTML = dollieHistorySkeletonHTML(4);
+  }
+
+  loyaltyHistoryLoading = true;
+
+  try {
+    const data = await apiFetch('/api/me/loyalty/history', {
+      limit: LOYALTY_HISTORY_PAGE_SIZE,
+      offset: loyaltyHistoryOffset,
+    });
+
+    if (!data.ok) throw new Error('bad response');
+
+    const txs = data.transactions || [];
+    loyaltyHistoryTotal = data.total || 0;
+    loyaltyHistoryOffset += txs.length;
+    loyaltyTxCache = loyaltyTxCache.concat(txs);
+
+    renderHistoryList();
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить историю Dollies —', e);
+    if (reset && container) container.innerHTML = dollieHistoryErrorHTML();
+    else showToast('Не удалось загрузить ещё операции');
+  } finally {
+    loyaltyHistoryLoading = false;
+  }
+}
+
+/* ---------- Деталь операции — маленький bottom sheet ---------- */
+function openTxDetail(idx, source) {
+  const cache = source === 'recent' ? dollieRecentCache : loyaltyTxCache;
+  const tx = cache[idx];
+  if (!tx) return;
+
+  const meta = txMeta(tx);
+  const sign = tx.amount > 0 ? '+' : '';
+  const colorClass = meta.isPositive ? 'pos' : 'neg';
+  const rubLine = !meta.isPositive
+    ? `<div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Сэкономлено: <b>&nbsp;${Math.abs(tx.amount)} ₽</b></div>`
+    : '';
+
+  document.getElementById('sheet-tx-detail-content').innerHTML = `
+    <div class="tx-detail-amount">
+      <div class="num ${colorClass}">${sign}${tx.amount} Dollies</div>
+      <div class="sub">${meta.title} · ${meta.subtitle}</div>
+    </div>
+    <div class="info-row"><svg class="icon"><use href="#icon-clock"/></svg>Дата: <b>&nbsp;${formatFullDate(tx.created_at)}</b></div>
+    ${tx.order_id ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Заказ: <b>&nbsp;№${escapeHtml(tx.order_id)}</b></div>` : ''}
+    ${rubLine}
+    <div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Баланс после операции: <b>&nbsp;${tx.balance_after} Dollies</b></div>
+  `;
+  openSheet('tx-detail');
+}
+
 /* ---------- Панель "Последнее обновление" + уведомления ---------- */
 function updateHomePanels() {
   const panel = document.getElementById('update-panel');
@@ -1087,6 +1734,7 @@ document.getElementById('track-input')?.addEventListener('keydown', e => { if (e
 
 renderHelpList();
 loadOrders();
+loadLoyalty();
 </script>
 
 </body>
