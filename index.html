@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 <title>DollieLand — Мои заказы</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,6 +388,16 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* Подстраховка: если WebView всё же оборачивает номера/даты в свою ссылку,
+     принудительно возвращаем обычный цвет текста и убираем подчёркивание */
+  a[x-apple-data-detectors],
+  .order-title a,
+  .hero-title a,
+  .order-id a {
+    color: inherit !important;
+    text-decoration: inherit !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
@@ -703,26 +714,42 @@ function closeSheet() {
   if (tg) tg.BackButton.hide();
 }
 
-/* ---------- Реальные статусы заказа (из существующей бизнес-логики) ---------- */
+/* ---------- Реальные статусы заказа — ТОЧНО как в ORDER_STATUSES бэкенда ----------
+   Порядок и формулировки взяты 1-в-1 из web_panel.py, чтобы избежать
+   расхождений в роде/окончаниях ("прибыл" / "прибыла" и т.п.) */
 const STATUS_STEPS = [
-  { key: 'processing',            label: 'Заказ обрабатывается',   keys: ['processing', 'обрабат'] },
-  { key: 'ordered',                label: 'Заказ у продавца',       keys: ['ordered', 'заказан', 'у продавца'] },
-  { key: 'seller_shipped',         label: 'Продавец отправил',      keys: ['seller shipped', 'продавец отправ'] },
-  { key: 'arrived_usa_warehouse',  label: 'Прибыл на склад США',    keys: ['arrived usa', 'usa warehouse', 'склад сша', 'склад в сша'] },
-  { key: 'pay_weight',             label: 'Ожидает оплаты веса',    keys: ['pay weight', 'оплат', 'ожидает оплаты'] },
-  { key: 'weight_paid',            label: 'Вес оплачен',            keys: ['weight paid', 'вес оплачен'] },
-  { key: 'sent_to_russia',         label: 'Отправлен в Россию',     keys: ['sent to russia', 'отправлен в росси'] },
-  { key: 'arrived_russia',         label: 'Прибыл в Россию',        keys: ['arrived russia', 'прибыл в росси'] },
-  { key: 'arrived_moscow',         label: 'Прибыл в Москву',        keys: ['arrived moscow', 'прибыл в москв'] },
-  { key: 'with_intermediary',      label: 'У посредника',           keys: ['with intermediary', 'у посредник', 'передан посредник'] },
-  { key: 'sent_by_intermediary',   label: 'Отправлен посредником',  keys: ['sent by intermediary', 'отправлен посредник'] },
-  { key: 'received',               label: 'Получен',                keys: ['received', 'получ'] }
+  { label: 'Заказ оформлен' },
+  { label: 'Продавец подготовил посылку' },
+  { label: 'Отправлен продавцом' },
+  { label: 'Прибыл на склад в США' },
+  { label: 'Требуется оплата веса' },
+  { label: 'Вес оплачен' },
+  { label: 'Обработка на складе в США' },
+  { label: 'Отправлена из США' },
+  { label: 'Прибыла в Россию' },
+  { label: 'Таможня РФ' },
+  { label: 'Таможня выпустила отправление' },
+  { label: 'Распределительный центр' },
+  { label: 'Прибыла в Москву' },
+  { label: 'Передано посреднику' },
+  { label: 'Отправлено посредником' },
+  { label: 'В пути к клиенту' },
+  { label: 'Доставлено клиенту' }
 ];
 
+const PAY_WEIGHT_STEP_INDEX = STATUS_STEPS.findIndex(s => s.label === 'Требуется оплата веса');
+
 function matchStep(status) {
-  const s = (status || '').toLowerCase().replace(/[_-]/g, ' ');
+  const raw = (status || '').trim();
+
+  // 1) Точное совпадение — основной путь, т.к. бэкенд отдаёт ровно эти строки
+  const exactIdx = STATUS_STEPS.findIndex(s => s.label === raw);
+  if (exactIdx !== -1) return exactIdx;
+
+  // 2) Мягкий fallback на случай небольших расхождений в написании
+  const s = raw.toLowerCase();
   for (let i = STATUS_STEPS.length - 1; i >= 0; i--) {
-    if (STATUS_STEPS[i].keys.some(k => s.includes(k))) return i;
+    if (s.includes(STATUS_STEPS[i].label.toLowerCase())) return i;
   }
   return 0;
 }
@@ -758,7 +785,7 @@ function orderCardHTML(order) {
 function heroCardHTML(order) {
   const step = matchStep(order.status);
   const next = STATUS_STEPS[step + 1];
-  const needsAction = STATUS_STEPS[step].key === 'pay_weight';
+  const needsAction = step === PAY_WEIGHT_STEP_INDEX;
   return `
     <button class="hero-card" onclick="openOrderDetail('${order.id}')">
       <div class="hero-eyebrow">Мой заказ</div>
