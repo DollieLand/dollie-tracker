@@ -1,190 +1,1036 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>DollieLand Трекер</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css?v=14" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>DollieLand — Мои заказы</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF9FB;
+    --surface: #FFFFFF;
+    --surface-soft: #FDF1F5;
+    --pink-soft: #FCE5ED;
+    --pink: #F2B3C7;
+    --pink-accent: #E78EAD;
+    --text: #392C31;
+    --text-secondary: #907D84;
+    --border: #F1E3E7;
+    --shadow-soft: 0 8px 24px rgba(57, 44, 49, 0.06);
+    --shadow-card: 0 10px 28px rgba(231, 142, 173, 0.15);
+    --shadow-nav: 0 -6px 24px rgba(57, 44, 49, 0.06);
+    --r-xl: 26px;
+    --r-lg: 20px;
+    --r-md: 14px;
+    --r-pill: 999px;
+    --tg-vh: 100vh;
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --nav-h: 66px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--bg); }
+
+  body {
+    font-family: 'Manrope', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: var(--tg-vh, 100vh);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button, input { font-family: inherit; }
+  button { border: none; background: none; cursor: pointer; -webkit-appearance: none; }
+  a { color: inherit; text-decoration: none; }
+
+  button:focus-visible, a:focus-visible, input:focus-visible {
+    outline: 2px solid var(--pink-accent);
+    outline-offset: 2px;
+  }
+
+  .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; flex-shrink: 0; }
+
+  /* ===================== APP SHELL ===================== */
+  .app { max-width: 480px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px); }
+
+  .tab-screen {
+    display: none;
+    padding: calc(var(--safe-t) + 14px) 18px 12px;
+    animation: fadeSlideIn 0.25s ease both;
+  }
+
+  .tab-screen.active { display: block; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===================== HEADER ===================== */
+  .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+
+  .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: #B4708F; letter-spacing: 0.2px; }
+
+  .icon-btn {
+    width: 44px; height: 44px;
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-soft);
+    color: var(--text);
+    transition: transform 0.15s ease;
+    position: relative;
+  }
+
+  .icon-btn:active { transform: scale(0.93); }
+
+  .icon-btn .dot {
+    position: absolute; top: 10px; right: 10px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--pink-accent);
+    border: 2px solid var(--surface);
+  }
+
+  .greeting h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.2px; }
+  .greeting p { font-size: 13.5px; color: var(--text-secondary); margin-top: 2px; margin-bottom: 18px; }
+
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin: 24px 0 10px; }
+  .section-head h3 { font-size: 14.5px; font-weight: 700; }
+
+  /* ===================== SCROLL ROW ===================== */
+  .scroll-row {
+    display: flex; gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 6px;
+    scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar { display: none; }
+
+  /* ===================== HERO ORDER CARD ===================== */
+  .hero-card {
+    background: linear-gradient(155deg, #FCE5ED 0%, #FFF4F8 55%, #FFFFFF 100%);
+    border-radius: var(--r-xl);
+    padding: 22px 20px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.15s ease;
+  }
+
+  .hero-card:active { transform: scale(0.98); }
+
+  .hero-eyebrow { font-size: 11.5px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.3px; margin-bottom: 6px; }
+  .hero-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+
+  .hero-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .hero-status-row .icon { color: var(--pink-accent); width: 19px; height: 19px; }
+  .hero-status-row span { font-size: 14px; font-weight: 700; }
+
+  .progress-bar-track { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--pink-accent); border-radius: 3px; transition: width 0.3s ease; }
+
+  .hero-next { font-size: 12px; color: var(--text-secondary); margin-top: 10px; }
+  .hero-next b { color: var(--text); font-weight: 700; }
+
+  .action-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--pink);
+    border-radius: 14px;
+    padding: 11px 14px;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--text);
+  }
+  .action-banner .icon { color: var(--pink-accent); width: 18px; height: 18px; flex-shrink: 0; }
+
+  .hero-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px;
+  }
+
+  .hero-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13.5px; font-weight: 700; color: var(--pink-accent);
+  }
+  .hero-link .icon { width: 16px; height: 16px; }
+
+  /* ===================== UPDATE PANEL ===================== */
+  .update-panel {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-soft);
+    margin-top: 22px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .update-panel .icon { color: var(--pink-accent); width: 19px; height: 19px; margin-top: 1px; }
+  .update-panel .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
+  .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; }
+
+  /* ===================== BUTTONS ===================== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 13px 22px; border-radius: var(--r-pill);
+    font-size: 14px; font-weight: 700;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    min-height: 46px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-block { width: 100%; margin-top: 10px; }
+  .btn-primary { background: var(--pink-accent); color: #FFFFFF; box-shadow: 0 8px 20px rgba(231,142,173,0.35); }
+  .btn-primary:active { opacity: 0.92; }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+  .btn-tertiary { background: transparent; color: var(--pink-accent); padding-left: 4px; padding-right: 4px; min-height: 40px; }
+
+  .pill-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 9px 16px; border-radius: var(--r-pill);
+    font-size: 12.5px; font-weight: 600; color: var(--text);
+    box-shadow: var(--shadow-soft);
+  }
+  .pill-btn .icon { width: 16px; height: 16px; }
+  .pill-btn:active { transform: scale(0.96); }
+  .pill-btn.spinning .icon { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===================== SCREEN HEADER ===================== */
+  .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; }
+
+  /* ===================== ORDER CARDS ===================== */
+  .order-card {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-soft);
+    width: 100%;
+    text-align: left;
+    transition: transform 0.15s ease;
+  }
+  .order-card:active { transform: scale(0.98); }
+
+  .order-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+
+  .order-thumb {
+    width: 44px; height: 44px; border-radius: var(--r-md);
+    background: var(--pink-soft);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--pink-accent); flex-shrink: 0;
+  }
+
+  .order-info { flex: 1; min-width: 0; }
+  .order-title { font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .order-id { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; }
+  .order-chevron { color: var(--text-secondary); flex-shrink: 0; }
+
+  .order-status-line { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--pink-accent); margin-bottom: 8px; }
+  .order-status-line .icon { width: 15px; height: 15px; }
+
+  .order-meta { font-size: 11px; color: var(--text-secondary); margin-top: 8px; }
+
+  /* Компактный chip для горизонтального ряда на главной */
+  .order-chip {
+    flex: 0 0 auto; scroll-snap-align: start; width: 220px;
+  }
+
+  /* ===================== TIMELINE ===================== */
+  .timeline { margin: 16px 0 6px; }
+
+  .timeline-step { display: flex; gap: 12px; position: relative; padding-bottom: 20px; }
+  .timeline-step:last-child { padding-bottom: 0; }
+
+  .timeline-step::before {
+    content: ''; position: absolute; left: 10px; top: 22px; bottom: -2px; width: 2px;
+    background: var(--border);
+  }
+  .timeline-step:last-child::before { display: none; }
+
+  .timeline-dot {
+    width: 22px; height: 22px; border-radius: var(--r-pill);
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: #FFFFFF; z-index: 1;
+  }
+  .timeline-step.done .timeline-dot { background: var(--pink-accent); }
+  .timeline-step.current .timeline-dot { background: var(--pink-accent); box-shadow: 0 0 0 4px var(--pink-soft); }
+  .timeline-step.done .timeline-dot .icon,
+  .timeline-step.current .timeline-dot .icon { width: 12px; height: 12px; }
+
+  .timeline-body { padding-top: 1px; }
+  .timeline-label { font-size: 13.5px; font-weight: 600; color: var(--text-secondary); }
+  .timeline-step.done .timeline-label,
+  .timeline-step.current .timeline-label { color: var(--text); }
+  .timeline-date { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
+
+  .info-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); padding: 10px 0; border-top: 1px solid var(--border); }
+  .info-row .icon { width: 17px; height: 17px; color: var(--pink-accent); flex-shrink: 0; }
+  .info-row b { color: var(--text); }
+
+  /* ===================== SKELETON ===================== */
+  .skeleton-card { background: var(--surface); border-radius: var(--r-lg); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-soft); }
+  .skeleton-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .skeleton-thumb { width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0; }
+  .skeleton-thumb, .skeleton-line {
+    background: linear-gradient(90deg, #FCE5ED 25%, #FFF6F9 37%, #FCE5ED 63%);
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+  .skeleton-line { height: 10px; border-radius: 6px; margin-bottom: 8px; }
+  .skeleton-line:last-child { margin-bottom: 0; }
+  .skeleton-line.w-40 { width: 40%; }
+  .skeleton-line.w-70 { width: 70%; }
+  .skeleton-bar { height: 6px; border-radius: 3px; width: 100%; }
+
+  @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+  /* ===================== EMPTY / ERROR STATES ===================== */
+  .empty-state { text-align: center; padding: 30px 16px 8px; }
+  .empty-illustration { width: 96px; height: 96px; margin-bottom: 4px; }
+  .empty-state h3 { font-size: 15.5px; font-weight: 700; margin-top: 8px; }
+  .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 270px; }
+
+  /* ===================== PROFILE ===================== */
+  .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
+  .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
+  .avatar.big { width: 58px; height: 58px; margin: 0 auto 10px; }
+  .profile-name { font-size: 15.5px; font-weight: 700; }
+  .profile-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .stat-row { display: flex; gap: 10px; margin-bottom: 18px; }
+  .stat-box { flex: 1; background: var(--surface); border-radius: var(--r-md); padding: 14px; box-shadow: var(--shadow-soft); text-align: center; }
+  .stat-box .num { font-size: 20px; font-weight: 800; color: var(--pink-accent); }
+  .stat-box .label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .menu-list { background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--shadow-soft); overflow: hidden; margin-bottom: 12px; }
+  .menu-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 15px 16px; font-size: 14px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); min-height: 50px; transition: background 0.15s ease; }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item:active { background: var(--bg); }
+  .menu-item .icon { color: var(--pink-accent); width: 20px; height: 20px; }
+  .menu-item span.label { flex: 1; text-align: left; }
+  .menu-item .icon.chev { color: var(--text-secondary); width: 18px; height: 18px; }
+  .menu-item .badge { font-size: 10.5px; font-weight: 700; color: var(--text-secondary); background: var(--bg); padding: 3px 8px; border-radius: var(--r-pill); }
+
+  /* ===================== HELP ACCORDION ===================== */
+  .help-item { background: var(--surface); border-radius: var(--r-md); margin-bottom: 8px; overflow: hidden; box-shadow: var(--shadow-soft); }
+  .help-item-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 13.5px; font-weight: 700; min-height: 48px; }
+  .help-item-head .icon { color: var(--pink-accent); }
+  .help-item-head span.label { flex: 1; text-align: left; }
+  .help-item-head .icon.chev { color: var(--text-secondary); transition: transform 0.2s ease; }
+  .help-item.open .help-item-head .icon.chev { transform: rotate(180deg); }
+  .help-item-body { display: none; padding: 0 16px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+  .help-item.open .help-item-body { display: block; }
+
+  /* ===================== CONTACT ===================== */
+  .contact-card { text-align: center; padding: 6px 0 4px; }
+  .contact-name { font-size: 16.5px; font-weight: 700; }
+  .contact-desc { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
+
+  /* ===================== BOTTOM NAV ===================== */
+  .bottom-nav {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-width: 480px; margin: 0 auto;
+    height: calc(var(--nav-h) + var(--safe-b));
+    padding-bottom: var(--safe-b);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-radius: 24px 24px 0 0;
+    box-shadow: var(--shadow-nav);
+    display: flex; z-index: 40;
+  }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-secondary); font-size: 10.5px; font-weight: 600; min-height: 44px; transition: color 0.15s ease, transform 0.15s ease; }
+  .nav-item .icon { width: 22px; height: 22px; }
+  .nav-item:active { transform: scale(0.92); }
+  .nav-item.active { color: var(--pink-accent); }
+
+  /* ===================== SHEETS ===================== */
+  .sheet-overlay { position: fixed; inset: 0; background: rgba(57,44,49,0.32); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 50; }
+  .sheet-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .bottom-sheet {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    max-width: 480px; margin: 0 auto;
+    max-height: 82vh;
+    background: var(--surface);
+    border-radius: 26px 26px 0 0;
+    box-shadow: 0 -12px 40px rgba(57,44,49,0.16);
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(.22,1,.36,1);
+    z-index: 51;
+    padding-bottom: calc(20px + var(--safe-b));
+    overflow-y: auto;
+    display: none;
+  }
+  .bottom-sheet.open { display: block; transform: translateY(0); }
+
+  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 10px auto 4px; }
+  .sheet-content { padding: 8px 20px 4px; }
+  .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; }
+
+  /* ===================== TOAST ===================== */
+  .toast {
+    position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 14px); left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text); border-radius: var(--r-pill); padding: 12px 22px;
+    font-size: 13px; font-weight: 600; color: #FFFFFF;
+    box-shadow: 0 10px 28px rgba(57,44,49,0.25);
+    z-index: 100; transition: transform 0.3s ease; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+</style>
 </head>
 <body>
-    <div id="app">
-        <!-- ===== ШАПКА ===== -->
-        <header>
-            <div class="header-top">
-                <div class="logo">
-                    <span class="logo-icon">
-                        <tg-emoji emoji-id="5197659195578541689">🌸</tg-emoji>
-                    </span>
-                    <h1>DollieLand</h1>
-                    <span class="logo-icon">
-                        <tg-emoji emoji-id="5197336179678146423">✨</tg-emoji>
-                    </span>
-                </div>
-                <button class="profile-btn" onclick="showProfile()">
-                    <span class="profile-avatar-small">
-                        <tg-emoji emoji-id="5195385478546747284">👤</tg-emoji>
-                    </span>
-                </button>
-            </div>
-            <p class="subtitle">
-                <tg-emoji emoji-id="5195337293308652456">⭐</tg-emoji>
-                Трекер заказов
-                <tg-emoji emoji-id="5195337293308652456">⭐</tg-emoji>
-            </p>
-        </header>
 
-        <!-- ===== ВКЛАДКИ ===== -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="orders" onclick="switchTab('orders')">
-                <span class="tab-icon">
-                    <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
-                </span>
-                Заказы
-            </button>
-            <button class="tab-btn" data-tab="stats" onclick="switchTab('stats')">
-                <span class="tab-icon">
-                    <tg-emoji emoji-id="5195283816670850617">📊</tg-emoji>
-                </span>
-                Статистика
-            </button>
-        </div>
+<!-- ===================== ICON SPRITE ===================== -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="icon-house" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
+  <symbol id="icon-package" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></symbol>
+  <symbol id="icon-bell" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+  <symbol id="icon-chevron-right" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="icon-truck" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="15" height="13"/><path d="M16 8h4l3 3v6h-3"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></symbol>
+  <symbol id="icon-map-pin" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.5 7-12a7 7 0 1 0-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><polyline points="12 7 12 12 15.5 14"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="icon-alert-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.1"/></symbol>
+  <symbol id="icon-help-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6.9c0 1.9-2.8 1.9-2.8 3.8"/><line x1="12" y1="17.2" x2="12" y2="17.3"/></symbol>
+  <symbol id="icon-message-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.6 8.6 0 0 1-3.6-.9L3 20l1.05-3.4A8.4 8.4 0 1 1 21 11.5z"/></symbol>
+  <symbol id="icon-settings" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="icon-refresh" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.5 9A9 9 0 0 0 4.6 5.6L1 10M23 14l-3.6 4.4A9 9 0 0 1 3.5 15"/></symbol>
+  <symbol id="icon-layers" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+  <symbol id="icon-heart" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></symbol>
+  <symbol id="icon-gift" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/></symbol>
+</svg>
 
-        <!-- ===== ВКЛАДКА: ЗАКАЗЫ ===== -->
-        <div id="tab-orders" class="tab-content active">
-            <div class="search-box">
-                <span class="search-icon">
-                    <tg-emoji emoji-id="5195319499441115700">🔍</tg-emoji>
-                </span>
-                <input type="text" id="searchInput" placeholder="Поиск по ID или названию..." oninput="filterOrders(this.value)">
-                <button class="search-clear" onclick="clearSearch()">✕</button>
-            </div>
+<div class="app">
 
-            <div id="orders-list">
-                <div class="card empty-state">
-                    <div class="empty-icon">
-                        <tg-emoji emoji-id="5197199582538263659">📭</tg-emoji>
-                    </div>
-                    <p class="empty-title">Здесь пока пусто</p>
-                    <p class="empty-sub">Нажмите «Обновить», чтобы загрузить</p>
-                    <button class="btn-primary" onclick="loadOrders()" style="margin-top:16px;width:100%;">
-                        <tg-emoji emoji-id="5197336179678146423">🔄</tg-emoji>
-                        Обновить
-                    </button>
-                </div>
-            </div>
-        </div>
+  <!-- ===================== HOME ===================== -->
+  <main class="tab-screen active" id="tab-home">
+    <header class="app-header">
+      <div class="brand">DollieLand</div>
+      <button class="icon-btn" onclick="openSheet('notifications')" aria-label="Уведомления">
+        <svg class="icon"><use href="#icon-bell"/></svg>
+        <span class="dot" id="notif-dot" hidden></span>
+      </button>
+    </header>
 
-        <!-- ===== ВКЛАДКА: СТАТИСТИКА ===== -->
-        <div id="tab-stats" class="tab-content">
-            <div id="stats-container">
-                <div class="card stats-card">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-number" id="statTotal">0</span>
-                            <span class="stat-label">
-                                <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
-                                Всего
-                            </span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="statDelivered">0</span>
-                            <span class="stat-label">
-                                <tg-emoji emoji-id="5197336179678146423">✅</tg-emoji>
-                                Доставлено
-                            </span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="statInTransit">0</span>
-                            <span class="stat-label">
-                                <tg-emoji emoji-id="5195019659002275787">✈️</tg-emoji>
-                                В пути
-                            </span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="statAvgDays">—</span>
-                            <span class="stat-label">
-                                <tg-emoji emoji-id="5195283816670850617">📅</tg-emoji>
-                                Ср. дней
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card level-card">
-                    <div class="level-display">
-                        <span class="level-emoji" id="levelEmoji">
-                            <tg-emoji emoji-id="5195337293308652456">🌟</tg-emoji>
-                        </span>
-                        <div>
-                            <p class="level-title">Ваш уровень</p>
-                            <p class="level-name" id="levelName">Новичок</p>
-                        </div>
-                    </div>
-                    <div class="level-progress">
-                        <div class="level-bar">
-                            <div class="level-fill" id="levelFill" style="width:0%;"></div>
-                        </div>
-                        <p class="level-next" id="levelNext">До следующего уровня: 5 заказов</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== ПОДВАЛ ===== -->
-        <footer>
-            <div class="divider">•.¸♡ ♡¸.•</div>
-            <p class="footer-text">
-                <tg-emoji emoji-id="5195385478546747284">♡</tg-emoji>
-                С любовью, DollieLand
-                <tg-emoji emoji-id="5195385478546747284">♡</tg-emoji>
-            </p>
-        </footer>
+    <div class="greeting">
+      <h1 id="greeting-title">Привет</h1>
+      <p>Ваши заказы всегда под рукой</p>
     </div>
 
-    <!-- ===== МОДАЛКА ПРОФИЛЯ ===== -->
-    <div id="profile-modal" class="modal" onclick="closeProfile(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeProfile()">✕</button>
-            <div class="profile-modal-header">
-                <div class="profile-modal-avatar">
-                    <tg-emoji emoji-id="5195385478546747284">👤</tg-emoji>
-                </div>
-                <div>
-                    <p class="profile-modal-name" id="modalName">Добро пожаловать!</p>
-                    <p class="profile-modal-id" id="modalId">ID: —</p>
-                </div>
-            </div>
-            <div class="profile-modal-info">
-                <div class="info-row">
-                    <span class="info-label">
-                        <tg-emoji emoji-id="5197647100950637442">📦</tg-emoji>
-                        Всего заказов
-                    </span>
-                    <span class="info-value" id="modalTotal">0</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">
-                        <tg-emoji emoji-id="5195337293308652456">⭐</tg-emoji>
-                        Уровень
-                    </span>
-                    <span class="info-value" id="modalLevel">🌟 Новичок</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">
-                        <tg-emoji emoji-id="5195283816670850617">📅</tg-emoji>
-                        В системе с
-                    </span>
-                    <span class="info-value" id="modalSince">—</span>
-                </div>
-            </div>
-            <button class="btn-primary" onclick="closeProfile();loadOrders();" style="width:100%;margin-top:12px;">
-                <tg-emoji emoji-id="5197336179678146423">🔄</tg-emoji>
-                Обновить заказы
-            </button>
+    <div id="home-content">
+      <!-- заполняется скриптом: hero-card / список / empty / error -->
+      <div class="skeleton-card">
+        <div class="skeleton-row"><div class="skeleton-thumb"></div>
+          <div style="flex:1"><div class="skeleton-line w-40"></div><div class="skeleton-line w-70"></div></div>
         </div>
+        <div class="skeleton-bar"></div>
+      </div>
     </div>
 
-    <script src="script.js?v=14"></script>
+    <section id="home-more-orders" hidden>
+      <div class="section-head"><h3>Другие заказы</h3></div>
+      <div class="scroll-row" id="home-orders-row"></div>
+    </section>
+
+    <div class="update-panel" id="update-panel" hidden>
+      <svg class="icon"><use href="#icon-clock"/></svg>
+      <div>
+        <div class="label">Последнее обновление</div>
+        <div class="value" id="update-panel-text">—</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== ORDERS ===================== -->
+  <main class="tab-screen" id="tab-orders">
+    <header class="screen-header">
+      <h1>Мои заказы</h1>
+      <button class="pill-btn" id="refresh-btn" onclick="loadOrders(true)" aria-label="Обновить">
+        <svg class="icon"><use href="#icon-refresh"/></svg>
+        Обновить
+      </button>
+    </header>
+    <div id="orders-list"></div>
+  </main>
+
+  <!-- ===================== PROFILE ===================== -->
+  <main class="tab-screen" id="tab-profile">
+    <header class="screen-header"><h1>Профиль</h1></header>
+
+    <div class="profile-card">
+      <div class="avatar"><svg class="icon"><use href="#icon-user"/></svg></div>
+      <div>
+        <div class="profile-name" id="profile-name">Гость</div>
+        <div class="profile-sub" id="profile-username">DollieLand</div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="stat-active">0</div><div class="label">Активных</div></div>
+      <div class="stat-box"><div class="num" id="stat-total">0</div><div class="label">Всего заказов</div></div>
+    </div>
+
+    <div class="menu-list">
+      <button class="menu-item" onclick="switchTab('orders')">
+        <svg class="icon"><use href="#icon-package"/></svg>
+        <span class="label">Мои заказы</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
+      <button class="menu-item" onclick="openSheet('notifications')">
+        <svg class="icon"><use href="#icon-bell"/></svg>
+        <span class="label">Уведомления</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
+      <button class="menu-item" onclick="comingSoon('Моя коллекция')">
+        <svg class="icon"><use href="#icon-layers"/></svg>
+        <span class="label">Моя коллекция</span>
+        <span class="badge">скоро</span>
+      </button>
+      <button class="menu-item" onclick="comingSoon('Избранное')">
+        <svg class="icon"><use href="#icon-heart"/></svg>
+        <span class="label">Избранное</span>
+        <span class="badge">скоро</span>
+      </button>
+      <button class="menu-item" onclick="comingSoon('Бонусы')">
+        <svg class="icon"><use href="#icon-gift"/></svg>
+        <span class="label">Бонусы</span>
+        <span class="badge">скоро</span>
+      </button>
+      <button class="menu-item" onclick="comingSoon('Настройки')">
+        <svg class="icon"><use href="#icon-settings"/></svg>
+        <span class="label">Настройки</span>
+        <span class="badge">скоро</span>
+      </button>
+    </div>
+
+    <div class="menu-list">
+      <button class="menu-item" onclick="openSheet('help')">
+        <svg class="icon"><use href="#icon-help-circle"/></svg>
+        <span class="label">Помощь</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
+      <button class="menu-item" onclick="openSheet('contact')">
+        <svg class="icon"><use href="#icon-message-circle"/></svg>
+        <span class="label">Связаться с DollieLand</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ===================== BOTTOM NAVIGATION ===================== -->
+<nav class="bottom-nav">
+  <button class="nav-item active" data-tab="home" onclick="switchTab('home')">
+    <svg class="icon"><use href="#icon-house"/></svg><span>Главная</span>
+  </button>
+  <button class="nav-item" data-tab="orders" onclick="switchTab('orders')">
+    <svg class="icon"><use href="#icon-package"/></svg><span>Мои заказы</span>
+  </button>
+  <button class="nav-item" data-tab="profile" onclick="switchTab('profile')">
+    <svg class="icon"><use href="#icon-user"/></svg><span>Профиль</span>
+  </button>
+</nav>
+
+<!-- ===================== SHEETS ===================== -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+
+<div class="bottom-sheet" id="sheet-order">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content" id="sheet-order-content"></div>
+</div>
+
+<div class="bottom-sheet" id="sheet-notifications">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content">
+    <h2>Уведомления</h2>
+    <div id="notifications-content"></div>
+  </div>
+</div>
+
+<div class="bottom-sheet" id="sheet-help">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content">
+    <h2>Помощь</h2>
+    <div id="help-list"></div>
+  </div>
+</div>
+
+<div class="bottom-sheet" id="sheet-track">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content">
+    <h2>Найти заказ по номеру</h2>
+    <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">Обычно это не требуется — ваши заказы уже привязаны к аккаунту. Используйте, если не видите нужный заказ в списке.</p>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input id="track-input" placeholder="Номер заказа" style="flex:1;border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="trackOrder()">Найти заказ</button>
+    <div id="track-result"></div>
+  </div>
+</div>
+
+<div class="bottom-sheet" id="sheet-contact">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content">
+    <h2>Связаться с нами</h2>
+    <div class="contact-card">
+      <div class="avatar big"><svg class="icon"><use href="#icon-user"/></svg></div>
+      <div class="contact-name">@Darielune</div>
+      <div class="contact-desc">Администратор DollieLand<br>Отвечает по заказам и статусам доставки</div>
+    </div>
+    <a class="btn btn-primary btn-block" href="https://t.me/Darielune" target="_blank">Написать DollieLand</a>
+    <button class="btn btn-secondary btn-block" onclick="callAdmin()">Позвать администратора</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   DollieLand — Personal Order Tracking Mini App
+   Только просмотр и отслеживание собственных заказов.
+   Источник истины — backend/бот. Ничего не хранится локально.
+   ========================================================= */
+
+/* ---------- Telegram WebApp ---------- */
+const tg = window.Telegram?.WebApp;
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+  tg.setHeaderColor('#FFF9FB');
+  tg.setBackgroundColor('#FFF9FB');
+
+  const updateViewportHeight = () => {
+    const h = tg.viewportStableHeight || tg.viewportHeight || window.innerHeight;
+    document.documentElement.style.setProperty('--tg-vh', h + 'px');
+  };
+  updateViewportHeight();
+  tg.onEvent('viewportChanged', updateViewportHeight);
+
+  // Единственная роль нативной BackButton здесь — закрывать открытый bottom sheet
+  tg.BackButton.onClick(() => { hapticImpact('light'); closeSheet(); });
+}
+
+const user = tg?.initDataUnsafe?.user;
+const userId = user?.id;
+
+if (user?.first_name) {
+  document.getElementById('greeting-title').textContent = `Привет, ${user.first_name}`;
+  document.getElementById('profile-name').textContent = `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`;
+}
+document.getElementById('profile-username').textContent = user?.username ? '@' + user.username : (userId ? 'ID ' + userId : 'DollieLand');
+
+/* ---------- Haptics ---------- */
+function hapticImpact(style) { tg?.HapticFeedback?.impactOccurred(style || 'light'); }
+function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
+function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
+
+/* ---------- API ----------
+   БЕЗОПАСНОСТЬ: статический секрет (X-Admin-Token / dollie_secret_2024) полностью
+   удалён из frontend. Вместо него передаются подписанные Telegram initData —
+   backend обязан провалидировать их bot-токеном на сервере и определять
+   пользователя ИМЕННО из проверенных initData, а не из query-параметра user_id,
+   присланного клиентом (иначе пользователь может подменить user_id и увидеть
+   чужие заказы). Подробности — в разделе "BACKEND CHANGES REQUIRED" после кода.
+------------------------------------------------------------ */
+const API_BASE = 'https://dollieland.pythonanywhere.com';
+
+async function apiFetch(path, params) {
+  const url = new URL(API_BASE + path);
+  Object.entries(params || {}).forEach(([k, v]) => { if (v != null) url.searchParams.set(k, v); });
+  const headers = {};
+  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
+  const res = await fetch(url.toString(), { headers });
+  if (!res.ok) throw new Error('Network response was not ok');
+  return res.json();
+}
+
+/* ---------- Навигация по табам ---------- */
+function switchTab(name) {
+  closeSheet();
+  document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  window.scrollTo(0, 0);
+  hapticSelection();
+}
+
+function comingSoon(label) { showToast(`${label} — совсем скоро`); }
+
+/* ---------- Bottom sheets ---------- */
+function openSheet(id) {
+  document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+  document.getElementById('sheet-' + id).classList.add('open');
+  document.getElementById('sheet-overlay').classList.add('open');
+  hapticImpact('light');
+  if (tg) tg.BackButton.show();
+}
+
+function closeSheet() {
+  document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+  document.getElementById('sheet-overlay').classList.remove('open');
+  if (tg) tg.BackButton.hide();
+}
+
+/* ---------- Реальные статусы заказа (из существующей бизнес-логики) ---------- */
+const STATUS_STEPS = [
+  { key: 'processing',            label: 'Заказ обрабатывается',   keys: ['processing', 'обрабат'] },
+  { key: 'ordered',                label: 'Заказ у продавца',       keys: ['ordered', 'заказан', 'у продавца'] },
+  { key: 'seller_shipped',         label: 'Продавец отправил',      keys: ['seller shipped', 'продавец отправ'] },
+  { key: 'arrived_usa_warehouse',  label: 'Прибыл на склад США',    keys: ['arrived usa', 'usa warehouse', 'склад сша', 'склад в сша'] },
+  { key: 'pay_weight',             label: 'Ожидает оплаты веса',    keys: ['pay weight', 'оплат', 'ожидает оплаты'] },
+  { key: 'weight_paid',            label: 'Вес оплачен',            keys: ['weight paid', 'вес оплачен'] },
+  { key: 'sent_to_russia',         label: 'Отправлен в Россию',     keys: ['sent to russia', 'отправлен в росси'] },
+  { key: 'arrived_russia',         label: 'Прибыл в Россию',        keys: ['arrived russia', 'прибыл в росси'] },
+  { key: 'arrived_moscow',         label: 'Прибыл в Москву',        keys: ['arrived moscow', 'прибыл в москв'] },
+  { key: 'with_intermediary',      label: 'У посредника',           keys: ['with intermediary', 'у посредник', 'передан посредник'] },
+  { key: 'sent_by_intermediary',   label: 'Отправлен посредником',  keys: ['sent by intermediary', 'отправлен посредник'] },
+  { key: 'received',               label: 'Получен',                keys: ['received', 'получ'] }
+];
+
+function matchStep(status) {
+  const s = (status || '').toLowerCase().replace(/[_-]/g, ' ');
+  for (let i = STATUS_STEPS.length - 1; i >= 0; i--) {
+    if (STATUS_STEPS[i].keys.some(k => s.includes(k))) return i;
+  }
+  return 0;
+}
+
+function progressPercent(step) {
+  return Math.round((step / (STATUS_STEPS.length - 1)) * 100);
+}
+
+/* ---------- Рендер карточек заказа ---------- */
+let ordersCache = [];
+let lastUpdatedAt = null;
+
+function orderTitle(order) { return order.title || `Заказ №${order.id}`; }
+
+function orderCardHTML(order) {
+  const step = matchStep(order.status);
+  return `
+    <button class="order-card" onclick="openOrderDetail('${order.id}')">
+      <div class="order-card-top">
+        <div class="order-thumb"><svg class="icon"><use href="#icon-package"/></svg></div>
+        <div class="order-info">
+          <div class="order-title">${orderTitle(order)}</div>
+          <div class="order-id">№ ${order.id}</div>
+        </div>
+        <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
+      </div>
+      <div class="order-status-line"><svg class="icon"><use href="#icon-truck"/></svg>${STATUS_STEPS[step].label}</div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progressPercent(step)}%"></div></div>
+      ${order.delivery_date ? `<div class="order-meta">Ориентировочно: ${order.delivery_date}</div>` : ''}
+    </button>`;
+}
+
+function heroCardHTML(order) {
+  const step = matchStep(order.status);
+  const next = STATUS_STEPS[step + 1];
+  const needsAction = STATUS_STEPS[step].key === 'pay_weight';
+  return `
+    <button class="hero-card" onclick="openOrderDetail('${order.id}')">
+      <div class="hero-eyebrow">Мой заказ</div>
+      <div class="hero-title">${orderTitle(order)} · № ${order.id}</div>
+      <div class="hero-status-row"><svg class="icon"><use href="#icon-truck"/></svg><span>${STATUS_STEPS[step].label}</span></div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progressPercent(step)}%"></div></div>
+      ${next ? `<div class="hero-next">Следующий этап: <b>${next.label}</b></div>` : ''}
+      ${needsAction ? `<div class="action-banner"><svg class="icon"><use href="#icon-alert-circle"/></svg>Требуется оплата веса, чтобы продолжить доставку</div>` : ''}
+      <div class="hero-footer">
+        <span></span>
+        <span class="hero-link">Подробнее <svg class="icon"><use href="#icon-chevron-right"/></svg></span>
+      </div>
+    </button>`;
+}
+
+function orderDetailHTML(order) {
+  const step = matchStep(order.status);
+  const timeline = STATUS_STEPS.map((s, i) => {
+    const state = i < step ? 'done' : (i === step ? 'current' : '');
+    const showCreated = i === 0 && order.created_date;
+    return `
+      <div class="timeline-step ${state}">
+        <div class="timeline-dot">${i <= step ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</div>
+        <div class="timeline-body">
+          <div class="timeline-label">${s.label}</div>
+          ${showCreated ? `<div class="timeline-date">${order.created_date}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <h2>${orderTitle(order)}</h2>
+    <div class="order-id" style="margin-bottom:2px">№ ${order.id}</div>
+    <div class="timeline">${timeline}</div>
+    ${order.delivery_date ? `<div class="info-row"><svg class="icon"><use href="#icon-map-pin"/></svg>Ориентировочная дата: <b>&nbsp;${order.delivery_date}</b></div>` : ''}
+    ${order.status ? `<div class="info-row"><svg class="icon"><use href="#icon-help-circle"/></svg>Статус в системе: <b>&nbsp;${order.status}</b></div>` : ''}
+    <button class="btn btn-secondary btn-block" onclick="closeSheet(); openSheet('contact');">Вопрос по заказу</button>
+  `;
+}
+
+function openOrderDetail(id) {
+  const order = ordersCache.find(o => String(o.id) === String(id));
+  if (!order) return;
+  document.getElementById('sheet-order-content').innerHTML = orderDetailHTML(order);
+  openSheet('order');
+}
+
+/* ---------- Skeletons ---------- */
+function skeletonOrdersHTML(count) {
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    html += `
+      <div class="skeleton-card">
+        <div class="skeleton-row"><div class="skeleton-thumb"></div>
+          <div style="flex:1"><div class="skeleton-line w-40"></div><div class="skeleton-line w-70"></div></div>
+        </div>
+        <div class="skeleton-bar"></div>
+      </div>`;
+  }
+  return html;
+}
+
+/* ---------- Empty / error states ---------- */
+function emptyIllustration() {
+  return `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <circle cx="60" cy="48" r="28" fill="#FCE5ED"/>
+      <circle cx="60" cy="48" r="28" fill="none" stroke="#F2B3C7" stroke-width="2"/>
+      <path d="M48 44h24M48 54h16" stroke="#E78EAD" stroke-width="3" stroke-linecap="round"/>
+      <path d="M30 98c6-17 19-27 30-27s24 10 30 27" stroke="#F2B3C7" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>`;
+}
+
+function ordersEmptyHTML() {
+  return `
+    <div class="empty-state">
+      ${emptyIllustration()}
+      <h3>Пока нет заказов</h3>
+      <p>Когда появится новый заказ, он автоматически появится здесь.</p>
+      <button class="btn btn-tertiary" onclick="openSheet('track')">У меня есть номер заказа</button>
+    </div>`;
+}
+
+function ordersErrorHTML() {
+  return `
+    <div class="empty-state">
+      <svg class="empty-illustration" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="30" fill="#FCE5ED"/>
+        <line x1="60" y1="46" x2="60" y2="62" stroke="#E78EAD" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="60" cy="74" r="2.4" fill="#E78EAD"/>
+      </svg>
+      <h3>Не удалось загрузить заказы</h3>
+      <p>Проверьте соединение и попробуйте ещё раз.</p>
+      <button class="btn btn-primary" onclick="loadOrders(true)">Повторить</button>
+    </div>`;
+}
+
+function noUserHTML() {
+  return `
+    <div class="empty-state">
+      <h3>Не удалось определить пользователя</h3>
+      <p>Попробуйте перезапустить приложение из Telegram.</p>
+    </div>`;
+}
+
+/* ---------- Загрузка заказов (единственный источник данных — backend) ---------- */
+async function loadOrders(isManualRefresh) {
+  const homeContent = document.getElementById('home-content');
+  const homeMore = document.getElementById('home-more-orders');
+  const homeMoreRow = document.getElementById('home-orders-row');
+  const ordersList = document.getElementById('orders-list');
+  const refreshBtn = document.getElementById('refresh-btn');
+
+  if (!userId) {
+    homeContent.innerHTML = noUserHTML();
+    ordersList.innerHTML = noUserHTML();
+    return;
+  }
+
+  if (isManualRefresh) refreshBtn?.classList.add('spinning');
+  if (!ordersCache.length) {
+    homeContent.innerHTML = skeletonOrdersHTML(1);
+    ordersList.innerHTML = skeletonOrdersHTML(2);
+  }
+
+  try {
+    // user_id передаётся для удобства/обратной совместимости, но backend ДОЛЖЕН
+    // определять владельца заказов из проверенных initData, а не доверять этому параметру
+    const data = await apiFetch('/api/user_orders', { user_id: userId });
+    const orders = data.orders || [];
+    ordersCache = orders;
+    lastUpdatedAt = new Date();
+
+    if (orders.length === 0) {
+      homeContent.innerHTML = ordersEmptyHTML();
+      homeMore.hidden = true;
+      ordersList.innerHTML = ordersEmptyHTML();
+    } else {
+      homeContent.innerHTML = heroCardHTML(orders[0]);
+      if (orders.length > 1) {
+        homeMore.hidden = false;
+        homeMoreRow.innerHTML = orders.slice(1).map(o => `<div class="order-chip">${orderCardHTML(o)}</div>`).join('');
+      } else {
+        homeMore.hidden = true;
+      }
+      ordersList.innerHTML = orders.map(orderCardHTML).join('');
+    }
+
+    updateHomePanels();
+  } catch (e) {
+    if (!ordersCache.length) {
+      homeContent.innerHTML = ordersErrorHTML();
+      ordersList.innerHTML = ordersErrorHTML();
+    } else {
+      showToast('Не удалось обновить заказы');
+    }
+  } finally {
+    refreshBtn?.classList.remove('spinning');
+  }
+}
+
+/* ---------- Панель "Последнее обновление" + уведомления ---------- */
+function updateHomePanels() {
+  const panel = document.getElementById('update-panel');
+  const panelText = document.getElementById('update-panel-text');
+  const notifDot = document.getElementById('notif-dot');
+  const notifContent = document.getElementById('notifications-content');
+
+  if (!lastUpdatedAt || ordersCache.length === 0) {
+    panel.hidden = true;
+    notifDot.hidden = true;
+    notifContent.innerHTML = `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса ваших заказов.</p></div>`;
+    return;
+  }
+
+  const timeStr = lastUpdatedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  const order = ordersCache[0];
+  const step = matchStep(order.status);
+
+  panel.hidden = false;
+  panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
+
+  notifDot.hidden = false;
+  notifContent.innerHTML = `
+    <div class="info-row" style="border-top:none;padding-top:0">
+      <svg class="icon"><use href="#icon-truck"/></svg>
+      <span><b>${orderTitle(order)}</b> — ${STATUS_STEPS[step].label}</span>
+    </div>
+    <div class="order-meta" style="margin-bottom:14px">Обновлено сегодня в ${timeStr}</div>
+    <button class="btn btn-secondary btn-block" onclick="closeSheet(); switchTab('orders');">Все заказы</button>
+  `;
+}
+
+/* ---------- Ручной поиск заказа по номеру (резервный сценарий) ---------- */
+async function trackOrder() {
+  const input = document.getElementById('track-input').value.trim();
+  const result = document.getElementById('track-result');
+
+  if (!input) { showToast('Введите номер заказа'); hapticNotification('warning'); return; }
+
+  result.innerHTML = skeletonOrdersHTML(1);
+
+  try {
+    const data = await apiFetch('/api/order_status', { order_id: input });
+    if (data.ok && data.order) {
+      result.innerHTML = orderCardHTML(data.order);
+      if (!ordersCache.find(o => String(o.id) === String(data.order.id))) {
+        ordersCache = [...ordersCache, data.order];
+      }
+      hapticNotification('success');
+    } else {
+      result.innerHTML = `<div class="empty-state"><h3>Заказ не найден</h3><p>Проверьте номер или напишите <b>@Darielune</b>.</p></div>`;
+      hapticNotification('error');
+    }
+  } catch (e) {
+    result.innerHTML = `<div class="empty-state"><h3>Ошибка соединения</h3><p>Попробуйте немного позже.</p></div>`;
+    hapticNotification('error');
+  }
+}
+
+/* ---------- Позвать администратора ---------- */
+function callAdmin() {
+  if (tg) {
+    tg.sendData(JSON.stringify({ action: 'call_admin' }));
+    showToast('Администратор уведомлён');
+    hapticNotification('success');
+  } else {
+    window.open('https://t.me/Darielune', '_blank');
+  }
+}
+
+/* ---------- Help Center ---------- */
+const HELP_DATA = [
+  { id: 'shipping', label: 'Как работает доставка', icon: 'truck',
+    body: 'Куклы заказываются у продавцов в США или Китае, затем едут на наш склад, а после — к вам в Россию. Доставка из США занимает обычно 4–5 недель, из Китая — 3–4 недели. Итоговая стоимость логистики зависит от веса и может немного меняться из-за курса валют или тарифов перевозчиков — мы всегда предупреждаем об этом заранее.' },
+  { id: 'statuses', label: 'Что означает статус заказа', icon: 'help-circle',
+    body: STATUS_STEPS.map((s, i) => `${i + 1}. ${s.label}`).join('<br>') },
+  { id: 'pay-weight', label: 'Как оплатить вес', icon: 'alert-circle',
+    body: 'Когда кукла прибывает на склад, мы взвешиваем посылку и присылаем итоговую сумму за доставку. Оплата принимается через администратора в чате с ботом — реквизиты вы получите там же, как только заказ перейдёт в статус «Ожидает оплаты веса».' },
+  { id: 'shipping-time', label: 'Когда заказ будет отправлен', icon: 'clock',
+    body: 'Отправка в Россию происходит сразу после оплаты веса. Дальнейшее движение (через посредника или напрямую) зависит от текущей логистической схемы и отображается в статусе вашего заказа.' },
+  { id: 'stuck-status', label: 'Что делать, если статус не меняется', icon: 'refresh',
+    body: 'Международная логистика иногда идёт с задержками, которые не всегда сразу отражаются в системе. Если статус не менялся необычно долго — напишите нам, и мы уточним актуальную информацию.' }
+];
+
+function renderHelpList() {
+  const container = document.getElementById('help-list');
+  container.innerHTML = HELP_DATA.map(item => `
+    <div class="help-item" id="help-item-${item.id}">
+      <button class="help-item-head" onclick="toggleHelpItem('${item.id}')">
+        <svg class="icon"><use href="#icon-${item.icon}"/></svg>
+        <span class="label">${item.label}</span>
+        <svg class="icon chev"><use href="#icon-chevron-down"/></svg>
+      </button>
+      <div class="help-item-body">${item.body}</div>
+    </div>
+  `).join('') + `
+    <button class="menu-item" style="border-radius:var(--r-md);box-shadow:var(--shadow-soft);margin-top:4px" onclick="closeSheet(); openSheet('contact');">
+      <svg class="icon"><use href="#icon-message-circle"/></svg>
+      <span class="label">Связаться с DollieLand</span>
+      <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+    </button>`;
+}
+
+function toggleHelpItem(id) {
+  document.getElementById('help-item-' + id).classList.toggle('open');
+  hapticSelection();
+}
+
+/* ---------- Toast ---------- */
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* ---------- Init ---------- */
+document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
+
+renderHelpList();
+loadOrders();
+</script>
+
 </body>
 </html>
+
+
+
