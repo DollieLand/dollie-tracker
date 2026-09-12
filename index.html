@@ -691,8 +691,6 @@
      WebView автоматически распознаёт номера заказов, даты, ID
      и оборачивает их в <a href="tel:..."> / <a x-apple-data-detectors>.
      Принудительно возвращаем им цвет родителя и убираем подчёркивание.
-     Важно: используем -webkit-text-fill-color, потому что многие
-     WebView красят текст именно через него, а не через color.
      ========================================================= */
   a[x-apple-data-detectors],
   a[x-apple-data-detectors-type],
@@ -727,17 +725,86 @@
     cursor: inherit !important;
   }
 
-  /* Точечная страховка для текстовых элементов — чтобы никакой автодетект
-     не перебил цвет обводкой/заливкой текста */
-  .order-title, .order-id, .order-meta, .order-status-line,
-  .timeline-label, .timeline-date,
-  .tx-title, .tx-subtitle, .tx-date, .tx-amount,
-  .info-row, .info-row b,
-  .hero-title, .hero-next, .hero-next b,
-  .banner-title, .banner-subtitle,
-  .dollie-balance-num, .dollie-hero-num, .dollie-value-rub,
-  .profile-name, .profile-sub {
-    -webkit-text-fill-color: currentColor;
+  /* =========================================================
+     ЖЁСТКАЯ ФИКСАЦИЯ ЦВЕТА для карточек заказа.
+     Используем конкретные hex-значения + !important, потому что
+     CSS-переменные и currentColor в момент применения системного
+     автодетекта WebView могут резолвиться неправильно.
+     ========================================================= */
+  .order-title,
+  .order-title *,
+  .order-title a,
+  .order-title span {
+    color: #392C31 !important;
+    -webkit-text-fill-color: #392C31 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+  }
+
+  .order-id,
+  .order-id *,
+  .order-id a,
+  .order-id span,
+  .order-meta,
+  .order-meta *,
+  .order-meta a,
+  .order-meta span,
+  .timeline-date,
+  .timeline-date *,
+  .timeline-date a,
+  .tx-date,
+  .tx-date *,
+  .tx-date a {
+    color: #907D84 !important;
+    -webkit-text-fill-color: #907D84 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+  }
+
+  .timeline-label,
+  .timeline-label *,
+  .timeline-label a,
+  .info-row,
+  .info-row b,
+  .info-row *,
+  .info-row a,
+  .tx-title,
+  .tx-title *,
+  .tx-title a,
+  .tx-subtitle,
+  .tx-subtitle *,
+  .tx-subtitle a {
+    text-decoration: none !important;
+    background: transparent !important;
+  }
+
+  .timeline-label,
+  .timeline-label *,
+  .timeline-label a,
+  .tx-title,
+  .tx-title *,
+  .tx-title a {
+    color: #392C31 !important;
+    -webkit-text-fill-color: #392C31 !important;
+  }
+
+  .tx-subtitle,
+  .tx-subtitle *,
+  .tx-subtitle a {
+    color: #907D84 !important;
+    -webkit-text-fill-color: #907D84 !important;
+  }
+
+  .info-row,
+  .info-row *,
+  .info-row a {
+    color: #907D84 !important;
+    -webkit-text-fill-color: #907D84 !important;
+  }
+  .info-row b,
+  .info-row b * {
+    color: #392C31 !important;
+    -webkit-text-fill-color: #392C31 !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -746,6 +813,12 @@
 </style>
 </head>
 <body>
+
+<!-- Дополнительный format-detection прямо в body — некоторые WebView
+     читают его только отсюда, игнорируя мета-тег в head -->
+<div style="display:none" aria-hidden="true">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+</div>
 
 <!-- ===================== ICON SPRITE ===================== -->
 <svg style="display:none" aria-hidden="true">
@@ -1101,14 +1174,7 @@ function hapticImpact(style) { tg?.HapticFeedback?.impactOccurred(style || 'ligh
 function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
 
-/* ---------- API ----------
-   БЕЗОПАСНОСТЬ: статический секрет (X-Admin-Token / dollie_secret_2024) полностью
-   удалён из frontend. Вместо него передаются подписанные Telegram initData —
-   backend обязан провалидировать их bot-токеном на сервере и определять
-   пользователя ИМЕННО из проверенных initData, а не из query-параметра user_id,
-   присланного клиентом (иначе пользователь может подменить user_id и увидеть
-   чужие заказы). Подробности — в разделе "BACKEND CHANGES REQUIRED" после кода.
------------------------------------------------------------- */
+/* ---------- API ---------- */
 const API_BASE = 'https://dollieland.pythonanywhere.com';
 
 async function apiFetch(path, params) {
@@ -1121,8 +1187,6 @@ async function apiFetch(path, params) {
   try {
     res = await fetch(url.toString(), { headers });
   } catch (networkErr) {
-    // fetch() сам бросил исключение — обычно это блокировка CORS, DNS-ошибка
-    // или недоступность хоста, а не ответ сервера с кодом ошибки
     throw new Error('NETWORK: ' + (networkErr?.message || 'не удалось выполнить запрос'));
   }
 
@@ -1162,9 +1226,7 @@ function closeSheet() {
   if (tg) tg.BackButton.hide();
 }
 
-/* ---------- Реальные статусы заказа — ТОЧНО как в ORDER_STATUSES бэкенда ----------
-   Порядок и формулировки взяты 1-в-1 из web_panel.py, чтобы избежать
-   расхождений в роде/окончаниях ("прибыл" / "прибыла" и т.п.) */
+/* ---------- Реальные статусы заказа — ТОЧНО как в ORDER_STATUSES бэкенда ---------- */
 const STATUS_STEPS = [
   { label: 'Заказ оформлен' },
   { label: 'Продавец подготовил посылку' },
@@ -1190,11 +1252,9 @@ const PAY_WEIGHT_STEP_INDEX = STATUS_STEPS.findIndex(s => s.label === 'Треб�
 function matchStep(status) {
   const raw = (status || '').trim();
 
-  // 1) Точное совпадение — основной путь, т.к. бэкенд отдаёт ровно эти строки
   const exactIdx = STATUS_STEPS.findIndex(s => s.label === raw);
   if (exactIdx !== -1) return exactIdx;
 
-  // 2) Мягкий fallback на случай небольших расхождений в написании
   const s = raw.toLowerCase();
   for (let i = STATUS_STEPS.length - 1; i >= 0; i--) {
     if (s.includes(STATUS_STEPS[i].label.toLowerCase())) return i;
@@ -1218,6 +1278,51 @@ function escapeHtml(str) {
 }
 
 function orderTitle(order) { return escapeHtml(order.title || `Заказ №${order.id}`); }
+
+/* ---------- Убираем авто-ссылки, которые WebView (iOS/Android) создаёт вокруг
+   номеров заказов, дат и ID. Заменяем <a> на его текстовое содержимое,
+   чтобы никакой системный детектор не мог покрасить текст в синий. ---------- */
+function stripAutoDetectLinks(root) {
+  if (!root) return;
+  const anchors = root.querySelectorAll(
+    'a[x-apple-data-detectors],' +
+    'a[x-apple-data-detectors-type],' +
+    'a[href^="tel:"],' +
+    'a[href^="mailto:"],' +
+    'a[href^="date:"],' +
+    'a[href^="address:"]'
+  );
+  anchors.forEach(a => {
+    const parent = a.parentNode;
+    if (!parent) return;
+    parent.replaceChild(document.createTextNode(a.textContent), a);
+  });
+}
+
+/* ---------- Глобальная страховка: как только WebView вставит свою авто-ссылку —
+   сразу вырезаем её и оставляем только текст. Работает во всех карточках,
+   включая те, что рендерятся динамически. ---------- */
+function watchAutoDetectLinks() {
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          if (node.tagName === 'A' && (
+            node.hasAttribute('x-apple-data-detectors') ||
+            node.hasAttribute('x-apple-data-detectors-type') ||
+            /^(tel|mailto|date|address):/.test(node.getAttribute('href') || '')
+          )) {
+            const parent = node.parentNode;
+            if (parent) parent.replaceChild(document.createTextNode(node.textContent), node);
+          } else {
+            stripAutoDetectLinks(node);
+          }
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
 
 function orderCardHTML(order) {
   const step = matchStep(order.status);
@@ -1265,7 +1370,9 @@ function orderDetailHTML(order) {
 function openOrderDetail(id) {
   const order = ordersCache.find(o => String(o.id) === String(id));
   if (!order) return;
-  document.getElementById('sheet-order-content').innerHTML = orderDetailHTML(order);
+  const content = document.getElementById('sheet-order-content');
+  content.innerHTML = orderDetailHTML(order);
+  stripAutoDetectLinks(content);
   openSheet('order');
 }
 
@@ -1352,7 +1459,6 @@ async function loadBanners() {
     renderBanners();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить баннеры —', e);
-    // Тихо скрываем секцию — баннеры декоративны и не критичны для остального приложения
     section.hidden = true;
   }
 }
@@ -1419,7 +1525,7 @@ function onBannerScroll(e) {
     const row = e.target;
     const first = row.firstElementChild;
     if (!first) return;
-    const cardWidth = first.offsetWidth + 12; // + gap из .scroll-row
+    const cardWidth = first.offsetWidth + 12;
     const idx = Math.max(0, Math.min(bannersCache.length - 1, Math.round(row.scrollLeft / cardWidth)));
     document.querySelectorAll('.banner-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
   }, 80);
@@ -1444,8 +1550,6 @@ async function loadOrders(isManualRefresh) {
   }
 
   try {
-    // user_id передаётся для удобства/обратной совместимости, но backend ДОЛЖЕН
-    // определять владельца заказов из проверенных initData, а не доверять этому параметру
     const data = await apiFetch('/api/user_orders', { user_id: userId });
     const orders = data.orders || [];
     ordersCache = orders;
@@ -1463,6 +1567,7 @@ async function loadOrders(isManualRefresh) {
           : `Все заказы получены (${orders.length})`;
       }
       ordersList.innerHTML = orders.map(orderCardHTML).join('');
+      stripAutoDetectLinks(ordersList);
     }
 
     updateHomePanels();
@@ -1480,9 +1585,7 @@ async function loadOrders(isManualRefresh) {
   }
 }
 
-/* ---------- Счётчики в профиле: «Активных» / «Всего заказов» ----------
-   Считаются из реальных данных ordersCache, полученных с backend —
-   "активный" = ещё не дошёл до последнего статуса ("Доставлено клиенту") */
+/* ---------- Счётчики в профиле: «Активных» / «Всего заказов» ---------- */
 function updateProfileStats() {
   const activeEl = document.getElementById('stat-active');
   const totalEl = document.getElementById('stat-total');
@@ -1504,10 +1607,10 @@ let loyaltyBalance = null;
 let loyaltyHistoryOffset = 0;
 let loyaltyHistoryTotal = 0;
 let loyaltyHistoryLoading = false;
-let loyaltyTxCache = [];        // все загруженные транзакции (для экрана "История")
-let dollieRecentCache = [];     // последние 3 транзакции (для превью на обзорном экране)
+let loyaltyTxCache = [];
+let dollieRecentCache = [];
 let dollieHistoryLoadedOnce = false;
-let dollieFilter = 'all';       // all | earn | spend
+let dollieFilter = 'all';
 const LOYALTY_HISTORY_PAGE_SIZE = 20;
 
 const FILTER_TYPE_GROUPS = {
@@ -1531,7 +1634,6 @@ function formatFullDate(iso) {
   return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-/* ---------- Плавная смена числа баланса (уважает prefers-reduced-motion) ---------- */
 function animateNumber(el, to) {
   if (!el) return;
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1552,7 +1654,6 @@ function animateNumber(el, to) {
   requestAnimationFrame(step);
 }
 
-/* ---------- Баланс: подтягиваем один раз при старте, используем везде ---------- */
 async function loadLoyalty() {
   if (!userId) return;
   try {
@@ -1563,9 +1664,6 @@ async function loadLoyalty() {
     }
   } catch (e) {
     console.error('DollieLand: не удалось загрузить баланс Dollies —', e);
-    // Тихо игнорируем — баланс не критичен для остального интерфейса,
-    // на месте цифры останется "—", а полноценная ошибка покажется
-    // только если пользователь откроет сам экран истории.
   }
 }
 
@@ -1586,7 +1684,6 @@ function updateLoyaltyBalanceUI() {
   if (historyBalanceEl) historyBalanceEl.textContent = `${balance} Dollies`;
 }
 
-/* ---------- Открытие Dollie Club: всегда начинаем с обзорной страницы ---------- */
 function openDolliesSheet() {
   openSheet('dollies');
   switchDolliePage('overview');
@@ -1616,7 +1713,6 @@ function filteredTxCache() {
   return loyaltyTxCache.filter(tx => group.includes(tx.type));
 }
 
-/* ---------- Состояния загрузки/пусто/ошибка ---------- */
 function dollieHistorySkeletonHTML(count) {
   let html = '';
   for (let i = 0; i < (count || 3); i++) {
@@ -1659,7 +1755,6 @@ function dollieHistoryErrorHTML() {
     </div>`;
 }
 
-/* ---------- Человекочитаемые название/подпись/иконка операции ---------- */
 function txMeta(tx) {
   const isPositive = tx.amount > 0;
   const orderPart = tx.order_id ? `Заказ №${escapeHtml(tx.order_id)}` : null;
@@ -1699,7 +1794,6 @@ function txMeta(tx) {
   return { title, subtitle, icon, isPositive };
 }
 
-/* ---------- Строка операции — fashion-стиль, не бухгалтерская таблица ---------- */
 function txRowHTML(tx, idx, source) {
   const meta = txMeta(tx);
   const sign = tx.amount > 0 ? '+' : '';
@@ -1718,7 +1812,6 @@ function txRowHTML(tx, idx, source) {
     </button>`;
 }
 
-/* ---------- Превью последних 3 операций (обзорная страница) ---------- */
 async function loadDollieRecent() {
   const container = document.getElementById('dollie-recent-content');
   if (!container) return;
@@ -1730,13 +1823,13 @@ async function loadDollieRecent() {
     container.innerHTML = dollieRecentCache.length
       ? dollieRecentCache.map((tx, i) => txRowHTML(tx, i, 'recent')).join('')
       : dollieHistoryEmptyHTML();
+    stripAutoDetectLinks(container);
   } catch (e) {
     console.error('DollieLand: не удалось загрузить последние операции —', e);
     container.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить операции</p>`;
   }
 }
 
-/* ---------- Полная история (ленивая пагинация + клиентская фильтрация) ---------- */
 function renderHistoryList() {
   const container = document.getElementById('dollies-history-content');
   if (!container) return;
@@ -1751,6 +1844,7 @@ function renderHistoryList() {
       <button class="btn btn-secondary btn-block tx-load-more" onclick="loadLoyaltyHistory(false)">Показать ещё</button>
     `);
   }
+  stripAutoDetectLinks(container);
 }
 
 async function loadLoyaltyHistory(reset) {
@@ -1789,7 +1883,6 @@ async function loadLoyaltyHistory(reset) {
   }
 }
 
-/* ---------- Деталь операции — маленький bottom sheet ---------- */
 function openTxDetail(idx, source) {
   const cache = source === 'recent' ? dollieRecentCache : loyaltyTxCache;
   const tx = cache[idx];
@@ -1802,7 +1895,8 @@ function openTxDetail(idx, source) {
     ? `<div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Сэкономлено: <b>&nbsp;${Math.abs(tx.amount)} ₽</b></div>`
     : '';
 
-  document.getElementById('sheet-tx-detail-content').innerHTML = `
+  const content = document.getElementById('sheet-tx-detail-content');
+  content.innerHTML = `
     <div class="tx-detail-amount">
       <div class="num ${colorClass}">${sign}${tx.amount} Dollies</div>
       <div class="sub">${meta.title} · ${meta.subtitle}</div>
@@ -1812,10 +1906,10 @@ function openTxDetail(idx, source) {
     ${rubLine}
     <div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Баланс после операции: <b>&nbsp;${tx.balance_after} Dollies</b></div>
   `;
+  stripAutoDetectLinks(content);
   openSheet('tx-detail');
 }
 
-/* ---------- Панель "Последнее обновление" + уведомления ---------- */
 function updateHomePanels() {
   const panel = document.getElementById('update-panel');
   const panelText = document.getElementById('update-panel-text');
@@ -1845,9 +1939,9 @@ function updateHomePanels() {
     <div class="order-meta" style="margin-bottom:14px">Обновлено сегодня в ${timeStr}</div>
     <button class="btn btn-secondary btn-block" onclick="closeSheet(); switchTab('orders');">Все заказы</button>
   `;
+  stripAutoDetectLinks(notifContent);
 }
 
-/* ---------- Ручной поиск заказа по номеру (резервный сценарий) ---------- */
 async function trackOrder() {
   const input = document.getElementById('track-input').value.trim();
   const result = document.getElementById('track-result');
@@ -1860,6 +1954,7 @@ async function trackOrder() {
     const data = await apiFetch('/api/order_status', { order_id: input });
     if (data.ok && data.order) {
       result.innerHTML = orderCardHTML(data.order);
+      stripAutoDetectLinks(result);
       if (!ordersCache.find(o => String(o.id) === String(data.order.id))) {
         ordersCache = [...ordersCache, data.order];
       }
@@ -1874,7 +1969,6 @@ async function trackOrder() {
   }
 }
 
-/* ---------- Позвать администратора ---------- */
 function callAdmin() {
   if (tg) {
     tg.sendData(JSON.stringify({ action: 'call_admin' }));
@@ -1885,7 +1979,6 @@ function callAdmin() {
   }
 }
 
-/* ---------- Help Center ---------- */
 const HELP_DATA = [
   { id: 'shipping', label: 'Как работает доставка', icon: 'truck',
     body: 'Куклы заказываются у продавцов в США или Китае, затем едут на наш склад, а после — к вам в Россию. Доставка из США занимает обычно 4–5 недель, из Китая — 3–4 недели. Итоговая стоимость логистики зависит от веса и может немного меняться из-за курса валют или тарифов перевозчиков — мы всегда предупреждаем об этом заранее.' },
@@ -1923,7 +2016,6 @@ function toggleHelpItem(id) {
   hapticSelection();
 }
 
-/* ---------- Toast ---------- */
 function showToast(msg) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
@@ -1935,6 +2027,7 @@ function showToast(msg) {
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
 renderHelpList();
+watchAutoDetectLinks();
 loadOrders();
 loadLoyalty();
 loadBanners();
