@@ -936,6 +936,7 @@ async function loadOrders(isManualRefresh) {
     }
 
     updateHomePanels();
+    updateProfileStats();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
     if (!ordersCache.length) {
@@ -947,6 +948,22 @@ async function loadOrders(isManualRefresh) {
   } finally {
     refreshBtn?.classList.remove('spinning');
   }
+}
+
+/* ---------- Счётчики в профиле: «Активных» / «Всего заказов» ----------
+   Считаются из реальных данных ordersCache, полученных с backend —
+   "активный" = ещё не дошёл до последнего статуса ("Доставлено клиенту") */
+function updateProfileStats() {
+  const activeEl = document.getElementById('stat-active');
+  const totalEl = document.getElementById('stat-total');
+  if (!activeEl || !totalEl) return;
+
+  const lastStepIndex = STATUS_STEPS.length - 1;
+  const total = ordersCache.length;
+  const active = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
+
+  totalEl.textContent = total;
+  activeEl.textContent = active;
 }
 
 /* ---------- Панель "Последнее обновление" + уведомления ---------- */
