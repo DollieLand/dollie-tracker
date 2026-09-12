@@ -416,6 +416,91 @@
     animation: shimmer 1.4s ease infinite;
   }
 
+  /* ===================== БАННЕРЫ (главная страница) ===================== */
+  .banner-row {
+    scroll-snap-type: x mandatory;
+    margin-bottom: 8px;
+  }
+
+  .banner-card {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: calc(100% - 44px);
+    max-width: 340px;
+    min-height: 152px;
+    background: linear-gradient(150deg, #FDF1F5 0%, #FFFFFF 100%);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    overflow: hidden;
+    display: flex;
+    text-align: left;
+    transition: transform 0.15s ease;
+  }
+  .banner-card:active { transform: scale(0.98); }
+
+  .banner-card-text {
+    flex: 1;
+    min-width: 0;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .banner-eyebrow {
+    font-size: 10.5px; font-weight: 700; color: var(--pink-accent);
+    letter-spacing: 0.6px; text-transform: uppercase;
+  }
+  .banner-title {
+    font-size: 16px; font-weight: 800; color: var(--text);
+    margin-top: 6px; line-height: 1.25;
+  }
+  .banner-subtitle {
+    font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .banner-cta {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    margin-top: 10px;
+  }
+  .banner-cta .icon { width: 13px; height: 13px; }
+
+  .banner-image-wrap {
+    width: 108px; flex-shrink: 0; position: relative; background: var(--pink-soft);
+  }
+  .banner-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .banner-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 18px; }
+  .banner-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.2s ease; }
+  .banner-dot.active { background: var(--pink-accent); width: 16px; border-radius: 3px; }
+
+  .banner-placeholder {
+    width: 100%;
+    text-align: center;
+    padding: 22px 16px;
+    color: var(--text-secondary);
+    background: var(--pink-soft);
+    border-radius: 20px;
+    font-size: 12.5px;
+    margin-bottom: 18px;
+  }
+
+  /* ===================== Компактная сводка заказов на главной ===================== */
+  .orders-summary-card {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 14px 16px; width: 100%; text-align: left;
+    box-shadow: var(--shadow-soft); margin-bottom: 14px;
+    transition: transform 0.15s ease;
+  }
+  .orders-summary-card:active { transform: scale(0.98); }
+  .orders-summary-icon {
+    width: 38px; height: 38px; border-radius: 999px; background: var(--pink-soft);
+    display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0;
+  }
+  .orders-summary-text { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text); }
+
   /* ===================== SCREEN HEADER ===================== */
   .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; }
@@ -661,6 +746,12 @@
       <p>Ваши заказы всегда под рукой</p>
     </div>
 
+    <!-- ===== БАННЕРЫ DOLLIELAND (управляются администратором) ===== -->
+    <section id="banner-section" hidden>
+      <div class="scroll-row banner-row" id="banner-row"></div>
+      <div class="banner-dots" id="banner-dots" hidden></div>
+    </section>
+
     <button class="dollie-card" onclick="openDolliesSheet()">
       <div class="dollie-card-top">
         <span class="dollie-label">Dollie Club</span>
@@ -674,20 +765,12 @@
       <div class="dollie-history-link">История <svg class="icon"><use href="#icon-chevron-right"/></svg></div>
     </button>
 
-    <div id="home-content">
-      <!-- заполняется скриптом: hero-card / список / empty / error -->
-      <div class="skeleton-card">
-        <div class="skeleton-row"><div class="skeleton-thumb"></div>
-          <div style="flex:1"><div class="skeleton-line w-40"></div><div class="skeleton-line w-70"></div></div>
-        </div>
-        <div class="skeleton-bar"></div>
-      </div>
-    </div>
-
-    <section id="home-more-orders" hidden>
-      <div class="section-head"><h3>Другие заказы</h3></div>
-      <div class="scroll-row" id="home-orders-row"></div>
-    </section>
+    <!-- ===== Компактная сводка по заказам (вместо большого блока) ===== -->
+    <button class="orders-summary-card" id="orders-summary-card" onclick="switchTab('orders')">
+      <div class="orders-summary-icon"><svg class="icon"><use href="#icon-package"/></svg></div>
+      <div class="orders-summary-text" id="orders-summary-text">Загружаем заказы…</div>
+      <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
+    </button>
 
     <div class="update-panel" id="update-panel" hidden>
       <svg class="icon"><use href="#icon-clock"/></svg>
@@ -1110,25 +1193,6 @@ function orderCardHTML(order) {
     </button>`;
 }
 
-function heroCardHTML(order) {
-  const step = matchStep(order.status);
-  const next = STATUS_STEPS[step + 1];
-  const needsAction = step === PAY_WEIGHT_STEP_INDEX;
-  return `
-    <button class="hero-card" onclick="openOrderDetail('${order.id}')">
-      <div class="hero-eyebrow">Мой заказ</div>
-      <div class="hero-title">${orderTitle(order)} · № ${order.id}</div>
-      <div class="hero-status-row"><svg class="icon"><use href="#icon-truck"/></svg><span>${STATUS_STEPS[step].label}</span></div>
-      <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progressPercent(step)}%"></div></div>
-      ${next ? `<div class="hero-next">Следующий этап: <b>${next.label}</b></div>` : ''}
-      ${needsAction ? `<div class="action-banner"><svg class="icon"><use href="#icon-alert-circle"/></svg>Требуется оплата веса, чтобы продолжить доставку</div>` : ''}
-      <div class="hero-footer">
-        <span></span>
-        <span class="hero-link">Подробнее <svg class="icon"><use href="#icon-chevron-right"/></svg></span>
-      </div>
-    </button>`;
-}
-
 function orderDetailHTML(order) {
   const step = matchStep(order.status);
   const timeline = STATUS_STEPS.map((s, i) => {
@@ -1220,23 +1284,118 @@ function noUserHTML() {
     </div>`;
 }
 
+/* ============================================================
+   БАННЕРЫ ГЛАВНОЙ СТРАНИЦЫ (управляются администратором)
+   ============================================================ */
+
+let bannersCache = [];
+let bannerScrollTimeout = null;
+
+function pluralizeActiveOrders(n) {
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'активный заказ';
+  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'активных заказа';
+  return 'активных заказов';
+}
+
+async function loadBanners() {
+  const section = document.getElementById('banner-section');
+  if (!section) return;
+  try {
+    const data = await apiFetch('/api/banners', {});
+    if (!data.ok) throw new Error('bad response');
+    bannersCache = data.banners || [];
+    renderBanners();
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить баннеры —', e);
+    // Тихо скрываем секцию — баннеры декоративны и не критичны для остального приложения
+    section.hidden = true;
+  }
+}
+
+function renderBanners() {
+  const section = document.getElementById('banner-section');
+  const row = document.getElementById('banner-row');
+  const dotsWrap = document.getElementById('banner-dots');
+  if (!section || !row || !dotsWrap) return;
+
+  section.hidden = false;
+
+  if (!bannersCache.length) {
+    row.innerHTML = `<div class="banner-placeholder">Скоро здесь появятся новости DollieLand</div>`;
+    dotsWrap.hidden = true;
+    return;
+  }
+
+  row.innerHTML = bannersCache.map((b, i) => bannerCardHTML(b, i)).join('');
+
+  if (bannersCache.length > 1) {
+    dotsWrap.hidden = false;
+    dotsWrap.innerHTML = bannersCache.map((_, i) => `<span class="banner-dot ${i === 0 ? 'active' : ''}"></span>`).join('');
+    row.removeEventListener('scroll', onBannerScroll);
+    row.addEventListener('scroll', onBannerScroll, { passive: true });
+  } else {
+    dotsWrap.hidden = true;
+  }
+}
+
+function bannerCardHTML(banner, idx) {
+  const title = escapeHtml(banner.title || '');
+  const subtitle = escapeHtml(banner.subtitle || '');
+  const btnText = escapeHtml(banner.button_text || 'Смотреть');
+  const hasLink = !!banner.link;
+  return `
+    <div class="banner-card" ${hasLink ? `onclick="openBannerLink(${idx})"` : ''}>
+      <div class="banner-card-text">
+        <div>
+          <span class="banner-eyebrow">DollieLand</span>
+          <div class="banner-title">${title}</div>
+          ${subtitle ? `<div class="banner-subtitle">${subtitle}</div>` : ''}
+        </div>
+        ${hasLink ? `<span class="banner-cta">${btnText} <svg class="icon"><use href="#icon-chevron-right"/></svg></span>` : ''}
+      </div>
+      ${banner.image_url ? `<div class="banner-image-wrap"><img src="${banner.image_url}" alt="" loading="lazy"></div>` : ''}
+    </div>`;
+}
+
+function openBannerLink(idx) {
+  const banner = bannersCache[idx];
+  if (!banner || !banner.link) return;
+  hapticImpact('light');
+  if (tg && /^https:\/\/t\.me\//.test(banner.link)) {
+    tg.openTelegramLink(banner.link);
+  } else {
+    window.open(banner.link, '_blank');
+  }
+}
+
+function onBannerScroll(e) {
+  clearTimeout(bannerScrollTimeout);
+  bannerScrollTimeout = setTimeout(() => {
+    const row = e.target;
+    const first = row.firstElementChild;
+    if (!first) return;
+    const cardWidth = first.offsetWidth + 12; // + gap из .scroll-row
+    const idx = Math.max(0, Math.min(bannersCache.length - 1, Math.round(row.scrollLeft / cardWidth)));
+    document.querySelectorAll('.banner-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  }, 80);
+}
+
 /* ---------- Загрузка заказов (единственный источник данных — backend) ---------- */
 async function loadOrders(isManualRefresh) {
-  const homeContent = document.getElementById('home-content');
-  const homeMore = document.getElementById('home-more-orders');
-  const homeMoreRow = document.getElementById('home-orders-row');
+  const summaryText = document.getElementById('orders-summary-text');
   const ordersList = document.getElementById('orders-list');
   const refreshBtn = document.getElementById('refresh-btn');
 
   if (!userId) {
-    homeContent.innerHTML = noUserHTML();
+    if (summaryText) summaryText.textContent = 'Не удалось определить пользователя';
     ordersList.innerHTML = noUserHTML();
     return;
   }
 
   if (isManualRefresh) refreshBtn?.classList.add('spinning');
   if (!ordersCache.length) {
-    homeContent.innerHTML = skeletonOrdersHTML(1);
+    if (summaryText) summaryText.textContent = 'Загружаем заказы…';
     ordersList.innerHTML = skeletonOrdersHTML(2);
   }
 
@@ -1249,16 +1408,15 @@ async function loadOrders(isManualRefresh) {
     lastUpdatedAt = new Date();
 
     if (orders.length === 0) {
-      homeContent.innerHTML = ordersEmptyHTML();
-      homeMore.hidden = true;
+      if (summaryText) summaryText.textContent = 'Нет активных заказов';
       ordersList.innerHTML = ordersEmptyHTML();
     } else {
-      homeContent.innerHTML = heroCardHTML(orders[0]);
-      if (orders.length > 1) {
-        homeMore.hidden = false;
-        homeMoreRow.innerHTML = orders.slice(1).map(o => `<div class="order-chip">${orderCardHTML(o)}</div>`).join('');
-      } else {
-        homeMore.hidden = true;
+      const lastStepIndex = STATUS_STEPS.length - 1;
+      const activeCount = orders.filter(o => matchStep(o.status) < lastStepIndex).length;
+      if (summaryText) {
+        summaryText.textContent = activeCount > 0
+          ? `${activeCount} ${pluralizeActiveOrders(activeCount)}`
+          : `Все заказы получены (${orders.length})`;
       }
       ordersList.innerHTML = orders.map(orderCardHTML).join('');
     }
@@ -1267,8 +1425,8 @@ async function loadOrders(isManualRefresh) {
     updateProfileStats();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
+    if (summaryText && !ordersCache.length) summaryText.textContent = 'Не удалось загрузить заказы';
     if (!ordersCache.length) {
-      homeContent.innerHTML = ordersErrorHTML(e?.message);
       ordersList.innerHTML = ordersErrorHTML(e?.message);
     } else {
       showToast('Не удалось обновить заказы');
@@ -1735,6 +1893,7 @@ document.getElementById('track-input')?.addEventListener('keydown', e => { if (e
 renderHelpList();
 loadOrders();
 loadLoyalty();
+loadBanners();
 </script>
 
 </body>
