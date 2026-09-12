@@ -657,8 +657,22 @@ async function apiFetch(path, params) {
   Object.entries(params || {}).forEach(([k, v]) => { if (v != null) url.searchParams.set(k, v); });
   const headers = {};
   if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
-  const res = await fetch(url.toString(), { headers });
-  if (!res.ok) throw new Error('Network response was not ok');
+
+  let res;
+  try {
+    res = await fetch(url.toString(), { headers });
+  } catch (networkErr) {
+    // fetch() сам бросил исключение — обычно это блокировка CORS, DNS-ошибка
+    // или недоступность хоста, а не ответ сервера с кодом ошибки
+    throw new Error('NETWORK: ' + (networkErr?.message || 'не удалось выполнить запрос'));
+  }
+
+  if (!res.ok) {
+    let bodyPreview = '';
+    try { bodyPreview = (await res.text()).slice(0, 160); } catch (_) {}
+    throw new Error(`HTTP ${res.status}${bodyPreview ? ' — ' + bodyPreview : ''}`);
+  }
+
   return res.json();
 }
 
@@ -828,7 +842,7 @@ function ordersEmptyHTML() {
     </div>`;
 }
 
-function ordersErrorHTML() {
+function ordersErrorHTML(errorDetail) {
   return `
     <div class="empty-state">
       <svg class="empty-illustration" viewBox="0 0 120 120">
@@ -838,6 +852,7 @@ function ordersErrorHTML() {
       </svg>
       <h3>Не удалось загрузить заказы</h3>
       <p>Проверьте соединение и попробуйте ещё раз.</p>
+      ${errorDetail ? `<p style="font-size:11px;color:var(--text-secondary);background:var(--bg);border-radius:10px;padding:8px 10px;word-break:break-word;">${errorDetail}</p>` : ''}
       <button class="btn btn-primary" onclick="loadOrders(true)">Повторить</button>
     </div>`;
 }
@@ -895,9 +910,10 @@ async function loadOrders(isManualRefresh) {
 
     updateHomePanels();
   } catch (e) {
+    console.error('DollieLand: не удалось загрузить заказы —', e);
     if (!ordersCache.length) {
-      homeContent.innerHTML = ordersErrorHTML();
-      ordersList.innerHTML = ordersErrorHTML();
+      homeContent.innerHTML = ordersErrorHTML(e?.message);
+      ordersList.innerHTML = ordersErrorHTML(e?.message);
     } else {
       showToast('Не удалось обновить заказы');
     }
@@ -1031,6 +1047,3 @@ loadOrders();
 
 </body>
 </html>
-
-
-
