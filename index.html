@@ -319,10 +319,36 @@
   }
   .dollie-hero-footer .text-link {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 13.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 13.5px; font-weight: 700;
+    color: var(--pink-accent);
     background: none; border: none; padding: 6px 4px;
   }
-  .dollie-hero-footer .icon { width: 15px; height: 15px; }
+  .dollie-hero-footer .text-link .icon {
+    width: 15px; height: 15px;
+    color: var(--pink-accent);
+    transform: rotate(180deg);
+  }
+
+  /* ===== Универсальный text-link — синий (розовый акцент), без подчёркивания ===== */
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--pink-accent);
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .text-link .icon {
+    width: 13px;
+    height: 13px;
+    color: var(--pink-accent);
+    transform: rotate(180deg);
+  }
 
   .dollie-section-title {
     font-size: 14.5px; font-weight: 700; color: var(--text);
@@ -1937,7 +1963,7 @@ let dollieFilter = 'all';
 const LOYALTY_HISTORY_PAGE_SIZE = 20;
 
 const FILTER_TYPE_GROUPS = {
-  earn: ['earn', 'manual_add', 'refund'],
+  earn: ['first_order', 'repeat_order', 'referral_inviter', 'referral_friend', 'review_reward', 'manual_add', 'refund', 'promotion'],
   spend: ['spend', 'manual_remove'],
 };
 
@@ -2298,7 +2324,13 @@ async function submitReview() {
         <p>${awarded > 0 ? `+${awarded} Dollies уже начислены на ваш баланс.` : 'Ваш отзыв опубликован.'}</p>
       </div>`;
     showToast(awarded > 0 ? `+${awarded} Dollies начислено` : 'Отзыв опубликован');
+    // После отзыва сразу подтягиваем обновлённый баланс и историю
     loadLoyalty();
+    // Если открыт экран истории Dollies — перезагружаем её
+    if (dollieHistoryLoadedOnce) {
+      loadLoyaltyHistory(true);
+    }
+    loadDollieRecent();
   } catch (e) {
     console.error('DollieLand: не удалось отправить отзыв —', e);
     showToast('Не удалось отправить отзыв');
@@ -2377,25 +2409,47 @@ function dollieHistoryErrorHTML() {
     </div>`;
 }
 
+/* =========================================================
+   txMeta — определяет, как выглядит операция в списке.
+   Ключевое: для ВСЕХ начислений (первый заказ, повторный,
+   реферальный, отзыв, ручное начисление, возврат, акция)
+   показываем «Начисление» (а не «Корректировка»).
+   ========================================================= */
 function txMeta(tx) {
   const isPositive = tx.amount > 0;
   const orderPart = tx.order_id ? `Заказ №${escapeHtml(tx.order_id)}` : null;
   let title, subtitle, icon;
 
   switch (tx.type) {
-    case 'earn':
-      title = orderPart || 'Начисление';
-      subtitle = 'Завершённый заказ';
+    // ===== Начисления =====
+    case 'first_order':
+      title = 'Начисление за первый заказ';
+      subtitle = orderPart || 'Первый заказ';
       icon = 'heart';
       break;
-    case 'spend':
-      title = orderPart || 'Списание';
-      subtitle = 'Использованы Dollies';
-      icon = 'minus';
+    case 'repeat_order':
+      title = 'Начисление за заказ';
+      subtitle = orderPart || 'Повторная покупка';
+      icon = 'heart';
       break;
-    case 'refund':
-      title = orderPart || 'Возврат';
-      subtitle = 'Возврат Dollies';
+    case 'referral_inviter':
+      title = 'Начисление за приглашение';
+      subtitle = 'Друг совершил покупку';
+      icon = 'user-plus';
+      break;
+    case 'referral_friend':
+      title = 'Начисление по реферальной программе';
+      subtitle = 'Бонус за покупку по приглашению';
+      icon = 'user-plus';
+      break;
+    case 'review_reward':
+      title = 'Начисление за отзыв';
+      subtitle = orderPart || 'Спасибо за отзыв!';
+      icon = 'star';
+      break;
+    case 'earn':
+      title = orderPart ? `Начисление · ${orderPart}` : 'Начисление';
+      subtitle = 'Завершённый заказ';
       icon = 'heart';
       break;
     case 'manual_add':
@@ -2403,15 +2457,38 @@ function txMeta(tx) {
       subtitle = escapeHtml(tx.description || 'От администратора');
       icon = 'heart';
       break;
+    case 'refund':
+      title = 'Возврат Dollies';
+      subtitle = orderPart || 'Возврат';
+      icon = 'heart';
+      break;
+    case 'promotion':
+      title = 'Начисление за акцию';
+      subtitle = escapeHtml(tx.description || 'Акция');
+      icon = 'gift';
+      break;
+    // ===== Списания =====
+    case 'spend':
+      title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies';
+      subtitle = 'Скидка на заказ';
+      icon = 'minus';
+      break;
     case 'manual_remove':
       title = 'Списание';
       subtitle = escapeHtml(tx.description || 'От администратора');
       icon = 'minus';
       break;
+    // ===== Фолбэк =====
     default:
-      title = 'Корректировка';
-      subtitle = escapeHtml(tx.description || '');
-      icon = isPositive ? 'heart' : 'minus';
+      if (isPositive) {
+        title = 'Начисление';
+        subtitle = escapeHtml(tx.description || '');
+        icon = 'heart';
+      } else {
+        title = 'Списание';
+        subtitle = escapeHtml(tx.description || '');
+        icon = 'minus';
+      }
   }
   return { title, subtitle, icon, isPositive };
 }
