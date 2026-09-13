@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <style>
+  /* =========================================================
+     STANDARD (без data-season) — НЕ ТРОГАЕМ
+     ========================================================= */
   :root {
     --bg: #FFF9FB;
     --surface: #FFFFFF;
@@ -30,10 +33,23 @@
     --safe-t: env(safe-area-inset-top, 0px);
     --safe-b: env(safe-area-inset-bottom, 0px);
     --nav-h: 66px;
+
+    /* seasonal defaults (used only if theme active) */
     --season-primary: #E78EAD;
     --season-secondary: #B4708F;
     --season-accent: #E78EAD;
-    --season-deco-color: #E78EAD;
+    --dollies-color: #E78EAD;
+    --btn-primary-bg: var(--pink-accent);
+    --btn-primary-text: #FFFFFF;
+    --btn-secondary-bg: var(--surface);
+    --btn-secondary-text: var(--text);
+    --badge-success-bg: #E8F1EA;
+    --badge-success-text: #4F7A5C;
+    --badge-warn-bg: #F7EEDC;
+    --badge-warn-text: #8A6A3A;
+    --badge-error-bg: #F5E0E0;
+    --badge-error-text: #9A4B43;
+    --nav-active: var(--pink-accent);
   }
 
   html[data-theme="dark"] {
@@ -53,6 +69,259 @@
   html[data-theme="dark"] .bottom-nav { background: rgba(36,26,30,0.92); }
   html[data-theme="dark"] .icon-btn { background: var(--surface); }
 
+  /* =========================================================
+     AUTUMN — warm editorial / vintage boutique / cozy
+     ========================================================= */
+  html[data-season="autumn"] {
+    --bg: #F5EDE3;
+    --surface: #FFF9F2;
+    --surface-soft: #F0E3D5;
+    --pink-soft: #EFE0D3;
+    --pink: #E4D3C4;
+    --pink-accent: #A9563F;
+    --text: #3D2925;
+    --text-secondary: #745E56;
+    --border: #E4D3C4;
+    --shadow-soft: 0 8px 24px rgba(61, 41, 37, 0.08);
+    --shadow-card: 0 10px 28px rgba(169, 86, 63, 0.12);
+    --shadow-nav: 0 -6px 24px rgba(61, 41, 37, 0.08);
+
+    --season-primary: #A9563F;
+    --season-secondary: #C17A52;
+    --season-accent: #A9563F;
+    --season-deep: #733B42;
+    --season-soft: #B9898A;
+    --dollies-color: #B97855;
+    --btn-primary-bg: #A9563F;
+    --btn-primary-text: #FFF9F2;
+    --btn-secondary-bg: #EFE0D3;
+    --btn-secondary-text: #5A3D35;
+    --badge-success-bg: #E4ECDF;
+    --badge-success-text: #4F5C42;
+    --badge-warn-bg: #F3E7D7;
+    --badge-warn-text: #806346;
+    --badge-error-bg: #F2DFDF;
+    --badge-error-text: #8A4340;
+    --nav-active: #A9563F;
+  }
+
+  /* =========================================================
+     WINTER — clean icy elegant crystalline
+     ========================================================= */
+  html[data-season="winter"] {
+    --bg: #F4F8FA;
+    --surface: #FFFFFF;
+    --surface-soft: #EAF2F6;
+    --pink-soft: #E6F0F4;
+    --pink: #C4DDE7;
+    --pink-accent: #526F7E;
+    --text: #24333D;
+    --text-secondary: #61727D;
+    --border: #DCE7EC;
+    --shadow-soft: 0 8px 24px rgba(36, 51, 61, 0.06);
+    --shadow-card: 0 10px 28px rgba(82, 111, 126, 0.12);
+    --shadow-nav: 0 -6px 24px rgba(36, 51, 61, 0.06);
+
+    --season-primary: #526F7E;
+    --season-secondary: #8FB8CB;
+    --season-accent: #8FB8CB;
+    --season-deep: #526F7E;
+    --season-soft: #D9C8D0;
+    --dollies-color: #B8A8B0;
+    --btn-primary-bg: #526F7E;
+    --btn-primary-text: #FFFFFF;
+    --btn-secondary-bg: #E6F0F4;
+    --btn-secondary-text: #526F7E;
+    --badge-success-bg: #E3EEE9;
+    --badge-success-text: #4B6B60;
+    --badge-warn-bg: #F3E7D7;
+    --badge-warn-text: #806346;
+    --badge-error-bg: #F2DFDF;
+    --badge-error-text: #8E5656;
+    --nav-active: #526F7E;
+  }
+
+  /* =========================================================
+     SPRING — fresh floral airy delicate
+     ========================================================= */
+  html[data-season="spring"] {
+    --bg: #FFF7F3;
+    --surface: #FFFCF9;
+    --surface-soft: #F5ECEF;
+    --pink-soft: #F2E4E8;
+    --pink: #E6B8C6;
+    --pink-accent: #C9829A;
+    --text: #3C3437;
+    --text-secondary: #756A70;
+    --border: #EADDE0;
+    --shadow-soft: 0 8px 24px rgba(60, 52, 55, 0.06);
+    --shadow-card: 0 10px 28px rgba(201, 130, 154, 0.12);
+    --shadow-nav: 0 -6px 24px rgba(60, 52, 55, 0.06);
+
+    --season-primary: #C9829A;
+    --season-secondary: #D8CBE5;
+    --season-accent: #C9829A;
+    --season-deep: #765362;
+    --season-soft: #F0C8B5;
+    --dollies-color: #C99AA9;
+    --btn-primary-bg: #C9829A;
+    --btn-primary-text: #FFFFFF;
+    --btn-secondary-bg: #F2E4E8;
+    --btn-secondary-text: #765362;
+    --badge-success-bg: #E5EFE3;
+    --badge-success-text: #566E52;
+    --badge-warn-bg: #F7EADF;
+    --badge-warn-text: #8A6A3A;
+    --badge-error-bg: #F3DEE0;
+    --badge-error-text: #8F575C;
+    --nav-active: #C9829A;
+  }
+
+  /* =========================================================
+     SUMMER — warm bright playful-luxury sunny
+     ========================================================= */
+  html[data-season="summer"] {
+    --bg: #FFF8EC;
+    --surface: #FFFCF5;
+    --surface-soft: #F8ECDD;
+    --pink-soft: #F7E4D6;
+    --pink: #F1B99A;
+    --pink-accent: #D97869;
+    --text: #403735;
+    --text-secondary: #786A63;
+    --border: #EEDFD0;
+    --shadow-soft: 0 8px 24px rgba(64, 55, 53, 0.06);
+    --shadow-card: 0 10px 28px rgba(217, 120, 105, 0.14);
+    --shadow-nav: 0 -6px 24px rgba(64, 55, 53, 0.06);
+
+    --season-primary: #D97869;
+    --season-secondary: #F1D889;
+    --season-accent: #D97869;
+    --season-deep: #76544D;
+    --season-soft: #BFD8E5;
+    --dollies-color: #D09B68;
+    --btn-primary-bg: #D97869;
+    --btn-primary-text: #FFFFFF;
+    --btn-secondary-bg: #F7E4D6;
+    --btn-secondary-text: #76544D;
+    --badge-success-bg: #E6EFDD;
+    --badge-success-text: #576B4D;
+    --badge-warn-bg: #F7EEDC;
+    --badge-warn-text: #8A6A3A;
+    --badge-error-bg: #F5DEDD;
+    --badge-error-text: #8E5651;
+    --nav-active: #D97869;
+  }
+
+  /* =========================================================
+     HALLOWEEN — gothic cute dark feminine
+     ========================================================= */
+  html[data-season="halloween"] {
+    --bg: #18151B;
+    --surface: #211C25;
+    --surface-soft: #29212D;
+    --pink-soft: #302633;
+    --pink: #3B273F;
+    --pink-accent: #8D465A;
+    --text: #F4E9E1;
+    --text-secondary: #C4B3B4;
+    --border: #3A303D;
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 10px 28px rgba(141, 70, 90, 0.2);
+    --shadow-nav: 0 -6px 24px rgba(0, 0, 0, 0.45);
+
+    --season-primary: #8D465A;
+    --season-secondary: #6B3042;
+    --season-accent: #C96C3D;
+    --season-deep: #3B273F;
+    --season-soft: #A8758A;
+    --dollies-color: #C59A7C;
+    --btn-primary-bg: #8D465A;
+    --btn-primary-text: #FFF7F0;
+    --btn-secondary-bg: #302633;
+    --btn-secondary-text: #D9BFC7;
+    --badge-success-bg: #2B3230;
+    --badge-success-text: #A8BCA5;
+    --badge-warn-bg: #33291E;
+    --badge-warn-text: #D0AE7B;
+    --badge-error-bg: #382323;
+    --badge-error-text: #D89B98;
+    --nav-active: #C96C3D;
+  }
+  html[data-season="halloween"][data-theme="dark"] .bottom-nav { background: rgba(33,28,37,0.92); }
+
+  /* =========================================================
+     CHRISTMAS — festive cozy elegant deep red + forest green + cream
+     ========================================================= */
+  html[data-season="christmas"] {
+    --bg: #F7F1E8;
+    --surface: #FFFDF8;
+    --surface-soft: #EFE6D9;
+    --pink-soft: #E8EEE8;
+    --pink: #D3A3A8;
+    --pink-accent: #A33E42;
+    --text: #26362E;
+    --text-secondary: #695E57;
+    --border: #E4D8CA;
+    --shadow-soft: 0 8px 24px rgba(38, 54, 46, 0.06);
+    --shadow-card: 0 10px 28px rgba(163, 62, 66, 0.12);
+    --shadow-nav: 0 -6px 24px rgba(38, 54, 46, 0.06);
+
+    --season-primary: #A33E42;
+    --season-secondary: #2F5140;
+    --season-accent: #A33E42;
+    --season-deep: #203B30;
+    --season-soft: #C8A978;
+    --dollies-color: #C8A978;
+    --btn-primary-bg: #A33E42;
+    --btn-primary-text: #FFF8EA;
+    --btn-secondary-bg: #E8EEE8;
+    --btn-secondary-text: #2F5140;
+    --badge-success-bg: #E4EEE7;
+    --badge-success-text: #2F5140;
+    --badge-warn-bg: #F3E7D7;
+    --badge-warn-text: #806346;
+    --badge-error-bg: #F2DFDF;
+    --badge-error-text: #93494B;
+    --nav-active: #2F5140;
+  }
+
+  /* =========================================================
+     VALENTINE — romantic feminine soft luxury
+     ========================================================= */
+  html[data-season="valentine"] {
+    --bg: #FFF5F3;
+    --surface: #FFFDFC;
+    --surface-soft: #F8E6E5;
+    --pink-soft: #F4E0E4;
+    --pink: #EBC1C9;
+    --pink-accent: #A8455C;
+    --text: #432F35;
+    --text-secondary: #775F65;
+    --border: #ECD9DC;
+    --shadow-soft: 0 8px 24px rgba(67, 47, 53, 0.06);
+    --shadow-card: 0 10px 28px rgba(168, 69, 92, 0.12);
+    --shadow-nav: 0 -6px 24px rgba(67, 47, 53, 0.06);
+
+    --season-primary: #A8455C;
+    --season-secondary: #D96F85;
+    --season-accent: #A8455C;
+    --season-deep: #762E40;
+    --season-soft: #C9A477;
+    --dollies-color: #C9A477;
+    --btn-primary-bg: #A8455C;
+    --btn-primary-text: #FFF8F5;
+    --btn-secondary-bg: #F4E0E4;
+    --btn-secondary-text: #7A4453;
+    --badge-success-bg: #E5EFE2;
+    --badge-success-text: #57704F;
+    --badge-warn-bg: #F7EADF;
+    --badge-warn-text: #8A6A3A;
+    --badge-error-bg: #F5DEE2;
+    --badge-error-text: #8F404F;
+    --nav-active: #A8455C;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { background: var(--bg); }
 
@@ -63,6 +332,7 @@
     min-height: var(--tg-vh, 100vh);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    position: relative;
   }
 
   button, input { font-family: inherit; }
@@ -76,14 +346,40 @@
 
   .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; flex-shrink: 0; }
 
-  .app { max-width: 480px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px); }
+  /* =========================================================
+     LAYER ARCHITECTURE
+     Background  →  #theme-decorations (z=0, pointer-events:none)
+     Content     →  .app (z=2, position:relative)
+     Nav / Sheets →  z=40+
+     Toast       →  z=100
+     ========================================================= */
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px);
+    position: relative;
+    z-index: 2;
+  }
+
+  #theme-decorations {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  #theme-decorations .deco-item {
+    position: absolute;
+    color: var(--season-soft, var(--pink-accent));
+    will-change: transform, opacity;
+  }
+  #theme-decorations .deco-item svg { display: block; }
 
   .tab-screen {
     display: none;
     padding: calc(var(--safe-t) + 14px) 18px 12px;
     animation: fadeSlideIn 0.25s ease both;
   }
-
   .tab-screen.active { display: block; }
 
   @keyframes fadeSlideIn {
@@ -93,7 +389,14 @@
 
   .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 
-  .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: var(--season-secondary, #B4708F); letter-spacing: 0.2px; }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 23px;
+    color: var(--season-secondary, #B4708F);
+    letter-spacing: 0.2px;
+  }
 
   .icon-btn {
     width: 44px; height: 44px;
@@ -105,13 +408,11 @@
     transition: transform 0.15s ease;
     position: relative;
   }
-
   .icon-btn:active { transform: scale(0.93); }
-
   .icon-btn .dot {
     position: absolute; top: 10px; right: 10px;
     width: 8px; height: 8px; border-radius: 50%;
-    background: var(--pink-accent);
+    background: var(--season-accent, var(--pink-accent));
     border: 2px solid var(--surface);
   }
 
@@ -131,51 +432,8 @@
   }
   .scroll-row::-webkit-scrollbar { display: none; }
 
-  .hero-card {
-    background: linear-gradient(155deg, #FCE5ED 0%, #FFF4F8 55%, #FFFFFF 100%);
-    border-radius: var(--r-xl);
-    padding: 22px 20px;
-    box-shadow: var(--shadow-card);
-    transition: transform 0.15s ease;
-  }
-
-  .hero-card:active { transform: scale(0.98); }
-
-  .hero-eyebrow { font-size: 11.5px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.3px; margin-bottom: 6px; }
-  .hero-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
-
-  .hero-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
-  .hero-status-row .icon { color: var(--pink-accent); width: 19px; height: 19px; }
-  .hero-status-row span { font-size: 14px; font-weight: 700; }
-
   .progress-bar-track { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: var(--pink-accent); border-radius: 3px; transition: width 0.3s ease; }
-
-  .hero-next { font-size: 12px; color: var(--text-secondary); margin-top: 10px; }
-  .hero-next b { color: var(--text); font-weight: 700; }
-
-  .action-banner {
-    display: flex; align-items: center; gap: 10px;
-    background: rgba(255,255,255,0.7);
-    border: 1px solid var(--pink);
-    border-radius: 14px;
-    padding: 11px 14px;
-    margin-top: 14px;
-    font-size: 12.5px;
-    color: var(--text);
-  }
-  .action-banner .icon { color: var(--pink-accent); width: 18px; height: 18px; flex-shrink: 0; }
-
-  .hero-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-top: 16px;
-  }
-
-  .hero-link {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 13.5px; font-weight: 700; color: var(--pink-accent);
-  }
-  .hero-link .icon { width: 16px; height: 16px; }
+  .progress-bar-fill { height: 100%; background: var(--season-primary, var(--pink-accent)); border-radius: 3px; transition: width 0.3s ease; }
 
   .update-panel {
     background: var(--surface);
@@ -187,8 +445,7 @@
     gap: 12px;
     align-items: flex-start;
   }
-
-  .update-panel .icon { color: var(--pink-accent); width: 19px; height: 19px; margin-top: 1px; }
+  .update-panel .icon { color: var(--season-accent, var(--pink-accent)); width: 19px; height: 19px; margin-top: 1px; }
   .update-panel .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
   .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; }
 
@@ -201,10 +458,10 @@
   }
   .btn:active { transform: scale(0.97); }
   .btn-block { width: 100%; margin-top: 10px; }
-  .btn-primary { background: var(--pink-accent); color: #FFFFFF; box-shadow: 0 8px 20px rgba(231,142,173,0.35); }
+  .btn-primary { background: var(--btn-primary-bg); color: var(--btn-primary-text); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
   .btn-primary:active { opacity: 0.92; }
-  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-  .btn-tertiary { background: transparent; color: var(--pink-accent); padding-left: 4px; padding-right: 4px; min-height: 40px; }
+  .btn-secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); border: 1px solid var(--border); }
+  .btn-tertiary { background: transparent; color: var(--season-primary, var(--pink-accent)); padding-left: 4px; padding-right: 4px; min-height: 40px; }
 
   .pill-btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -219,11 +476,11 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .dollie-card {
-    background: linear-gradient(150deg, #FDF1F5 0%, #FFF9FB 60%, #FFFFFF 100%);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--r-xl);
     padding: 18px 20px;
-    box-shadow: 0 8px 30px rgba(231, 142, 173, 0.08);
+    box-shadow: var(--shadow-card);
     margin-bottom: 4px;
     width: 100%;
     text-align: left;
@@ -234,8 +491,8 @@
   .dollie-card:active { transform: scale(0.98); }
 
   .dollie-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .dollie-card-top .dollie-label { font-size: 12px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.4px; text-transform: uppercase; }
-  .dollie-card-top .icon { color: var(--pink-accent); width: 18px; height: 18px; }
+  .dollie-card-top .dollie-label { font-size: 12px; font-weight: 700; color: var(--season-primary, var(--pink-accent)); letter-spacing: 0.4px; text-transform: uppercase; }
+  .dollie-card-top .icon { color: var(--season-primary, var(--pink-accent)); width: 18px; height: 18px; }
 
   .dollie-balance-row { display: flex; align-items: baseline; gap: 6px; }
   .dollie-balance-num { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; font-variant-numeric: tabular-nums; }
@@ -245,7 +502,7 @@
 
   .dollie-history-link {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 12.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent));
     margin-top: 10px;
     background: none; border: none; padding: 0;
   }
@@ -264,7 +521,7 @@
   }
 
   .dollie-hero {
-    background: linear-gradient(160deg, #FDF1F5 0%, #FFFCFD 55%, #FFFFFF 100%);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 24px;
     padding: 26px 24px 22px;
@@ -273,29 +530,28 @@
     overflow: hidden;
     margin-bottom: 22px;
   }
-
   .dollie-hero::before {
     content: '';
     position: absolute;
     top: -30px; right: -30px;
     width: 140px; height: 140px;
-    border: 1.5px solid var(--pink-accent);
+    border: 1.5px solid var(--season-soft, var(--pink-accent));
     border-radius: 50%;
-    opacity: 0.08;
+    opacity: 0.15;
   }
   .dollie-hero::after {
     content: '';
     position: absolute;
     bottom: -46px; left: -20px;
     width: 110px; height: 110px;
-    border: 1.5px solid var(--pink-accent);
+    border: 1.5px solid var(--season-soft, var(--pink-accent));
     border-radius: 50%;
-    opacity: 0.06;
+    opacity: 0.1;
   }
 
   .dollie-hero-eyebrow {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: 11.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 11.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent));
     letter-spacing: 0.6px; text-transform: uppercase;
     position: relative; z-index: 1;
   }
@@ -324,12 +580,12 @@
   .dollie-hero-footer .text-link {
     display: inline-flex; align-items: center; gap: 4px;
     font-size: 13.5px; font-weight: 700;
-    color: var(--pink-accent);
+    color: var(--season-primary, var(--pink-accent));
     background: none; border: none; padding: 6px 4px;
   }
   .dollie-hero-footer .text-link .icon {
     width: 15px; height: 15px;
-    color: var(--pink-accent);
+    color: var(--season-primary, var(--pink-accent));
     transform: rotate(180deg);
   }
 
@@ -339,7 +595,7 @@
     gap: 4px;
     font-size: 12.5px;
     font-weight: 700;
-    color: var(--pink-accent);
+    color: var(--season-primary, var(--pink-accent));
     background: none;
     border: none;
     padding: 0;
@@ -349,7 +605,7 @@
   .text-link .icon {
     width: 13px;
     height: 13px;
-    color: var(--pink-accent);
+    color: var(--season-primary, var(--pink-accent));
     transform: rotate(180deg);
   }
 
@@ -359,7 +615,7 @@
   }
   .dollie-section-title.with-link { display: flex; justify-content: space-between; align-items: center; }
   .dollie-section-title .text-link {
-    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 12.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent));
     background: none; border: none; padding: 0;
     display: inline-flex; align-items: center; gap: 3px;
   }
@@ -368,12 +624,12 @@
   .howitworks-card {
     flex: 0 0 auto; scroll-snap-align: start;
     width: 148px;
-    background: var(--surface, #FFFFFF);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 16px 14px;
   }
-  .howitworks-index { font-size: 11px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.5px; }
+  .howitworks-index { font-size: 11px; font-weight: 700; color: var(--season-primary, var(--pink-accent)); letter-spacing: 0.5px; }
   .howitworks-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-top: 8px; }
   .howitworks-desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.4; }
 
@@ -392,7 +648,7 @@
   .reward-row:last-child { border-bottom: none; }
   .reward-icon {
     width: 38px; height: 38px; border-radius: var(--r-pill);
-    background: var(--pink-soft); color: var(--pink-accent);
+    background: var(--pink-soft); color: var(--season-primary, var(--pink-accent));
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .reward-icon .icon { width: 17px; height: 17px; }
@@ -400,7 +656,7 @@
   .reward-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
   .reward-subtitle { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; }
   .reward-amount {
-    font-size: 13.5px; font-weight: 800; color: var(--pink-accent);
+    font-size: 13.5px; font-weight: 800; color: var(--season-primary, var(--pink-accent));
     flex-shrink: 0; padding-left: 8px; white-space: nowrap;
   }
   .reward-row-done { opacity: 0.6; }
@@ -424,7 +680,7 @@
     flex-shrink: 0;
   }
   .tx-icon .icon { width: 16px; height: 16px; }
-  .tx-icon.pos { background: var(--pink-soft); color: var(--pink-accent); }
+  .tx-icon.pos { background: var(--pink-soft); color: var(--season-primary, var(--pink-accent)); }
   .tx-icon.neg { background: var(--border); color: var(--text-secondary); }
 
   .tx-main { flex: 1; min-width: 0; }
@@ -433,7 +689,7 @@
 
   .tx-side { text-align: right; flex-shrink: 0; padding-left: 6px; }
   .tx-amount { font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .tx-amount.pos { color: var(--pink-accent); }
+  .tx-amount.pos { color: var(--season-primary, var(--pink-accent)); }
   .tx-amount.neg { color: var(--text-secondary); }
   .tx-date { font-size: 10.5px; color: var(--text-secondary); margin-top: 2px; }
 
@@ -444,15 +700,15 @@
     padding: 7px 14px;
     border-radius: var(--r-pill);
     border: 1px solid var(--border);
-    background: var(--surface, #FFFFFF);
+    background: var(--surface);
     font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
   }
-  .dollie-filter-pill.active { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
+  .dollie-filter-pill.active { background: var(--season-primary, var(--pink-accent)); border-color: var(--season-primary, var(--pink-accent)); color: #FFFFFF; }
 
   .dollie-history-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
   .dollie-back-btn {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 12.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent));
     background: none; border: none; padding: 4px 0; margin-bottom: 10px;
   }
   .dollie-back-btn .icon { width: 15px; height: 15px; transform: rotate(180deg); }
@@ -462,21 +718,11 @@
 
   .tx-detail-amount { text-align: center; padding: 6px 0 18px; }
   .tx-detail-amount .num { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .tx-detail-amount .num.pos { color: var(--pink-accent); }
+  .tx-detail-amount .num.pos { color: var(--season-primary, var(--pink-accent)); }
   .tx-detail-amount .num.neg { color: var(--text); }
   .tx-detail-amount .sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; }
 
-  .dollie-skeleton-num {
-    width: 120px; height: 44px; border-radius: 10px; margin: 6px auto 0;
-    background: linear-gradient(90deg, #FCE5ED 25%, #FFF6F9 37%, #FCE5ED 63%);
-    background-size: 400% 100%;
-    animation: shimmer 1.4s ease infinite;
-  }
-
-  .banner-row {
-    scroll-snap-type: x mandatory;
-    margin-bottom: 8px;
-  }
+  .banner-row { scroll-snap-type: x mandatory; margin-bottom: 8px; }
 
   .banner-card {
     flex: 0 0 auto;
@@ -484,7 +730,7 @@
     width: calc(100% - 44px);
     max-width: 340px;
     min-height: 152px;
-    background: linear-gradient(150deg, #FDF1F5 0%, #FFFFFF 100%);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 22px;
     overflow: hidden;
@@ -504,7 +750,7 @@
   }
 
   .banner-eyebrow {
-    font-size: 10.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 10.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent));
     letter-spacing: 0.6px; text-transform: uppercase;
   }
   .banner-title {
@@ -517,7 +763,7 @@
   }
   .banner-cta {
     display: inline-flex; align-items: center; gap: 4px;
-    font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
+    font-size: 12.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent));
     margin-top: 10px;
   }
   .banner-cta .icon { width: 13px; height: 13px; }
@@ -531,7 +777,7 @@
 
   .banner-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 18px; }
   .banner-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.2s ease; }
-  .banner-dot.active { background: var(--pink-accent); width: 16px; border-radius: 3px; }
+  .banner-dot.active { background: var(--season-primary, var(--pink-accent)); width: 16px; border-radius: 3px; }
 
   .banner-placeholder {
     width: 100%;
@@ -554,7 +800,7 @@
   .orders-summary-card:active { transform: scale(0.98); }
   .orders-summary-icon {
     width: 38px; height: 38px; border-radius: 999px; background: var(--pink-soft);
-    display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; color: var(--season-primary, var(--pink-accent)); flex-shrink: 0;
   }
   .orders-summary-text { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text); }
 
@@ -579,7 +825,7 @@
     width: 44px; height: 44px; border-radius: var(--r-md);
     background: var(--pink-soft);
     display: flex; align-items: center; justify-content: center;
-    color: var(--pink-accent); flex-shrink: 0;
+    color: var(--season-primary, var(--pink-accent)); flex-shrink: 0;
   }
 
   .order-info { flex: 1; min-width: 0; }
@@ -587,14 +833,10 @@
   .order-id { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; }
   .order-chevron { color: var(--text-secondary); flex-shrink: 0; }
 
-  .order-status-line { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--pink-accent); margin-bottom: 8px; }
+  .order-status-line { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--season-primary, var(--pink-accent)); margin-bottom: 8px; }
   .order-status-line .icon { width: 15px; height: 15px; }
 
   .order-meta { font-size: 11px; color: var(--text-secondary); margin-top: 8px; }
-
-  .order-chip {
-    flex: 0 0 auto; scroll-snap-align: start; width: 220px;
-  }
 
   .timeline { margin: 16px 0 6px; }
 
@@ -613,8 +855,8 @@
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; color: #FFFFFF; z-index: 1;
   }
-  .timeline-step.done .timeline-dot { background: var(--pink-accent); }
-  .timeline-step.current .timeline-dot { background: var(--pink-accent); box-shadow: 0 0 0 4px var(--pink-soft); }
+  .timeline-step.done .timeline-dot { background: var(--season-primary, var(--pink-accent)); }
+  .timeline-step.current .timeline-dot { background: var(--season-primary, var(--pink-accent)); box-shadow: 0 0 0 4px var(--pink-soft); }
   .timeline-step.done .timeline-dot .icon,
   .timeline-step.current .timeline-dot .icon { width: 12px; height: 12px; }
 
@@ -625,14 +867,14 @@
   .timeline-date { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
 
   .info-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); padding: 10px 0; border-top: 1px solid var(--border); }
-  .info-row .icon { width: 17px; height: 17px; color: var(--pink-accent); flex-shrink: 0; }
+  .info-row .icon { width: 17px; height: 17px; color: var(--season-primary, var(--pink-accent)); flex-shrink: 0; }
   .info-row b { color: var(--text); }
 
   .skeleton-card { background: var(--surface); border-radius: var(--r-lg); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-soft); }
   .skeleton-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
   .skeleton-thumb { width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0; }
   .skeleton-thumb, .skeleton-line {
-    background: linear-gradient(90deg, #FCE5ED 25%, #FFF6F9 37%, #FCE5ED 63%);
+    background: linear-gradient(90deg, var(--pink-soft) 25%, var(--surface) 37%, var(--pink-soft) 63%);
     background-size: 400% 100%;
     animation: shimmer 1.4s ease infinite;
   }
@@ -644,34 +886,53 @@
 
   @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
 
+  /* Seasonal spinner used in loading states */
+  .seasonal-spinner {
+    width: 46px; height: 46px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+    color: var(--season-primary, var(--pink-accent));
+  }
+  .seasonal-spinner svg { width: 100%; height: 100%; }
+  .seasonal-spinner.spin svg { animation: ss-spin 2.4s linear infinite; }
+  .seasonal-spinner.pulse svg { animation: ss-pulse 1.8s ease-in-out infinite; }
+  .seasonal-spinner.shimmer svg { animation: ss-shimmer 2s ease-in-out infinite; }
+  .seasonal-spinner.glow svg { animation: ss-glow 2.4s ease-in-out infinite; }
+  .seasonal-spinner.heartbeat svg { animation: ss-heartbeat 1.6s ease-in-out infinite; }
+  @keyframes ss-spin { to { transform: rotate(360deg); } }
+  @keyframes ss-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: .8; } }
+  @keyframes ss-shimmer { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+  @keyframes ss-glow { 0%,100% { opacity: .5; filter: drop-shadow(0 0 0 currentColor); } 50% { opacity: 1; filter: drop-shadow(0 0 6px currentColor); } }
+  @keyframes ss-heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
   .empty-state { text-align: center; padding: 30px 16px 8px; }
-  .empty-illustration { width: 96px; height: 96px; margin-bottom: 4px; }
+  .empty-illustration { width: 108px; height: 108px; margin-bottom: 4px; }
   .empty-state h3 { font-size: 15.5px; font-weight: 700; margin-top: 8px; }
   .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 270px; }
 
-  .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
-  .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
+  .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; position: relative; overflow: hidden; }
+  .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--season-primary, var(--pink-accent)); flex-shrink: 0; }
   .avatar.big { width: 58px; height: 58px; margin: 0 auto 10px; }
   .profile-name { font-size: 15.5px; font-weight: 700; }
   .profile-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
   .stat-row { display: flex; gap: 10px; margin-bottom: 18px; }
   .stat-box { flex: 1; background: var(--surface); border-radius: var(--r-md); padding: 14px; box-shadow: var(--shadow-soft); text-align: center; }
-  .stat-box .num { font-size: 20px; font-weight: 800; color: var(--pink-accent); }
+  .stat-box .num { font-size: 20px; font-weight: 800; color: var(--season-primary, var(--pink-accent)); }
   .stat-box .label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
 
   .menu-list { background: var(--surface); border-radius: var(--r-lg); box-shadow: var(--shadow-soft); overflow: hidden; margin-bottom: 12px; }
   .menu-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 15px 16px; font-size: 14px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); min-height: 50px; transition: background 0.15s ease; }
   .menu-item:last-child { border-bottom: none; }
   .menu-item:active { background: var(--bg); }
-  .menu-item .icon { color: var(--pink-accent); width: 20px; height: 20px; }
+  .menu-item .icon { color: var(--season-primary, var(--pink-accent)); width: 20px; height: 20px; }
   .menu-item span.label { flex: 1; text-align: left; }
   .menu-item .icon.chev { color: var(--text-secondary); width: 18px; height: 18px; }
   .menu-item .badge { font-size: 10.5px; font-weight: 700; color: var(--text-secondary); background: var(--bg); padding: 3px 8px; border-radius: var(--r-pill); }
 
   .help-item { background: var(--surface); border-radius: var(--r-md); margin-bottom: 8px; overflow: hidden; box-shadow: var(--shadow-soft); }
   .help-item-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 13.5px; font-weight: 700; min-height: 48px; }
-  .help-item-head .icon { color: var(--pink-accent); }
+  .help-item-head .icon { color: var(--season-primary, var(--pink-accent)); }
   .help-item-head span.label { flex: 1; text-align: left; }
   .help-item-head .icon.chev { color: var(--text-secondary); transition: transform 0.2s ease; }
   .help-item.open .help-item-head .icon.chev { transform: rotate(180deg); }
@@ -688,26 +949,16 @@
   .referral-step:last-child::before { display: none; }
   .referral-step-num {
     width: 26px; height: 26px; border-radius: var(--r-pill);
-    background: var(--pink-soft); color: var(--pink-accent);
+    background: var(--pink-soft); color: var(--season-primary, var(--pink-accent));
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 800; flex-shrink: 0; z-index: 1;
   }
   .referral-step-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; padding-top: 3px; }
-  .referral-step-text b { color: var(--pink-accent); }
-
-  .referral-copy-row {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
-    padding: 12px 14px; margin-bottom: 10px;
-  }
-  .referral-copy-value {
-    flex: 1; min-width: 0; font-size: 13.5px; font-weight: 700; color: var(--text);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .referral-step-text b { color: var(--season-primary, var(--pink-accent)); }
 
   .referral-stats-row { display: flex; gap: 10px; }
   .referral-stat-box { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; text-align: center; }
-  .referral-stat-box .num { font-size: 20px; font-weight: 800; color: var(--pink-accent); }
+  .referral-stat-box .num { font-size: 20px; font-weight: 800; color: var(--season-primary, var(--pink-accent)); }
   .referral-stat-box .label { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; }
 
   .review-order-pick {
@@ -738,7 +989,7 @@
     margin-bottom: 8px; min-height: 50px; transition: transform 0.15s ease;
   }
   .theme-option-row:active { transform: scale(0.98); }
-  .theme-option-row .icon { color: var(--pink-accent); width: 20px; height: 20px; }
+  .theme-option-row .icon { color: var(--season-primary, var(--pink-accent)); width: 20px; height: 20px; }
   .theme-option-row .label-wrap { flex: 1; text-align: left; }
   .theme-option-row .label-wrap .title { font-size: 14px; font-weight: 700; }
   .theme-option-row .label-wrap .desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; font-weight: 500; }
@@ -746,70 +997,8 @@
     width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .theme-option-row.selected .check-dot { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
+  .theme-option-row.selected .check-dot { background: var(--season-primary, var(--pink-accent)); border-color: var(--season-primary, var(--pink-accent)); color: #FFFFFF; }
   .theme-option-row.selected .check-dot .icon { width: 12px; height: 12px; color: #FFFFFF; }
-
-  .seasonal-banner {
-    border-radius: var(--r-xl);
-    padding: 20px 22px;
-    margin-bottom: 18px;
-    color: #FFFFFF;
-    position: relative;
-    overflow: hidden;
-    min-height: 120px;
-  }
-  .seasonal-banner-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; opacity: 0.9; position: relative; z-index: 2; }
-  .seasonal-banner-title { font-size: 18px; font-weight: 800; margin-top: 6px; position: relative; z-index: 2; }
-  .seasonal-banner-subtitle { font-size: 12.5px; margin-top: 4px; opacity: 0.92; position: relative; z-index: 2; }
-  .seasonal-banner-art {
-    position: absolute;
-    pointer-events: none;
-    z-index: 1;
-  }
-  .seasonal-banner-art.art-1 { top: -10px; right: -14px; width: 130px; height: 130px; opacity: 0.32; }
-  .seasonal-banner-art.art-2 { bottom: -18px; left: -10px; width: 90px; height: 90px; opacity: 0.22; }
-  .seasonal-banner-art.art-3 { top: 50%; right: 22px; width: 44px; height: 44px; transform: translateY(-50%); opacity: 0.5; }
-
-  #theme-decorations {
-    position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
-  }
-  #theme-decorations .deco-item {
-    position: absolute;
-    color: var(--season-deco-color, var(--pink-accent));
-    will-change: transform, opacity;
-  }
-  #theme-decorations .deco-item svg { display: block; }
-
-  @keyframes deco-fall      { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.75; } 90% { opacity: 0.75; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
-  @keyframes deco-fall-sway { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.75; } 50% { transform: translateY(50vh) translateX(24px) rotate(180deg); } 90% { opacity: 0.75; } 100% { transform: translateY(110vh) translateX(-12px) rotate(360deg); opacity: 0; } }
-  @keyframes deco-twinkle   { 0%, 100% { opacity: 0.15; transform: scale(0.85); } 50% { opacity: 0.85; transform: scale(1.1); } }
-  @keyframes deco-float     { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-  @keyframes deco-sway      { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
-  @keyframes deco-glow      { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
-  @keyframes deco-bat-fly   { 0% { transform: translate(-20vw, 0) scaleX(1); opacity: 0; } 15% { opacity: 0.85; } 50% { transform: translate(50vw, -20px) scaleX(1); } 85% { opacity: 0.85; } 100% { transform: translate(120vw, 10px) scaleX(1); opacity: 0; } }
-  @keyframes deco-shimmer   { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 0.95; transform: scale(1.15); } }
-
-  .anim-fall-slow     { animation: deco-fall 14s linear infinite; }
-  .anim-fall-med      { animation: deco-fall 10s linear infinite; }
-  .anim-fall-sway     { animation: deco-fall-sway 16s ease-in-out infinite; }
-  .anim-twinkle       { animation: deco-twinkle 3.2s ease-in-out infinite; }
-  .anim-float         { animation: deco-float 6s ease-in-out infinite; }
-  .anim-sway          { animation: deco-sway 7s ease-in-out infinite; transform-origin: 50% 0; }
-  .anim-glow          { animation: deco-glow 5s ease-in-out infinite; }
-  .anim-shimmer       { animation: deco-shimmer 4s ease-in-out infinite; }
-  .anim-bat-fly       { animation: deco-bat-fly 22s linear infinite; }
-
-  .seasonal-corners { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; z-index: 1; }
-  .seasonal-corner {
-    position: absolute;
-    color: var(--season-accent, var(--pink-accent));
-  }
-  .seasonal-corner.tl { top: 10px; left: 10px; width: 32px; height: 32px; opacity: 0.55; }
-  .seasonal-corner.tr { top: 10px; right: 10px; width: 32px; height: 32px; opacity: 0.55; }
-  .seasonal-corner.bl { bottom: 10px; left: 10px; width: 32px; height: 32px; opacity: 0.45; }
-  .seasonal-corner.br { bottom: 10px; right: 10px; width: 32px; height: 32px; opacity: 0.45; }
-
-  .empty-illustration.seasonal { filter: drop-shadow(0 4px 12px rgba(231,142,173,0.15)); }
 
   .contact-card { text-align: center; padding: 6px 0 4px; }
   .contact-name { font-size: 16.5px; font-weight: 700; }
@@ -826,12 +1015,14 @@
     box-shadow: var(--shadow-nav);
     display: flex; z-index: 40;
   }
+  html[data-season="halloween"] .bottom-nav { background: rgba(33,28,37,0.92); }
+  html[data-season="halloween"] .icon-btn { background: var(--surface); }
   .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text-secondary); font-size: 10.5px; font-weight: 600; min-height: 44px; transition: color 0.15s ease, transform 0.15s ease; }
   .nav-item .icon { width: 22px; height: 22px; }
   .nav-item:active { transform: scale(0.92); }
-  .nav-item.active { color: var(--pink-accent); }
+  .nav-item.active { color: var(--nav-active, var(--pink-accent)); }
 
-  .sheet-overlay { position: fixed; inset: 0; background: rgba(57,44,49,0.32); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 50; }
+  .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.42); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 50; }
   .sheet-overlay.open { opacity: 1; pointer-events: auto; }
 
   .bottom-sheet {
@@ -842,7 +1033,7 @@
     max-height: calc(var(--tg-vh, 100vh) * 0.82);
     background: var(--surface);
     border-radius: 26px 26px 0 0;
-    box-shadow: 0 -12px 40px rgba(57,44,49,0.16);
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.16);
     transform: translateY(100%);
     transition: transform 0.32s cubic-bezier(.22,1,.36,1), max-height 0.32s cubic-bezier(.22,1,.36,1);
     z-index: 51;
@@ -859,7 +1050,7 @@
   .sheet-handle-area { padding: 8px 0 2px; touch-action: none; cursor: grab; }
   .sheet-handle-area:active { cursor: grabbing; }
   .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 6px auto 4px; transition: background 0.15s ease; }
-  .sheet-handle-area:active .sheet-handle { background: var(--pink); }
+  .sheet-handle-area:active .sheet-handle { background: var(--season-primary, var(--pink-accent)); }
   .sheet-content { padding: 8px 20px 4px; }
   .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; }
 
@@ -867,8 +1058,8 @@
     position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 14px); left: 50%;
     transform: translateX(-50%) translateY(80px);
     background: var(--text); border-radius: var(--r-pill); padding: 12px 22px;
-    font-size: 13px; font-weight: 600; color: #FFFFFF;
-    box-shadow: 0 10px 28px rgba(57,44,49,0.25);
+    font-size: 13px; font-weight: 600; color: var(--bg);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.25);
     z-index: 100;
     transition: transform 0.3s ease, opacity 0.3s ease;
     white-space: nowrap;
@@ -890,7 +1081,6 @@
   .app [href],
   .order-title a,
   .order-id a,
-  .hero-title a,
   .timeline-label a,
   .timeline-date a,
   .tx-title a,
@@ -914,87 +1104,10 @@
   .timeline-label, .timeline-date,
   .tx-title, .tx-subtitle, .tx-date, .tx-amount,
   .info-row, .info-row b,
-  .hero-title, .hero-next, .hero-next b,
   .banner-title, .banner-subtitle,
   .dollie-balance-num, .dollie-hero-num, .dollie-value-rub,
   .profile-name, .profile-sub {
     -webkit-text-fill-color: currentColor;
-  }
-
-  .order-title,
-  .order-title *,
-  .order-title a,
-  .order-title span {
-    color: #392C31 !important;
-    -webkit-text-fill-color: #392C31 !important;
-    text-decoration: none !important;
-    background: transparent !important;
-  }
-
-  .order-id,
-  .order-id *,
-  .order-id a,
-  .order-id span,
-  .order-meta,
-  .order-meta *,
-  .order-meta a,
-  .order-meta span,
-  .timeline-date,
-  .timeline-date *,
-  .timeline-date a,
-  .tx-date,
-  .tx-date *,
-  .tx-date a {
-    color: #907D84 !important;
-    -webkit-text-fill-color: #907D84 !important;
-    text-decoration: none !important;
-    background: transparent !important;
-  }
-
-  .timeline-label,
-  .timeline-label *,
-  .timeline-label a,
-  .info-row,
-  .info-row b,
-  .info-row *,
-  .info-row a,
-  .tx-title,
-  .tx-title *,
-  .tx-title a,
-  .tx-subtitle,
-  .tx-subtitle *,
-  .tx-subtitle a {
-    text-decoration: none !important;
-    background: transparent !important;
-  }
-
-  .timeline-label,
-  .timeline-label *,
-  .timeline-label a,
-  .tx-title,
-  .tx-title *,
-  .tx-title a {
-    color: #392C31 !important;
-    -webkit-text-fill-color: #392C31 !important;
-  }
-
-  .tx-subtitle,
-  .tx-subtitle *,
-  .tx-subtitle a {
-    color: #907D84 !important;
-    -webkit-text-fill-color: #907D84 !important;
-  }
-
-  .info-row,
-  .info-row *,
-  .info-row a {
-    color: #907D84 !important;
-    -webkit-text-fill-color: #907D84 !important;
-  }
-  .info-row b,
-  .info-row b * {
-    color: #392C31 !important;
-    -webkit-text-fill-color: #392C31 !important;
   }
 
   .toast:not(.show),
@@ -1007,6 +1120,34 @@
     display: none;
   }
 
+  /* =========================================================
+     SEASONAL DECORATIVE ANIMATIONS (behind content)
+     ========================================================= */
+  @keyframes deco-fall      { 0% { transform: translateY(-8vh) rotate(0deg); opacity: 0; } 12% { opacity: var(--deco-op, 0.55); } 88% { opacity: var(--deco-op, 0.55); } 100% { transform: translateY(108vh) rotate(340deg); opacity: 0; } }
+  @keyframes deco-fall-sway { 0% { transform: translateY(-8vh) translateX(0) rotate(0deg); opacity: 0; } 12% { opacity: var(--deco-op, 0.55); } 50% { transform: translateY(50vh) translateX(22px) rotate(180deg); } 88% { opacity: var(--deco-op, 0.55); } 100% { transform: translateY(108vh) translateX(-14px) rotate(340deg); opacity: 0; } }
+  @keyframes deco-twinkle   { 0%, 100% { opacity: 0.15; transform: scale(0.85); } 50% { opacity: 0.7; transform: scale(1.08); } }
+  @keyframes deco-float     { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes deco-sway      { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+  @keyframes deco-glow      { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.75; } }
+  @keyframes deco-bat-fly   { 0% { transform: translate(-15vw, 0); opacity: 0; } 15% { opacity: 0.7; } 50% { transform: translate(55vw, -14px); } 85% { opacity: 0.7; } 100% { transform: translate(120vw, 6px); opacity: 0; } }
+  @keyframes deco-shimmer   { 0%, 100% { opacity: 0.3; transform: scale(0.92); } 50% { opacity: 0.9; transform: scale(1.1); } }
+  @keyframes deco-lights    { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.8; } }
+  @keyframes deco-ribbon    { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
+  @keyframes deco-heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  .anim-fall-slow     { animation: deco-fall 16s linear infinite; }
+  .anim-fall-med      { animation: deco-fall 11s linear infinite; }
+  .anim-fall-sway     { animation: deco-fall-sway 18s ease-in-out infinite; }
+  .anim-twinkle       { animation: deco-twinkle 3.6s ease-in-out infinite; }
+  .anim-float         { animation: deco-float 7s ease-in-out infinite; }
+  .anim-sway          { animation: deco-sway 8s ease-in-out infinite; transform-origin: 50% 0; }
+  .anim-glow          { animation: deco-glow 5.5s ease-in-out infinite; }
+  .anim-shimmer       { animation: deco-shimmer 4.5s ease-in-out infinite; }
+  .anim-bat-fly       { animation: deco-bat-fly 24s linear infinite; }
+  .anim-lights        { animation: deco-lights 5s ease-in-out infinite; }
+  .anim-ribbon        { animation: deco-ribbon 6s ease-in-out infinite; transform-origin: 50% 0; }
+  .anim-heartbeat     { animation: deco-heartbeat 3.4s ease-in-out infinite; }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
@@ -1014,10 +1155,9 @@
 </head>
 <body>
 
-<div style="display:none" aria-hidden="true">
-  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
-</div>
-
+<!-- =========================================================
+     BASE FUNCTIONAL ICONS (Standard)
+     ========================================================= -->
 <svg style="display:none" aria-hidden="true">
   <symbol id="icon-house" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
   <symbol id="icon-package" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></symbol>
@@ -1037,33 +1177,29 @@
   <symbol id="icon-layers" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
   <symbol id="icon-heart" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></symbol>
   <symbol id="icon-gift" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/></symbol>
-  <symbol id="icon-gem" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M8 3l4 6 4-6M12 9v12"/></symbol>
-  <symbol id="icon-plus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
-  <symbol id="icon-minus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
   <symbol id="icon-minus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
   <symbol id="icon-star" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></symbol>
   <symbol id="icon-user-plus" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-4 3.5-6 7-6s7 2 7 6"/><line x1="18" y1="9" x2="18" y2="15"/><line x1="15" y1="12" x2="21" y2="12"/></symbol>
   <symbol id="icon-sun" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></symbol>
   <symbol id="icon-moon" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></symbol>
-  <symbol id="icon-copy" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M5.5 15.5h-1a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
   <symbol id="icon-share" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="8.3" y1="10.7" x2="15.7" y2="6.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="17.7"/></symbol>
   <symbol id="icon-camera" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 8z"/><circle cx="12" cy="14" r="3.5"/></symbol>
   <symbol id="icon-send" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10.5 13.5"/><path d="M21 3l-6.5 18-4-8-8-4z"/></symbol>
-  <symbol id="icon-users" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17" cy="9" r="3"/><path d="M15.5 14.3c2.8.4 5 2.2 5 5.2"/></symbol>
 </svg>
 
+<!-- =========================================================
+     SEASONAL ICONS (all themes)
+     ========================================================= -->
 <svg style="display:none" aria-hidden="true">
 
   <!-- AUTUMN -->
-  <symbol id="season-autumn-maple-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-autumn-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2c-1.4 1.7-1.6 3.4-.7 5.2-2.3-.7-4.2-.2-5.3 1.4 1.8.3 2.9 1.1 3.4 2.5-2.1-.3-3.6.6-4.3 2.4 1.9 0 3.3.6 4.2 1.9-1.5.3-2.4 1.5-2.5 3.1 1.9-.7 3.3-.5 4.2.5-.7 1.4-.5 2.8.9 4.1.6-1.4 1.6-2.2 3-2.2s2.4.8 3 2.2c1.4-1.3 1.6-2.7.9-4.1.9-1 2.3-1.2 4.2-.5-.1-1.6-1-2.8-2.5-3.1.9-1.3 2.3-1.9 4.2-1.9-.7-1.8-2.2-2.7-4.3-2.4.5-1.4 1.6-2.2 3.4-2.5-1.1-1.6-3-2.1-5.3-1.4.9-1.8.7-3.5-.7-5.2z"/>
     <path d="M12 8v13" stroke-width="1.1"/>
   </symbol>
-
-  <symbol id="season-autumn-oak-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-autumn-oak" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2.5c-1.6 0-2.9 1.2-2.9 2.8 0 .4.1.8.3 1.2-1.2-.4-2.6.2-3.2 1.4-.6 1.2-.1 2.6 1.1 3.2-.9.8-1.3 2.1-.8 3.3.5 1.1 1.7 1.8 3 1.6 0 1.4.9 2.5 2.1 2.7v3.3M12 2.5c1.6 0 2.9 1.2 2.9 2.8 0 .4-.1.8-.3 1.2 1.2-.4 2.6.2 3.2 1.4.6 1.2.1 2.6-1.1 3.2.9.8 1.3 2.1.8 3.3-.5 1.1-1.7 1.8-3 1.6 0 1.4-.9 2.5-2.1 2.7"/>
   </symbol>
-
   <symbol id="season-autumn-acorn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 21c-3 0-5-2-5-5v-4.5h10V16c0 3-2 5-5 5z"/>
     <path d="M7 11.5c0-3 2-6 5-6s5 3 5 6"/>
@@ -1073,7 +1209,6 @@
     <circle cx="14" cy="14" r=".6" fill="currentColor"/>
     <circle cx="12" cy="17" r=".6" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-autumn-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22V8"/>
     <path d="M12 8c-.3-2-1.4-3.8-3.4-5"/>
@@ -1082,10 +1217,7 @@
     <path d="M12 12c2.2 0 3.7-1.1 4.4-2.7"/>
     <path d="M12 16c-2.2 0-3.7-1.1-4.4-2.7"/>
     <path d="M12 16c2.2 0 3.7-1.1 4.4-2.7"/>
-    <circle cx="8" cy="4.5" r="1.1" fill="currentColor" opacity=".4"/>
-    <circle cx="16" cy="4.5" r="1.1" fill="currentColor" opacity=".4"/>
   </symbol>
-
   <symbol id="season-autumn-wreath" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9z"/>
     <path d="M12 7c-3 0-5 2-5 5s2 5 5 5 5-2 5-5-2-5-5-5z"/>
@@ -1093,18 +1225,12 @@
     <path d="M15 5c1 1 1.5 2 1.5 3"/>
     <path d="M9 19c-1-1-1.5-2-1.5-3"/>
     <path d="M15 19c1-1 1.5-2 1.5-3"/>
-    <circle cx="6" cy="8" r=".8" fill="currentColor" opacity=".5"/>
-    <circle cx="18" cy="8" r=".8" fill="currentColor" opacity=".5"/>
-    <circle cx="6" cy="16" r=".8" fill="currentColor" opacity=".5"/>
-    <circle cx="18" cy="16" r=".8" fill="currentColor" opacity=".5"/>
   </symbol>
-
   <symbol id="season-autumn-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3l1.2 4.8L18 9l-4.8 1.2L12 15l-1.2-4.8L6 9l4.8-1.2z"/>
     <path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
     <path d="M5 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
   </symbol>
-
   <symbol id="season-autumn-mushroom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3c-5 0-9 3.2-9 7.2h18c0-4-4-7.2-9-7.2z"/>
     <path d="M10 10.2v8c0 1 .9 2 2 2s2-1 2-2v-8"/>
@@ -1112,28 +1238,23 @@
     <circle cx="14" cy="6" r=".8" fill="currentColor"/>
     <circle cx="16" cy="8" r=".8" fill="currentColor"/>
   </symbol>
-
-  <symbol id="season-autumn-dried-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-autumn-dried" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22V12"/>
     <path d="M12 12c-2-2-2-5 0-7 2 2 2 5 0 7z"/>
     <path d="M12 12c-2 0-4-1-5-3 2-1 4 0 5 3z"/>
     <path d="M12 12c2 0 4-1 5-3-2-1-4 0-5 3z"/>
     <path d="M12 16c-1.5-1-2-3-1.5-5 1.5.5 2.5 2 1.5 5z"/>
     <path d="M12 16c1.5-1 2-3 1.5-5-1.5.5-2.5 2-1.5 5z"/>
-    <path d="M10 19c.5-.6 1.2-1 2-1s1.5.4 2 1" stroke-width="1"/>
   </symbol>
-
   <symbol id="season-autumn-berry" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="9" cy="14" r="3"/>
     <circle cx="15" cy="14" r="3"/>
     <circle cx="12" cy="10" r="3"/>
     <path d="M12 7V4"/>
-    <path d="M10 4c0-1 1-1.5 2-1.5s2 .5 2 1.5"/>
     <circle cx="9" cy="14" r=".8" fill="currentColor" opacity=".5"/>
     <circle cx="15" cy="14" r=".8" fill="currentColor" opacity=".5"/>
     <circle cx="12" cy="10" r=".8" fill="currentColor" opacity=".5"/>
   </symbol>
-
   <symbol id="season-autumn-pumpkin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
     <path d="M12 5V2.5"/>
@@ -1141,36 +1262,21 @@
   </symbol>
 
   <!-- WINTER -->
-  <symbol id="season-winter-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-winter-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
     <path d="M12 5l-2-2M12 5l2-2M12 19l-2 2M12 19l2 2"/>
     <path d="M5 12l-2-2M5 12l-2 2M19 12l2-2M19 12l2 2"/>
   </symbol>
-
-  <symbol id="season-winter-crystal-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
-    <path d="M12 5l-2-2M12 5l2-2M12 19l-2 2M12 19l2 2"/>
-    <path d="M5 12l-2-2M5 12l-2 2M19 12l2-2M19 12l2 2"/>
-    <circle cx="12" cy="12" r="2.5"/>
-    <circle cx="12" cy="5" r=".8" fill="currentColor"/>
-    <circle cx="12" cy="19" r=".8" fill="currentColor"/>
-    <circle cx="5" cy="12" r=".8" fill="currentColor"/>
-    <circle cx="19" cy="12" r=".8" fill="currentColor"/>
-  </symbol>
-
-  <symbol id="season-winter-ice-crystal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-winter-crystal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l3 5-3 5-3-5z"/>
     <path d="M12 12l3 5-3 5-3-5z"/>
     <path d="M3 7l5 3-5 3-3-3z"/>
     <path d="M21 7l5 3-5 3-3-3z" transform="translate(-2 0)"/>
   </symbol>
-
-  <symbol id="season-winter-frosted-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-winter-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
     <path d="M19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
-    <path d="M5 15l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z"/>
   </symbol>
-
   <symbol id="season-winter-snow-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22V6"/>
     <path d="M12 6c-2-1-3-3-3-5"/>
@@ -1179,15 +1285,11 @@
     <path d="M12 12c2 0 3.5-1.5 4-3"/>
     <path d="M12 16c-2 0-3.5-1.5-4-3"/>
     <path d="M12 16c2 0 3.5-1.5 4-3"/>
-    <circle cx="9" cy="4" r="1" fill="currentColor"/>
-    <circle cx="15" cy="4" r="1" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-winter-frosted-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
     <path d="M12 8v4M10 10h4" stroke-width="1"/>
   </symbol>
-
   <symbol id="season-winter-snow-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="11" r="8"/>
     <path d="M8 19h8"/>
@@ -1195,10 +1297,7 @@
     <circle cx="9" cy="9" r=".8" fill="currentColor"/>
     <circle cx="15" cy="8" r=".8" fill="currentColor"/>
     <circle cx="12" cy="14" r=".8" fill="currentColor"/>
-    <circle cx="10" cy="12" r=".5" fill="currentColor"/>
-    <circle cx="14" cy="11" r=".5" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-winter-ornament" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="14" r="6"/>
     <path d="M12 8V5"/>
@@ -1206,69 +1305,58 @@
     <path d="M10 5c0-1 1-2 2-2s2 1 2 2"/>
     <path d="M8 12c1.5-1 3-1 4 0s2.5 1 4 0" stroke-width="1"/>
   </symbol>
-
-  <symbol id="season-winter-winter-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-winter-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>
-    <path d="M12 7v10M7 12h10" stroke-width=".8"/>
+  </symbol>
+  <symbol id="season-winter-ice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v20M2 12h20"/>
+    <circle cx="12" cy="12" r="2.5"/>
   </symbol>
 
   <!-- SPRING -->
-  <symbol id="season-spring-cherry-blossom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-spring-blossom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="1.8"/>
     <path d="M12 10.2c-1.8-1-1.8-4 0-5 1.8 1 1.8 4 0 5z"/>
     <path d="M12 13.8c1.8 1 1.8 4 0 5-1.8-1-1.8-4 0-5z"/>
     <path d="M10.2 12c-1-1.8-4-1.8-5 0 1 1.8 4 1.8 5 0z"/>
     <path d="M13.8 12c1-1.8 4-1.8 5 0-1 1.8-4 1.8-5 0z"/>
   </symbol>
-
   <symbol id="season-spring-tulip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22V12"/>
     <path d="M12 12c-3 0-5-2-5-5 0-1 .5-2 1-2.5.5 1 1.5 1.5 2 1 .5-1 1.5-1.5 2-1 .5 1 1.5 1.5 2 1 .5-1 1.5-1.5 2-1 .5.5 1 1.5 1 2.5 0 3-2 5-5 5z"/>
-    <path d="M8 18c-1-1-1.5-2-1-3M16 18c1-1 1.5-2 1-3" stroke-width="1.2"/>
   </symbol>
-
-  <symbol id="season-spring-blooming-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-spring-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M3 20c4-4 8-8 12-12 2-2 4-3 6-4"/>
     <circle cx="8" cy="15" r="1.6"/>
     <circle cx="14" cy="9" r="1.6"/>
     <circle cx="18" cy="6" r="1.6"/>
-    <path d="M8 15l-1.2-2.2M14 9l-1.2-2.2M18 6l-1.2-2.2" stroke-width="1"/>
   </symbol>
-
   <symbol id="season-spring-petal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3c-3 3-4 7-2 10 2-3 4-4 6-4-1 3-3 5-6 6 3 1 6 0 8-3 1-2 1-5-1-7-2-2-4-2-5-2z"/>
   </symbol>
-
   <symbol id="season-spring-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 21c-4 0-7-3-7-7 0-5 4-9 11-11-1 7-4 11-8 13"/>
     <path d="M12 21c0-4 1-8 4-11" stroke-width="1.1"/>
   </symbol>
-
   <symbol id="season-spring-butterfly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 7v10"/>
     <path d="M12 8c-2-3-6-3-8-1 1 3 4 5 7 4"/>
     <path d="M12 8c2-3 6-3 8-1-1 3-4 5-7 4"/>
     <path d="M12 14c-2 3-6 3-8 1 1-3 4-5 7-4"/>
     <path d="M12 14c2 3 6 3 8 1-1-3-4-5-7-4"/>
-    <path d="M11 6l-1-2M13 6l1-2" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-spring-bud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22V14"/>
     <path d="M12 14c-2-2-3-4-3-6 0-2 1-3 3-3s3 1 3 3c0 2-1 4-3 6z"/>
-    <path d="M9 10c1-1 2-1.5 3-1.5s2 .5 3 1.5" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-spring-botanical-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
     <path d="M12 8v6M9 10c1 0 2 1 3 2M15 10c-1 0-2 1-3 2" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-spring-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3l1.5 5L18 9.5l-4.5 1.5L12 16l-1.5-5L6 9.5l4.5-1.5z"/>
     <path d="M18 16l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z"/>
   </symbol>
-
   <symbol id="season-spring-small-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="1.4"/>
     <circle cx="12" cy="8" r="2"/>
@@ -1282,24 +1370,15 @@
     <circle cx="12" cy="12" r="4.5"/>
     <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M4.5 19.5l2-2M17.5 6.5l2-2"/>
   </symbol>
-
-  <symbol id="season-summer-sun-ray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
-    <circle cx="12" cy="12" r="3"/>
-  </symbol>
-
   <symbol id="season-summer-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 12c-2-3-5-4-7-2 0 3 3 5 7 2z"/>
     <path d="M12 12c2-3 5-4 7-2 0 3-3 5-7 2z"/>
     <path d="M12 12v8"/>
-    <path d="M10 20l2-2 2 2"/>
   </symbol>
-
   <symbol id="season-summer-shell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 21c-5 0-9-4-9-9 0-6 5-9 9-9s9 3 9 9c0 5-4 9-9 9z"/>
     <path d="M12 3v18M8 5c-1 3-1 7 0 10M16 5c1 3 1 7 0 10"/>
   </symbol>
-
   <symbol id="season-summer-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="1.8"/>
     <path d="M12 10.2c-1.5-2-1-5 1-6 1 2 1 4-1 6z"/>
@@ -1307,140 +1386,97 @@
     <path d="M10.2 12c-2-1.5-5-1-6 1 2 1 4 1 6-1z"/>
     <path d="M13.8 12c2-1.5 5-1 6 1-2 1-4 1-6-1z"/>
   </symbol>
-
   <symbol id="season-summer-bow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 12c-2-2-5-2-6 0 1 2 4 2 6 0z"/>
     <path d="M12 12c2-2 5-2 6 0-1 2-4 2-6 0z"/>
-    <path d="M12 12v3M12 15c0 1-1 2-2 2M12 15c0 1 1 2 2 2" stroke-width="1.1"/>
+    <path d="M12 12v3"/>
   </symbol>
-
   <symbol id="season-summer-starburst" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/>
   </symbol>
-
   <symbol id="season-summer-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3c4 2 6 6 6 10 0 5-3 8-6 8s-6-3-6-8c0-4 2-8 6-10z"/>
     <path d="M12 3v18M9 8c1 1 2 2 3 3M15 8c-1 1-2 2-3 3" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-summer-citrus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="9"/>
-    <path d="M12 3v18M3 12h18M5.5 5.5l13 13M18.5 5.5l-13 13" stroke-width=".8"/>
+    <path d="M12 3v18M3 12h18" stroke-width=".8"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+  <symbol id="season-summer-sun-ray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
     <circle cx="12" cy="12" r="3"/>
   </symbol>
 
   <!-- HALLOWEEN -->
-  <symbol id="season-halloween-pumpkin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
-    <path d="M12 5V2.5"/>
-    <path d="M10 2.5c0-1 1-1.5 2-1.5s2 .5 2 1.5"/>
-  </symbol>
-
-  <symbol id="season-halloween-pumpkin-face" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
-    <path d="M12 5V2.5"/>
-    <path d="M9 11l1.5 1.5L12 11M15 11l-1.5 1.5L12 11" stroke-width="1.1"/>
-    <path d="M10 16c.5-1 1.5-1.5 2-1.5s1.5.5 2 1.5" stroke-width="1.1"/>
-  </symbol>
-
   <symbol id="season-halloween-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/>
     <circle cx="8" cy="8" r=".7" fill="currentColor"/>
     <circle cx="14" cy="5" r=".4" fill="currentColor"/>
     <circle cx="18" cy="10" r=".5" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-halloween-bat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 10c-2-4-6-5-9-3 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 3z"/>
-    <circle cx="9.5" cy="11.5" r=".5" fill="currentColor"/>
-    <circle cx="14.5" cy="11.5" r=".5" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-halloween-gothic-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l1.8 6.2L20 6l-4.2 4.8L22 12l-6.2 1.2L20 18l-6.2-2.2L12 22l-1.8-6.2L4 18l4.2-4.8L2 12l6.2-1.2L4 6l6.2 2.2z"/>
   </symbol>
-
   <symbol id="season-halloween-candle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 8c-1 1.5-.5 3 1 3.5-1.5.5-2 2-1 3.5"/>
     <rect x="9" y="15" width="6" height="7" rx="1"/>
-    <path d="M11 15v7M13 15v7" stroke-width=".8"/>
     <path d="M7 22h10"/>
   </symbol>
-
   <symbol id="season-halloween-spiderweb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
     <path d="M3 3l18 18M3 3l6 18M3 3l14 8M3 3l10 12M3 3l18 6M3 3l16 12"/>
     <path d="M7 7c5-1 9 3 8 8-6 1-10-3-8-8z"/>
-    <path d="M5 11c6 0 8 4 7 9"/>
   </symbol>
-
   <symbol id="season-halloween-spider" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
     <ellipse cx="12" cy="14" rx="3" ry="3.5"/>
     <circle cx="12" cy="9.5" r="1.5"/>
     <path d="M9 12L5 10M9 14H4.5M9.5 16l-4 2.5M15 12l4-2M15 14h4.5M14.5 16l4 2.5" stroke-width="1.1"/>
-    <circle cx="11.3" cy="9.3" r=".3" fill="currentColor"/>
-    <circle cx="12.7" cy="9.3" r=".3" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-halloween-ghost" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3c-3.5 0-6 2.5-6 6v10c0 .5.5.8 1 .5l1.5-1 1.5 1c.5.3 1 .3 1.5 0l1.5-1 1.5 1c.5.3 1 .3 1.5 0l1.5-1 1.5 1c.5.3 1 0 1-.5V9c0-3.5-2.5-6-6-6z"/>
     <circle cx="10" cy="10" r=".8" fill="currentColor"/>
     <circle cx="14" cy="10" r=".8" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-halloween-gothic-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 22V12"/>
     <path d="M12 12c-2.5-1-3-4-1.5-6 2 1 2.5 3.5 1.5 6z"/>
     <path d="M12 12c2.5-1 3-4 1.5-6-2 1-2.5 3.5-1.5 6z"/>
     <path d="M12 12c-2 1.5-5 .5-5.5-1.5 2-.5 4.5 0 5.5 1.5z"/>
     <path d="M12 12c2 1.5 5 .5 5.5-1.5-2-.5-4.5 0-5.5 1.5z"/>
-    <path d="M10 17c.5-.6 1.2-1 2-1s1.5.4 2 1"/>
   </symbol>
-
-  <symbol id="season-halloween-thorn-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3 21c3-3 6-6 9-9 3-3 6-6 9-9"/>
-    <path d="M7 17l-2-1 1-2z" fill="currentColor"/>
-    <path d="M11 13l-2-1 1-2z" fill="currentColor"/>
-    <path d="M15 9l-2-1 1-2z" fill="currentColor"/>
-    <path d="M7 17l1 2 2-1z" fill="currentColor"/>
-    <path d="M11 13l1 2 2-1z" fill="currentColor"/>
-    <path d="M15 9l1 2 2-1z" fill="currentColor"/>
-  </symbol>
-
   <symbol id="season-halloween-potion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10 3h4v4l3 5v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-7l3-5z"/>
     <path d="M8 15h8"/>
     <circle cx="11" cy="17" r=".6" fill="currentColor"/>
     <circle cx="14" cy="19" r=".6" fill="currentColor"/>
-    <path d="M10 3h4" stroke-width="1"/>
   </symbol>
-
+  <symbol id="season-halloween-pumpkin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
+    <path d="M12 5V2.5"/>
+    <path d="M10 2.5c0-1 1-1.5 2-1.5s2 .5 2 1.5"/>
+  </symbol>
   <symbol id="season-halloween-witch-hat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l2 8 1 3"/>
     <path d="M5 17h14"/>
     <path d="M3 20c0-1.5 4-3 9-3s9 1.5 9 3"/>
-    <path d="M10 17l1-4M14 17l-1-4" stroke-width="1"/>
     <path d="M8 14h9"/>
   </symbol>
-
   <symbol id="season-halloween-magic-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3l1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4z"/>
     <path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
     <circle cx="5" cy="18" r=".8" fill="currentColor"/>
-    <circle cx="20" cy="5" r=".6" fill="currentColor"/>
   </symbol>
 
   <!-- CHRISTMAS -->
   <symbol id="season-christmas-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l3 7 7 1-5 5 1 7-6-3.5L6 22l1-7-5-5 7-1z"/>
-    <path d="M12 6v12M8 10h8" stroke-width=".7"/>
   </symbol>
-
   <symbol id="season-christmas-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
-    <path d="M12 5l-2-2M12 5l2-2M12 19l-2 2M12 19l2 2"/>
-    <path d="M5 12l-2-2M5 12l-2 2M19 12l2-2M19 12l2 2"/>
   </symbol>
-
   <symbol id="season-christmas-tree" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2l3 5h-6z"/>
     <path d="M12 7l4 6h-8z"/>
@@ -1448,74 +1484,54 @@
     <path d="M12 20v2"/>
     <circle cx="9" cy="17" r=".6" fill="currentColor"/>
     <circle cx="15" cy="17" r=".6" fill="currentColor"/>
-    <circle cx="12" cy="11" r=".6" fill="currentColor"/>
-    <circle cx="10" cy="15" r=".5" fill="currentColor"/>
-    <circle cx="14" cy="15" r=".5" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-christmas-ornament" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="14" r="6"/>
     <path d="M12 8V5"/>
     <path d="M10 5h4"/>
     <path d="M10 5c0-1 1-2 2-2s2 1 2 2"/>
-    <path d="M8 12c1.5-1 3-1 4 0s2.5 1 4 0" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-christmas-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 4c-3.5 0-6 3-6 6.5V14l-2 3h16l-2-3V10.5c0-3.5-2.5-6.5-6-6.5z"/>
     <path d="M12 4V2"/>
     <circle cx="12" cy="4" r="1" fill="currentColor"/>
     <path d="M10 20c0 1 1 2 2 2s2-1 2-2"/>
-    <path d="M9 10c1-.8 2-.8 3 0s2 .8 3 0" stroke-width=".8"/>
   </symbol>
-
   <symbol id="season-christmas-holly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M5 14c-2-4 1-8 5-8 0 3-1 6-5 8z"/>
     <path d="M19 14c2-4-1-8-5-8 0 3 1 6 5 8z"/>
-    <path d="M10 14l-1-3M14 14l1-3" stroke-width="1"/>
     <circle cx="9" cy="17" r="2"/>
     <circle cx="13" cy="18" r="2"/>
     <circle cx="11" cy="15" r="1.8"/>
   </symbol>
-
   <symbol id="season-christmas-pine-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M3 20c4-3 9-6 14-8"/>
     <path d="M5 17l-1-3 3-1M9 14l-1-3 3-1M13 11l-1-3 3-1M17 9l-1-3 3-1"/>
     <path d="M5 17l3 2M9 14l3 2M13 11l3 2"/>
   </symbol>
-
   <symbol id="season-christmas-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 12c-2-3-5-4-7-2 0 3 3 5 7 2z"/>
     <path d="M12 12c2-3 5-4 7-2 0 3-3 5-7 2z"/>
     <path d="M12 12v8"/>
-    <path d="M10 20l2-2 2 2"/>
   </symbol>
-
   <symbol id="season-christmas-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="9" width="18" height="12" rx="1"/>
     <path d="M12 9v12"/>
     <path d="M12 9V6a2 2 0 1 0-2 2h2zM12 9V6a2 2 0 1 1 2 2h-2z"/>
-    <path d="M3 13h18" stroke-width=".8"/>
   </symbol>
-
   <symbol id="season-christmas-stocking" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M7 4h10v10c0 4-2 8-6 8-3 0-5-3-5-7v-5h1z"/>
-    <path d="M7 9h10" stroke-width=".8"/>
     <path d="M9 4v-1h6v1" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-christmas-candle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 8c-1 1.5-.5 3 1 3.5-1.5.5-2 2-1 3.5"/>
     <rect x="9" y="15" width="6" height="7" rx="1"/>
     <path d="M7 22h10"/>
   </symbol>
-
-  <symbol id="season-christmas-newyear-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <symbol id="season-christmas-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
     <path d="M19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
-    <circle cx="5" cy="17" r=".8" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-christmas-mistletoe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3v8"/>
     <path d="M12 11c-3 0-5 2-5 5 3 0 5-2 5-5z"/>
@@ -1524,7 +1540,6 @@
     <circle cx="12" cy="17" r=".7" fill="currentColor"/>
     <circle cx="14" cy="14" r=".7" fill="currentColor"/>
   </symbol>
-
   <symbol id="season-christmas-lights" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M2 8c4 3 8 3 10 0 2-3 6-3 10 0"/>
     <ellipse cx="5" cy="11" rx="1.2" ry="2"/>
@@ -1538,23 +1553,17 @@
     <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
     <path d="M8 9l3 3 3-3 3 3" stroke-width="1"/>
   </symbol>
-
   <symbol id="season-valentine-double-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M9 18c-.2 0-.4-.1-.5-.2C5.6 15.7 3 13.3 3 10.6 3 8.7 4.4 7 6.2 7c1.1 0 2 .6 2.5 1.5.5-.9 1.4-1.5 2.5-1.5C13 7 14.4 8.7 14.4 10.6c0 2.7-2.6 5.1-5.5 7.2-.1.1-.3.2-.4.2z"/>
     <path d="M15 20c-.2 0-.4-.1-.5-.2C11.6 17.7 9 15.3 9 12.6c0-1.9 1.4-3.6 3.2-3.6 1.1 0 2 .6 2.5 1.5.5-.9 1.4-1.5 2.5-1.5C19 9 20.4 10.7 20.4 12.6c0 2.7-2.6 5.1-5.5 7.2-.1.1-.3.2-.4.2z"/>
   </symbol>
-
   <symbol id="season-valentine-heart-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
-    <path d="M12 9c-1.5 1-2 2.5-1.5 4" stroke-width=".8"/>
   </symbol>
-
   <symbol id="season-valentine-floral-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
     <circle cx="12" cy="10" r="1.4"/>
-    <path d="M12 8.6V7M12 11.4V13M10.6 10H9M13.4 10H15" stroke-width=".8"/>
   </symbol>
-
   <symbol id="season-valentine-rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="8" r="1.6"/>
     <path d="M12 6.4c-1.8-1.2-1.8-3.6 0-4.8 1.8 1.2 1.8 3.6 0 4.8z"/>
@@ -1562,55 +1571,39 @@
     <path d="M13.6 8c1.2-1.8 3.6-1.8 4.8 0-1.2 1.8-3.6 1.8-4.8 0z"/>
     <path d="M12 9.6c-1.8 1.2-1.8 3.6 0 4.8 1.8-1.2 1.8-3.6 0-4.8z"/>
     <path d="M12 14.4V21"/>
-    <path d="M10 18c-1.2-.8-2.5-.5-3 .3 1.2.8 2.5.5 3-.3z" stroke-width="1"/>
   </symbol>
-
   <symbol id="season-valentine-envelope" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="6" width="18" height="13" rx="1"/>
     <path d="M3 8l9 6 9-6"/>
-    <path d="M12 15.5c-.15 0-.3-.05-.4-.15-1.4-1.1-2.6-2.2-2.6-3.5 0-.9.7-1.6 1.6-1.6.5 0 1 .3 1.2.7.2-.4.7-.7 1.2-.7.9 0 1.6.7 1.6 1.6 0 1.3-1.2 2.4-2.6 3.5-.1.1-.25.15-.4.15z" stroke-width=".9"/>
   </symbol>
-
   <symbol id="season-valentine-love-letter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
     <path d="M8 7h8M8 10h6M8 13h8" stroke-width="1"/>
-    <path d="M12 20c-.15 0-.3-.05-.4-.15-1.4-1.1-2.6-2.2-2.6-3.5 0-.9.7-1.6 1.6-1.6.5 0 1 .3 1.2.7.2-.4.7-.7 1.2-.7.9 0 1.6.7 1.6 1.6 0 1.3-1.2 2.4-2.6 3.5-.1.1-.25.15-.4.15z" stroke-width=".8"/>
   </symbol>
-
   <symbol id="season-valentine-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 12c-2-3-5-4-7-2 0 3 3 5 7 2z"/>
     <path d="M12 12c2-3 5-4 7-2 0 3-3 5-7 2z"/>
     <path d="M12 12v8"/>
-    <path d="M10 20l2-2 2 2"/>
   </symbol>
-
   <symbol id="season-valentine-bow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 12c-2-2-5-2-6 0 1 2 4 2 6 0z"/>
     <path d="M12 12c2-2 5-2 6 0-1 2-4 2-6 0z"/>
-    <path d="M12 12v3M12 15c0 1-1 2-2 2M12 15c0 1 1 2 2 2" stroke-width="1.1"/>
+    <path d="M12 12v3"/>
   </symbol>
-
   <symbol id="season-valentine-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
     <path d="M19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
   </symbol>
-
   <symbol id="season-valentine-cupid-bow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M5 19c6-6 11-11 14-14"/>
     <path d="M19 5l-3 1 2 2z" fill="currentColor"/>
-    <path d="M5 19l1 1 1-1-1-1z" fill="currentColor"/>
     <path d="M5 19c-1.5-1.5-1-4 1-4 2 0 3 1.5 3 3"/>
   </symbol>
-
-  <symbol id="season-valentine-champagne-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9 3v6M9 3h4v6H9z"/>
-    <path d="M9 9c0 2 1 4 1 6v4h2v-4c0-2 1-4 1-6"/>
-    <path d="M7 21h6"/>
-    <path d="M17 4l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" stroke-width="1"/>
-  </symbol>
-
 </svg>
 
+<!-- =========================================================
+     APP
+     ========================================================= -->
 <div class="app">
 
   <main class="tab-screen active" id="tab-home">
@@ -1626,8 +1619,6 @@
       <h1 id="greeting-title">Привет</h1>
       <p id="greeting-subtitle">Ваши заказы всегда под рукой</p>
     </div>
-
-    <div id="seasonal-banner-slot"></div>
 
     <section id="banner-section" hidden>
       <div class="scroll-row banner-row" id="banner-row"></div>
@@ -1930,7 +1921,7 @@
     <h2>Найти заказ по номеру</h2>
     <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">Обычно это не требуется — ваши заказы уже привязаны к аккаунту. Используйте, если не видите нужный заказ в списке.</p>
     <div style="display:flex;gap:8px;margin-bottom:12px">
-      <input id="track-input" placeholder="Номер заказа" style="flex:1;border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;">
+      <input id="track-input" placeholder="Номер заказа" style="flex:1;border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;background:var(--surface);color:var(--text);">
     </div>
     <button class="btn btn-primary btn-block" onclick="trackOrder()">Найти заказ</button>
     <div id="track-result"></div>
@@ -1955,8 +1946,8 @@
 <div id="theme-decorations" aria-hidden="true"></div>
 <script>
 /* =========================================================
-   DollieLand — Personal Order Tracking Mini App
-   С сезонной системой иконок и полной кастомизацией
+   DollieLand — Seasonal Themes (per prompt)
+   Standard = no data-season attribute → unchanged
    ========================================================= */
 
 const tg = window.Telegram?.WebApp;
