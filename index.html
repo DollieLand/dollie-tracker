@@ -30,6 +30,10 @@
     --safe-t: env(safe-area-inset-top, 0px);
     --safe-b: env(safe-area-inset-bottom, 0px);
     --nav-h: 66px;
+    --season-primary: #E78EAD;
+    --season-secondary: #B4708F;
+    --season-accent: #E78EAD;
+    --season-deco-color: #E78EAD;
   }
 
   html[data-theme="dark"] {
@@ -89,7 +93,7 @@
 
   .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 
-  .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: #B4708F; letter-spacing: 0.2px; }
+  .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: var(--season-secondary, #B4708F); letter-spacing: 0.2px; }
 
   .icon-btn {
     width: 44px; height: 44px;
@@ -329,7 +333,6 @@
     transform: rotate(180deg);
   }
 
-  /* ===== Универсальный text-link — синий (розовый акцент), без подчёркивания ===== */
   .text-link {
     display: inline-flex;
     align-items: center;
@@ -365,7 +368,7 @@
   .howitworks-card {
     flex: 0 0 auto; scroll-snap-align: start;
     width: 148px;
-    background: var(--card, #FFFFFF);
+    background: var(--surface, #FFFFFF);
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 16px 14px;
@@ -441,7 +444,7 @@
     padding: 7px 14px;
     border-radius: var(--r-pill);
     border: 1px solid var(--border);
-    background: var(--card, #FFFFFF);
+    background: var(--surface, #FFFFFF);
     font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
   }
   .dollie-filter-pill.active { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
@@ -748,28 +751,65 @@
 
   .seasonal-banner {
     border-radius: var(--r-xl);
-    padding: 18px 20px;
+    padding: 20px 22px;
     margin-bottom: 18px;
     color: #FFFFFF;
-    background: linear-gradient(140deg, var(--pink-accent), var(--pink));
     position: relative;
     overflow: hidden;
+    min-height: 120px;
   }
-  .seasonal-banner-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; opacity: 0.85; }
-  .seasonal-banner-title { font-size: 17px; font-weight: 800; margin-top: 6px; }
-  .seasonal-banner-subtitle { font-size: 12.5px; margin-top: 4px; opacity: 0.9; }
-  .seasonal-banner img.seasonal-banner-bg {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-    opacity: 0.22; z-index: 0;
+  .seasonal-banner-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; opacity: 0.9; position: relative; z-index: 2; }
+  .seasonal-banner-title { font-size: 18px; font-weight: 800; margin-top: 6px; position: relative; z-index: 2; }
+  .seasonal-banner-subtitle { font-size: 12.5px; margin-top: 4px; opacity: 0.92; position: relative; z-index: 2; }
+  .seasonal-banner-art {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
   }
-  .seasonal-banner > * { position: relative; z-index: 1; }
+  .seasonal-banner-art.art-1 { top: -10px; right: -14px; width: 130px; height: 130px; opacity: 0.32; }
+  .seasonal-banner-art.art-2 { bottom: -18px; left: -10px; width: 90px; height: 90px; opacity: 0.22; }
+  .seasonal-banner-art.art-3 { top: 50%; right: 22px; width: 44px; height: 44px; transform: translateY(-50%); opacity: 0.5; }
 
   #theme-decorations {
     position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
   }
-  #theme-decorations .deco-item { position: absolute; opacity: 0.5; }
-  @keyframes deco-fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
-  @keyframes deco-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
+  #theme-decorations .deco-item {
+    position: absolute;
+    color: var(--season-deco-color, var(--pink-accent));
+    will-change: transform, opacity;
+  }
+  #theme-decorations .deco-item svg { display: block; }
+
+  @keyframes deco-fall      { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.75; } 90% { opacity: 0.75; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+  @keyframes deco-fall-sway { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.75; } 50% { transform: translateY(50vh) translateX(24px) rotate(180deg); } 90% { opacity: 0.75; } 100% { transform: translateY(110vh) translateX(-12px) rotate(360deg); opacity: 0; } }
+  @keyframes deco-twinkle   { 0%, 100% { opacity: 0.15; transform: scale(0.85); } 50% { opacity: 0.85; transform: scale(1.1); } }
+  @keyframes deco-float     { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+  @keyframes deco-sway      { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+  @keyframes deco-glow      { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
+  @keyframes deco-bat-fly   { 0% { transform: translate(-20vw, 0) scaleX(1); opacity: 0; } 15% { opacity: 0.85; } 50% { transform: translate(50vw, -20px) scaleX(1); } 85% { opacity: 0.85; } 100% { transform: translate(120vw, 10px) scaleX(1); opacity: 0; } }
+  @keyframes deco-shimmer   { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 0.95; transform: scale(1.15); } }
+
+  .anim-fall-slow     { animation: deco-fall 14s linear infinite; }
+  .anim-fall-med      { animation: deco-fall 10s linear infinite; }
+  .anim-fall-sway     { animation: deco-fall-sway 16s ease-in-out infinite; }
+  .anim-twinkle       { animation: deco-twinkle 3.2s ease-in-out infinite; }
+  .anim-float         { animation: deco-float 6s ease-in-out infinite; }
+  .anim-sway          { animation: deco-sway 7s ease-in-out infinite; transform-origin: 50% 0; }
+  .anim-glow          { animation: deco-glow 5s ease-in-out infinite; }
+  .anim-shimmer       { animation: deco-shimmer 4s ease-in-out infinite; }
+  .anim-bat-fly       { animation: deco-bat-fly 22s linear infinite; }
+
+  .seasonal-corners { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; z-index: 1; }
+  .seasonal-corner {
+    position: absolute;
+    color: var(--season-accent, var(--pink-accent));
+  }
+  .seasonal-corner.tl { top: 10px; left: 10px; width: 32px; height: 32px; opacity: 0.55; }
+  .seasonal-corner.tr { top: 10px; right: 10px; width: 32px; height: 32px; opacity: 0.55; }
+  .seasonal-corner.bl { bottom: 10px; left: 10px; width: 32px; height: 32px; opacity: 0.45; }
+  .seasonal-corner.br { bottom: 10px; right: 10px; width: 32px; height: 32px; opacity: 0.45; }
+
+  .empty-illustration.seasonal { filter: drop-shadow(0 4px 12px rgba(231,142,173,0.15)); }
 
   .contact-card { text-align: center; padding: 6px 0 4px; }
   .contact-name { font-size: 16.5px; font-weight: 700; }
@@ -813,9 +853,7 @@
     overscroll-behavior: contain;
   }
   .bottom-sheet.open { display: block; transform: translateY(0); }
-  .bottom-sheet.expanded {
-    max-height: calc(var(--tg-vh, 100vh) - var(--safe-t) - 14px);
-  }
+  .bottom-sheet.expanded { max-height: calc(var(--tg-vh, 100vh) - var(--safe-t) - 14px); }
   .bottom-sheet.dragging { transition: none; }
 
   .sheet-handle-area { padding: 8px 0 2px; touch-action: none; cursor: grab; }
@@ -1014,6 +1052,565 @@
   <symbol id="icon-users" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17" cy="9" r="3"/><path d="M15.5 14.3c2.8.4 5 2.2 5 5.2"/></symbol>
 </svg>
 
+<svg style="display:none" aria-hidden="true">
+
+  <!-- AUTUMN -->
+  <symbol id="season-autumn-maple-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2c-1.4 1.7-1.6 3.4-.7 5.2-2.3-.7-4.2-.2-5.3 1.4 1.8.3 2.9 1.1 3.4 2.5-2.1-.3-3.6.6-4.3 2.4 1.9 0 3.3.6 4.2 1.9-1.5.3-2.4 1.5-2.5 3.1 1.9-.7 3.3-.5 4.2.5-.7 1.4-.5 2.8.9 4.1.6-1.4 1.6-2.2 3-2.2s2.4.8 3 2.2c1.4-1.3 1.6-2.7.9-4.1.9-1 2.3-1.2 4.2-.5-.1-1.6-1-2.8-2.5-3.1.9-1.3 2.3-1.9 4.2-1.9-.7-1.8-2.2-2.7-4.3-2.4.5-1.4 1.6-2.2 3.4-2.5-1.1-1.6-3-2.1-5.3-1.4.9-1.8.7-3.5-.7-5.2z"/>
+    <path d="M12 8v13" stroke-width="1.1"/>
+  </symbol>
+
+  <symbol id="season-autumn-oak-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.5c-1.6 0-2.9 1.2-2.9 2.8 0 .4.1.8.3 1.2-1.2-.4-2.6.2-3.2 1.4-.6 1.2-.1 2.6 1.1 3.2-.9.8-1.3 2.1-.8 3.3.5 1.1 1.7 1.8 3 1.6 0 1.4.9 2.5 2.1 2.7v3.3M12 2.5c1.6 0 2.9 1.2 2.9 2.8 0 .4-.1.8-.3 1.2 1.2-.4 2.6.2 3.2 1.4.6 1.2.1 2.6-1.1 3.2.9.8 1.3 2.1.8 3.3-.5 1.1-1.7 1.8-3 1.6 0 1.4-.9 2.5-2.1 2.7"/>
+  </symbol>
+
+  <symbol id="season-autumn-acorn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21c-3 0-5-2-5-5v-4.5h10V16c0 3-2 5-5 5z"/>
+    <path d="M7 11.5c0-3 2-6 5-6s5 3 5 6"/>
+    <path d="M9 7.5c1-1 2-1.5 3-1.5s2 .5 3 1.5"/>
+    <path d="M12 5.5V2.5M10 3.2c0-1 1-1.6 2-1.6s2 .6 2 1.6"/>
+    <circle cx="10" cy="14" r=".6" fill="currentColor"/>
+    <circle cx="14" cy="14" r=".6" fill="currentColor"/>
+    <circle cx="12" cy="17" r=".6" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-autumn-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V8"/>
+    <path d="M12 8c-.3-2-1.4-3.8-3.4-5"/>
+    <path d="M12 8c.3-2 1.4-3.8 3.4-5"/>
+    <path d="M12 12c-2.2 0-3.7-1.1-4.4-2.7"/>
+    <path d="M12 12c2.2 0 3.7-1.1 4.4-2.7"/>
+    <path d="M12 16c-2.2 0-3.7-1.1-4.4-2.7"/>
+    <path d="M12 16c2.2 0 3.7-1.1 4.4-2.7"/>
+    <circle cx="8" cy="4.5" r="1.1" fill="currentColor" opacity=".4"/>
+    <circle cx="16" cy="4.5" r="1.1" fill="currentColor" opacity=".4"/>
+  </symbol>
+
+  <symbol id="season-autumn-wreath" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9z"/>
+    <path d="M12 7c-3 0-5 2-5 5s2 5 5 5 5-2 5-5-2-5-5-5z"/>
+    <path d="M9 5c-1 1-1.5 2-1.5 3"/>
+    <path d="M15 5c1 1 1.5 2 1.5 3"/>
+    <path d="M9 19c-1-1-1.5-2-1.5-3"/>
+    <path d="M15 19c1-1 1.5-2 1.5-3"/>
+    <circle cx="6" cy="8" r=".8" fill="currentColor" opacity=".5"/>
+    <circle cx="18" cy="8" r=".8" fill="currentColor" opacity=".5"/>
+    <circle cx="6" cy="16" r=".8" fill="currentColor" opacity=".5"/>
+    <circle cx="18" cy="16" r=".8" fill="currentColor" opacity=".5"/>
+  </symbol>
+
+  <symbol id="season-autumn-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.2 4.8L18 9l-4.8 1.2L12 15l-1.2-4.8L6 9l4.8-1.2z"/>
+    <path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
+    <path d="M5 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
+  </symbol>
+
+  <symbol id="season-autumn-mushroom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3c-5 0-9 3.2-9 7.2h18c0-4-4-7.2-9-7.2z"/>
+    <path d="M10 10.2v8c0 1 .9 2 2 2s2-1 2-2v-8"/>
+    <circle cx="8" cy="7" r=".8" fill="currentColor"/>
+    <circle cx="14" cy="6" r=".8" fill="currentColor"/>
+    <circle cx="16" cy="8" r=".8" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-autumn-dried-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V12"/>
+    <path d="M12 12c-2-2-2-5 0-7 2 2 2 5 0 7z"/>
+    <path d="M12 12c-2 0-4-1-5-3 2-1 4 0 5 3z"/>
+    <path d="M12 12c2 0 4-1 5-3-2-1-4 0-5 3z"/>
+    <path d="M12 16c-1.5-1-2-3-1.5-5 1.5.5 2.5 2 1.5 5z"/>
+    <path d="M12 16c1.5-1 2-3 1.5-5-1.5.5-2.5 2-1.5 5z"/>
+    <path d="M10 19c.5-.6 1.2-1 2-1s1.5.4 2 1" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-autumn-berry" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="9" cy="14" r="3"/>
+    <circle cx="15" cy="14" r="3"/>
+    <circle cx="12" cy="10" r="3"/>
+    <path d="M12 7V4"/>
+    <path d="M10 4c0-1 1-1.5 2-1.5s2 .5 2 1.5"/>
+    <circle cx="9" cy="14" r=".8" fill="currentColor" opacity=".5"/>
+    <circle cx="15" cy="14" r=".8" fill="currentColor" opacity=".5"/>
+    <circle cx="12" cy="10" r=".8" fill="currentColor" opacity=".5"/>
+  </symbol>
+
+  <symbol id="season-autumn-pumpkin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
+    <path d="M12 5V2.5"/>
+    <path d="M10 2.5c0-1 1-1.5 2-1.5s2 .5 2 1.5"/>
+  </symbol>
+
+  <!-- WINTER -->
+  <symbol id="season-winter-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
+    <path d="M12 5l-2-2M12 5l2-2M12 19l-2 2M12 19l2 2"/>
+    <path d="M5 12l-2-2M5 12l-2 2M19 12l2-2M19 12l2 2"/>
+  </symbol>
+
+  <symbol id="season-winter-crystal-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
+    <path d="M12 5l-2-2M12 5l2-2M12 19l-2 2M12 19l2 2"/>
+    <path d="M5 12l-2-2M5 12l-2 2M19 12l2-2M19 12l2 2"/>
+    <circle cx="12" cy="12" r="2.5"/>
+    <circle cx="12" cy="5" r=".8" fill="currentColor"/>
+    <circle cx="12" cy="19" r=".8" fill="currentColor"/>
+    <circle cx="5" cy="12" r=".8" fill="currentColor"/>
+    <circle cx="19" cy="12" r=".8" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-winter-ice-crystal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l3 5-3 5-3-5z"/>
+    <path d="M12 12l3 5-3 5-3-5z"/>
+    <path d="M3 7l5 3-5 3-3-3z"/>
+    <path d="M21 7l5 3-5 3-3-3z" transform="translate(-2 0)"/>
+  </symbol>
+
+  <symbol id="season-winter-frosted-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
+    <path d="M19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
+    <path d="M5 15l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z"/>
+  </symbol>
+
+  <symbol id="season-winter-snow-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V6"/>
+    <path d="M12 6c-2-1-3-3-3-5"/>
+    <path d="M12 6c2-1 3-3 3-5"/>
+    <path d="M12 12c-2 0-3.5-1.5-4-3"/>
+    <path d="M12 12c2 0 3.5-1.5 4-3"/>
+    <path d="M12 16c-2 0-3.5-1.5-4-3"/>
+    <path d="M12 16c2 0 3.5-1.5 4-3"/>
+    <circle cx="9" cy="4" r="1" fill="currentColor"/>
+    <circle cx="15" cy="4" r="1" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-winter-frosted-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+    <path d="M12 8v4M10 10h4" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-winter-snow-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="11" r="8"/>
+    <path d="M8 19h8"/>
+    <path d="M10 21h4"/>
+    <circle cx="9" cy="9" r=".8" fill="currentColor"/>
+    <circle cx="15" cy="8" r=".8" fill="currentColor"/>
+    <circle cx="12" cy="14" r=".8" fill="currentColor"/>
+    <circle cx="10" cy="12" r=".5" fill="currentColor"/>
+    <circle cx="14" cy="11" r=".5" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-winter-ornament" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="14" r="6"/>
+    <path d="M12 8V5"/>
+    <path d="M10 5h4"/>
+    <path d="M10 5c0-1 1-2 2-2s2 1 2 2"/>
+    <path d="M8 12c1.5-1 3-1 4 0s2.5 1 4 0" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-winter-winter-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>
+    <path d="M12 7v10M7 12h10" stroke-width=".8"/>
+  </symbol>
+
+  <!-- SPRING -->
+  <symbol id="season-spring-cherry-blossom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1.8"/>
+    <path d="M12 10.2c-1.8-1-1.8-4 0-5 1.8 1 1.8 4 0 5z"/>
+    <path d="M12 13.8c1.8 1 1.8 4 0 5-1.8-1-1.8-4 0-5z"/>
+    <path d="M10.2 12c-1-1.8-4-1.8-5 0 1 1.8 4 1.8 5 0z"/>
+    <path d="M13.8 12c1-1.8 4-1.8 5 0-1 1.8-4 1.8-5 0z"/>
+  </symbol>
+
+  <symbol id="season-spring-tulip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V12"/>
+    <path d="M12 12c-3 0-5-2-5-5 0-1 .5-2 1-2.5.5 1 1.5 1.5 2 1 .5-1 1.5-1.5 2-1 .5 1 1.5 1.5 2 1 .5-1 1.5-1.5 2-1 .5.5 1 1.5 1 2.5 0 3-2 5-5 5z"/>
+    <path d="M8 18c-1-1-1.5-2-1-3M16 18c1-1 1.5-2 1-3" stroke-width="1.2"/>
+  </symbol>
+
+  <symbol id="season-spring-blooming-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 20c4-4 8-8 12-12 2-2 4-3 6-4"/>
+    <circle cx="8" cy="15" r="1.6"/>
+    <circle cx="14" cy="9" r="1.6"/>
+    <circle cx="18" cy="6" r="1.6"/>
+    <path d="M8 15l-1.2-2.2M14 9l-1.2-2.2M18 6l-1.2-2.2" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-spring-petal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3c-3 3-4 7-2 10 2-3 4-4 6-4-1 3-3 5-6 6 3 1 6 0 8-3 1-2 1-5-1-7-2-2-4-2-5-2z"/>
+  </symbol>
+
+  <symbol id="season-spring-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21c-4 0-7-3-7-7 0-5 4-9 11-11-1 7-4 11-8 13"/>
+    <path d="M12 21c0-4 1-8 4-11" stroke-width="1.1"/>
+  </symbol>
+
+  <symbol id="season-spring-butterfly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 7v10"/>
+    <path d="M12 8c-2-3-6-3-8-1 1 3 4 5 7 4"/>
+    <path d="M12 8c2-3 6-3 8-1-1 3-4 5-7 4"/>
+    <path d="M12 14c-2 3-6 3-8 1 1-3 4-5 7-4"/>
+    <path d="M12 14c2 3 6 3 8 1-1-3-4-5-7-4"/>
+    <path d="M11 6l-1-2M13 6l1-2" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-spring-bud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V14"/>
+    <path d="M12 14c-2-2-3-4-3-6 0-2 1-3 3-3s3 1 3 3c0 2-1 4-3 6z"/>
+    <path d="M9 10c1-1 2-1.5 3-1.5s2 .5 3 1.5" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-spring-botanical-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+    <path d="M12 8v6M9 10c1 0 2 1 3 2M15 10c-1 0-2 1-3 2" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-spring-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.5 5L18 9.5l-4.5 1.5L12 16l-1.5-5L6 9.5l4.5-1.5z"/>
+    <path d="M18 16l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z"/>
+  </symbol>
+
+  <symbol id="season-spring-small-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1.4"/>
+    <circle cx="12" cy="8" r="2"/>
+    <circle cx="12" cy="16" r="2"/>
+    <circle cx="8" cy="12" r="2"/>
+    <circle cx="16" cy="12" r="2"/>
+  </symbol>
+
+  <!-- SUMMER -->
+  <symbol id="season-summer-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="4.5"/>
+    <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.5 4.5l2 2M17.5 17.5l2 2M4.5 19.5l2-2M17.5 6.5l2-2"/>
+  </symbol>
+
+  <symbol id="season-summer-sun-ray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+
+  <symbol id="season-summer-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 12c-2-3-5-4-7-2 0 3 3 5 7 2z"/>
+    <path d="M12 12c2-3 5-4 7-2 0 3-3 5-7 2z"/>
+    <path d="M12 12v8"/>
+    <path d="M10 20l2-2 2 2"/>
+  </symbol>
+
+  <symbol id="season-summer-shell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21c-5 0-9-4-9-9 0-6 5-9 9-9s9 3 9 9c0 5-4 9-9 9z"/>
+    <path d="M12 3v18M8 5c-1 3-1 7 0 10M16 5c1 3 1 7 0 10"/>
+  </symbol>
+
+  <symbol id="season-summer-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="1.8"/>
+    <path d="M12 10.2c-1.5-2-1-5 1-6 1 2 1 4-1 6z"/>
+    <path d="M12 13.8c1.5 2 1 5-1 6-1-2-1-4 1-6z"/>
+    <path d="M10.2 12c-2-1.5-5-1-6 1 2 1 4 1 6-1z"/>
+    <path d="M13.8 12c2-1.5 5-1 6 1-2 1-4 1-6-1z"/>
+  </symbol>
+
+  <symbol id="season-summer-bow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 12c-2-2-5-2-6 0 1 2 4 2 6 0z"/>
+    <path d="M12 12c2-2 5-2 6 0-1 2-4 2-6 0z"/>
+    <path d="M12 12v3M12 15c0 1-1 2-2 2M12 15c0 1 1 2 2 2" stroke-width="1.1"/>
+  </symbol>
+
+  <symbol id="season-summer-starburst" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/>
+  </symbol>
+
+  <symbol id="season-summer-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3c4 2 6 6 6 10 0 5-3 8-6 8s-6-3-6-8c0-4 2-8 6-10z"/>
+    <path d="M12 3v18M9 8c1 1 2 2 3 3M15 8c-1 1-2 2-3 3" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-summer-citrus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/>
+    <path d="M12 3v18M3 12h18M5.5 5.5l13 13M18.5 5.5l-13 13" stroke-width=".8"/>
+    <circle cx="12" cy="12" r="3"/>
+  </symbol>
+
+  <!-- HALLOWEEN -->
+  <symbol id="season-halloween-pumpkin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
+    <path d="M12 5V2.5"/>
+    <path d="M10 2.5c0-1 1-1.5 2-1.5s2 .5 2 1.5"/>
+  </symbol>
+
+  <symbol id="season-halloween-pumpkin-face" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5c-3-2-7-1.5-9 1.5-2 4 1 10 5 12 2 .9 4 .9 4 .9s2 0 4-.9c4-2 7-8 5-12C19 3.5 15 3 12 5z"/>
+    <path d="M12 5V2.5"/>
+    <path d="M9 11l1.5 1.5L12 11M15 11l-1.5 1.5L12 11" stroke-width="1.1"/>
+    <path d="M10 16c.5-1 1.5-1.5 2-1.5s1.5.5 2 1.5" stroke-width="1.1"/>
+  </symbol>
+
+  <symbol id="season-halloween-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/>
+    <circle cx="8" cy="8" r=".7" fill="currentColor"/>
+    <circle cx="14" cy="5" r=".4" fill="currentColor"/>
+    <circle cx="18" cy="10" r=".5" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-halloween-bat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 10c-2-4-6-5-9-3 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 3z"/>
+    <circle cx="9.5" cy="11.5" r=".5" fill="currentColor"/>
+    <circle cx="14.5" cy="11.5" r=".5" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-halloween-gothic-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l1.8 6.2L20 6l-4.2 4.8L22 12l-6.2 1.2L20 18l-6.2-2.2L12 22l-1.8-6.2L4 18l4.2-4.8L2 12l6.2-1.2L4 6l6.2 2.2z"/>
+  </symbol>
+
+  <symbol id="season-halloween-candle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 8c-1 1.5-.5 3 1 3.5-1.5.5-2 2-1 3.5"/>
+    <rect x="9" y="15" width="6" height="7" rx="1"/>
+    <path d="M11 15v7M13 15v7" stroke-width=".8"/>
+    <path d="M7 22h10"/>
+  </symbol>
+
+  <symbol id="season-halloween-spiderweb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 3l18 18M3 3l6 18M3 3l14 8M3 3l10 12M3 3l18 6M3 3l16 12"/>
+    <path d="M7 7c5-1 9 3 8 8-6 1-10-3-8-8z"/>
+    <path d="M5 11c6 0 8 4 7 9"/>
+  </symbol>
+
+  <symbol id="season-halloween-spider" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="12" cy="14" rx="3" ry="3.5"/>
+    <circle cx="12" cy="9.5" r="1.5"/>
+    <path d="M9 12L5 10M9 14H4.5M9.5 16l-4 2.5M15 12l4-2M15 14h4.5M14.5 16l4 2.5" stroke-width="1.1"/>
+    <circle cx="11.3" cy="9.3" r=".3" fill="currentColor"/>
+    <circle cx="12.7" cy="9.3" r=".3" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-halloween-ghost" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3c-3.5 0-6 2.5-6 6v10c0 .5.5.8 1 .5l1.5-1 1.5 1c.5.3 1 .3 1.5 0l1.5-1 1.5 1c.5.3 1 .3 1.5 0l1.5-1 1.5 1c.5.3 1 0 1-.5V9c0-3.5-2.5-6-6-6z"/>
+    <circle cx="10" cy="10" r=".8" fill="currentColor"/>
+    <circle cx="14" cy="10" r=".8" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-halloween-gothic-flower" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V12"/>
+    <path d="M12 12c-2.5-1-3-4-1.5-6 2 1 2.5 3.5 1.5 6z"/>
+    <path d="M12 12c2.5-1 3-4 1.5-6-2 1-2.5 3.5-1.5 6z"/>
+    <path d="M12 12c-2 1.5-5 .5-5.5-1.5 2-.5 4.5 0 5.5 1.5z"/>
+    <path d="M12 12c2 1.5 5 .5 5.5-1.5-2-.5-4.5 0-5.5 1.5z"/>
+    <path d="M10 17c.5-.6 1.2-1 2-1s1.5.4 2 1"/>
+  </symbol>
+
+  <symbol id="season-halloween-thorn-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 21c3-3 6-6 9-9 3-3 6-6 9-9"/>
+    <path d="M7 17l-2-1 1-2z" fill="currentColor"/>
+    <path d="M11 13l-2-1 1-2z" fill="currentColor"/>
+    <path d="M15 9l-2-1 1-2z" fill="currentColor"/>
+    <path d="M7 17l1 2 2-1z" fill="currentColor"/>
+    <path d="M11 13l1 2 2-1z" fill="currentColor"/>
+    <path d="M15 9l1 2 2-1z" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-halloween-potion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 3h4v4l3 5v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-7l3-5z"/>
+    <path d="M8 15h8"/>
+    <circle cx="11" cy="17" r=".6" fill="currentColor"/>
+    <circle cx="14" cy="19" r=".6" fill="currentColor"/>
+    <path d="M10 3h4" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-halloween-witch-hat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l2 8 1 3"/>
+    <path d="M5 17h14"/>
+    <path d="M3 20c0-1.5 4-3 9-3s9 1.5 9 3"/>
+    <path d="M10 17l1-4M14 17l-1-4" stroke-width="1"/>
+    <path d="M8 14h9"/>
+  </symbol>
+
+  <symbol id="season-halloween-magic-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4z"/>
+    <path d="M19 15l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5z"/>
+    <circle cx="5" cy="18" r=".8" fill="currentColor"/>
+    <circle cx="20" cy="5" r=".6" fill="currentColor"/>
+  </symbol>
+
+  <!-- CHRISTMAS -->
+  <symbol id="season-christmas-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l3 7 7 1-5 5 1 7-6-3.5L6 22l1-7-5-5 7-1z"/>
+    <path d="M12 6v12M8 10h8" stroke-width=".7"/>
+  </symbol>
+
+  <symbol id="season-christmas-snowflake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
+    <path d="M12 5l-2-2M12 5l2-2M12 19l-2 2M12 19l2 2"/>
+    <path d="M5 12l-2-2M5 12l-2 2M19 12l2-2M19 12l2 2"/>
+  </symbol>
+
+  <symbol id="season-christmas-tree" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2l3 5h-6z"/>
+    <path d="M12 7l4 6h-8z"/>
+    <path d="M12 13l5 7H7z"/>
+    <path d="M12 20v2"/>
+    <circle cx="9" cy="17" r=".6" fill="currentColor"/>
+    <circle cx="15" cy="17" r=".6" fill="currentColor"/>
+    <circle cx="12" cy="11" r=".6" fill="currentColor"/>
+    <circle cx="10" cy="15" r=".5" fill="currentColor"/>
+    <circle cx="14" cy="15" r=".5" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-christmas-ornament" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="14" r="6"/>
+    <path d="M12 8V5"/>
+    <path d="M10 5h4"/>
+    <path d="M10 5c0-1 1-2 2-2s2 1 2 2"/>
+    <path d="M8 12c1.5-1 3-1 4 0s2.5 1 4 0" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-christmas-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 4c-3.5 0-6 3-6 6.5V14l-2 3h16l-2-3V10.5c0-3.5-2.5-6.5-6-6.5z"/>
+    <path d="M12 4V2"/>
+    <circle cx="12" cy="4" r="1" fill="currentColor"/>
+    <path d="M10 20c0 1 1 2 2 2s2-1 2-2"/>
+    <path d="M9 10c1-.8 2-.8 3 0s2 .8 3 0" stroke-width=".8"/>
+  </symbol>
+
+  <symbol id="season-christmas-holly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 14c-2-4 1-8 5-8 0 3-1 6-5 8z"/>
+    <path d="M19 14c2-4-1-8-5-8 0 3 1 6 5 8z"/>
+    <path d="M10 14l-1-3M14 14l1-3" stroke-width="1"/>
+    <circle cx="9" cy="17" r="2"/>
+    <circle cx="13" cy="18" r="2"/>
+    <circle cx="11" cy="15" r="1.8"/>
+  </symbol>
+
+  <symbol id="season-christmas-pine-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 20c4-3 9-6 14-8"/>
+    <path d="M5 17l-1-3 3-1M9 14l-1-3 3-1M13 11l-1-3 3-1M17 9l-1-3 3-1"/>
+    <path d="M5 17l3 2M9 14l3 2M13 11l3 2"/>
+  </symbol>
+
+  <symbol id="season-christmas-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 12c-2-3-5-4-7-2 0 3 3 5 7 2z"/>
+    <path d="M12 12c2-3 5-4 7-2 0 3-3 5-7 2z"/>
+    <path d="M12 12v8"/>
+    <path d="M10 20l2-2 2 2"/>
+  </symbol>
+
+  <symbol id="season-christmas-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="9" width="18" height="12" rx="1"/>
+    <path d="M12 9v12"/>
+    <path d="M12 9V6a2 2 0 1 0-2 2h2zM12 9V6a2 2 0 1 1 2 2h-2z"/>
+    <path d="M3 13h18" stroke-width=".8"/>
+  </symbol>
+
+  <symbol id="season-christmas-stocking" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 4h10v10c0 4-2 8-6 8-3 0-5-3-5-7v-5h1z"/>
+    <path d="M7 9h10" stroke-width=".8"/>
+    <path d="M9 4v-1h6v1" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-christmas-candle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 8c-1 1.5-.5 3 1 3.5-1.5.5-2 2-1 3.5"/>
+    <rect x="9" y="15" width="6" height="7" rx="1"/>
+    <path d="M7 22h10"/>
+  </symbol>
+
+  <symbol id="season-christmas-newyear-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
+    <path d="M19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
+    <circle cx="5" cy="17" r=".8" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-christmas-mistletoe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3v8"/>
+    <path d="M12 11c-3 0-5 2-5 5 3 0 5-2 5-5z"/>
+    <path d="M12 11c3 0 5 2 5 5-3 0-5-2-5-5z"/>
+    <circle cx="10" cy="14" r=".7" fill="currentColor"/>
+    <circle cx="12" cy="17" r=".7" fill="currentColor"/>
+    <circle cx="14" cy="14" r=".7" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="season-christmas-lights" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 8c4 3 8 3 10 0 2-3 6-3 10 0"/>
+    <ellipse cx="5" cy="11" rx="1.2" ry="2"/>
+    <ellipse cx="10" cy="12" rx="1.2" ry="2"/>
+    <ellipse cx="14" cy="12" rx="1.2" ry="2"/>
+    <ellipse cx="19" cy="11" rx="1.2" ry="2"/>
+  </symbol>
+
+  <!-- VALENTINE -->
+  <symbol id="season-valentine-heart-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+    <path d="M8 9l3 3 3-3 3 3" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-valentine-double-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18c-.2 0-.4-.1-.5-.2C5.6 15.7 3 13.3 3 10.6 3 8.7 4.4 7 6.2 7c1.1 0 2 .6 2.5 1.5.5-.9 1.4-1.5 2.5-1.5C13 7 14.4 8.7 14.4 10.6c0 2.7-2.6 5.1-5.5 7.2-.1.1-.3.2-.4.2z"/>
+    <path d="M15 20c-.2 0-.4-.1-.5-.2C11.6 17.7 9 15.3 9 12.6c0-1.9 1.4-3.6 3.2-3.6 1.1 0 2 .6 2.5 1.5.5-.9 1.4-1.5 2.5-1.5C19 9 20.4 10.7 20.4 12.6c0 2.7-2.6 5.1-5.5 7.2-.1.1-.3.2-.4.2z"/>
+  </symbol>
+
+  <symbol id="season-valentine-heart-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+    <path d="M12 9c-1.5 1-2 2.5-1.5 4" stroke-width=".8"/>
+  </symbol>
+
+  <symbol id="season-valentine-floral-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+    <circle cx="12" cy="10" r="1.4"/>
+    <path d="M12 8.6V7M12 11.4V13M10.6 10H9M13.4 10H15" stroke-width=".8"/>
+  </symbol>
+
+  <symbol id="season-valentine-rose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8" r="1.6"/>
+    <path d="M12 6.4c-1.8-1.2-1.8-3.6 0-4.8 1.8 1.2 1.8 3.6 0 4.8z"/>
+    <path d="M10.4 8c-1.2-1.8-3.6-1.8-4.8 0 1.2 1.8 3.6 1.8 4.8 0z"/>
+    <path d="M13.6 8c1.2-1.8 3.6-1.8 4.8 0-1.2 1.8-3.6 1.8-4.8 0z"/>
+    <path d="M12 9.6c-1.8 1.2-1.8 3.6 0 4.8 1.8-1.2 1.8-3.6 0-4.8z"/>
+    <path d="M12 14.4V21"/>
+    <path d="M10 18c-1.2-.8-2.5-.5-3 .3 1.2.8 2.5.5 3-.3z" stroke-width="1"/>
+  </symbol>
+
+  <symbol id="season-valentine-envelope" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="6" width="18" height="13" rx="1"/>
+    <path d="M3 8l9 6 9-6"/>
+    <path d="M12 15.5c-.15 0-.3-.05-.4-.15-1.4-1.1-2.6-2.2-2.6-3.5 0-.9.7-1.6 1.6-1.6.5 0 1 .3 1.2.7.2-.4.7-.7 1.2-.7.9 0 1.6.7 1.6 1.6 0 1.3-1.2 2.4-2.6 3.5-.1.1-.25.15-.4.15z" stroke-width=".9"/>
+  </symbol>
+
+  <symbol id="season-valentine-love-letter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+    <path d="M8 7h8M8 10h6M8 13h8" stroke-width="1"/>
+    <path d="M12 20c-.15 0-.3-.05-.4-.15-1.4-1.1-2.6-2.2-2.6-3.5 0-.9.7-1.6 1.6-1.6.5 0 1 .3 1.2.7.2-.4.7-.7 1.2-.7.9 0 1.6.7 1.6 1.6 0 1.3-1.2 2.4-2.6 3.5-.1.1-.25.15-.4.15z" stroke-width=".8"/>
+  </symbol>
+
+  <symbol id="season-valentine-ribbon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 12c-2-3-5-4-7-2 0 3 3 5 7 2z"/>
+    <path d="M12 12c2-3 5-4 7-2 0 3-3 5-7 2z"/>
+    <path d="M12 12v8"/>
+    <path d="M10 20l2-2 2 2"/>
+  </symbol>
+
+  <symbol id="season-valentine-bow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 12c-2-2-5-2-6 0 1 2 4 2 6 0z"/>
+    <path d="M12 12c2-2 5-2 6 0-1 2-4 2-6 0z"/>
+    <path d="M12 12v3M12 15c0 1-1 2-2 2M12 15c0 1 1 2 2 2" stroke-width="1.1"/>
+  </symbol>
+
+  <symbol id="season-valentine-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/>
+    <path d="M19 15l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/>
+  </symbol>
+
+  <symbol id="season-valentine-cupid-bow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 19c6-6 11-11 14-14"/>
+    <path d="M19 5l-3 1 2 2z" fill="currentColor"/>
+    <path d="M5 19l1 1 1-1-1-1z" fill="currentColor"/>
+    <path d="M5 19c-1.5-1.5-1-4 1-4 2 0 3 1.5 3 3"/>
+  </symbol>
+
+  <symbol id="season-valentine-champagne-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3v6M9 3h4v6H9z"/>
+    <path d="M9 9c0 2 1 4 1 6v4h2v-4c0-2 1-4 1-6"/>
+    <path d="M7 21h6"/>
+    <path d="M17 4l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" stroke-width="1"/>
+  </symbol>
+
+</svg>
+
 <div class="app">
 
   <main class="tab-screen active" id="tab-home">
@@ -1027,7 +1624,7 @@
 
     <div class="greeting">
       <h1 id="greeting-title">Привет</h1>
-      <p>Ваши заказы всегда под рукой</p>
+      <p id="greeting-subtitle">Ваши заказы всегда под рукой</p>
     </div>
 
     <div id="seasonal-banner-slot"></div>
@@ -1040,7 +1637,7 @@
     <button class="dollie-card" onclick="openDolliesSheet()">
       <div class="dollie-card-top">
         <span class="dollie-label">Dollie Club</span>
-        <svg class="icon"><use href="#icon-heart"/></svg>
+        <svg class="icon" id="dollie-card-icon"><use href="#icon-heart"/></svg>
       </div>
       <div class="dollie-balance-row">
         <span class="dollie-balance-num" id="dollie-balance-home">—</span>
@@ -1051,7 +1648,7 @@
     </button>
 
     <button class="orders-summary-card" id="orders-summary-card" onclick="switchTab('orders')">
-      <div class="orders-summary-icon"><svg class="icon"><use href="#icon-package"/></svg></div>
+      <div class="orders-summary-icon"><svg class="icon" id="orders-summary-icon"><use href="#icon-package"/></svg></div>
       <div class="orders-summary-text" id="orders-summary-text">Загружаем заказы…</div>
       <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
     </button>
@@ -1356,10 +1953,10 @@
 
 <div class="toast" id="toast"></div>
 <div id="theme-decorations" aria-hidden="true"></div>
-
 <script>
 /* =========================================================
    DollieLand — Personal Order Tracking Mini App
+   С сезонной системой иконок и полной кастомизацией
    ========================================================= */
 
 const tg = window.Telegram?.WebApp;
@@ -1394,7 +1991,6 @@ function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
 
 const API_BASE = 'https://dollieland.pythonanywhere.com';
-// ⚠️ ЗАМЕНИ на реальный username твоего бота (без @)
 const BOT_USERNAME = 'DollieHelper_bot';
 
 async function apiFetch(path, params, opts) {
@@ -1411,7 +2007,6 @@ async function apiFetch(path, params, opts) {
     try {
       const res = await fetch(url.toString(), { headers, signal: controller.signal });
       clearTimeout(timer);
-
       if (!res.ok) {
         let bodyPreview = '';
         try { bodyPreview = (await res.text()).slice(0, 160); } catch (_) {}
@@ -1429,6 +2024,13 @@ async function apiFetch(path, params, opts) {
     }
   }
   throw lastError;
+}
+
+async function apiPost(path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
+  const res = await fetch(API_BASE + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
+  return res.json();
 }
 
 function switchTab(name) {
@@ -1472,11 +2074,7 @@ function closeSheet() {
 function setupSheetDrag(sheetEl) {
   const handleArea = sheetEl.querySelector('.sheet-handle-area');
   if (!handleArea) return;
-
-  let dragging = false;
-  let startY = 0;
-  let startHeight = 0;
-  let movedEnough = false;
+  let dragging = false, startY = 0, startHeight = 0, movedEnough = false;
 
   function currentMaxHeightPx(expanded) {
     const tgVhRaw = getComputedStyle(document.documentElement).getPropertyValue('--tg-vh').trim();
@@ -1484,87 +2082,44 @@ function setupSheetDrag(sheetEl) {
     const safeT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-t')) || 0;
     return expanded ? (vh - safeT - 14) : vh * 0.82;
   }
-
-  function onDragStart(clientY) {
-    dragging = true;
-    movedEnough = false;
-    startY = clientY;
-    startHeight = sheetEl.getBoundingClientRect().height;
-    sheetEl.classList.add('dragging');
-  }
-
+  function onDragStart(clientY) { dragging = true; movedEnough = false; startY = clientY; startHeight = sheetEl.getBoundingClientRect().height; sheetEl.classList.add('dragging'); }
   function onDragMove(clientY) {
     if (!dragging) return;
     const delta = startY - clientY;
     if (Math.abs(delta) > 4) movedEnough = true;
-
     const maxExpanded = currentMaxHeightPx(true);
-    let newHeight = startHeight + delta;
-    newHeight = Math.min(maxExpanded, newHeight);
-
-    if (delta < 0) {
-      const pull = Math.min(140, -delta);
-      sheetEl.style.transform = `translateY(${pull}px)`;
-      sheetEl.style.maxHeight = startHeight + 'px';
-    } else {
-      sheetEl.style.transform = '';
-      sheetEl.style.maxHeight = newHeight + 'px';
-    }
+    let newHeight = Math.min(maxExpanded, startHeight + delta);
+    if (delta < 0) { const pull = Math.min(140, -delta); sheetEl.style.transform = `translateY(${pull}px)`; sheetEl.style.maxHeight = startHeight + 'px'; }
+    else { sheetEl.style.transform = ''; sheetEl.style.maxHeight = newHeight + 'px'; }
   }
-
   function onDragEnd(clientY) {
     if (!dragging) return;
     dragging = false;
     sheetEl.classList.remove('dragging');
-
     const delta = startY - clientY;
     const translateActive = sheetEl.style.transform && sheetEl.style.transform !== '';
-
     sheetEl.style.transform = '';
-
-    if (!movedEnough) {
-      sheetEl.style.maxHeight = '';
-      sheetEl.classList.toggle('expanded');
-      return;
-    }
-
-    if (translateActive && -delta > 90) {
-      sheetEl.style.maxHeight = '';
-      closeSheet();
-      return;
-    }
-
+    if (!movedEnough) { sheetEl.style.maxHeight = ''; sheetEl.classList.toggle('expanded'); return; }
+    if (translateActive && -delta > 90) { sheetEl.style.maxHeight = ''; closeSheet(); return; }
     const collapsedH = currentMaxHeightPx(false);
     const expandedH = currentMaxHeightPx(true);
     const finishHeight = Math.min(expandedH, startHeight + delta);
     const midPoint = (collapsedH + expandedH) / 2;
-
     sheetEl.style.maxHeight = '';
-    if (finishHeight > midPoint) {
-      sheetEl.classList.add('expanded');
-    } else {
-      sheetEl.classList.remove('expanded');
-    }
+    sheetEl.classList.toggle('expanded', finishHeight > midPoint);
   }
-
   handleArea.addEventListener('touchstart', e => onDragStart(e.touches[0].clientY), { passive: true });
-  handleArea.addEventListener('touchmove', e => { onDragMove(e.touches[0].clientY); }, { passive: true });
+  handleArea.addEventListener('touchmove', e => onDragMove(e.touches[0].clientY), { passive: true });
   handleArea.addEventListener('touchend', e => onDragEnd(e.changedTouches[0].clientY));
   handleArea.addEventListener('touchcancel', () => { dragging = false; sheetEl.classList.remove('dragging'); sheetEl.style.transform = ''; sheetEl.style.maxHeight = ''; });
-
   handleArea.addEventListener('mousedown', e => {
     onDragStart(e.clientY);
     const onMouseMove = ev => onDragMove(ev.clientY);
-    const onMouseUp = ev => {
-      onDragEnd(ev.clientY);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-    };
+    const onMouseUp = ev => { onDragEnd(ev.clientY); window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); };
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
   });
 }
-
 document.querySelectorAll('.bottom-sheet').forEach(setupSheetDrag);
 
 const STATUS_STEPS = [
@@ -1592,15 +2147,10 @@ function matchStep(status) {
   const exactIdx = STATUS_STEPS.findIndex(s => s.label === raw);
   if (exactIdx !== -1) return exactIdx;
   const s = raw.toLowerCase();
-  for (let i = STATUS_STEPS.length - 1; i >= 0; i--) {
-    if (s.includes(STATUS_STEPS[i].label.toLowerCase())) return i;
-  }
+  for (let i = STATUS_STEPS.length - 1; i >= 0; i--) if (s.includes(STATUS_STEPS[i].label.toLowerCase())) return i;
   return 0;
 }
-
-function progressPercent(step) {
-  return Math.round((step / (STATUS_STEPS.length - 1)) * 100);
-}
+function progressPercent(step) { return Math.round((step / (STATUS_STEPS.length - 1)) * 100); }
 
 let ordersCache = [];
 let lastUpdatedAt = null;
@@ -1610,61 +2160,173 @@ function escapeHtml(str) {
   div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
 }
-
 function orderTitle(order) { return escapeHtml(order.title || `Заказ №${order.id}`); }
 
 function stripAutoDetectLinks(root) {
   if (!root) return;
-  const anchors = root.querySelectorAll(
-    'a[x-apple-data-detectors],' +
-    'a[x-apple-data-detectors-type],' +
-    'a[href^="tel:"],' +
-    'a[href^="mailto:"],' +
-    'a[href^="date:"],' +
-    'a[href^="address:"]'
-  );
-  anchors.forEach(a => {
-    const parent = a.parentNode;
-    if (!parent) return;
-    parent.replaceChild(document.createTextNode(a.textContent), a);
-  });
+  const anchors = root.querySelectorAll('a[x-apple-data-detectors],a[x-apple-data-detectors-type],a[href^="tel:"],a[href^="mailto:"],a[href^="date:"],a[href^="address:"]');
+  anchors.forEach(a => { const p = a.parentNode; if (p) p.replaceChild(document.createTextNode(a.textContent), a); });
 }
-
 function watchAutoDetectLinks() {
   const observer = new MutationObserver(mutations => {
-    mutations.forEach(m => {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType === 1) {
-          if (node.tagName === 'A' && (
-            node.hasAttribute('x-apple-data-detectors') ||
-            node.hasAttribute('x-apple-data-detectors-type') ||
-            /^(tel|mailto|date|address):/.test(node.getAttribute('href') || '')
-          )) {
-            const parent = node.parentNode;
-            if (parent) parent.replaceChild(document.createTextNode(node.textContent), node);
-          } else {
-            stripAutoDetectLinks(node);
-          }
-        }
-      });
-    });
+    mutations.forEach(m => m.addedNodes.forEach(node => {
+      if (node.nodeType === 1) {
+        if (node.tagName === 'A' && (node.hasAttribute('x-apple-data-detectors') || node.hasAttribute('x-apple-data-detectors-type') || /^(tel|mailto|date|address):/.test(node.getAttribute('href') || ''))) {
+          const p = node.parentNode; if (p) p.replaceChild(document.createTextNode(node.textContent), node);
+        } else { stripAutoDetectLinks(node); }
+      }
+    }));
   });
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
+/* ====== SEASONAL ICON SYSTEM ====== */
+const SEASONAL_ICON_MAP = {
+  autumn: {
+    'package': 'season-autumn-acorn',
+    'heart': 'season-autumn-berry',
+    'gift': 'season-autumn-pumpkin',
+    'star': 'season-autumn-maple-leaf',
+    'sparkle': 'season-autumn-sparkle',
+    'layers': 'season-autumn-wreath',
+    'user-plus': 'season-autumn-branch',
+    'star-illustration': 'season-autumn-oak-leaf',
+    'empty': 'season-autumn-dried-flower',
+    'clock': 'season-autumn-mushroom',
+    'bell': 'season-autumn-branch',
+    'check': 'season-autumn-berry',
+    'truck': 'season-autumn-acorn'
+  },
+  winter: {
+    'package': 'season-winter-snow-globe',
+    'heart': 'season-winter-frosted-heart',
+    'gift': 'season-winter-ornament',
+    'star': 'season-winter-winter-star',
+    'sparkle': 'season-winter-frosted-sparkle',
+    'layers': 'season-winter-ice-crystal',
+    'user-plus': 'season-winter-snow-branch',
+    'star-illustration': 'season-winter-crystal-snowflake',
+    'empty': 'season-winter-snowflake',
+    'clock': 'season-winter-ice-crystal',
+    'bell': 'season-winter-ornament',
+    'check': 'season-winter-crystal-snowflake',
+    'truck': 'season-winter-snow-globe'
+  },
+  spring: {
+    'package': 'season-spring-bud',
+    'heart': 'season-spring-botanical-heart',
+    'gift': 'season-spring-cherry-blossom',
+    'star': 'season-spring-small-flower',
+    'sparkle': 'season-spring-sparkle',
+    'layers': 'season-spring-blooming-branch',
+    'user-plus': 'season-spring-butterfly',
+    'star-illustration': 'season-spring-tulip',
+    'empty': 'season-spring-petal',
+    'clock': 'season-spring-bud',
+    'bell': 'season-spring-small-flower',
+    'check': 'season-spring-leaf',
+    'truck': 'season-spring-leaf'
+  },
+  summer: {
+    'package': 'season-summer-shell',
+    'heart': 'season-summer-flower',
+    'gift': 'season-summer-bow',
+    'star': 'season-summer-starburst',
+    'sparkle': 'season-summer-sun-ray',
+    'layers': 'season-summer-leaf',
+    'user-plus': 'season-summer-sun',
+    'star-illustration': 'season-summer-citrus',
+    'empty': 'season-summer-shell',
+    'clock': 'season-summer-sun',
+    'bell': 'season-summer-flower',
+    'check': 'season-summer-starburst',
+    'truck': 'season-summer-ribbon'
+  },
+  halloween: {
+    'package': 'season-halloween-potion',
+    'heart': 'season-halloween-magic-sparkle',
+    'gift': 'season-halloween-pumpkin',
+    'star': 'season-halloween-gothic-star',
+    'sparkle': 'season-halloween-magic-sparkle',
+    'layers': 'season-halloween-gothic-flower',
+    'user-plus': 'season-halloween-witch-hat',
+    'star-illustration': 'season-halloween-moon',
+    'empty': 'season-halloween-ghost',
+    'clock': 'season-halloween-candle',
+    'bell': 'season-halloween-bat',
+    'check': 'season-halloween-magic-sparkle',
+    'truck': 'season-halloween-spider'
+  },
+  christmas: {
+    'package': 'season-christmas-gift',
+    'heart': 'season-christmas-ornament',
+    'gift': 'season-christmas-gift',
+    'star': 'season-christmas-star',
+    'sparkle': 'season-christmas-newyear-sparkle',
+    'layers': 'season-christmas-pine-branch',
+    'user-plus': 'season-christmas-bell',
+    'star-illustration': 'season-christmas-tree',
+    'empty': 'season-christmas-snowflake',
+    'clock': 'season-christmas-candle',
+    'bell': 'season-christmas-bell',
+    'check': 'season-christmas-star',
+    'truck': 'season-christmas-stocking'
+  },
+  valentine: {
+    'package': 'season-valentine-envelope',
+    'heart': 'season-valentine-heart-ribbon',
+    'gift': 'season-valentine-floral-heart',
+    'star': 'season-valentine-sparkle',
+    'sparkle': 'season-valentine-champagne-sparkle',
+    'layers': 'season-valentine-love-letter',
+    'user-plus': 'season-valentine-cupid-bow',
+    'star-illustration': 'season-valentine-double-heart',
+    'empty': 'season-valentine-heart-outline',
+    'clock': 'season-valentine-ribbon',
+    'bell': 'season-valentine-double-heart',
+    'check': 'season-valentine-heart-ribbon',
+    'truck': 'season-valentine-envelope'
+  }
+};
+
+function seasonalIcon(name, fallbackName) {
+  const themeSlug = themeConfig?.theme?.slug;
+  if (themeSlug && SEASONAL_ICON_MAP[themeSlug]) {
+    const mapped = SEASONAL_ICON_MAP[themeSlug][name];
+    if (mapped) return '#' + mapped;
+  }
+  return '#' + (fallbackName || ('icon-' + name));
+}
+
+function applySeasonalIcons(root) {
+  const scope = root || document;
+  const themeSlug = themeConfig?.theme?.slug;
+  if (!themeSlug || themeSlug === 'standard') return;
+  const map = SEASONAL_ICON_MAP[themeSlug];
+  if (!map) return;
+
+  scope.querySelectorAll('use[href^="#icon-"]').forEach(use => {
+    const baseName = use.getAttribute('href').slice(6);
+    if (map[baseName]) {
+      use.setAttribute('href', '#' + map[baseName]);
+    }
+  });
+}
+
+/* ====== Order cards ====== */
 function orderCardHTML(order) {
   const step = matchStep(order.status);
   return `
     <button class="order-card" onclick="openOrderDetail('${order.id}')">
       <div class="order-card-top">
-        <div class="order-thumb"><svg class="icon"><use href="#icon-package"/></svg></div>
+        <div class="order-thumb"><svg class="icon"><use href="${seasonalIcon('package')}"/></svg></div>
         <div class="order-info">
           <div class="order-title">${orderTitle(order)}</div>
           <div class="order-id">№ ${order.id}</div>
         </div>
         <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
       </div>
-      <div class="order-status-line"><svg class="icon"><use href="#icon-truck"/></svg>${STATUS_STEPS[step].label}</div>
+      <div class="order-status-line"><svg class="icon"><use href="${seasonalIcon('truck','icon-truck')}"/></svg>${STATUS_STEPS[step].label}</div>
       <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progressPercent(step)}%"></div></div>
       ${order.delivery_date ? `<div class="order-meta">Ориентировочно: ${order.delivery_date}</div>` : ''}
     </button>`;
@@ -1707,68 +2369,52 @@ function openOrderDetail(id) {
 function skeletonOrdersHTML(count) {
   let html = '';
   for (let i = 0; i < count; i++) {
-    html += `
-      <div class="skeleton-card">
-        <div class="skeleton-row"><div class="skeleton-thumb"></div>
-          <div style="flex:1"><div class="skeleton-line w-40"></div><div class="skeleton-line w-70"></div></div>
-        </div>
-        <div class="skeleton-bar"></div>
-      </div>`;
+    html += `<div class="skeleton-card"><div class="skeleton-row"><div class="skeleton-thumb"></div>
+      <div style="flex:1"><div class="skeleton-line w-40"></div><div class="skeleton-line w-70"></div></div></div>
+      <div class="skeleton-bar"></div></div>`;
   }
   return html;
 }
 
 function emptyIllustration() {
-  return `
-    <svg class="empty-illustration" viewBox="0 0 120 120">
-      <circle cx="60" cy="48" r="28" fill="#FCE5ED"/>
-      <circle cx="60" cy="48" r="28" fill="none" stroke="#F2B3C7" stroke-width="2"/>
-      <path d="M48 44h24M48 54h16" stroke="#E78EAD" stroke-width="3" stroke-linecap="round"/>
-      <path d="M30 98c6-17 19-27 30-27s24 10 30 27" stroke="#F2B3C7" stroke-width="3" fill="none" stroke-linecap="round"/>
+  const themeSlug = themeConfig?.theme?.slug;
+  if (themeSlug && SEASONAL_ICON_MAP[themeSlug]) {
+    const map = SEASONAL_ICON_MAP[themeSlug];
+    const svgId = map['empty'] || map['star-illustration'] || map['star'];
+    return `<svg class="empty-illustration seasonal" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" fill="var(--pink-soft)" opacity=".6"/>
+      <use href="#${svgId}" x="20" y="20" width="60" height="60" style="color:var(--pink-accent)"/>
     </svg>`;
+  }
+  return `<svg class="empty-illustration" viewBox="0 0 120 120">
+    <circle cx="60" cy="48" r="28" fill="#FCE5ED"/>
+    <circle cx="60" cy="48" r="28" fill="none" stroke="#F2B3C7" stroke-width="2"/>
+    <path d="M48 44h24M48 54h16" stroke="#E78EAD" stroke-width="3" stroke-linecap="round"/>
+    <path d="M30 98c6-17 19-27 30-27s24 10 30 27" stroke="#F2B3C7" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`;
 }
 
 function ordersEmptyHTML() {
-  return `
-    <div class="empty-state">
-      ${emptyIllustration()}
-      <h3>Пока нет заказов</h3>
-      <p>Когда появится новый заказ, он автоматически появится здесь.</p>
-      <button class="btn btn-tertiary" onclick="openSheet('track')">У меня есть номер заказа</button>
-    </div>`;
+  return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет заказов</h3>
+    <p>Когда появится новый заказ, он автоматически появится здесь.</p>
+    <button class="btn btn-tertiary" onclick="openSheet('track')">У меня есть номер заказа</button></div>`;
 }
-
-function ordersErrorHTML(errorDetail) {
-  return `
-    <div class="empty-state">
-      <svg class="empty-illustration" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="30" fill="#FCE5ED"/>
-        <line x1="60" y1="46" x2="60" y2="62" stroke="#E78EAD" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="60" cy="74" r="2.4" fill="#E78EAD"/>
-      </svg>
-      <h3>Не удалось загрузить заказы</h3>
-      <p>Проверьте соединение и попробуйте ещё раз.</p>
-      ${errorDetail ? `<p style="font-size:11px;color:var(--text-secondary);background:var(--bg);border-radius:10px;padding:8px 10px;word-break:break-word;">${errorDetail}</p>` : ''}
-      <button class="btn btn-primary" onclick="loadOrders(true)">Повторить</button>
-    </div>`;
+function ordersErrorHTML(detail) {
+  return `<div class="empty-state"><h3>Не удалось загрузить заказы</h3>
+    <p>Проверьте соединение и попробуйте ещё раз.</p>
+    ${detail ? `<p style="font-size:11px;color:var(--text-secondary);background:var(--bg);border-radius:10px;padding:8px 10px;word-break:break-word;">${detail}</p>` : ''}
+    <button class="btn btn-primary" onclick="loadOrders(true)">Повторить</button></div>`;
 }
-
-function noUserHTML() {
-  return `
-    <div class="empty-state">
-      <h3>Не удалось определить пользователя</h3>
-      <p>Попробуйте перезапустить приложение из Telegram.</p>
-    </div>`;
-}
+function noUserHTML() { return `<div class="empty-state"><h3>Не удалось определить пользователя</h3><p>Попробуйте перезапустить приложение из Telegram.</p></div>`; }
 
 let bannersCache = [];
 let bannerScrollTimeout = null;
 let bannersRetryTimer = null;
 
 function pluralizeActiveOrders(n) {
-  const mod10 = n % 10, mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return 'активный заказ';
-  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'активных заказа';
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'активный заказ';
+  if ([2,3,4].includes(m10) && ![12,13,14].includes(m100)) return 'активных заказа';
   return 'активных заказов';
 }
 
@@ -1794,26 +2440,20 @@ function renderBanners() {
   const row = document.getElementById('banner-row');
   const dotsWrap = document.getElementById('banner-dots');
   if (!section || !row || !dotsWrap) return;
-
   section.hidden = false;
-
   if (!bannersCache.length) {
     row.innerHTML = `<div class="banner-placeholder">Скоро здесь появятся новости DollieLand</div>`;
     dotsWrap.hidden = true;
     return;
   }
-
   row.innerHTML = bannersCache.map((b, i) => bannerCardHTML(b, i)).join('');
   stripAutoDetectLinks(row);
-
   if (bannersCache.length > 1) {
     dotsWrap.hidden = false;
     dotsWrap.innerHTML = bannersCache.map((_, i) => `<span class="banner-dot ${i === 0 ? 'active' : ''}"></span>`).join('');
     row.removeEventListener('scroll', onBannerScroll);
     row.addEventListener('scroll', onBannerScroll, { passive: true });
-  } else {
-    dotsWrap.hidden = true;
-  }
+  } else { dotsWrap.hidden = true; }
 }
 
 function bannerCardHTML(banner, idx) {
@@ -1822,11 +2462,7 @@ function bannerCardHTML(banner, idx) {
   const btnText = escapeHtml(banner.button_text || 'Смотреть');
   const hasLink = !!banner.link;
   const imageHTML = banner.image_url
-    ? `<div class="banner-image-wrap" id="banner-img-wrap-${idx}">
-         <img src="${banner.image_url}" alt="" loading="lazy" decoding="async"
-              onload="this.classList.add('loaded')"
-              onerror="handleBannerImgError(this, ${idx})">
-       </div>`
+    ? `<div class="banner-image-wrap" id="banner-img-wrap-${idx}"><img src="${banner.image_url}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="handleBannerImgError(this, ${idx})"></div>`
     : '';
   return `
     <div class="banner-card" ${hasLink ? `onclick="openBannerLink(${idx})"` : ''}>
@@ -1846,7 +2482,6 @@ function handleBannerImgError(imgEl, idx) {
   const attempts = Number(imgEl.dataset.retry || 0);
   const banner = bannersCache[idx];
   const baseSrc = banner?.image_url;
-
   if (attempts < 2 && baseSrc) {
     imgEl.dataset.retry = String(attempts + 1);
     setTimeout(() => {
@@ -1855,7 +2490,6 @@ function handleBannerImgError(imgEl, idx) {
     }, 700 * (attempts + 1));
     return;
   }
-
   const wrap = imgEl.closest('.banner-image-wrap');
   if (wrap) wrap.classList.add('img-failed');
 }
@@ -1864,11 +2498,8 @@ function openBannerLink(idx) {
   const banner = bannersCache[idx];
   if (!banner || !banner.link) return;
   hapticImpact('light');
-  if (tg && /^https:\/\/t\.me\//.test(banner.link)) {
-    tg.openTelegramLink(banner.link);
-  } else {
-    window.open(banner.link, '_blank');
-  }
+  if (tg && /^https:\/\/t\.me\//.test(banner.link)) tg.openTelegramLink(banner.link);
+  else window.open(banner.link, '_blank');
 }
 
 function onBannerScroll(e) {
@@ -1887,19 +2518,13 @@ async function loadOrders(isManualRefresh) {
   const summaryText = document.getElementById('orders-summary-text');
   const ordersList = document.getElementById('orders-list');
   const refreshBtn = document.getElementById('refresh-btn');
-
-  if (!userId) {
-    if (summaryText) summaryText.textContent = 'Не удалось определить пользователя';
-    ordersList.innerHTML = noUserHTML();
-    return;
-  }
+  if (!userId) { if (summaryText) summaryText.textContent = 'Не удалось определить пользователя'; ordersList.innerHTML = noUserHTML(); return; }
 
   if (isManualRefresh) refreshBtn?.classList.add('spinning');
   if (!ordersCache.length) {
     if (summaryText) summaryText.textContent = 'Загружаем заказы…';
     ordersList.innerHTML = skeletonOrdersHTML(2);
   }
-
   try {
     const data = await apiFetch('/api/user_orders', { user_id: userId }, { timeoutMs: 12000, retries: 1 });
     const orders = data.orders || [];
@@ -1912,43 +2537,33 @@ async function loadOrders(isManualRefresh) {
     } else {
       const lastStepIndex = STATUS_STEPS.length - 1;
       const activeCount = orders.filter(o => matchStep(o.status) < lastStepIndex).length;
-      if (summaryText) {
-        summaryText.textContent = activeCount > 0
-          ? `${activeCount} ${pluralizeActiveOrders(activeCount)}`
-          : `Все заказы получены (${orders.length})`;
-      }
+      if (summaryText) summaryText.textContent = activeCount > 0 ? `${activeCount} ${pluralizeActiveOrders(activeCount)}` : `Все заказы получены (${orders.length})`;
       ordersList.innerHTML = orders.map(orderCardHTML).join('');
       stripAutoDetectLinks(ordersList);
+      applySeasonalIcons(ordersList);
     }
-
     updateHomePanels();
     updateProfileStats();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
     if (summaryText && !ordersCache.length) summaryText.textContent = 'Не удалось загрузить заказы';
-    if (!ordersCache.length) {
-      ordersList.innerHTML = ordersErrorHTML(e?.message);
-    } else {
-      showToast('Не удалось обновить заказы');
-    }
-  } finally {
-    refreshBtn?.classList.remove('spinning');
-  }
+    if (!ordersCache.length) ordersList.innerHTML = ordersErrorHTML(e?.message);
+    else showToast('Не удалось обновить заказы');
+  } finally { refreshBtn?.classList.remove('spinning'); }
 }
 
 function updateProfileStats() {
   const activeEl = document.getElementById('stat-active');
   const totalEl = document.getElementById('stat-total');
   if (!activeEl || !totalEl) return;
-
   const lastStepIndex = STATUS_STEPS.length - 1;
   const total = ordersCache.length;
   const active = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
-
   totalEl.textContent = total;
   activeEl.textContent = active;
 }
 
+/* ====== Loyalty ====== */
 let loyaltyBalance = null;
 let loyaltyRewards = null;
 let loyaltyLimits = { min_redeem_amount: 0, max_discount_rub: 0 };
@@ -1959,45 +2574,30 @@ let loyaltyTxCache = [];
 let dollieRecentCache = [];
 let dollieHistoryLoadedOnce = false;
 let dollieFilter = 'all';
+let firstOrderCompleted = false;
 const LOYALTY_HISTORY_PAGE_SIZE = 20;
 
 const FILTER_TYPE_GROUPS = {
-  earn: ['first_order', 'repeat_order', 'referral_inviter', 'referral_friend', 'review_reward', 'manual_add', 'refund', 'promotion'],
-  spend: ['spend', 'manual_remove'],
+  earn: ['first_order','repeat_order','referral_inviter','referral_friend','review_reward','manual_add','refund','promotion'],
+  spend: ['spend','manual_remove'],
 };
 
 const RU_MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 
-function formatTxDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]}`;
-}
-
-function formatFullDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}`;
-}
+function formatTxDate(iso) { if (!iso) return ''; const d = new Date(iso); if (isNaN(d.getTime())) return ''; return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]}`; }
+function formatFullDate(iso) { if (!iso) return ''; const d = new Date(iso); if (isNaN(d.getTime())) return ''; return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}`; }
 
 function animateNumber(el, to) {
   if (!el) return;
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const from = parseInt(el.textContent, 10);
-  if (prefersReduced || isNaN(from) || from === to) {
-    el.textContent = to;
-    return;
-  }
-  const duration = 500;
-  const start = performance.now();
+  if (prefersReduced || isNaN(from) || from === to) { el.textContent = to; return; }
+  const duration = 500, start = performance.now();
   function step(now) {
     const progress = Math.min((now - start) / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
     el.textContent = Math.round(from + (to - from) * eased);
-    if (progress < 1) requestAnimationFrame(step);
-    else el.textContent = to;
+    if (progress < 1) requestAnimationFrame(step); else el.textContent = to;
   }
   requestAnimationFrame(step);
 }
@@ -2009,89 +2609,49 @@ async function loadLoyalty() {
     if (data.ok) {
       loyaltyBalance = data.balance;
       loyaltyRewards = data.rewards || {};
-      loyaltyLimits = {
-        min_redeem_amount: data.min_redeem_amount || 0,
-        max_discount_rub: data.max_discount_rub || 0,
-      };
+      loyaltyLimits = { min_redeem_amount: data.min_redeem_amount || 0, max_discount_rub: data.max_discount_rub || 0 };
       firstOrderCompleted = !!data.first_order_completed;
       updateLoyaltyBalanceUI();
       renderDollieRewards();
     }
-  } catch (e) {
-    console.error('DollieLand: не удалось загрузить баланс Dollies —', e);
-  }
+  } catch (e) { console.error('DollieLand: не удалось загрузить баланс Dollies —', e); }
 }
 
 function updateLoyaltyBalanceUI() {
   const balance = loyaltyBalance ?? 0;
-
   animateNumber(document.getElementById('dollie-balance-home'), balance);
   animateNumber(document.getElementById('dollie-balance-profile'), balance);
   animateNumber(document.getElementById('dollie-hero-balance'), balance);
-
   const rubText = `≈ ${balance} ₽ скидки`;
-  ['dollie-value-home', 'dollie-value-profile', 'dollie-hero-rub'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = rubText;
-  });
-
+  ['dollie-value-home','dollie-value-profile','dollie-hero-rub'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = rubText; });
   const historyBalanceEl = document.getElementById('dollie-history-balance');
   if (historyBalanceEl) historyBalanceEl.textContent = `${balance} Dollies`;
 }
 
-let firstOrderCompleted = false;
-
 const REWARD_DEFS = [
-  {
-    key: 'order', icon: 'package', title: 'Первый заказ',
-    subtitle: 'Получите бонус за первую покупку в DollieLand',
-    completed: () => firstOrderCompleted,
-    amountHTML: (r) => `+${r.first_order_bonus}`,
-    action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
-  },
-  {
-    key: 'repeat', icon: 'refresh', title: 'Повторная покупка',
-    subtitle: (r) => {
-      const step = r.repeat_tier_step_rub || 5000;
-      const bonus = r.repeat_tier_bonus || 25;
-      return `Каждые ${step} ₽ суммы заказа → +${bonus} Dollies`;
-    },
-    amountHTML: (r) => `+${r.repeat_tier_bonus}/шаг`,
-    action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
-  },
-  {
-    key: 'referral', icon: 'user-plus', title: 'Пригласить друга',
-    subtitle: (r) => `Друг получит +${r.referral_friend_bonus} Dollies`,
-    amountHTML: (r) => `+${r.referral_inviter_bonus}`,
-    action: () => openReferralSheet(),
-  },
-  {
-    key: 'review', icon: 'star', title: 'Оставить отзыв',
-    subtitle: 'Расскажите о полученном заказе',
-    amountHTML: (r) => `+${r.review_bonus}`,
-    action: () => openReviewSheet(),
-  },
+  { key:'order', icon:'package', title:'Первый заказ', subtitle:'Получите бонус за первую покупку в DollieLand', completed: () => firstOrderCompleted, amountHTML: (r) => `+${r.first_order_bonus}`, action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); } },
+  { key:'repeat', icon:'refresh', title:'Повторная покупка', subtitle: (r) => { const step = r.repeat_tier_step_rub || 5000; const bonus = r.repeat_tier_bonus || 25; return `Каждые ${step} ₽ суммы заказа → +${bonus} Dollies`; }, amountHTML: (r) => `+${r.repeat_tier_bonus}/шаг`, action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); } },
+  { key:'referral', icon:'user-plus', title:'Пригласить друга', subtitle: (r) => `Друг получит +${r.referral_friend_bonus} Dollies`, amountHTML: (r) => `+${r.referral_inviter_bonus}`, action: () => openReferralSheet() },
+  { key:'review', icon:'star', title:'Оставить отзыв', subtitle:'Расскажите о полученном заказе', amountHTML: (r) => `+${r.review_bonus}`, action: () => openReviewSheet() },
 ];
 
 function renderDollieRewards() {
   const container = document.getElementById('dollie-rewards-list');
   if (!container || !loyaltyRewards) return;
-
   container.innerHTML = REWARD_DEFS.map(def => {
     const isDone = def.completed && def.completed();
     const subtitle = typeof def.subtitle === 'function' ? def.subtitle(loyaltyRewards) : def.subtitle;
     const amountHTML = isDone ? '' : (def.amountHTML ? def.amountHTML(loyaltyRewards) : '');
-    return `
-      <button class="reward-row ${isDone ? 'reward-row-done' : ''}" onclick="dollieRewardAction('${def.key}')">
-        <div class="reward-icon ${isDone ? 'reward-icon-done' : ''}">
-          <svg class="icon"><use href="#icon-${isDone ? 'check' : def.icon}"/></svg>
-        </div>
-        <div class="reward-main">
-          <div class="reward-title">${def.title}</div>
-          <div class="reward-subtitle">${isDone ? 'Получено' : subtitle}</div>
-        </div>
-        ${amountHTML ? `<div class="reward-amount">${amountHTML}</div>` : ''}
-      </button>`;
+    return `<button class="reward-row ${isDone ? 'reward-row-done' : ''}" onclick="dollieRewardAction('${def.key}')">
+      <div class="reward-icon ${isDone ? 'reward-icon-done' : ''}">
+        <svg class="icon"><use href="${isDone ? '#icon-check' : seasonalIcon(def.icon, 'icon-' + def.icon)}"/></svg>
+      </div>
+      <div class="reward-main">
+        <div class="reward-title">${def.title}</div>
+        <div class="reward-subtitle">${isDone ? 'Получено' : subtitle}</div>
+      </div>
+      ${amountHTML ? `<div class="reward-amount">${amountHTML}</div>` : ''}
+    </button>`;
   }).join('');
 }
 
@@ -2102,40 +2662,27 @@ function dollieRewardAction(key) {
 }
 
 let referralData = null;
-
-function referralLink(code) {
-  return `https://t.me/${BOT_USERNAME}?start=ref_${code}`;
-}
+function referralLink(code) { return `https://t.me/${BOT_USERNAME}?start=ref_${code}`; }
 
 async function openReferralSheet() {
   openSheet('referral');
   const statsContainer = document.getElementById('referral-stats-content');
   statsContainer.innerHTML = dollieHistorySkeletonHTML(1);
-
   if (!userId) return;
-
   try {
     const data = await apiFetch('/api/me/referral', {}, { timeoutMs: 10000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
     referralData = data;
-
-    document.getElementById('referral-hero-subtitle').textContent =
-      `Получайте ${data.inviter_bonus} Dollies, а ваш друг — ${data.friend_bonus} Dollies за его первую покупку.`;
-
+    document.getElementById('referral-hero-subtitle').textContent = `Получайте ${data.inviter_bonus} Dollies, а ваш друг — ${data.friend_bonus} Dollies за его первую покупку.`;
     if (data.invited_count > 0) {
-      statsContainer.innerHTML = `
-        <div class="referral-stats-row">
-          <div class="referral-stat-box"><div class="num">${data.invited_count}</div><div class="label">Приглашено</div></div>
-          <div class="referral-stat-box"><div class="num">${data.purchased_count}</div><div class="label">Первая покупка</div></div>
-          <div class="referral-stat-box"><div class="num">+${data.earned_dollies}</div><div class="label">Получено</div></div>
-        </div>`;
+      statsContainer.innerHTML = `<div class="referral-stats-row">
+        <div class="referral-stat-box"><div class="num">${data.invited_count}</div><div class="label">Приглашено</div></div>
+        <div class="referral-stat-box"><div class="num">${data.purchased_count}</div><div class="label">Первая покупка</div></div>
+        <div class="referral-stat-box"><div class="num">+${data.earned_dollies}</div><div class="label">Получено</div></div>
+      </div>`;
     } else {
-      statsContainer.innerHTML = `
-        <div class="empty-state" style="padding-top:6px;">
-          ${emptyIllustration()}
-          <h3>Пока нет приглашений</h3>
-          <p>Поделитесь DollieLand с другом и получите +${data.inviter_bonus} Dollies после его первой покупки.</p>
-        </div>`;
+      statsContainer.innerHTML = `<div class="empty-state" style="padding-top:6px;">${emptyIllustration()}<h3>Пока нет приглашений</h3>
+        <p>Поделитесь DollieLand с другом и получите +${data.inviter_bonus} Dollies после его первой покупки.</p></div>`;
     }
   } catch (e) {
     console.error('DollieLand: не удалось загрузить статистику приглашений —', e);
@@ -2143,26 +2690,16 @@ async function openReferralSheet() {
   }
 }
 
-function copyReferralLink() {
-  if (!referralData) return;
-  copyTextToClipboard(referralLink(referralData.referral_code), 'Ссылка скопирована');
-}
-
 function copyTextToClipboard(text, toastMsg) {
   hapticImpact('light');
   const done = () => { showToast(toastMsg); hapticNotification('success'); };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(done).catch(done);
-  } else {
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(done);
+  else {
     const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
     try { document.execCommand('copy'); } catch (_) {}
-    document.body.removeChild(ta);
-    done();
+    document.body.removeChild(ta); done();
   }
 }
 
@@ -2172,11 +2709,8 @@ function shareReferralLink() {
   const link = referralLink(referralData.referral_code);
   const text = 'Я нашла классное место для кукол ♡\nЗагляни в DollieLand и получи ' + referralData.friend_bonus + ' Dollies за первый заказ.';
   const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
-  if (tg && tg.openTelegramLink) {
-    tg.openTelegramLink(shareUrl);
-  } else {
-    window.open(shareUrl, '_blank');
-  }
+  if (tg && tg.openTelegramLink) tg.openTelegramLink(shareUrl);
+  else window.open(shareUrl, '_blank');
 }
 
 let reviewableOrdersCache = [];
@@ -2186,33 +2720,21 @@ let selectedReviewPhotoFile = null;
 
 async function openReviewSheet() {
   openSheet('review');
-  selectedReviewOrderId = null;
-  selectedReviewRating = 0;
-  selectedReviewPhotoFile = null;
-
+  selectedReviewOrderId = null; selectedReviewRating = 0; selectedReviewPhotoFile = null;
   const body = document.getElementById('review-sheet-body');
   body.innerHTML = dollieHistorySkeletonHTML(2);
-
   if (!userId) return;
-
   try {
     const data = await apiFetch('/api/me/reviewable_orders', {}, { timeoutMs: 10000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
     reviewableOrdersCache = data.orders || [];
-
     if (reviewableOrdersCache.length === 0) {
-      body.innerHTML = `
-        <div class="empty-state" style="padding-top:6px;">
-          ${emptyIllustration()}
-          <h3>Пока нечего оценить</h3>
-          <p>Отзыв можно оставить после получения заказа — как только он появится, вы сможете рассказать о своих впечатлениях здесь.</p>
-        </div>`;
+      body.innerHTML = `<div class="empty-state" style="padding-top:6px;">${emptyIllustration()}<h3>Пока нечего оценить</h3>
+        <p>Отзыв можно оставить после получения заказа.</p></div>`;
     } else if (reviewableOrdersCache.length === 1) {
       selectedReviewOrderId = reviewableOrdersCache[0].id;
       renderReviewForm();
-    } else {
-      renderReviewOrderPicker();
-    }
+    } else renderReviewOrderPicker();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы для отзыва —', e);
     body.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить заказы</p>`;
@@ -2221,31 +2743,18 @@ async function openReviewSheet() {
 
 function renderReviewOrderPicker() {
   const body = document.getElementById('review-sheet-body');
-  body.innerHTML = `
-    <div class="dollie-section-title">О каком заказе рассказать?</div>
-    ${reviewableOrdersCache.map(o => `
-      <button class="review-order-pick" onclick="selectReviewOrder('${o.id}')">
-        ${escapeHtml(o.title || ('Заказ №' + o.id))}
-      </button>`).join('')}
-  `;
+  body.innerHTML = `<div class="dollie-section-title">О каком заказе рассказать?</div>
+    ${reviewableOrdersCache.map(o => `<button class="review-order-pick" onclick="selectReviewOrder('${o.id}')">${escapeHtml(o.title || ('Заказ №' + o.id))}</button>`).join('')}`;
 }
-
-function selectReviewOrder(orderId) {
-  selectedReviewOrderId = orderId;
-  hapticSelection();
-  renderReviewForm();
-}
+function selectReviewOrder(orderId) { selectedReviewOrderId = orderId; hapticSelection(); renderReviewForm(); }
 
 function renderReviewForm() {
   const body = document.getElementById('review-sheet-body');
   const order = reviewableOrdersCache.find(o => o.id === selectedReviewOrderId);
-  body.innerHTML = `
-    ${order ? `<div class="dollie-section-title">${escapeHtml(order.title || ('Заказ №' + order.id))}</div>` : ''}
+  body.innerHTML = `${order ? `<div class="dollie-section-title">${escapeHtml(order.title || ('Заказ №' + order.id))}</div>` : ''}
     <div class="review-star-row" id="review-star-row">
-      ${[1,2,3,4,5].map(n => `
-        <button type="button" class="review-star-btn" data-star="${n}" onclick="setReviewRating(${n})">
-          <svg class="icon"><use href="#icon-star"/></svg>
-        </button>`).join('')}
+      ${[1,2,3,4,5].map(n => `<button type="button" class="review-star-btn" data-star="${n}" onclick="setReviewRating(${n})">
+        <svg class="icon"><use href="${seasonalIcon('star','icon-star')}"/></svg></button>`).join('')}
     </div>
     <textarea class="review-textarea" id="review-text-input" placeholder="Расскажите, как прошёл ваш заказ (необязательно)"></textarea>
     <div class="review-photo-row">
@@ -2258,77 +2767,49 @@ function renderReviewForm() {
     </div>
     <button class="btn btn-primary btn-block" style="margin-top:16px" onclick="submitReview()">
       <svg class="icon" style="width:16px;height:16px;"><use href="#icon-send"/></svg>Отправить отзыв
-    </button>
-  `;
+    </button>`;
 }
 
 function setReviewRating(n) {
-  selectedReviewRating = n;
-  hapticSelection();
-  document.querySelectorAll('#review-star-row .review-star-btn').forEach(btn => {
-    btn.classList.toggle('active', Number(btn.dataset.star) <= n);
-  });
+  selectedReviewRating = n; hapticSelection();
+  document.querySelectorAll('#review-star-row .review-star-btn').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.star) <= n));
 }
-
 function onReviewPhotoChange(input) {
   const file = input.files && input.files[0];
   if (!file) return;
   selectedReviewPhotoFile = file;
   const preview = document.getElementById('review-photo-preview');
   const reader = new FileReader();
-  reader.onload = e => {
-    preview.src = e.target.result;
-    preview.style.display = 'block';
-  };
+  reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
   reader.readAsDataURL(file);
 }
 
 async function submitReview() {
   if (!selectedReviewOrderId) { showToast('Выберите заказ'); return; }
   if (!selectedReviewRating) { showToast('Поставьте оценку'); hapticNotification('warning'); return; }
-
   const text = document.getElementById('review-text-input')?.value.trim() || '';
   const fd = new FormData();
   fd.append('order_id', selectedReviewOrderId);
   fd.append('rating', String(selectedReviewRating));
   fd.append('text', text);
   if (selectedReviewPhotoFile) fd.append('photo', selectedReviewPhotoFile);
-
   const headers = {};
   if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
-
   try {
     const res = await fetch(API_BASE + '/api/me/reviews', { method: 'POST', headers, body: fd });
     const data = await res.json();
-
     if (!data.ok) {
-      const messages = {
-        already_reviewed: 'На этот заказ уже есть отзыв',
-        order_not_completed: 'Отзыв можно оставить только на полученный заказ',
-        not_your_order: 'Это не ваш заказ',
-        invalid_rating: 'Поставьте оценку от 1 до 5',
-        bad_photo_format: 'Неподдерживаемый формат фото',
-      };
+      const messages = { already_reviewed:'На этот заказ уже есть отзыв', order_not_completed:'Отзыв можно оставить только на полученный заказ', not_your_order:'Это не ваш заказ', invalid_rating:'Поставьте оценку от 1 до 5', bad_photo_format:'Неподдерживаемый формат фото' };
       showToast(messages[data.error] || 'Не удалось отправить отзыв');
       hapticNotification('error');
       return;
     }
-
     hapticNotification('success');
     const awarded = data.review?.awarded_amount || 0;
-    document.getElementById('review-sheet-body').innerHTML = `
-      <div class="empty-state" style="padding-top:10px;">
-        ${emptyIllustration()}
-        <h3>Спасибо за отзыв ♡</h3>
-        <p>${awarded > 0 ? `+${awarded} Dollies уже начислены на ваш баланс.` : 'Ваш отзыв опубликован.'}</p>
-      </div>`;
+    document.getElementById('review-sheet-body').innerHTML = `<div class="empty-state" style="padding-top:10px;">${emptyIllustration()}<h3>Спасибо за отзыв ♡</h3><p>${awarded > 0 ? `+${awarded} Dollies уже начислены на ваш баланс.` : 'Ваш отзыв опубликован.'}</p></div>`;
     showToast(awarded > 0 ? `+${awarded} Dollies начислено` : 'Отзыв опубликован');
-    // После отзыва сразу подтягиваем обновлённый баланс и историю
     loadLoyalty();
-    // Если открыт экран истории Dollies — перезагружаем её
-    if (dollieHistoryLoadedOnce) {
-      loadLoyaltyHistory(true);
-    }
+    if (dollieHistoryLoadedOnce) loadLoyaltyHistory(true);
     loadDollieRecent();
   } catch (e) {
     console.error('DollieLand: не удалось отправить отзыв —', e);
@@ -2341,16 +2822,14 @@ function openDolliesSheet() {
   openSheet('dollies');
   switchDolliePage('overview');
   loadDollieRecent();
+  applySeasonalIcons(document.getElementById('sheet-dollies'));
 }
 
 function switchDolliePage(page) {
   document.getElementById('dollie-page-overview').classList.toggle('active', page === 'overview');
   document.getElementById('dollie-page-history').classList.toggle('active', page === 'history');
   hapticSelection();
-  if (page === 'history' && !dollieHistoryLoadedOnce) {
-    dollieHistoryLoadedOnce = true;
-    loadLoyaltyHistory(true);
-  }
+  if (page === 'history' && !dollieHistoryLoadedOnce) { dollieHistoryLoadedOnce = true; loadLoyaltyHistory(true); }
 }
 
 function setDollieFilter(filter) {
@@ -2359,155 +2838,62 @@ function setDollieFilter(filter) {
   renderHistoryList();
   hapticSelection();
 }
-
-function filteredTxCache() {
-  if (dollieFilter === 'all') return loyaltyTxCache;
-  const group = FILTER_TYPE_GROUPS[dollieFilter] || [];
-  return loyaltyTxCache.filter(tx => group.includes(tx.type));
-}
+function filteredTxCache() { if (dollieFilter === 'all') return loyaltyTxCache; const group = FILTER_TYPE_GROUPS[dollieFilter] || []; return loyaltyTxCache.filter(tx => group.includes(tx.type)); }
 
 function dollieHistorySkeletonHTML(count) {
   let html = '';
   for (let i = 0; i < (count || 3); i++) {
-    html += `
-      <div class="tx-row" style="border-bottom:1px solid var(--border)">
-        <div class="skeleton-thumb" style="width:38px;height:38px;border-radius:999px;"></div>
-        <div style="flex:1">
-          <div class="skeleton-line w-40"></div>
-          <div class="skeleton-line w-70"></div>
-        </div>
-      </div>`;
+    html += `<div class="tx-row" style="border-bottom:1px solid var(--border)">
+      <div class="skeleton-thumb" style="width:38px;height:38px;border-radius:999px;"></div>
+      <div style="flex:1"><div class="skeleton-line w-40"></div><div class="skeleton-line w-70"></div></div></div>`;
   }
   return html;
 }
-
 function dollieHistoryEmptyHTML() {
   const balance = loyaltyBalance ?? 0;
-  if (balance === 0) {
-    return `
-      <div class="empty-state">
-        ${emptyIllustration()}
-        <h3>0 Dollies</h3>
-        <p>Здесь будут появляться твои Dollies после завершённых заказов.</p>
-      </div>`;
-  }
-  return `
-    <div class="empty-state">
-      ${emptyIllustration()}
-      <h3>Пока нет операций</h3>
-      <p>Здесь появится история начислений и использования Dollies.</p>
-    </div>`;
+  if (balance === 0) return `<div class="empty-state">${emptyIllustration()}<h3>0 Dollies</h3><p>Здесь будут появляться твои Dollies после завершённых заказов.</p></div>`;
+  return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет операций</h3><p>Здесь появится история начислений и использования Dollies.</p></div>`;
 }
+function dollieHistoryErrorHTML() { return `<div class="empty-state"><h3>Не удалось загрузить историю</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button></div>`; }
 
-function dollieHistoryErrorHTML() {
-  return `
-    <div class="empty-state">
-      <h3>Не удалось загрузить историю</h3>
-      <p>Проверьте соединение и попробуйте ещё раз.</p>
-      <button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button>
-    </div>`;
-}
-
-/* =========================================================
-   txMeta — определяет, как выглядит операция в списке.
-   Ключевое: для ВСЕХ начислений (первый заказ, повторный,
-   реферальный, отзыв, ручное начисление, возврат, акция)
-   показываем «Начисление» (а не «Корректировка»).
-   ========================================================= */
 function txMeta(tx) {
   const isPositive = tx.amount > 0;
   const orderPart = tx.order_id ? `Заказ №${escapeHtml(tx.order_id)}` : null;
   let title, subtitle, icon;
-
   switch (tx.type) {
-    // ===== Начисления =====
-    case 'first_order':
-      title = 'Начисление за первый заказ';
-      subtitle = orderPart || 'Первый заказ';
-      icon = 'heart';
-      break;
-    case 'repeat_order':
-      title = 'Начисление за заказ';
-      subtitle = orderPart || 'Повторная покупка';
-      icon = 'heart';
-      break;
-    case 'referral_inviter':
-      title = 'Начисление за приглашение';
-      subtitle = 'Друг совершил покупку';
-      icon = 'user-plus';
-      break;
-    case 'referral_friend':
-      title = 'Начисление по реферальной программе';
-      subtitle = 'Бонус за покупку по приглашению';
-      icon = 'user-plus';
-      break;
-    case 'review_reward':
-      title = 'Начисление за отзыв';
-      subtitle = orderPart || 'Спасибо за отзыв!';
-      icon = 'star';
-      break;
-    case 'earn':
-      title = orderPart ? `Начисление · ${orderPart}` : 'Начисление';
-      subtitle = 'Завершённый заказ';
-      icon = 'heart';
-      break;
-    case 'manual_add':
-      title = 'Начисление';
-      subtitle = escapeHtml(tx.description || 'От администратора');
-      icon = 'heart';
-      break;
-    case 'refund':
-      title = 'Возврат Dollies';
-      subtitle = orderPart || 'Возврат';
-      icon = 'heart';
-      break;
-    case 'promotion':
-      title = 'Начисление за акцию';
-      subtitle = escapeHtml(tx.description || 'Акция');
-      icon = 'gift';
-      break;
-    // ===== Списания =====
-    case 'spend':
-      title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies';
-      subtitle = 'Скидка на заказ';
-      icon = 'minus';
-      break;
-    case 'manual_remove':
-      title = 'Списание';
-      subtitle = escapeHtml(tx.description || 'От администратора');
-      icon = 'minus';
-      break;
-    // ===== Фолбэк =====
-    default:
-      if (isPositive) {
-        title = 'Начисление';
-        subtitle = escapeHtml(tx.description || '');
-        icon = 'heart';
-      } else {
-        title = 'Списание';
-        subtitle = escapeHtml(tx.description || '');
-        icon = 'minus';
-      }
+    case 'first_order': title = 'Начисление за первый заказ'; subtitle = orderPart || 'Первый заказ'; icon = 'heart'; break;
+    case 'repeat_order': title = 'Начисление за заказ'; subtitle = orderPart || 'Повторная покупка'; icon = 'heart'; break;
+    case 'referral_inviter': title = 'Начисление за приглашение'; subtitle = 'Друг совершил покупку'; icon = 'user-plus'; break;
+    case 'referral_friend': title = 'Начисление по реферальной программе'; subtitle = 'Бонус за покупку по приглашению'; icon = 'user-plus'; break;
+    case 'review_reward': title = 'Начисление за отзыв'; subtitle = orderPart || 'Спасибо за отзыв!'; icon = 'star'; break;
+    case 'earn': title = orderPart ? `Начисление · ${orderPart}` : 'Начисление'; subtitle = 'Завершённый заказ'; icon = 'heart'; break;
+    case 'manual_add': title = 'Начисление'; subtitle = escapeHtml(tx.description || 'От администратора'); icon = 'heart'; break;
+    case 'refund': title = 'Возврат Dollies'; subtitle = orderPart || 'Возврат'; icon = 'heart'; break;
+    case 'promotion': title = 'Начисление за акцию'; subtitle = escapeHtml(tx.description || 'Акция'); icon = 'gift'; break;
+    case 'spend': title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies'; subtitle = 'Скидка на заказ'; icon = 'minus'; break;
+    case 'manual_remove': title = 'Списание'; subtitle = escapeHtml(tx.description || 'От администратора'); icon = 'minus'; break;
+    default: if (isPositive) { title = 'Начисление'; subtitle = escapeHtml(tx.description || ''); icon = 'heart'; } else { title = 'Списание'; subtitle = escapeHtml(tx.description || ''); icon = 'minus'; }
   }
   return { title, subtitle, icon, isPositive };
 }
 
-function txRowHTML(tx, idx, source) {
+function txRowHTML(tx, source) {
   const meta = txMeta(tx);
   const sign = tx.amount > 0 ? '+' : '';
   const colorClass = meta.isPositive ? 'pos' : 'neg';
-  return `
-    <button class="tx-row" onclick="openTxDetail(${idx}, '${source || 'history'}')">
-      <div class="tx-icon ${colorClass}"><svg class="icon"><use href="#icon-${meta.icon}"/></svg></div>
-      <div class="tx-main">
-        <div class="tx-title">${meta.title}</div>
-        <div class="tx-subtitle">${meta.subtitle}</div>
-      </div>
-      <div class="tx-side">
-        <div class="tx-amount ${colorClass}">${sign}${tx.amount}</div>
-        <div class="tx-date">${formatTxDate(tx.created_at)}</div>
-      </div>
-    </button>`;
+  const cache = source === 'recent' ? dollieRecentCache : loyaltyTxCache;
+  const idx = cache.indexOf(tx);
+  return `<button class="tx-row" onclick="openTxDetail(${idx}, '${source || 'history'}')">
+    <div class="tx-icon ${colorClass}"><svg class="icon"><use href="${seasonalIcon(meta.icon, 'icon-' + meta.icon)}"/></svg></div>
+    <div class="tx-main">
+      <div class="tx-title">${meta.title}</div>
+      <div class="tx-subtitle">${meta.subtitle}</div>
+    </div>
+    <div class="tx-side">
+      <div class="tx-amount ${colorClass}">${sign}${tx.amount}</div>
+      <div class="tx-date">${formatTxDate(tx.created_at)}</div>
+    </div>
+  </button>`;
 }
 
 async function loadDollieRecent() {
@@ -2518,9 +2904,7 @@ async function loadDollieRecent() {
     const data = await apiFetch('/api/me/loyalty/history', { limit: 3, offset: 0 }, { timeoutMs: 10000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
     dollieRecentCache = data.transactions || [];
-    container.innerHTML = dollieRecentCache.length
-      ? dollieRecentCache.map((tx, i) => txRowHTML(tx, i, 'recent')).join('')
-      : dollieHistoryEmptyHTML();
+    container.innerHTML = dollieRecentCache.length ? dollieRecentCache.map((tx) => txRowHTML(tx, 'recent')).join('') : dollieHistoryEmptyHTML();
     stripAutoDetectLinks(container);
   } catch (e) {
     console.error('DollieLand: не удалось загрузить последние операции —', e);
@@ -2531,16 +2915,10 @@ async function loadDollieRecent() {
 function renderHistoryList() {
   const container = document.getElementById('dollies-history-content');
   if (!container) return;
-
   const list = filteredTxCache();
-  container.innerHTML = list.length
-    ? list.map(tx => txRowHTML(tx, loyaltyTxCache.indexOf(tx), 'history')).join('')
-    : dollieHistoryEmptyHTML();
-
+  container.innerHTML = list.length ? list.map(tx => txRowHTML(tx, 'history')).join('') : dollieHistoryEmptyHTML();
   if (loyaltyHistoryOffset < loyaltyHistoryTotal) {
-    container.insertAdjacentHTML('beforeend', `
-      <button class="btn btn-secondary btn-block tx-load-more" onclick="loadLoyaltyHistory(false)">Показать ещё</button>
-    `);
+    container.insertAdjacentHTML('beforeend', `<button class="btn btn-secondary btn-block tx-load-more" onclick="loadLoyaltyHistory(false)">Показать ещё</button>`);
   }
   stripAutoDetectLinks(container);
 }
@@ -2548,62 +2926,40 @@ function renderHistoryList() {
 async function loadLoyaltyHistory(reset) {
   if (loyaltyHistoryLoading) return;
   const container = document.getElementById('dollies-history-content');
-
-  if (reset) {
-    loyaltyHistoryOffset = 0;
-    loyaltyHistoryTotal = 0;
-    loyaltyTxCache = [];
-    if (container) container.innerHTML = dollieHistorySkeletonHTML(4);
-  }
-
+  if (reset) { loyaltyHistoryOffset = 0; loyaltyHistoryTotal = 0; loyaltyTxCache = []; if (container) container.innerHTML = dollieHistorySkeletonHTML(4); }
   loyaltyHistoryLoading = true;
-
   try {
-    const data = await apiFetch('/api/me/loyalty/history', {
-      limit: LOYALTY_HISTORY_PAGE_SIZE,
-      offset: loyaltyHistoryOffset,
-    }, { timeoutMs: 10000, retries: 1 });
-
+    const data = await apiFetch('/api/me/loyalty/history', { limit: LOYALTY_HISTORY_PAGE_SIZE, offset: loyaltyHistoryOffset }, { timeoutMs: 10000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
-
     const txs = data.transactions || [];
     loyaltyHistoryTotal = data.total || 0;
     loyaltyHistoryOffset += txs.length;
     loyaltyTxCache = loyaltyTxCache.concat(txs);
-
     renderHistoryList();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить историю Dollies —', e);
     if (reset && container) container.innerHTML = dollieHistoryErrorHTML();
     else showToast('Не удалось загрузить ещё операции');
-  } finally {
-    loyaltyHistoryLoading = false;
-  }
+  } finally { loyaltyHistoryLoading = false; }
 }
 
 function openTxDetail(idx, source) {
   const cache = source === 'recent' ? dollieRecentCache : loyaltyTxCache;
   const tx = cache[idx];
   if (!tx) return;
-
   const meta = txMeta(tx);
   const sign = tx.amount > 0 ? '+' : '';
   const colorClass = meta.isPositive ? 'pos' : 'neg';
-  const rubLine = !meta.isPositive
-    ? `<div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Сэкономлено: <b>&nbsp;${Math.abs(tx.amount)} ₽</b></div>`
-    : '';
-
+  const rubLine = !meta.isPositive ? `<div class="info-row"><svg class="icon"><use href="${seasonalIcon('heart','icon-heart')}"/></svg>Сэкономлено: <b>&nbsp;${Math.abs(tx.amount)} ₽</b></div>` : '';
   const content = document.getElementById('sheet-tx-detail-content');
-  content.innerHTML = `
-    <div class="tx-detail-amount">
-      <div class="num ${colorClass}">${sign}${tx.amount} Dollies</div>
-      <div class="sub">${meta.title} · ${meta.subtitle}</div>
-    </div>
-    <div class="info-row"><svg class="icon"><use href="#icon-clock"/></svg>Дата: <b>&nbsp;${formatFullDate(tx.created_at)}</b></div>
-    ${tx.order_id ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Заказ: <b>&nbsp;№${escapeHtml(tx.order_id)}</b></div>` : ''}
-    ${rubLine}
-    <div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Баланс после операции: <b>&nbsp;${tx.balance_after} Dollies</b></div>
-  `;
+  content.innerHTML = `<div class="tx-detail-amount">
+    <div class="num ${colorClass}">${sign}${tx.amount} Dollies</div>
+    <div class="sub">${meta.title} · ${meta.subtitle}</div>
+  </div>
+  <div class="info-row"><svg class="icon"><use href="#icon-clock"/></svg>Дата: <b>&nbsp;${formatFullDate(tx.created_at)}</b></div>
+  ${tx.order_id ? `<div class="info-row"><svg class="icon"><use href="${seasonalIcon('package')}"/></svg>Заказ: <b>&nbsp;№${escapeHtml(tx.order_id)}</b></div>` : ''}
+  ${rubLine}
+  <div class="info-row"><svg class="icon"><use href="${seasonalIcon('heart','icon-heart')}"/></svg>Баланс после операции: <b>&nbsp;${tx.balance_after} Dollies</b></div>`;
   stripAutoDetectLinks(content);
   openSheet('tx-detail');
 }
@@ -2611,32 +2967,18 @@ function openTxDetail(idx, source) {
 function updateHomePanels() {
   const panel = document.getElementById('update-panel');
   const panelText = document.getElementById('update-panel-text');
-
-  if (!lastUpdatedAt || ordersCache.length === 0) {
-    panel.hidden = true;
-    return;
-  }
-
+  if (!lastUpdatedAt || ordersCache.length === 0) { panel.hidden = true; return; }
   const timeStr = lastUpdatedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
   const order = ordersCache[0];
   const step = matchStep(order.status);
-
   panel.hidden = false;
   panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
 }
 
-const NOTIF_ICON_BY_TYPE = {
-  order_status: 'truck',
-  dollies: 'heart',
-  referral_joined: 'user-plus',
-};
-
-function notifIcon(type) {
-  return NOTIF_ICON_BY_TYPE[type] || 'bell';
-}
+const NOTIF_ICON_BY_TYPE = { order_status: 'truck', dollies: 'heart', referral_joined: 'user-plus' };
+function notifIcon(type) { return NOTIF_ICON_BY_TYPE[type] || 'bell'; }
 
 const RU_MONTHS_GEN_NOTIF = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-
 function formatNotifTime(iso) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -2648,22 +2990,19 @@ function formatNotifTime(iso) {
   return `${d.getDate()} ${RU_MONTHS_GEN_NOTIF[d.getMonth()]}, ${timeStr}`;
 }
 
-function notificationsEmptyHTML() {
-  return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса заказов, начисления Dollies и другие события.</p></div>`;
-}
+function notificationsEmptyHTML() { return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса заказов и другие события.</p></div>`; }
 
 function notificationRowHTML(n) {
-  return `
-    <div class="info-row" style="border-top:none;padding:10px 0;align-items:flex-start;">
-      <div class="tx-icon pos" style="width:32px;height:32px;flex-shrink:0;">
-        <svg class="icon" style="width:15px;height:15px;"><use href="#icon-${notifIcon(n.type)}"/></svg>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13.5px;font-weight:700;color:var(--text);">${escapeHtml(n.title || '')}</div>
-        <div style="font-size:12.5px;color:var(--text-secondary);margin-top:2px;line-height:1.4;">${escapeHtml(n.body || '')}</div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">${formatNotifTime(n.created_at)}</div>
-      </div>
-    </div>`;
+  return `<div class="info-row" style="border-top:none;padding:10px 0;align-items:flex-start;">
+    <div class="tx-icon pos" style="width:32px;height:32px;flex-shrink:0;">
+      <svg class="icon" style="width:15px;height:15px;"><use href="${seasonalIcon(notifIcon(n.type), 'icon-' + notifIcon(n.type))}"/></svg>
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13.5px;font-weight:700;color:var(--text);">${escapeHtml(n.title || '')}</div>
+      <div style="font-size:12.5px;color:var(--text-secondary);margin-top:2px;line-height:1.4;">${escapeHtml(n.body || '')}</div>
+      <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">${formatNotifTime(n.created_at)}</div>
+    </div>
+  </div>`;
 }
 
 async function openNotificationsSheet() {
@@ -2674,60 +3013,39 @@ async function openNotificationsSheet() {
 async function loadNotifications(markRead) {
   const notifDot = document.getElementById('notif-dot');
   const notifContent = document.getElementById('notifications-content');
-  if (!userId) {
-    if (notifContent) notifContent.innerHTML = notificationsEmptyHTML();
-    return;
-  }
-
+  if (!userId) { if (notifContent) notifContent.innerHTML = notificationsEmptyHTML(); return; }
   try {
     const data = await apiFetch('/api/me/notifications', { limit: 30 }, { timeoutMs: 10000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
-
     const items = data.notifications || [];
     if (notifDot) notifDot.hidden = !(data.unread_count > 0);
-
     if (notifContent) {
-      notifContent.innerHTML = items.length
-        ? items.map(notificationRowHTML).join('')
-        : notificationsEmptyHTML();
+      notifContent.innerHTML = items.length ? items.map(notificationRowHTML).join('') : notificationsEmptyHTML();
       stripAutoDetectLinks(notifContent);
+      applySeasonalIcons(notifContent);
     }
-
     if (markRead && data.unread_count > 0) {
       apiPost('/api/me/notifications/read', {}).catch(() => {});
       if (notifDot) notifDot.hidden = true;
     }
   } catch (e) {
     console.error('DollieLand: не удалось загрузить уведомления —', e);
-    if (notifContent && !notifContent.innerHTML) {
-      notifContent.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить уведомления</p>`;
-    }
+    if (notifContent && !notifContent.innerHTML) notifContent.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить уведомления</p>`;
   }
-}
-
-async function apiPost(path, body) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
-  const res = await fetch(API_BASE + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
-  return res.json();
 }
 
 async function trackOrder() {
   const input = document.getElementById('track-input').value.trim();
   const result = document.getElementById('track-result');
-
   if (!input) { showToast('Введите номер заказа'); hapticNotification('warning'); return; }
-
   result.innerHTML = skeletonOrdersHTML(1);
-
   try {
     const data = await apiFetch('/api/order_status', { order_id: input }, { timeoutMs: 10000, retries: 1 });
     if (data.ok && data.order) {
       result.innerHTML = orderCardHTML(data.order);
       stripAutoDetectLinks(result);
-      if (!ordersCache.find(o => String(o.id) === String(data.order.id))) {
-        ordersCache = [...ordersCache, data.order];
-      }
+      applySeasonalIcons(result);
+      if (!ordersCache.find(o => String(o.id) === String(data.order.id))) ordersCache = [...ordersCache, data.order];
       hapticNotification('success');
     } else {
       result.innerHTML = `<div class="empty-state"><h3>Заказ не найден</h3><p>Проверьте номер или напишите <b>@Darielune</b>.</p></div>`;
@@ -2740,26 +3058,16 @@ async function trackOrder() {
 }
 
 function callAdmin() {
-  if (tg) {
-    tg.sendData(JSON.stringify({ action: 'call_admin' }));
-    showToast('Администратор уведомлён');
-    hapticNotification('success');
-  } else {
-    window.open('https://t.me/Darielune', '_blank');
-  }
+  if (tg) { tg.sendData(JSON.stringify({ action: 'call_admin' })); showToast('Администратор уведомлён'); hapticNotification('success'); }
+  else window.open('https://t.me/Darielune', '_blank');
 }
 
 const HELP_DATA = [
-  { id: 'shipping', label: 'Как работает доставка', icon: 'truck',
-    body: 'Куклы заказываются у продавцов в США или Китае, затем едут на наш склад, а после — к вам в Россию. Доставка из США занимает обычно 4–5 недель, из Китая — 3–4 недели. Итоговая стоимость логистики зависит от веса и может немного меняться из-за курса валют или тарифов перевозчиков — мы всегда предупреждаем об этом заранее.' },
-  { id: 'statuses', label: 'Что означает статус заказа', icon: 'help-circle',
-    body: STATUS_STEPS.map((s, i) => `${i + 1}. ${s.label}`).join('<br>') },
-  { id: 'pay-weight', label: 'Как оплатить вес', icon: 'alert-circle',
-    body: 'Когда кукла прибывает на склад, мы взвешиваем посылку и присылаем итоговую сумму за доставку. Оплата принимается через администратора в чате с ботом — реквизиты вы получите там же, как только заказ перейдёт в статус «Ожидает оплаты веса».' },
-  { id: 'shipping-time', label: 'Когда заказ будет отправлен', icon: 'clock',
-    body: 'Отправка в Россию происходит сразу после оплаты веса. Дальнейшее движение (через посредника или напрямую) зависит от текущей логистической схемы и отображается в статусе вашего заказа.' },
-  { id: 'stuck-status', label: 'Что делать, если статус не меняется', icon: 'refresh',
-    body: 'Международная логистика иногда идёт с задержками, которые не всегда сразу отражаются в системе. Если статус не менялся необычно долго — напишите нам, и мы уточним актуальную информацию.' }
+  { id:'shipping', label:'Как работает доставка', icon:'truck', body:'Куклы заказываются у продавцов в США или Китае, затем едут на наш склад, а после — к вам в Россию. Доставка из США занимает обычно 4–5 недель, из Китая — 3–4 недели.' },
+  { id:'statuses', label:'Что означает статус заказа', icon:'help-circle', body: STATUS_STEPS.map((s, i) => `${i + 1}. ${s.label}`).join('<br>') },
+  { id:'pay-weight', label:'Как оплатить вес', icon:'alert-circle', body:'Когда кукла прибывает на склад, мы взвешиваем посылку и присылаем итоговую сумму за доставку. Оплата принимается через администратора в чате с ботом.' },
+  { id:'shipping-time', label:'Когда заказ будет отправлен', icon:'clock', body:'Отправка в Россию происходит сразу после оплаты веса. Дальнейшее движение отображается в статусе вашего заказа.' },
+  { id:'stuck-status', label:'Что делать, если статус не меняется', icon:'refresh', body:'Международная логистика иногда идёт с задержками. Если статус не менялся необычно долго — напишите нам, и мы уточним актуальную информацию.' }
 ];
 
 function renderHelpList() {
@@ -2767,27 +3075,24 @@ function renderHelpList() {
   container.innerHTML = HELP_DATA.map(item => `
     <div class="help-item" id="help-item-${item.id}">
       <button class="help-item-head" onclick="toggleHelpItem('${item.id}')">
-        <svg class="icon"><use href="#icon-${item.icon}"/></svg>
+        <svg class="icon"><use href="${seasonalIcon(item.icon, 'icon-' + item.icon)}"/></svg>
         <span class="label">${item.label}</span>
         <svg class="icon chev"><use href="#icon-chevron-down"/></svg>
       </button>
       <div class="help-item-body">${item.body}</div>
     </div>
-  `).join('') + `
-    <button class="menu-item" style="border-radius:var(--r-md);box-shadow:var(--shadow-soft);margin-top:4px" onclick="closeSheet(); openSheet('contact');">
-      <svg class="icon"><use href="#icon-message-circle"/></svg>
-      <span class="label">Связаться с DollieLand</span>
-      <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
-    </button>`;
+  `).join('') + `<button class="menu-item" style="border-radius:var(--r-md);box-shadow:var(--shadow-soft);margin-top:4px" onclick="closeSheet(); openSheet('contact');">
+    <svg class="icon"><use href="#icon-message-circle"/></svg>
+    <span class="label">Связаться с DollieLand</span>
+    <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+  </button>`;
 }
 
-function toggleHelpItem(id) {
-  document.getElementById('help-item-' + id).classList.toggle('open');
-  hapticSelection();
-}
+function toggleHelpItem(id) { document.getElementById('help-item-' + id).classList.toggle('open'); hapticSelection(); }
 
 function showToast(msg) {
   const toast = document.getElementById('toast');
+  if (!toast) return;
   toast.textContent = msg;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2800);
@@ -2795,19 +3100,24 @@ function showToast(msg) {
 
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
-/* =========================================================================
-   THEME SYSTEM v2 — фиксированный каталог из 8 готовых тем на бэкенде.
-   Клиент ничего не сочиняет сам: хранит только выбор Light/Dark и
-   применяет то, что прислал сервер. Никакого "system"-режима.
-   ========================================================================= */
-
+/* ====== THEME SYSTEM ====== */
 const CSS_VAR_MAP = {
-  background: '--bg', surface: '--surface', elevated_surface: '--surface-soft',
-  text: '--text', secondary_text: '--text-secondary', border: '--border',
+  background: '--bg',
+  surface: '--surface',
+  elevated_surface: '--surface-soft',
+  text: '--text',
+  secondary_text: '--text-secondary',
+  border: '--border'
+};
+
+const SEASON_CSS_VARS = {
+  primary: '--season-primary',
+  secondary: '--season-secondary',
+  accent: '--season-accent'
 };
 
 let themeConfig = { theme: null };
-let themeMode = 'light'; // только 'light' | 'dark'
+let themeMode = 'light';
 
 function applyTheme() {
   const mode = (themeMode === 'dark') ? 'dark' : 'light';
@@ -2823,12 +3133,17 @@ function applyTheme() {
     });
     if (colors.accent) root.style.setProperty('--pink-accent', colors.accent);
     if (colors.dollies) root.style.setProperty('--dollies-color', colors.dollies);
+
+    Object.entries(SEASON_CSS_VARS).forEach(([field, cssVar]) => {
+      if (colors[field]) root.style.setProperty(cssVar, colors[field]);
+    });
   }
 
   updateThemeMetaColors(colors && colors.background);
   renderThemeOptionsList();
   renderSeasonalBanner();
   renderThemeDecorations();
+  applySeasonalIcons(document);
 }
 
 function updateThemeMetaColors(bgColor) {
@@ -2842,14 +3157,10 @@ async function loadThemeConfig() {
   try {
     const [activeRes, prefRes] = await Promise.all([
       apiFetch('/api/theme/active', {}, { timeoutMs: 8000, retries: 1 }),
-      userId ? apiFetch('/api/me/theme_preference', {}, { timeoutMs: 8000, retries: 1 }) : Promise.resolve(null),
+      userId ? apiFetch('/api/me/theme_preference', {}, { timeoutMs: 8000, retries: 1 }) : Promise.resolve(null)
     ]);
-    if (activeRes && activeRes.ok) {
-      themeConfig = { theme: activeRes.theme };
-    }
-    if (prefRes && prefRes.ok && (prefRes.mode === 'light' || prefRes.mode === 'dark')) {
-      themeMode = prefRes.mode;
-    }
+    if (activeRes && activeRes.ok && activeRes.theme) themeConfig = { theme: activeRes.theme };
+    if (prefRes && prefRes.ok && (prefRes.mode === 'light' || prefRes.mode === 'dark')) themeMode = prefRes.mode;
   } catch (e) {
     console.error('DollieLand: не удалось загрузить конфиг темы —', e);
   }
@@ -2858,7 +3169,7 @@ async function loadThemeConfig() {
 
 const THEME_MODE_OPTIONS = [
   { key: 'light', icon: 'sun', title: 'Светлая', desc: 'Всегда светлое оформление' },
-  { key: 'dark', icon: 'moon', title: 'Тёмная', desc: 'Всегда тёмное оформление' },
+  { key: 'dark', icon: 'moon', title: 'Тёмная', desc: 'Всегда тёмное оформление' }
 ];
 
 function renderThemeOptionsList() {
@@ -2881,16 +3192,33 @@ async function selectThemeMode(mode) {
   hapticSelection();
   themeMode = mode;
   applyTheme();
-
   if (!userId) return;
   try {
     const url = new URL(API_BASE + '/api/me/theme_preference');
     const headers = { 'Content-Type': 'application/json' };
     if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
     await fetch(url.toString(), { method: 'POST', headers, body: JSON.stringify({ mode }) });
-  } catch (e) {
-    console.error('DollieLand: не удалось сохранить предпочтение темы —', e);
-  }
+  } catch (e) { console.error('DollieLand: не удалось сохранить предпочтение темы —', e); }
+}
+
+/* ====== SEASONAL BANNER ====== */
+function seasonalBannerArt(themeSlug) {
+  const artBySlug = {
+    autumn:    ['#season-autumn-maple-leaf', '#season-autumn-branch', '#season-autumn-berry'],
+    winter:    ['#season-winter-crystal-snowflake', '#season-winter-snow-branch', '#season-winter-frosted-heart'],
+    spring:    ['#season-spring-blooming-branch', '#season-spring-cherry-blossom', '#season-spring-butterfly'],
+    summer:    ['#season-summer-sun', '#season-summer-flower', '#season-summer-shell'],
+    halloween: ['#season-halloween-moon', '#season-halloween-gothic-flower', '#season-halloween-bat'],
+    christmas: ['#season-christmas-tree', '#season-christmas-pine-branch', '#season-christmas-ornament'],
+    valentine: ['#season-valentine-heart-ribbon', '#season-valentine-floral-heart', '#season-valentine-rose']
+  };
+  const icons = artBySlug[themeSlug];
+  if (!icons) return '';
+  return `
+    <svg class="seasonal-banner-art art-1" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><use href="${icons[0]}"/></svg>
+    <svg class="seasonal-banner-art art-2" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><use href="${icons[1]}"/></svg>
+    <svg class="seasonal-banner-art art-3" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="${icons[2]}"/></svg>
+  `;
 }
 
 function renderSeasonalBanner() {
@@ -2904,133 +3232,183 @@ function renderSeasonalBanner() {
   }
   slot.innerHTML = `
     <div class="seasonal-banner">
+      ${seasonalBannerArt(active.slug)}
       <div class="seasonal-banner-eyebrow">${escapeHtml(active.name || 'DollieLand')}</div>
       ${texts.banner_title ? `<div class="seasonal-banner-title">${escapeHtml(texts.banner_title)}</div>` : ''}
       ${texts.banner_subtitle ? `<div class="seasonal-banner-subtitle">${escapeHtml(texts.banner_subtitle)}</div>` : ''}
     </div>`;
 }
 
-const DECORATION_RENDERERS = {
-  snow: () => Array.from({ length: 14 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 6).toFixed(1);
-    const duration = (10 + Math.random() * 8).toFixed(1);
-    const size = 3 + Math.round(Math.random() * 3);
-    return `<div class="deco-item" style="left:${left}%;top:-5%;width:${size}px;height:${size}px;border-radius:50%;background:#FFFFFF;animation:deco-fall ${duration}s linear ${delay}s infinite;"></div>`;
-  }).join(''),
-
-  hearts: () => Array.from({ length: 10 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 5).toFixed(1);
-    const duration = (12 + Math.random() * 6).toFixed(1);
-    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
-    </div>`;
-  }).join(''),
-
-  stars: () => Array.from({ length: 12 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const top = Math.round(Math.random() * 40);
-    const delay = (Math.random() * 4).toFixed(1);
-    return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3s ease ${delay}s infinite;">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="#FFFFFF" stroke="none"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
-    </div>`;
-  }).join(''),
-
-  spiderweb_bats: () => `
-    <svg class="deco-item" style="top:-2%;right:-2%;width:120px;height:120px;opacity:0.35;" viewBox="0 0 100 100" fill="none" stroke="#FFFFFF" stroke-width="1">
-      <path d="M100 0 L20 100 M100 0 L60 100 M100 0 L100 40 M100 0 L100 80"/>
-      <path d="M100 20 Q60 20 20 60 M100 45 Q75 45 45 80"/>
-    </svg>
-    <div class="deco-item" style="top:12%;left:20%;animation:deco-fall 16s linear infinite;">
-      <svg width="16" height="10" viewBox="0 0 24 16" fill="#2A1F22" stroke="none"><path d="M12 4c-2-3-6-4-9-2 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 2z"/></svg>
-    </div>`,
-
-  autumn_leaves: () => Array.from({ length: 10 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 6).toFixed(1);
-    const duration = (11 + Math.random() * 7).toFixed(1);
-    const colors = ['#C97A3D', '#B8563A', '#D9A441'];
-    const color = colors[i % colors.length];
-    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}" stroke="none"><path d="M12 2c5 4 8 9 8 13a8 8 0 1 1-16 0c0-4 3-9 8-13z"/></svg>
-    </div>`;
-  }).join(''),
-
-  sun_rays: () => `
-    <svg class="deco-item" style="top:-5%;right:-5%;width:160px;height:160px;opacity:0.18;" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="30" fill="#FFD36E"/>
-    </svg>`,
-
-  /* ---- новые пресеты ---- */
-
-  // Winter: снежинки + редкие мерцающие искры — холоднее и спокойнее, чем чистый snow
-  winter_sparkle: () => {
-    const flakes = Array.from({ length: 10 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const delay = (Math.random() * 6).toFixed(1);
-      const duration = (13 + Math.random() * 9).toFixed(1);
-      const size = 3 + Math.round(Math.random() * 2);
-      return `<div class="deco-item" style="left:${left}%;top:-5%;width:${size}px;height:${size}px;border-radius:50%;background:#FFFFFF;opacity:0.7;animation:deco-fall ${duration}s linear ${delay}s infinite;"></div>`;
-    }).join('');
-    const sparkles = Array.from({ length: 6 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 35);
-      const delay = (Math.random() * 4).toFixed(1);
-      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3.5s ease ${delay}s infinite;">
-        <svg width="8" height="8" viewBox="0 0 24 24" fill="#EAF4FA" stroke="none"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
+/* ====== SEASONAL DECORATIONS ====== */
+const SEASONAL_DECORATION_RENDERERS = {
+  autumn: () => {
+    const icons = ['#season-autumn-maple-leaf', '#season-autumn-oak-leaf', '#season-autumn-dried-flower', '#season-autumn-berry'];
+    let html = '';
+    for (let i = 0; i < 6; i++) {
+      const left = Math.round(Math.random() * 95);
+      const size = 14 + Math.round(Math.random() * 14);
+      const delay = (Math.random() * 8).toFixed(1);
+      const dur = (12 + Math.random() * 8).toFixed(1);
+      const iconId = icons[i % icons.length];
+      html += `<div class="deco-item anim-fall-slow" style="left:${left}%;top:-6%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${dur}s;color:var(--season-accent);">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="${iconId}"/></svg>
       </div>`;
-    }).join('');
-    return flakes + sparkles;
+    }
+    return html;
   },
 
-  // Spring: медленно падающие лепестки
-  petals: () => Array.from({ length: 10 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 6).toFixed(1);
-    const duration = (13 + Math.random() * 8).toFixed(1);
-    const colors = ['#D98CAE', '#E8B8CE', '#F2D6E4'];
-    const color = colors[i % colors.length];
-    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}" stroke="none"><path d="M12 2c3 3 3 7 0 10-3-3-3-7 0-10zM12 12c3 3 3 7 0 10-3-3-3-7 0-10zM2 12c3-3 7-3 10 0-3 3-7 3-10 0zM12 12c3-3 7-3 10 0-3 3-7 3-10 0z"/></svg>
-    </div>`;
-  }).join(''),
-
-  // Christmas: маленькие мерцающие огоньки + редкие подвесные ornament-шарики
-  ornaments_lights: () => {
-    const lights = Array.from({ length: 8 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 45);
-      const delay = (Math.random() * 3).toFixed(1);
-      const colors = ['#D9B86A', '#C9A24A', '#F3D9A0'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.8s ease ${delay}s infinite;">
-        <svg width="7" height="7" viewBox="0 0 24 24" fill="${color}" stroke="none"><circle cx="12" cy="12" r="9"/></svg>
+  winter: () => {
+    let html = '';
+    for (let i = 0; i < 8; i++) {
+      const left = Math.round(Math.random() * 95);
+      const size = 8 + Math.round(Math.random() * 10);
+      const delay = (Math.random() * 10).toFixed(1);
+      const dur = (14 + Math.random() * 8).toFixed(1);
+      const iconId = i % 3 === 0 ? '#season-winter-crystal-snowflake' : '#season-winter-snowflake';
+      html += `<div class="deco-item anim-fall-slow" style="left:${left}%;top:-6%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${dur}s;color:var(--season-accent);opacity:.55;">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="${iconId}"/></svg>
       </div>`;
-    }).join('');
-    const ornaments = Array.from({ length: 4 }, () => {
-      const left = Math.round(Math.random() * 100);
+    }
+    for (let i = 0; i < 4; i++) {
+      const left = Math.round(Math.random() * 95);
+      const top = Math.round(Math.random() * 40);
+      const size = 6 + Math.round(Math.random() * 6);
       const delay = (Math.random() * 5).toFixed(1);
-      const duration = (17 + Math.random() * 6).toFixed(1);
-      const colors = ['#7A2E38', '#3E5C46', '#C9A24A'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return `<div class="deco-item" style="left:${left}%;top:-8%;opacity:0.5;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-        <svg width="13" height="16" viewBox="0 0 24 28" fill="none"><rect x="10" y="0" width="4" height="5" fill="#D9B86A"/><circle cx="12" cy="16" r="10" fill="${color}"/></svg>
+      html += `<div class="deco-item anim-twinkle" style="left:${left}%;top:${top}%;width:${size}px;height:${size}px;animation-delay:${delay}s;color:var(--season-accent);">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-winter-frosted-sparkle"/></svg>
       </div>`;
-    }).join('');
-    return lights + ornaments;
+    }
+    return html;
   },
+
+  spring: () => {
+    const petals = ['#season-spring-petal', '#season-spring-cherry-blossom', '#season-spring-small-flower'];
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+      const left = Math.round(Math.random() * 95);
+      const size = 10 + Math.round(Math.random() * 10);
+      const delay = (Math.random() * 8).toFixed(1);
+      const dur = (13 + Math.random() * 8).toFixed(1);
+      const iconId = petals[i % petals.length];
+      html += `<div class="deco-item anim-fall-sway" style="left:${left}%;top:-6%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${dur}s;color:var(--season-accent);opacity:.7;">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="${iconId}"/></svg>
+      </div>`;
+    }
+    const leftButterfly = Math.round(Math.random() * 80);
+    const topButterfly = Math.round(Math.random() * 40);
+    html += `<div class="deco-item anim-float" style="left:${leftButterfly}%;top:${topButterfly}%;width:22px;height:22px;color:var(--season-accent);opacity:.55;">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-spring-butterfly"/></svg>
+    </div>`;
+    return html;
+  },
+
+  summer: () => {
+    let html = '';
+    for (let i = 0; i < 3; i++) {
+      const left = Math.round(Math.random() * 90);
+      const top = 5 + Math.round(Math.random() * 40);
+      const size = 10 + Math.round(Math.random() * 10);
+      const delay = (Math.random() * 4).toFixed(1);
+      html += `<div class="deco-item anim-twinkle" style="left:${left}%;top:${top}%;width:${size}px;height:${size}px;animation-delay:${delay}s;color:var(--season-accent);opacity:.7;">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-summer-starburst"/></svg>
+      </div>`;
+    }
+    html += `<div class="deco-item anim-sway" style="left:8%;top:8%;width:44px;height:44px;color:var(--season-accent);opacity:.35;">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><use href="#season-summer-sun"/></svg>
+    </div>`;
+    html += `<div class="deco-item anim-float" style="right:12%;bottom:18%;width:30px;height:30px;color:var(--season-accent);opacity:.45;">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-summer-shell"/></svg>
+    </div>`;
+    return html;
+  },
+
+  halloween: () => {
+    let html = '';
+    for (let i = 0; i < 2; i++) {
+      const top = 4 + i * 6;
+      const delay = (i * 8 + Math.random() * 4).toFixed(1);
+      const dur = (18 + Math.random() * 6).toFixed(1);
+      html += `<div class="deco-item anim-bat-fly" style="left:-15%;top:${top}%;width:22px;height:22px;animation-delay:${delay}s;animation-duration:${dur}s;color:#1A1018;opacity:.85;">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor" stroke="none"><use href="#season-halloween-bat"/></svg>
+      </div>`;
+    }
+    html += `<div class="deco-item anim-glow" style="right:6%;top:5%;width:52px;height:52px;color:var(--season-accent);opacity:.55;">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><use href="#season-halloween-moon"/></svg>
+    </div>`;
+    for (let i = 0; i < 4; i++) {
+      const left = Math.round(Math.random() * 90);
+      const top = 10 + Math.round(Math.random() * 60);
+      const size = 8 + Math.round(Math.random() * 8);
+      const delay = (Math.random() * 5).toFixed(1);
+      html += `<div class="deco-item anim-twinkle" style="left:${left}%;top:${top}%;width:${size}px;height:${size}px;animation-delay:${delay}s;color:var(--season-accent);">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-halloween-magic-sparkle"/></svg>
+      </div>`;
+    }
+    return html;
+  },
+
+  christmas: () => {
+    let html = '';
+    for (let i = 0; i < 8; i++) {
+      const left = Math.round(Math.random() * 95);
+      const size = 8 + Math.round(Math.random() * 10);
+      const delay = (Math.random() * 10).toFixed(1);
+      const dur = (14 + Math.random() * 8).toFixed(1);
+      html += `<div class="deco-item anim-fall-slow" style="left:${left}%;top:-6%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${dur}s;color:var(--season-accent);opacity:.65;">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-christmas-snowflake"/></svg>
+      </div>`;
+    }
+    html += `<div class="deco-item anim-glow" style="left:5%;top:2%;width:90px;height:18px;color:var(--season-accent);opacity:.7;">
+      <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><use href="#season-christmas-lights"/></svg>
+    </div>`;
+    for (let i = 0; i < 3; i++) {
+      const left = 10 + i * 30 + Math.round(Math.random() * 15);
+      const top = 8 + Math.round(Math.random() * 20);
+      const size = 10 + Math.round(Math.random() * 8);
+      html += `<div class="deco-item anim-twinkle" style="left:${left}%;top:${top}%;width:${size}px;height:${size}px;color:var(--season-accent);">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-christmas-star"/></svg>
+      </div>`;
+    }
+    return html;
+  },
+
+  valentine: () => {
+    let html = '';
+    const hearts = ['#season-valentine-heart-ribbon', '#season-valentine-double-heart', '#season-valentine-floral-heart', '#season-valentine-heart-outline'];
+    for (let i = 0; i < 6; i++) {
+      const left = Math.round(Math.random() * 95);
+      const size = 12 + Math.round(Math.random() * 12);
+      const delay = (Math.random() * 8).toFixed(1);
+      const dur = (13 + Math.random() * 7).toFixed(1);
+      const iconId = hearts[i % hearts.length];
+      html += `<div class="deco-item anim-fall-sway" style="left:${left}%;top:-6%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${dur}s;color:var(--season-accent);opacity:.6;">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="${iconId}"/></svg>
+      </div>`;
+    }
+    for (let i = 0; i < 3; i++) {
+      const left = 10 + i * 30 + Math.round(Math.random() * 10);
+      const top = 10 + Math.round(Math.random() * 30);
+      const size = 8 + Math.round(Math.random() * 6);
+      const delay = (Math.random() * 4).toFixed(1);
+      html += `<div class="deco-item anim-twinkle" style="left:${left}%;top:${top}%;width:${size}px;height:${size}px;animation-delay:${delay}s;color:var(--season-accent);">
+        <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><use href="#season-valentine-sparkle"/></svg>
+      </div>`;
+    }
+    return html;
+  }
 };
 
 function renderThemeDecorations() {
   const container = document.getElementById('theme-decorations');
   if (!container) return;
   const active = themeConfig.theme;
-  const preset = (active && active.decoration_preset) || 'none';
-  const renderer = DECORATION_RENDERERS[preset];
-  container.innerHTML = renderer ? renderer() : '';
+  const slug = active && active.slug;
+  const renderer = SEASONAL_DECORATION_RENDERERS[slug];
+  if (!renderer) { container.innerHTML = ''; return; }
+  container.innerHTML = renderer();
 }
 
+/* ====== Init ====== */
 renderHelpList();
 watchAutoDetectLinks();
 loadOrders();
