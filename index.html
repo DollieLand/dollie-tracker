@@ -341,6 +341,32 @@
 
   .dollie-section { margin-bottom: 24px; }
 
+  /* ===================== REWARDS — «Как получить больше Dollies» ===================== */
+  .reward-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    text-align: left;
+    background: none; border-left: none; border-right: none; border-top: none;
+    transition: opacity 0.15s ease;
+  }
+  .reward-row:active { opacity: 0.6; }
+  .reward-row:last-child { border-bottom: none; }
+  .reward-icon {
+    width: 38px; height: 38px; border-radius: var(--r-pill);
+    background: var(--pink-soft); color: var(--pink-accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .reward-icon .icon { width: 17px; height: 17px; }
+  .reward-main { flex: 1; min-width: 0; }
+  .reward-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .reward-subtitle { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; }
+  .reward-amount {
+    font-size: 13.5px; font-weight: 800; color: var(--pink-accent);
+    flex-shrink: 0; padding-left: 8px; white-space: nowrap;
+  }
+
   .tx-row {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 2px;
@@ -863,6 +889,8 @@
   <symbol id="icon-plus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
   <symbol id="icon-minus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
   <symbol id="icon-minus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="icon-star" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></symbol>
+  <symbol id="icon-user-plus" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-4 3.5-6 7-6s7 2 7 6"/><line x1="18" y1="9" x2="18" y2="15"/><line x1="15" y1="12" x2="21" y2="12"/></symbol>
 </svg>
 
 <div class="app">
@@ -1069,6 +1097,11 @@
             <div class="howitworks-desc">как небольшую скидку</div>
           </div>
         </div>
+      </div>
+
+      <div class="dollie-section" id="dollie-rewards-section">
+        <div class="dollie-section-title">Как получить больше Dollies</div>
+        <div id="dollie-rewards-list"></div>
       </div>
 
       <div class="dollie-section">
@@ -1574,8 +1607,6 @@ async function loadBanners() {
     renderBanners();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить баннеры —', e);
-    // Баннеры не критичны — просто прячем блок, чтобы не показывать пустоту,
-    // и один раз пробуем повторить чуть позже (например, сеть отвисла).
     section.hidden = true;
     clearTimeout(bannersRetryTimer);
     bannersRetryTimer = setTimeout(loadBanners, 6000);
@@ -1635,11 +1666,6 @@ function bannerCardHTML(banner, idx) {
     </div>`;
 }
 
-/* Фото баннера иногда не успевает прогрузиться с первого раза (нестабильная
-   сеть в Telegram WebView). Если картинка не загрузилась — пробуем один раз
-   перезапросить её с небольшой задержкой и cache-busting параметром, а если
-   и это не помогло — аккуратно скрываем <img>, оставляя мягкую плашку-фон
-   вместо «битой» иконки. */
 function handleBannerImgError(imgEl, idx) {
   const attempts = Number(imgEl.dataset.retry || 0);
   const banner = bannersCache[idx];
@@ -1748,6 +1774,8 @@ function updateProfileStats() {
 }
 
 let loyaltyBalance = null;
+let loyaltyRewards = null;
+let loyaltyLimits = { min_redeem_amount: 0, max_discount_rub: 0 };
 let loyaltyHistoryOffset = 0;
 let loyaltyHistoryTotal = 0;
 let loyaltyHistoryLoading = false;
@@ -1804,7 +1832,13 @@ async function loadLoyalty() {
     const data = await apiFetch('/api/me/loyalty', {}, { timeoutMs: 10000, retries: 1 });
     if (data.ok) {
       loyaltyBalance = data.balance;
+      loyaltyRewards = data.rewards || {};
+      loyaltyLimits = {
+        min_redeem_amount: data.min_redeem_amount || 0,
+        max_discount_rub: data.max_discount_rub || 0,
+      };
       updateLoyaltyBalanceUI();
+      renderDollieRewards();
     }
   } catch (e) {
     console.error('DollieLand: не удалось загрузить баланс Dollies —', e);
@@ -1826,6 +1860,61 @@ function updateLoyaltyBalanceUI() {
 
   const historyBalanceEl = document.getElementById('dollie-history-balance');
   if (historyBalanceEl) historyBalanceEl.textContent = `${balance} Dollies`;
+}
+
+/* ===================== «Как получить больше Dollies» =====================
+   Все суммы приходят с backend (/api/me/loyalty -> rewards), настраиваются
+   из админки («Настройки Dollie Club») и НЕ хардкодятся здесь. */
+const REWARD_DEFS = [
+  {
+    key: 'order', icon: 'package', title: 'Оформить заказ',
+    subtitle: 'Получайте Dollies за покупки',
+    amountKey: 'first_order_bonus',
+    action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
+  },
+  {
+    key: 'repeat', icon: 'refresh', title: 'Повторная покупка',
+    subtitle: 'Дополнительные Dollies за возвращение в DollieLand',
+    amountKey: 'repeat_order_bonus',
+    action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
+  },
+  {
+    key: 'referral', icon: 'user-plus', title: 'Пригласить друга',
+    subtitle: 'Бонус после первой покупки друга',
+    amountKey: 'referral_bonus',
+    action: () => comingSoon('Приглашение друзей'),
+  },
+  {
+    key: 'review', icon: 'star', title: 'Оставить отзыв',
+    subtitle: 'Расскажите о полученном заказе',
+    amountKey: 'review_bonus',
+    action: () => comingSoon('Отзывы'),
+  },
+];
+
+function renderDollieRewards() {
+  const container = document.getElementById('dollie-rewards-list');
+  if (!container || !loyaltyRewards) return;
+
+  container.innerHTML = REWARD_DEFS.map(def => {
+    const amount = loyaltyRewards[def.amountKey];
+    const amountHTML = amount ? `+${amount}` : '';
+    return `
+      <button class="reward-row" onclick="dollieRewardAction('${def.key}')">
+        <div class="reward-icon"><svg class="icon"><use href="#icon-${def.icon}"/></svg></div>
+        <div class="reward-main">
+          <div class="reward-title">${def.title}</div>
+          <div class="reward-subtitle">${def.subtitle}</div>
+        </div>
+        ${amountHTML ? `<div class="reward-amount">${amountHTML}</div>` : ''}
+      </button>`;
+  }).join('');
+}
+
+function dollieRewardAction(key) {
+  hapticSelection();
+  const def = REWARD_DEFS.find(d => d.key === key);
+  if (def) def.action();
 }
 
 function openDolliesSheet() {
