@@ -1034,7 +1034,7 @@
   <main class="tab-screen active" id="tab-home">
     <header class="app-header">
       <div class="brand">DollieLand</div>
-      <button class="icon-btn" onclick="openSheet('notifications')" aria-label="Уведомления">
+      <button class="icon-btn" onclick="openNotificationsSheet()" aria-label="Уведомления">
         <svg class="icon"><use href="#icon-bell"/></svg>
         <span class="dot" id="notif-dot" hidden></span>
       </button>
@@ -1126,7 +1126,7 @@
         <span class="label">Мои заказы</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
-      <button class="menu-item" onclick="openSheet('notifications')">
+      <button class="menu-item" onclick="openNotificationsSheet()">
         <svg class="icon"><use href="#icon-bell"/></svg>
         <span class="label">Уведомления</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
@@ -1280,33 +1280,25 @@
 <div class="bottom-sheet" id="sheet-referral">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2 style="margin-bottom:2px">Приглашайте друзей</h2>
-    <p class="dollie-subtitle" id="referral-hero-subtitle">Получайте Dollies, а ваш друг — свой бонус за первую покупку.</p>
+    <h2 style="margin-bottom:8px">Приглашайте друзей</h2>
+    <p class="dollie-subtitle" style="margin-top:0" id="referral-hero-subtitle">Получайте Dollies, а ваш друг — свой бонус за первую покупку.</p>
 
     <div class="referral-stepper">
       <div class="referral-step">
         <div class="referral-step-num">01</div>
-        <div class="referral-step-text">Поделитесь своей ссылкой или @username с другом.</div>
+        <div class="referral-step-text">Поделитесь своей ссылкой с другом.</div>
       </div>
       <div class="referral-step">
         <div class="referral-step-num">02</div>
-        <div class="referral-step-text">Друг оформляет свой первый заказ в DollieLand.</div>
+        <div class="referral-step-text">Друг переходит по ссылке — он автоматически привязывается к вам.</div>
       </div>
       <div class="referral-step">
         <div class="referral-step-num">03</div>
-        <div class="referral-step-text">При переходе по ссылке он автоматически привязывается к вам.</div>
+        <div class="referral-step-text">Друг оформляет свой первый заказ в DollieLand.</div>
       </div>
       <div class="referral-step">
         <div class="referral-step-num">04</div>
-        <div class="referral-step-text">После успешного завершения его первой покупки: <b>вы</b> и <b>друг</b> получаете Dollies.</div>
-      </div>
-    </div>
-
-    <div class="dollie-section">
-      <div class="dollie-section-title">Ваш @username</div>
-      <div class="referral-copy-row">
-        <div class="referral-copy-value" id="referral-username-value">—</div>
-        <button class="pill-btn" onclick="copyReferralUsername()"><svg class="icon"><use href="#icon-copy"/></svg>Скопировать</button>
+        <div class="referral-step-text">После подтверждения покупки: <b>вы</b> и <b>друг</b> получаете Dollies.</div>
       </div>
     </div>
 
@@ -1423,7 +1415,7 @@ function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(typ
 const API_BASE = 'https://dollieland.pythonanywhere.com';
 // TODO: замените на реальный @username бота (без @) — используется для
 // реферальной ссылки вида https://t.me/<BOT_USERNAME>?start=ref_<id>.
-const BOT_USERNAME = 'DollieHelper_bot';
+const BOT_USERNAME = 'DollieLandBot';
 
 /* ===================== FETCH С ТАЙМАУТОМ И ПОВТОРОМ ===================== */
 async function apiFetch(path, params, opts) {
@@ -2160,7 +2152,6 @@ async function openReferralSheet() {
 
     document.getElementById('referral-hero-subtitle').textContent =
       `Получайте ${data.inviter_bonus} Dollies, а ваш друг — ${data.friend_bonus} Dollies за его первую покупку.`;
-    document.getElementById('referral-username-value').textContent = data.username ? '@' + data.username : `ID ${data.referral_code}`;
     document.getElementById('referral-link-value').textContent = referralLink(data.referral_code);
 
     if (data.invited_count > 0) {
@@ -2182,12 +2173,6 @@ async function openReferralSheet() {
     console.error('DollieLand: не удалось загрузить статистику приглашений —', e);
     statsContainer.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить статистику</p>`;
   }
-}
-
-function copyReferralUsername() {
-  if (!referralData) return;
-  const text = referralData.username ? '@' + referralData.username : String(referralData.referral_code);
-  copyTextToClipboard(text, 'Скопировано');
 }
 
 function copyReferralLink() {
@@ -2608,13 +2593,9 @@ function openTxDetail(idx, source) {
 function updateHomePanels() {
   const panel = document.getElementById('update-panel');
   const panelText = document.getElementById('update-panel-text');
-  const notifDot = document.getElementById('notif-dot');
-  const notifContent = document.getElementById('notifications-content');
 
   if (!lastUpdatedAt || ordersCache.length === 0) {
     panel.hidden = true;
-    notifDot.hidden = true;
-    notifContent.innerHTML = `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса ваших заказов.</p></div>`;
     return;
   }
 
@@ -2624,17 +2605,97 @@ function updateHomePanels() {
 
   panel.hidden = false;
   panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
+}
 
-  notifDot.hidden = false;
-  notifContent.innerHTML = `
-    <div class="info-row" style="border-top:none;padding-top:0">
-      <svg class="icon"><use href="#icon-truck"/></svg>
-      <span><b>${orderTitle(order)}</b> — ${STATUS_STEPS[step].label}</span>
-    </div>
-    <div class="order-meta" style="margin-bottom:14px">Обновлено сегодня в ${timeStr}</div>
-    <button class="btn btn-secondary btn-block" onclick="closeSheet(); switchTab('orders');">Все заказы</button>
-  `;
-  stripAutoDetectLinks(notifContent);
+/* ===================== NOTIFICATION CENTER =====================
+   Единая лента событий с бэкенда (/api/me/notifications): смена статуса
+   заказа, начисление/списание Dollies, реферальные события и т.д. —
+   а не только «последний статус последнего заказа», как было раньше. */
+const NOTIF_ICON_BY_TYPE = {
+  order_status: 'truck',
+  dollies: 'heart',
+  referral_joined: 'user-plus',
+};
+
+function notifIcon(type) {
+  return NOTIF_ICON_BY_TYPE[type] || 'bell';
+}
+
+const RU_MONTHS_GEN_NOTIF = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+function formatNotifTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  const timeStr = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  if (sameDay) return `Сегодня, ${timeStr}`;
+  return `${d.getDate()} ${RU_MONTHS_GEN_NOTIF[d.getMonth()]}, ${timeStr}`;
+}
+
+function notificationsEmptyHTML() {
+  return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса заказов, начисления Dollies и другие события.</p></div>`;
+}
+
+function notificationRowHTML(n) {
+  return `
+    <div class="info-row" style="border-top:none;padding:10px 0;align-items:flex-start;">
+      <div class="tx-icon pos" style="width:32px;height:32px;flex-shrink:0;">
+        <svg class="icon" style="width:15px;height:15px;"><use href="#icon-${notifIcon(n.type)}"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13.5px;font-weight:700;color:var(--text);">${escapeHtml(n.title || '')}</div>
+        <div style="font-size:12.5px;color:var(--text-secondary);margin-top:2px;line-height:1.4;">${escapeHtml(n.body || '')}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">${formatNotifTime(n.created_at)}</div>
+      </div>
+    </div>`;
+}
+
+async function openNotificationsSheet() {
+  openSheet('notifications');
+  await loadNotifications(true);
+}
+
+async function loadNotifications(markRead) {
+  const notifDot = document.getElementById('notif-dot');
+  const notifContent = document.getElementById('notifications-content');
+  if (!userId) {
+    if (notifContent) notifContent.innerHTML = notificationsEmptyHTML();
+    return;
+  }
+
+  try {
+    const data = await apiFetch('/api/me/notifications', { limit: 30 }, { timeoutMs: 10000, retries: 1 });
+    if (!data.ok) throw new Error('bad response');
+
+    const items = data.notifications || [];
+    if (notifDot) notifDot.hidden = !(data.unread_count > 0);
+
+    if (notifContent) {
+      notifContent.innerHTML = items.length
+        ? items.map(notificationRowHTML).join('')
+        : notificationsEmptyHTML();
+      stripAutoDetectLinks(notifContent);
+    }
+
+    if (markRead && data.unread_count > 0) {
+      apiPost('/api/me/notifications/read', {}).catch(() => {});
+      if (notifDot) notifDot.hidden = true;
+    }
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить уведомления —', e);
+    if (notifContent && !notifContent.innerHTML) {
+      notifContent.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить уведомления</p>`;
+    }
+  }
+}
+
+async function apiPost(path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
+  const res = await fetch(API_BASE + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
+  return res.json();
 }
 
 async function trackOrder() {
@@ -2947,6 +3008,7 @@ loadOrders();
 loadLoyalty();
 loadBanners();
 loadThemeConfig();
+loadNotifications(false);
 </script>
 
 </body>
