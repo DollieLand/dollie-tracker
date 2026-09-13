@@ -461,7 +461,9 @@
   .banner-image-wrap {
     width: 108px; flex-shrink: 0; position: relative; background: var(--pink-soft);
   }
-  .banner-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .banner-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.25s ease; }
+  .banner-image-wrap img.loaded { opacity: 1; }
+  .banner-image-wrap.img-failed img { display: none; }
 
   .banner-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 18px; }
   .banner-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.2s ease; }
@@ -649,20 +651,31 @@
   .bottom-sheet {
     position: fixed; left: 0; right: 0; bottom: 0;
     max-width: 480px; margin: 0 auto;
+    height: auto;
     max-height: 82vh;
+    max-height: calc(var(--tg-vh, 100vh) * 0.82);
     background: var(--surface);
     border-radius: 26px 26px 0 0;
     box-shadow: 0 -12px 40px rgba(57,44,49,0.16);
     transform: translateY(100%);
-    transition: transform 0.32s cubic-bezier(.22,1,.36,1);
+    transition: transform 0.32s cubic-bezier(.22,1,.36,1), max-height 0.32s cubic-bezier(.22,1,.36,1);
     z-index: 51;
     padding-bottom: calc(20px + var(--safe-b));
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: none;
+    overscroll-behavior: contain;
   }
   .bottom-sheet.open { display: block; transform: translateY(0); }
+  .bottom-sheet.expanded {
+    max-height: calc(var(--tg-vh, 100vh) - var(--safe-t) - 14px);
+  }
+  .bottom-sheet.dragging { transition: none; }
 
-  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 10px auto 4px; }
+  .sheet-handle-area { padding: 8px 0 2px; touch-action: none; cursor: grab; }
+  .sheet-handle-area:active { cursor: grabbing; }
+  .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 6px auto 4px; transition: background 0.15s ease; }
+  .sheet-handle-area:active .sheet-handle { background: var(--pink); }
   .sheet-content { padding: 8px 20px 4px; }
   .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; }
 
@@ -1005,12 +1018,12 @@
 <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
 
 <div class="bottom-sheet" id="sheet-order">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content" id="sheet-order-content"></div>
 </div>
 
 <div class="bottom-sheet" id="sheet-notifications">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
     <h2>Уведомления</h2>
     <div id="notifications-content"></div>
@@ -1018,7 +1031,7 @@
 </div>
 
 <div class="bottom-sheet" id="sheet-dollies">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
 
     <div class="dollie-sheet-page active" id="dollie-page-overview">
@@ -1089,12 +1102,12 @@
 </div>
 
 <div class="bottom-sheet" id="sheet-tx-detail">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content" id="sheet-tx-detail-content"></div>
 </div>
 
 <div class="bottom-sheet" id="sheet-help">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
     <h2>Помощь</h2>
     <div id="help-list"></div>
@@ -1102,7 +1115,7 @@
 </div>
 
 <div class="bottom-sheet" id="sheet-track">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
     <h2>Найти заказ по номеру</h2>
     <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">Обычно это не требуется — ваши заказы уже привязаны к аккаунту. Используйте, если не видите нужный заказ в списке.</p>
@@ -1115,7 +1128,7 @@
 </div>
 
 <div class="bottom-sheet" id="sheet-contact">
-  <div class="sheet-handle"></div>
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
     <h2>Связаться с нами</h2>
     <div class="contact-card">
@@ -1168,26 +1181,39 @@ function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(typ
 
 const API_BASE = 'https://dollieland.pythonanywhere.com';
 
-async function apiFetch(path, params) {
+/* ===================== FETCH С ТАЙМАУТОМ И ПОВТОРОМ ===================== */
+async function apiFetch(path, params, opts) {
+  const { timeoutMs = 12000, retries = 1 } = opts || {};
   const url = new URL(API_BASE + path);
   Object.entries(params || {}).forEach(([k, v]) => { if (v != null) url.searchParams.set(k, v); });
   const headers = {};
   if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
 
-  let res;
-  try {
-    res = await fetch(url.toString(), { headers });
-  } catch (networkErr) {
-    throw new Error('NETWORK: ' + (networkErr?.message || 'не удалось выполнить запрос'));
-  }
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url.toString(), { headers, signal: controller.signal });
+      clearTimeout(timer);
 
-  if (!res.ok) {
-    let bodyPreview = '';
-    try { bodyPreview = (await res.text()).slice(0, 160); } catch (_) {}
-    throw new Error(`HTTP ${res.status}${bodyPreview ? ' — ' + bodyPreview : ''}`);
+      if (!res.ok) {
+        let bodyPreview = '';
+        try { bodyPreview = (await res.text()).slice(0, 160); } catch (_) {}
+        throw new Error(`HTTP ${res.status}${bodyPreview ? ' — ' + bodyPreview : ''}`);
+      }
+      return await res.json();
+    } catch (err) {
+      clearTimeout(timer);
+      lastError = err?.name === 'AbortError'
+        ? new Error('NETWORK: превышено время ожидания ответа')
+        : (err instanceof TypeError ? new Error('NETWORK: ' + (err?.message || 'не удалось выполнить запрос')) : err);
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
   }
-
-  return res.json();
+  throw lastError;
 }
 
 function switchTab(name) {
@@ -1202,18 +1228,135 @@ function switchTab(name) {
 function comingSoon(label) { showToast(`${label} — совсем скоро`); }
 
 function openSheet(id) {
+  const sheetEl = document.getElementById('sheet-' + id);
+  if (!sheetEl) return;
+  document.querySelectorAll('.bottom-sheet').forEach(s => resetSheetGeometry(s));
   document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
-  document.getElementById('sheet-' + id).classList.add('open');
+  sheetEl.classList.add('open');
+  sheetEl.scrollTop = 0;
   document.getElementById('sheet-overlay').classList.add('open');
   hapticImpact('light');
   if (tg) tg.BackButton.show();
 }
 
+function resetSheetGeometry(sheetEl) {
+  sheetEl.classList.remove('expanded', 'dragging');
+  sheetEl.style.maxHeight = '';
+  sheetEl.style.transform = '';
+}
+
 function closeSheet() {
-  document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.bottom-sheet').forEach(s => {
+    s.classList.remove('open');
+    resetSheetGeometry(s);
+  });
   document.getElementById('sheet-overlay').classList.remove('open');
   if (tg) tg.BackButton.hide();
 }
+
+/* ===================== ПОДНЯТИЕ ШТОРКИ ВВЕРХ (drag/tap на "ручке") =====================
+   Позволяет пользователю потянуть шторку (Dollie Club, Уведомления, Помощь и т.д.)
+   вверх, чтобы развернуть её почти на весь экран, или вниз — чтобы закрыть. */
+function setupSheetDrag(sheetEl) {
+  const handleArea = sheetEl.querySelector('.sheet-handle-area');
+  if (!handleArea) return;
+
+  let dragging = false;
+  let startY = 0;
+  let startHeight = 0;
+  let movedEnough = false;
+
+  function currentMaxHeightPx(expanded) {
+    const tgVhRaw = getComputedStyle(document.documentElement).getPropertyValue('--tg-vh').trim();
+    const vh = parseFloat(tgVhRaw) || window.innerHeight;
+    const safeT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-t')) || 0;
+    return expanded ? (vh - safeT - 14) : vh * 0.82;
+  }
+
+  function onDragStart(clientY) {
+    dragging = true;
+    movedEnough = false;
+    startY = clientY;
+    startHeight = sheetEl.getBoundingClientRect().height;
+    sheetEl.classList.add('dragging');
+  }
+
+  function onDragMove(clientY) {
+    if (!dragging) return;
+    const delta = startY - clientY; // > 0 когда тянут вверх
+    if (Math.abs(delta) > 4) movedEnough = true;
+
+    const maxExpanded = currentMaxHeightPx(true);
+    let newHeight = startHeight + delta;
+    newHeight = Math.min(maxExpanded, newHeight);
+
+    if (delta < 0) {
+      // тянут вниз — двигаем шторку вниз для ощущения закрытия
+      const pull = Math.min(140, -delta);
+      sheetEl.style.transform = `translateY(${pull}px)`;
+      sheetEl.style.maxHeight = startHeight + 'px';
+    } else {
+      sheetEl.style.transform = '';
+      sheetEl.style.maxHeight = newHeight + 'px';
+    }
+  }
+
+  function onDragEnd(clientY) {
+    if (!dragging) return;
+    dragging = false;
+    sheetEl.classList.remove('dragging');
+
+    const delta = startY - clientY;
+    const translateActive = sheetEl.style.transform && sheetEl.style.transform !== '';
+
+    sheetEl.style.transform = '';
+
+    if (!movedEnough) {
+      // короткий тап по ручке — переключить между обычным и развёрнутым видом
+      sheetEl.style.maxHeight = '';
+      sheetEl.classList.toggle('expanded');
+      return;
+    }
+
+    if (translateActive && -delta > 90) {
+      // достаточно потянули вниз — закрываем
+      sheetEl.style.maxHeight = '';
+      closeSheet();
+      return;
+    }
+
+    const collapsedH = currentMaxHeightPx(false);
+    const expandedH = currentMaxHeightPx(true);
+    const finishHeight = Math.min(expandedH, startHeight + delta);
+    const midPoint = (collapsedH + expandedH) / 2;
+
+    sheetEl.style.maxHeight = '';
+    if (finishHeight > midPoint) {
+      sheetEl.classList.add('expanded');
+    } else {
+      sheetEl.classList.remove('expanded');
+    }
+  }
+
+  handleArea.addEventListener('touchstart', e => onDragStart(e.touches[0].clientY), { passive: true });
+  handleArea.addEventListener('touchmove', e => { onDragMove(e.touches[0].clientY); }, { passive: true });
+  handleArea.addEventListener('touchend', e => onDragEnd(e.changedTouches[0].clientY));
+  handleArea.addEventListener('touchcancel', () => { dragging = false; sheetEl.classList.remove('dragging'); sheetEl.style.transform = ''; sheetEl.style.maxHeight = ''; });
+
+  handleArea.addEventListener('mousedown', e => {
+    onDragStart(e.clientY);
+    const onMouseMove = ev => onDragMove(ev.clientY);
+    const onMouseUp = ev => {
+      onDragEnd(ev.clientY);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  });
+}
+
+document.querySelectorAll('.bottom-sheet').forEach(setupSheetDrag);
 
 const STATUS_STEPS = [
   { label: 'Заказ оформлен' },
@@ -1411,6 +1554,7 @@ function noUserHTML() {
 
 let bannersCache = [];
 let bannerScrollTimeout = null;
+let bannersRetryTimer = null;
 
 function pluralizeActiveOrders(n) {
   const mod10 = n % 10, mod100 = n % 100;
@@ -1423,13 +1567,18 @@ async function loadBanners() {
   const section = document.getElementById('banner-section');
   if (!section) return;
   try {
-    const data = await apiFetch('/api/banners', {});
+    const data = await apiFetch('/api/banners', {}, { timeoutMs: 8000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
+    clearTimeout(bannersRetryTimer);
     bannersCache = data.banners || [];
     renderBanners();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить баннеры —', e);
+    // Баннеры не критичны — просто прячем блок, чтобы не показывать пустоту,
+    // и один раз пробуем повторить чуть позже (например, сеть отвисла).
     section.hidden = true;
+    clearTimeout(bannersRetryTimer);
+    bannersRetryTimer = setTimeout(loadBanners, 6000);
   }
 }
 
@@ -1448,6 +1597,7 @@ function renderBanners() {
   }
 
   row.innerHTML = bannersCache.map((b, i) => bannerCardHTML(b, i)).join('');
+  stripAutoDetectLinks(row);
 
   if (bannersCache.length > 1) {
     dotsWrap.hidden = false;
@@ -1464,6 +1614,13 @@ function bannerCardHTML(banner, idx) {
   const subtitle = escapeHtml(banner.subtitle || '');
   const btnText = escapeHtml(banner.button_text || 'Смотреть');
   const hasLink = !!banner.link;
+  const imageHTML = banner.image_url
+    ? `<div class="banner-image-wrap" id="banner-img-wrap-${idx}">
+         <img src="${banner.image_url}" alt="" loading="lazy" decoding="async"
+              onload="this.classList.add('loaded')"
+              onerror="handleBannerImgError(this, ${idx})">
+       </div>`
+    : '';
   return `
     <div class="banner-card" ${hasLink ? `onclick="openBannerLink(${idx})"` : ''}>
       <div class="banner-card-text">
@@ -1474,8 +1631,31 @@ function bannerCardHTML(banner, idx) {
         </div>
         ${hasLink ? `<span class="banner-cta">${btnText} <svg class="icon"><use href="#icon-chevron-right"/></svg></span>` : ''}
       </div>
-      ${banner.image_url ? `<div class="banner-image-wrap"><img src="${banner.image_url}" alt="" loading="lazy"></div>` : ''}
+      ${imageHTML}
     </div>`;
+}
+
+/* Фото баннера иногда не успевает прогрузиться с первого раза (нестабильная
+   сеть в Telegram WebView). Если картинка не загрузилась — пробуем один раз
+   перезапросить её с небольшой задержкой и cache-busting параметром, а если
+   и это не помогло — аккуратно скрываем <img>, оставляя мягкую плашку-фон
+   вместо «битой» иконки. */
+function handleBannerImgError(imgEl, idx) {
+  const attempts = Number(imgEl.dataset.retry || 0);
+  const banner = bannersCache[idx];
+  const baseSrc = banner?.image_url;
+
+  if (attempts < 2 && baseSrc) {
+    imgEl.dataset.retry = String(attempts + 1);
+    setTimeout(() => {
+      const sep = baseSrc.includes('?') ? '&' : '?';
+      imgEl.src = baseSrc + sep + '_retry=' + Date.now();
+    }, 700 * (attempts + 1));
+    return;
+  }
+
+  const wrap = imgEl.closest('.banner-image-wrap');
+  if (wrap) wrap.classList.add('img-failed');
 }
 
 function openBannerLink(idx) {
@@ -1519,7 +1699,7 @@ async function loadOrders(isManualRefresh) {
   }
 
   try {
-    const data = await apiFetch('/api/user_orders', { user_id: userId });
+    const data = await apiFetch('/api/user_orders', { user_id: userId }, { timeoutMs: 12000, retries: 1 });
     const orders = data.orders || [];
     ordersCache = orders;
     lastUpdatedAt = new Date();
@@ -1621,7 +1801,7 @@ function animateNumber(el, to) {
 async function loadLoyalty() {
   if (!userId) return;
   try {
-    const data = await apiFetch('/api/me/loyalty', {});
+    const data = await apiFetch('/api/me/loyalty', {}, { timeoutMs: 10000, retries: 1 });
     if (data.ok) {
       loyaltyBalance = data.balance;
       updateLoyaltyBalanceUI();
@@ -1781,7 +1961,7 @@ async function loadDollieRecent() {
   if (!container) return;
   container.innerHTML = dollieHistorySkeletonHTML(3);
   try {
-    const data = await apiFetch('/api/me/loyalty/history', { limit: 3, offset: 0 });
+    const data = await apiFetch('/api/me/loyalty/history', { limit: 3, offset: 0 }, { timeoutMs: 10000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
     dollieRecentCache = data.transactions || [];
     container.innerHTML = dollieRecentCache.length
@@ -1828,7 +2008,7 @@ async function loadLoyaltyHistory(reset) {
     const data = await apiFetch('/api/me/loyalty/history', {
       limit: LOYALTY_HISTORY_PAGE_SIZE,
       offset: loyaltyHistoryOffset,
-    });
+    }, { timeoutMs: 10000, retries: 1 });
 
     if (!data.ok) throw new Error('bad response');
 
@@ -1915,7 +2095,7 @@ async function trackOrder() {
   result.innerHTML = skeletonOrdersHTML(1);
 
   try {
-    const data = await apiFetch('/api/order_status', { order_id: input });
+    const data = await apiFetch('/api/order_status', { order_id: input }, { timeoutMs: 10000, retries: 1 });
     if (data.ok && data.order) {
       result.innerHTML = orderCardHTML(data.order);
       stripAutoDetectLinks(result);
