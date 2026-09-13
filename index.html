@@ -32,11 +32,6 @@
     --nav-h: 66px;
   }
 
-  /* ===================== DARK MODE — базовые токены =====================
-     Это fallback на случай, если JS ещё не успел применить актуальный
-     конфиг с бэкенда (/api/theme/active) — чтобы не было «мигания» цветов.
-     Реальные значения (в т.ч. изменённые админом) подставляются поверх
-     через document.documentElement.style.setProperty(...) в applyTheme(). */
   html[data-theme="dark"] {
     --bg: #1C1417;
     --surface: #241A1E;
@@ -77,7 +72,6 @@
 
   .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; flex-shrink: 0; }
 
-  /* ===================== APP SHELL ===================== */
   .app { max-width: 480px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px); }
 
   .tab-screen {
@@ -93,7 +87,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ===================== HEADER ===================== */
   .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 
   .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: #B4708F; letter-spacing: 0.2px; }
@@ -124,7 +117,6 @@
   .section-head { display: flex; align-items: center; justify-content: space-between; margin: 24px 0 10px; }
   .section-head h3 { font-size: 14.5px; font-weight: 700; }
 
-  /* ===================== SCROLL ROW ===================== */
   .scroll-row {
     display: flex; gap: 12px;
     overflow-x: auto;
@@ -135,7 +127,6 @@
   }
   .scroll-row::-webkit-scrollbar { display: none; }
 
-  /* ===================== HERO ORDER CARD ===================== */
   .hero-card {
     background: linear-gradient(155deg, #FCE5ED 0%, #FFF4F8 55%, #FFFFFF 100%);
     border-radius: var(--r-xl);
@@ -182,7 +173,6 @@
   }
   .hero-link .icon { width: 16px; height: 16px; }
 
-  /* ===================== UPDATE PANEL ===================== */
   .update-panel {
     background: var(--surface);
     border-radius: var(--r-lg);
@@ -198,7 +188,6 @@
   .update-panel .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
   .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; }
 
-  /* ===================== BUTTONS ===================== */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     padding: 13px 22px; border-radius: var(--r-pill);
@@ -225,7 +214,6 @@
   .pill-btn.spinning .icon { animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ===================== DOLLIE CLUB — превью (Главная / Профиль) ===================== */
   .dollie-card {
     background: linear-gradient(150deg, #FDF1F5 0%, #FFF9FB 60%, #FFFFFF 100%);
     border: 1px solid var(--border);
@@ -262,14 +250,13 @@
   .dollie-card.compact { padding: 16px 18px; margin-bottom: 14px; }
   .dollie-card.compact .dollie-balance-num { font-size: 26px; }
 
-  /* ===================== DOLLIE CLUB — полный экран (bottom sheet) ===================== */
   .dollie-sheet-page { display: none; }
   .dollie-sheet-page.active { display: block; }
 
   .dollie-subtitle {
     font-size: 13px;
     color: var(--text-secondary);
-    margin: -8px 0 16px;
+    margin: 8px 0 16px;
   }
 
   .dollie-hero {
@@ -363,7 +350,6 @@
 
   .dollie-section { margin-bottom: 24px; }
 
-  /* ===================== REWARDS — «Как получить больше Dollies» ===================== */
   .reward-row {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 2px;
@@ -458,7 +444,6 @@
     animation: shimmer 1.4s ease infinite;
   }
 
-  /* ===================== БАННЕРЫ ===================== */
   .banner-row {
     scroll-snap-type: x mandatory;
     margin-bottom: 8px;
@@ -530,7 +515,6 @@
     margin-bottom: 18px;
   }
 
-  /* ===================== Компактная сводка заказов ===================== */
   .orders-summary-card {
     display: flex; align-items: center; gap: 12px;
     background: var(--surface); border: 1px solid var(--border);
@@ -545,11 +529,9 @@
   }
   .orders-summary-text { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text); }
 
-  /* ===================== SCREEN HEADER ===================== */
   .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; }
 
-  /* ===================== ORDER CARDS ===================== */
   .order-card {
     background: var(--surface);
     border-radius: var(--r-lg);
@@ -585,7 +567,6 @@
     flex: 0 0 auto; scroll-snap-align: start; width: 220px;
   }
 
-  /* ===================== TIMELINE ===================== */
   .timeline { margin: 16px 0 6px; }
 
   .timeline-step { display: flex; gap: 12px; position: relative; padding-bottom: 20px; }
@@ -618,7 +599,6 @@
   .info-row .icon { width: 17px; height: 17px; color: var(--pink-accent); flex-shrink: 0; }
   .info-row b { color: var(--text); }
 
-  /* ===================== SKELETON ===================== */
   .skeleton-card { background: var(--surface); border-radius: var(--r-lg); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-soft); }
   .skeleton-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
   .skeleton-thumb { width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0; }
@@ -635,13 +615,11 @@
 
   @keyframes shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
 
-  /* ===================== EMPTY / ERROR STATES ===================== */
   .empty-state { text-align: center; padding: 30px 16px 8px; }
   .empty-illustration { width: 96px; height: 96px; margin-bottom: 4px; }
   .empty-state h3 { font-size: 15.5px; font-weight: 700; margin-top: 8px; }
   .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 270px; }
 
-  /* ===================== PROFILE ===================== */
   .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
   .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
   .avatar.big { width: 58px; height: 58px; margin: 0 auto 10px; }
@@ -662,7 +640,6 @@
   .menu-item .icon.chev { color: var(--text-secondary); width: 18px; height: 18px; }
   .menu-item .badge { font-size: 10.5px; font-weight: 700; color: var(--text-secondary); background: var(--bg); padding: 3px 8px; border-radius: var(--r-pill); }
 
-  /* ===================== HELP ACCORDION ===================== */
   .help-item { background: var(--surface); border-radius: var(--r-md); margin-bottom: 8px; overflow: hidden; box-shadow: var(--shadow-soft); }
   .help-item-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 13.5px; font-weight: 700; min-height: 48px; }
   .help-item-head .icon { color: var(--pink-accent); }
@@ -672,7 +649,6 @@
   .help-item-body { display: none; padding: 0 16px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
   .help-item.open .help-item-body { display: block; }
 
-  /* ===================== REFERRAL SHEET ===================== */
   .referral-stepper { margin-bottom: 22px; }
   .referral-step { display: flex; gap: 14px; position: relative; padding-bottom: 18px; }
   .referral-step:last-child { padding-bottom: 0; }
@@ -705,7 +681,6 @@
   .referral-stat-box .num { font-size: 20px; font-weight: 800; color: var(--pink-accent); }
   .referral-stat-box .label { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; }
 
-  /* ===================== REVIEW SHEET ===================== */
   .review-order-pick {
     width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r-md); padding: 13px 16px; margin-bottom: 8px; font-size: 13.5px; font-weight: 700; color: var(--text);
@@ -727,7 +702,6 @@
     padding: 9px 16px; font-size: 12.5px; font-weight: 600; color: var(--text);
   }
 
-  /* ===================== THEME SHEET (Light/Dark/System) ===================== */
   .theme-option-row {
     width: 100%; display: flex; align-items: center; gap: 12px;
     padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text);
@@ -746,7 +720,6 @@
   .theme-option-row.selected .check-dot { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
   .theme-option-row.selected .check-dot .icon { width: 12px; height: 12px; color: #FFFFFF; }
 
-  /* ===================== SEASONAL BANNER ===================== */
   .seasonal-banner {
     border-radius: var(--r-xl);
     padding: 18px 20px;
@@ -765,10 +738,6 @@
   }
   .seasonal-banner > * { position: relative; z-index: 1; }
 
-  /* ===================== THEME DECORATIONS (декоративные пресеты) =====================
-     Лёгкий, статичный/малоанимированный оверлей поверх Главной — не мешает
-     нажатиям (pointer-events: none) и уважает prefers-reduced-motion
-     (см. общее правило в конце файла). */
   #theme-decorations {
     position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
   }
@@ -776,12 +745,10 @@
   @keyframes deco-fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
   @keyframes deco-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
 
-  /* ===================== CONTACT ===================== */
   .contact-card { text-align: center; padding: 6px 0 4px; }
   .contact-name { font-size: 16.5px; font-weight: 700; }
   .contact-desc { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
 
-  /* ===================== BOTTOM NAV ===================== */
   .bottom-nav {
     position: fixed; left: 0; right: 0; bottom: 0;
     max-width: 480px; margin: 0 auto;
@@ -798,7 +765,6 @@
   .nav-item:active { transform: scale(0.92); }
   .nav-item.active { color: var(--pink-accent); }
 
-  /* ===================== SHEETS ===================== */
   .sheet-overlay { position: fixed; inset: 0; background: rgba(57,44,49,0.32); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 50; }
   .sheet-overlay.open { opacity: 1; pointer-events: auto; }
 
@@ -833,7 +799,6 @@
   .sheet-content { padding: 8px 20px 4px; }
   .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; }
 
-  /* ===================== TOAST ===================== */
   .toast {
     position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 14px); left: 50%;
     transform: translateX(-50%) translateY(80px);
@@ -848,9 +813,6 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
 
-  /* =========================================================
-     АНТИ-АВТОДЕТЕКТ
-     ========================================================= */
   a[x-apple-data-detectors],
   a[x-apple-data-detectors-type],
   a[href^="tel:"],
@@ -971,8 +933,6 @@
     -webkit-text-fill-color: #392C31 !important;
   }
 
-  /* Гарантированно скрываем закрытые оверлеи/шторки/toast, чтобы они
-     не выглядели как "чёрный прямоугольник" поверх контента */
   .toast:not(.show),
   .bottom-sheet:not(.open),
   .sheet-overlay:not(.open) {
@@ -1280,8 +1240,8 @@
 <div class="bottom-sheet" id="sheet-referral">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2 style="margin-bottom:8px">Приглашайте друзей</h2>
-    <p class="dollie-subtitle" style="margin-top:0" id="referral-hero-subtitle">Получайте Dollies, а ваш друг — свой бонус за первую покупку.</p>
+    <h2 style="margin-bottom:12px">Приглашайте друзей</h2>
+    <p class="dollie-subtitle" id="referral-hero-subtitle">Получайте Dollies, а ваш друг — свой бонус за первую покупку.</p>
 
     <div class="referral-stepper">
       <div class="referral-step">
@@ -1303,11 +1263,7 @@
     </div>
 
     <div class="dollie-section">
-      <div class="dollie-section-title">Ваша ссылка</div>
-      <div class="referral-copy-row">
-        <div class="referral-copy-value" id="referral-link-value">—</div>
-        <button class="pill-btn" onclick="copyReferralLink()"><svg class="icon"><use href="#icon-copy"/></svg>Скопировать</button>
-      </div>
+      <div class="dollie-section-title">Приглашайте друзей</div>
       <button class="btn btn-primary btn-block" onclick="shareReferralLink()">
         <svg class="icon"><use href="#icon-share"/></svg>Поделиться DollieLand
       </button>
@@ -1413,11 +1369,9 @@ function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
 
 const API_BASE = 'https://dollieland.pythonanywhere.com';
-// TODO: замените на реальный @username бота (без @) — используется для
-// реферальной ссылки вида https://t.me/<BOT_USERNAME>?start=ref_<id>.
-const BOT_USERNAME = 'DollieLandBot';
+// ⚠️ ЗАМЕНИ на реальный username твоего бота (без @)
+const BOT_USERNAME = 'DollieHelper_bot';
 
-/* ===================== FETCH С ТАЙМАУТОМ И ПОВТОРОМ ===================== */
 async function apiFetch(path, params, opts) {
   const { timeoutMs = 12000, retries = 1 } = opts || {};
   const url = new URL(API_BASE + path);
@@ -1490,9 +1444,6 @@ function closeSheet() {
   if (tg) tg.BackButton.hide();
 }
 
-/* ===================== ПОДНЯТИЕ ШТОРКИ ВВЕРХ (drag/tap на "ручке") =====================
-   Позволяет пользователю потянуть шторку (Dollie Club, Уведомления, Помощь и т.д.)
-   вверх, чтобы развернуть её почти на весь экран, или вниз — чтобы закрыть. */
 function setupSheetDrag(sheetEl) {
   const handleArea = sheetEl.querySelector('.sheet-handle-area');
   if (!handleArea) return;
@@ -1519,7 +1470,7 @@ function setupSheetDrag(sheetEl) {
 
   function onDragMove(clientY) {
     if (!dragging) return;
-    const delta = startY - clientY; // > 0 когда тянут вверх
+    const delta = startY - clientY;
     if (Math.abs(delta) > 4) movedEnough = true;
 
     const maxExpanded = currentMaxHeightPx(true);
@@ -1527,7 +1478,6 @@ function setupSheetDrag(sheetEl) {
     newHeight = Math.min(maxExpanded, newHeight);
 
     if (delta < 0) {
-      // тянут вниз — двигаем шторку вниз для ощущения закрытия
       const pull = Math.min(140, -delta);
       sheetEl.style.transform = `translateY(${pull}px)`;
       sheetEl.style.maxHeight = startHeight + 'px';
@@ -1548,14 +1498,12 @@ function setupSheetDrag(sheetEl) {
     sheetEl.style.transform = '';
 
     if (!movedEnough) {
-      // короткий тап по ручке — переключить между обычным и развёрнутым видом
       sheetEl.style.maxHeight = '';
       sheetEl.classList.toggle('expanded');
       return;
     }
 
     if (translateActive && -delta > 90) {
-      // достаточно потянули вниз — закрываем
       sheetEl.style.maxHeight = '';
       closeSheet();
       return;
@@ -2066,10 +2014,6 @@ function updateLoyaltyBalanceUI() {
   if (historyBalanceEl) historyBalanceEl.textContent = `${balance} Dollies`;
 }
 
-/* ===================== «Как получить больше Dollies» =====================
-   Все суммы приходят с backend (/api/me/loyalty -> rewards), настраиваются
-   из админки («Настройки Dollie Club») и НЕ хардкодятся здесь. Повторная
-   покупка — ВСЕГДА процент от суммы заказа, а не фиксированная сумма. */
 let firstOrderCompleted = false;
 
 const REWARD_DEFS = [
@@ -2083,10 +2027,11 @@ const REWARD_DEFS = [
   {
     key: 'repeat', icon: 'refresh', title: 'Повторная покупка',
     subtitle: (r) => {
-      const example = Math.round(10000 * (r.earn_rate_percent || 0) / 100);
-      return `Например: заказ на 10 000 ₽ → +${example} Dollies`;
+      const step = r.repeat_tier_step_rub || 5000;
+      const bonus = r.repeat_tier_bonus || 25;
+      return `Каждые ${step} ₽ суммы заказа → +${bonus} Dollies`;
     },
-    amountHTML: (r) => `${String(r.earn_rate_percent).replace('.', ',')}%`,
+    amountHTML: (r) => `+${r.repeat_tier_bonus}/шаг`,
     action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
   },
   {
@@ -2131,7 +2076,6 @@ function dollieRewardAction(key) {
   if (def) def.action();
 }
 
-/* ===================== REFERRAL SHEET ===================== */
 let referralData = null;
 
 function referralLink(code) {
@@ -2152,7 +2096,6 @@ async function openReferralSheet() {
 
     document.getElementById('referral-hero-subtitle').textContent =
       `Получайте ${data.inviter_bonus} Dollies, а ваш друг — ${data.friend_bonus} Dollies за его первую покупку.`;
-    document.getElementById('referral-link-value').textContent = referralLink(data.referral_code);
 
     if (data.invited_count > 0) {
       statsContainer.innerHTML = `
@@ -2211,7 +2154,6 @@ function shareReferralLink() {
   }
 }
 
-/* ===================== REVIEW SHEET ===================== */
 let reviewableOrdersCache = [];
 let selectedReviewOrderId = null;
 let selectedReviewRating = 0;
@@ -2607,10 +2549,6 @@ function updateHomePanels() {
   panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
 }
 
-/* ===================== NOTIFICATION CENTER =====================
-   Единая лента событий с бэкенда (/api/me/notifications): смена статуса
-   заказа, начисление/списание Dollies, реферальные события и т.д. —
-   а не только «последний статус последнего заказа», как было раньше. */
 const NOTIF_ICON_BY_TYPE = {
   order_status: 'truck',
   dollies: 'heart',
@@ -2781,13 +2719,6 @@ function showToast(msg) {
 
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
-/* =========================================================
-   ОФОРМЛЕНИЕ: Light / Dark / System + сезонные темы
-   ========================================================= */
-
-// Цвета light/dark по умолчанию — используются, пока /api/theme/active
-// ещё не ответил (первый кадр без «мигания»); реальные значения (в т.ч.
-// изменённые админом) заменяют их сразу после ответа сервера.
 const DEFAULT_BASE_THEME = {
   colors_light: {
     primary: '#E78EAD', secondary: '#B4708F', background: '#FFF9FB', surface: '#FFFFFF',
@@ -2804,12 +2735,10 @@ const DEFAULT_BASE_THEME = {
 const CSS_VAR_MAP = {
   background: '--bg', surface: '--surface', elevated_surface: '--surface-soft',
   text: '--text', secondary_text: '--text-secondary', border: '--border',
-  // pink/pink-accent завязаны на accent — так фирменный акцент (обычный ИЛИ
-  // сезонный) применяется во всех местах, где раньше был статичный розовый.
 };
 
 let themeConfig = { base: DEFAULT_BASE_THEME, seasonal: null };
-let themeMode = 'system'; // 'light' | 'dark' | 'system' — предпочтение пользователя
+let themeMode = 'system';
 
 function systemPrefersDark() {
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -2832,19 +2761,13 @@ function applyTheme() {
     if (base[field]) root.style.setProperty(cssVar, base[field]);
   });
 
-  // Акцентные переменные — сезонная тема побеждает базовую, если задана.
   const accent = seasonal.accent || seasonal.primary || base.accent;
   const dollies = seasonal.dollies || accent;
   if (accent) {
     root.style.setProperty('--pink-accent', accent);
   }
-  if (base.secondary || seasonal.secondary) {
-    // pink/pink-soft — более светлые «подложки» под акцент; вычисляем не
-    // отдельным полем, а оставляем токены темы (--pink, --pink-soft) как
-    // мягкий нейтральный фон, который уже настроен в base_theme.
-  }
   if (dollies) {
-    root.style.setProperty('--dollies-color', dollies); // на случай, если понадобится отдельно от accent
+    root.style.setProperty('--dollies-color', dollies);
   }
 
   updateThemeMetaColors(base.background);
@@ -2878,7 +2801,6 @@ async function loadThemeConfig() {
   applyTheme();
 }
 
-// Если пользователь выбрал «Системная» — следим за изменением системной темы live.
 if (window.matchMedia) {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (themeMode === 'system') applyTheme();
@@ -2910,7 +2832,7 @@ async function selectThemeMode(mode) {
   if (mode === themeMode) return;
   hapticSelection();
   themeMode = mode;
-  applyTheme(); // мгновенно, не дожидаясь ответа сервера
+  applyTheme();
 
   if (!userId) return;
   try {
@@ -2942,10 +2864,6 @@ function renderSeasonalBanner() {
     </div>`;
 }
 
-/* ---------- декоративные пресеты (п.30 ТЗ) ----------
-   Небольшой набор лёгких, «дорогих» декораций — не гифки, а тонкие SVG-формы
-   с едва заметной анимацией. Список пресетов задаёт админ в Theme Manager;
-   рисование самих декораций живёт только здесь, во фронтенде. */
 const DECORATION_RENDERERS = {
   snow: () => Array.from({ length: 14 }, (_, i) => {
     const left = Math.round(Math.random() * 100);
