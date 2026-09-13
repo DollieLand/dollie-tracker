@@ -32,6 +32,28 @@
     --nav-h: 66px;
   }
 
+  /* ===================== DARK MODE — базовые токены =====================
+     Это fallback на случай, если JS ещё не успел применить актуальный
+     конфиг с бэкенда (/api/theme/active) — чтобы не было «мигания» цветов.
+     Реальные значения (в т.ч. изменённые админом) подставляются поверх
+     через document.documentElement.style.setProperty(...) в applyTheme(). */
+  html[data-theme="dark"] {
+    --bg: #1C1417;
+    --surface: #241A1E;
+    --surface-soft: #2E2226;
+    --pink-soft: #3A2C31;
+    --pink: #4A363D;
+    --pink-accent: #F2A8C4;
+    --text: #F5E9EC;
+    --text-secondary: #B79CA5;
+    --border: #3A2C31;
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.28);
+    --shadow-card: 0 10px 28px rgba(242, 168, 196, 0.12);
+    --shadow-nav: 0 -6px 24px rgba(0, 0, 0, 0.3);
+  }
+  html[data-theme="dark"] .bottom-nav { background: rgba(36,26,30,0.92); }
+  html[data-theme="dark"] .icon-btn { background: var(--surface); }
+
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { background: var(--bg); }
 
@@ -648,6 +670,55 @@
   .help-item-body { display: none; padding: 0 16px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
   .help-item.open .help-item-body { display: block; }
 
+  /* ===================== THEME SHEET (Light/Dark/System) ===================== */
+  .theme-option-row {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text);
+    background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow-soft);
+    margin-bottom: 8px; min-height: 50px; transition: transform 0.15s ease;
+  }
+  .theme-option-row:active { transform: scale(0.98); }
+  .theme-option-row .icon { color: var(--pink-accent); width: 20px; height: 20px; }
+  .theme-option-row .label-wrap { flex: 1; text-align: left; }
+  .theme-option-row .label-wrap .title { font-size: 14px; font-weight: 700; }
+  .theme-option-row .label-wrap .desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; font-weight: 500; }
+  .theme-option-row .check-dot {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .theme-option-row.selected .check-dot { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
+  .theme-option-row.selected .check-dot .icon { width: 12px; height: 12px; color: #FFFFFF; }
+
+  /* ===================== SEASONAL BANNER ===================== */
+  .seasonal-banner {
+    border-radius: var(--r-xl);
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    color: #FFFFFF;
+    background: linear-gradient(140deg, var(--pink-accent), var(--pink));
+    position: relative;
+    overflow: hidden;
+  }
+  .seasonal-banner-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; opacity: 0.85; }
+  .seasonal-banner-title { font-size: 17px; font-weight: 800; margin-top: 6px; }
+  .seasonal-banner-subtitle { font-size: 12.5px; margin-top: 4px; opacity: 0.9; }
+  .seasonal-banner img.seasonal-banner-bg {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.22; z-index: 0;
+  }
+  .seasonal-banner > * { position: relative; z-index: 1; }
+
+  /* ===================== THEME DECORATIONS (декоративные пресеты) =====================
+     Лёгкий, статичный/малоанимированный оверлей поверх Главной — не мешает
+     нажатиям (pointer-events: none) и уважает prefers-reduced-motion
+     (см. общее правило в конце файла). */
+  #theme-decorations {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
+  }
+  #theme-decorations .deco-item { position: absolute; opacity: 0.5; }
+  @keyframes deco-fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
+  @keyframes deco-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
+
   /* ===================== CONTACT ===================== */
   .contact-card { text-align: center; padding: 6px 0 4px; }
   .contact-name { font-size: 16.5px; font-weight: 700; }
@@ -891,6 +962,9 @@
   <symbol id="icon-minus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
   <symbol id="icon-star" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></symbol>
   <symbol id="icon-user-plus" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-4 3.5-6 7-6s7 2 7 6"/><line x1="18" y1="9" x2="18" y2="15"/><line x1="15" y1="12" x2="21" y2="12"/></symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></symbol>
+  <symbol id="icon-monitor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="1.5"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
 </svg>
 
 <div class="app">
@@ -908,6 +982,8 @@
       <h1 id="greeting-title">Привет</h1>
       <p>Ваши заказы всегда под рукой</p>
     </div>
+
+    <div id="seasonal-banner-slot"></div>
 
     <section id="banner-section" hidden>
       <div class="scroll-row banner-row" id="banner-row"></div>
@@ -1008,10 +1084,10 @@
         <span class="label">Бонусы</span>
         <span class="badge">скоро</span>
       </button>
-      <button class="menu-item" onclick="comingSoon('Настройки')">
+      <button class="menu-item" onclick="openSheet('theme')">
         <svg class="icon"><use href="#icon-settings"/></svg>
-        <span class="label">Настройки</span>
-        <span class="badge">скоро</span>
+        <span class="label">Оформление</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
     </div>
 
@@ -1139,6 +1215,15 @@
   <div class="sheet-content" id="sheet-tx-detail-content"></div>
 </div>
 
+<div class="bottom-sheet" id="sheet-theme">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <h2>Оформление</h2>
+    <p style="font-size:12.5px;color:var(--text-secondary);margin:-8px 0 14px;">Выберите, как должен выглядеть DollieLand на этом устройстве</p>
+    <div id="theme-options-list"></div>
+  </div>
+</div>
+
 <div class="bottom-sheet" id="sheet-help">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
@@ -1175,6 +1260,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="theme-decorations" aria-hidden="true"></div>
 
 <script>
 /* =========================================================
@@ -2258,11 +2344,233 @@ function showToast(msg) {
 
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
+/* =========================================================
+   ОФОРМЛЕНИЕ: Light / Dark / System + сезонные темы
+   ========================================================= */
+
+// Цвета light/dark по умолчанию — используются, пока /api/theme/active
+// ещё не ответил (первый кадр без «мигания»); реальные значения (в т.ч.
+// изменённые админом) заменяют их сразу после ответа сервера.
+const DEFAULT_BASE_THEME = {
+  colors_light: {
+    primary: '#E78EAD', secondary: '#B4708F', background: '#FFF9FB', surface: '#FFFFFF',
+    elevated_surface: '#FDF1F5', text: '#392C31', secondary_text: '#907D84', border: '#F1E3E7',
+    accent: '#E78EAD', success: '#2E7D5B', warning: '#B8860B', error: '#C0392B', dollies: '#E78EAD',
+  },
+  colors_dark: {
+    primary: '#E78EAD', secondary: '#D9A6BC', background: '#1C1417', surface: '#241A1E',
+    elevated_surface: '#2E2226', text: '#F5E9EC', secondary_text: '#B79CA5', border: '#3A2C31',
+    accent: '#F2A8C4', success: '#5BBE94', warning: '#E0B84D', error: '#E36C64', dollies: '#F2A8C4',
+  },
+};
+
+const CSS_VAR_MAP = {
+  background: '--bg', surface: '--surface', elevated_surface: '--surface-soft',
+  text: '--text', secondary_text: '--text-secondary', border: '--border',
+  // pink/pink-accent завязаны на accent — так фирменный акцент (обычный ИЛИ
+  // сезонный) применяется во всех местах, где раньше был статичный розовый.
+};
+
+let themeConfig = { base: DEFAULT_BASE_THEME, seasonal: null };
+let themeMode = 'system'; // 'light' | 'dark' | 'system' — предпочтение пользователя
+
+function systemPrefersDark() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function resolveEffectiveMode() {
+  if (themeMode === 'system') return systemPrefersDark() ? 'dark' : 'light';
+  return themeMode;
+}
+
+function applyTheme() {
+  const mode = resolveEffectiveMode();
+  const base = themeConfig.base['colors_' + mode] || DEFAULT_BASE_THEME['colors_' + mode];
+  const seasonal = (themeConfig.seasonal && themeConfig.seasonal.colors) || {};
+  const root = document.documentElement;
+
+  root.dataset.theme = mode;
+
+  Object.entries(CSS_VAR_MAP).forEach(([field, cssVar]) => {
+    if (base[field]) root.style.setProperty(cssVar, base[field]);
+  });
+
+  // Акцентные переменные — сезонная тема побеждает базовую, если задана.
+  const accent = seasonal.accent || seasonal.primary || base.accent;
+  const dollies = seasonal.dollies || accent;
+  if (accent) {
+    root.style.setProperty('--pink-accent', accent);
+  }
+  if (base.secondary || seasonal.secondary) {
+    // pink/pink-soft — более светлые «подложки» под акцент; вычисляем не
+    // отдельным полем, а оставляем токены темы (--pink, --pink-soft) как
+    // мягкий нейтральный фон, который уже настроен в base_theme.
+  }
+  if (dollies) {
+    root.style.setProperty('--dollies-color', dollies); // на случай, если понадобится отдельно от accent
+  }
+
+  updateThemeMetaColors(base.background);
+  renderThemeOptionsList();
+  renderSeasonalBanner();
+  renderThemeDecorations();
+}
+
+function updateThemeMetaColors(bgColor) {
+  if (tg && bgColor) {
+    tg.setHeaderColor(bgColor);
+    tg.setBackgroundColor(bgColor);
+  }
+}
+
+async function loadThemeConfig() {
+  try {
+    const [activeRes, prefRes] = await Promise.all([
+      apiFetch('/api/theme/active', {}, { timeoutMs: 8000, retries: 1 }),
+      userId ? apiFetch('/api/me/theme_preference', {}, { timeoutMs: 8000, retries: 1 }) : Promise.resolve(null),
+    ]);
+    if (activeRes && activeRes.ok) {
+      themeConfig = { base: activeRes.base, seasonal: activeRes.seasonal };
+    }
+    if (prefRes && prefRes.ok) {
+      themeMode = prefRes.mode || 'system';
+    }
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить конфиг темы —', e);
+  }
+  applyTheme();
+}
+
+// Если пользователь выбрал «Системная» — следим за изменением системной темы live.
+if (window.matchMedia) {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (themeMode === 'system') applyTheme();
+  });
+}
+
+const THEME_MODE_OPTIONS = [
+  { key: 'light', icon: 'sun', title: 'Светлая', desc: 'Всегда светлое оформление' },
+  { key: 'dark', icon: 'moon', title: 'Тёмная', desc: 'Всегда тёмное оформление' },
+  { key: 'system', icon: 'monitor', title: 'Системная', desc: 'Как в настройках Telegram/телефона' },
+];
+
+function renderThemeOptionsList() {
+  const container = document.getElementById('theme-options-list');
+  if (!container) return;
+  container.innerHTML = THEME_MODE_OPTIONS.map(opt => `
+    <button class="theme-option-row ${themeMode === opt.key ? 'selected' : ''}" onclick="selectThemeMode('${opt.key}')">
+      <svg class="icon"><use href="#icon-${opt.icon}"/></svg>
+      <div class="label-wrap">
+        <div class="title">${opt.title}</div>
+        <div class="desc">${opt.desc}</div>
+      </div>
+      <div class="check-dot">${themeMode === opt.key ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</div>
+    </button>
+  `).join('');
+}
+
+async function selectThemeMode(mode) {
+  if (mode === themeMode) return;
+  hapticSelection();
+  themeMode = mode;
+  applyTheme(); // мгновенно, не дожидаясь ответа сервера
+
+  if (!userId) return;
+  try {
+    const url = new URL(API_BASE + '/api/me/theme_preference');
+    const headers = { 'Content-Type': 'application/json' };
+    if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
+    await fetch(url.toString(), { method: 'POST', headers, body: JSON.stringify({ mode }) });
+  } catch (e) {
+    console.error('DollieLand: не удалось сохранить предпочтение темы —', e);
+  }
+}
+
+function renderSeasonalBanner() {
+  const slot = document.getElementById('seasonal-banner-slot');
+  if (!slot) return;
+  const seasonal = themeConfig.seasonal;
+  const texts = (seasonal && seasonal.texts) || {};
+  if (!seasonal || (!texts.banner_title && !texts.banner_subtitle)) {
+    slot.innerHTML = '';
+    return;
+  }
+  const bgUrl = (seasonal.assets && seasonal.assets.banner) || '';
+  slot.innerHTML = `
+    <div class="seasonal-banner">
+      ${bgUrl ? `<img class="seasonal-banner-bg" src="${bgUrl}" alt="" loading="lazy">` : ''}
+      <div class="seasonal-banner-eyebrow">${escapeHtml(seasonal.name || 'DollieLand')}</div>
+      ${texts.banner_title ? `<div class="seasonal-banner-title">${escapeHtml(texts.banner_title)}</div>` : ''}
+      ${texts.banner_subtitle ? `<div class="seasonal-banner-subtitle">${escapeHtml(texts.banner_subtitle)}</div>` : ''}
+    </div>`;
+}
+
+/* ---------- декоративные пресеты (п.30 ТЗ) ----------
+   Небольшой набор лёгких, «дорогих» декораций — не гифки, а тонкие SVG-формы
+   с едва заметной анимацией. Список пресетов задаёт админ в Theme Manager;
+   рисование самих декораций живёт только здесь, во фронтенде. */
+const DECORATION_RENDERERS = {
+  snow: () => Array.from({ length: 14 }, (_, i) => {
+    const left = Math.round(Math.random() * 100);
+    const delay = (Math.random() * 6).toFixed(1);
+    const duration = (10 + Math.random() * 8).toFixed(1);
+    const size = 3 + Math.round(Math.random() * 3);
+    return `<div class="deco-item" style="left:${left}%;top:-5%;width:${size}px;height:${size}px;border-radius:50%;background:#FFFFFF;animation:deco-fall ${duration}s linear ${delay}s infinite;"></div>`;
+  }).join(''),
+  hearts: () => Array.from({ length: 10 }, (_, i) => {
+    const left = Math.round(Math.random() * 100);
+    const delay = (Math.random() * 5).toFixed(1);
+    const duration = (12 + Math.random() * 6).toFixed(1);
+    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
+    </div>`;
+  }).join(''),
+  stars: () => Array.from({ length: 12 }, (_, i) => {
+    const left = Math.round(Math.random() * 100);
+    const top = Math.round(Math.random() * 40);
+    const delay = (Math.random() * 4).toFixed(1);
+    return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3s ease ${delay}s infinite;">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="#FFFFFF" stroke="none"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
+    </div>`;
+  }).join(''),
+  spiderweb_bats: () => `
+    <svg class="deco-item" style="top:-2%;right:-2%;width:120px;height:120px;opacity:0.35;" viewBox="0 0 100 100" fill="none" stroke="#FFFFFF" stroke-width="1">
+      <path d="M100 0 L20 100 M100 0 L60 100 M100 0 L100 40 M100 0 L100 80"/>
+      <path d="M100 20 Q60 20 20 60 M100 45 Q75 45 45 80"/>
+    </svg>
+    <div class="deco-item" style="top:12%;left:20%;animation:deco-fall 16s linear infinite;">
+      <svg width="16" height="10" viewBox="0 0 24 16" fill="#2A1F22" stroke="none"><path d="M12 4c-2-3-6-4-9-2 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 2z"/></svg>
+    </div>`,
+  autumn_leaves: () => Array.from({ length: 10 }, (_, i) => {
+    const left = Math.round(Math.random() * 100);
+    const delay = (Math.random() * 6).toFixed(1);
+    const duration = (11 + Math.random() * 7).toFixed(1);
+    const colors = ['#C97A3D', '#B8563A', '#D9A441'];
+    const color = colors[i % colors.length];
+    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}" stroke="none"><path d="M12 2c5 4 8 9 8 13a8 8 0 1 1-16 0c0-4 3-9 8-13z"/></svg>
+    </div>`;
+  }).join(''),
+  sun_rays: () => `
+    <svg class="deco-item" style="top:-5%;right:-5%;width:160px;height:160px;opacity:0.18;" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="30" fill="#FFD36E"/>
+    </svg>`,
+};
+
+function renderThemeDecorations() {
+  const container = document.getElementById('theme-decorations');
+  if (!container) return;
+  const preset = (themeConfig.seasonal && themeConfig.seasonal.decoration_preset) || 'none';
+  const renderer = DECORATION_RENDERERS[preset];
+  container.innerHTML = renderer ? renderer() : '';
+}
+
 renderHelpList();
 watchAutoDetectLinks();
 loadOrders();
 loadLoyalty();
 loadBanners();
+loadThemeConfig();
 </script>
 
 </body>
