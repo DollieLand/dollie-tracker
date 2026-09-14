@@ -2173,7 +2173,10 @@ async function loadOrders(isManualRefresh) {
     const data = await apiFetch('/api/user_orders', {}, { timeoutMs: 12000, retries: 1 });
     ordersCache = data.orders || [];
     renderOrdersList();
-    if (isManualRefresh) checkReviewPrompt();
+    // Проверяем серверный триггер после каждого обновления заказов:
+    // так окно появляется не только при запуске Mini App, но и после
+    // фонового обновления, когда заказ только что стал «Доставлено клиенту».
+    setTimeout(() => checkReviewPrompt(), isManualRefresh ? 0 : 250);
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
     if (!ordersCache.length) ordersList.innerHTML = ordersErrorHTML(e?.message);
