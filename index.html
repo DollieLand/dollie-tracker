@@ -1750,7 +1750,6 @@ async function loadOrders(isManualRefresh) {
     const data = await apiFetch('/api/user_orders', {}, { timeoutMs: 12000, retries: 1 });
     ordersCache = data.orders || [];
     renderOrdersList();
-    // При ручном обновлении проверяем review prompt (статус мог измениться)
     if (isManualRefresh) checkReviewPrompt();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
@@ -2615,7 +2614,6 @@ async function loadReviews(isManual = false, opts = {}) {
 
     const newFingerprint = computeReviewsFingerprint(publicData, mineData, eligibleData);
 
-    // Если данные не изменились — не перерисовываем DOM, чтобы фото не перезагружались
     if (silentIfSame && reviewsLoadedOnce && newFingerprint === reviewsRenderFingerprint) {
       reviewsLoadInflight = false;
       btn?.classList.remove('spinning');
@@ -2852,7 +2850,8 @@ function closePhotoLightbox() {
 })();
 
 /* Review form */
-async function openReviewSheet(orderId = null) {
+async function openReviewSheet(orderId = null, opts = {}) {
+  const { skipFetch = false, orderHint = null } = opts;
   openSheet('review');
   selectedReviewOrderId = orderId;
   selectedReviewRating = 0;
@@ -2862,11 +2861,28 @@ async function openReviewSheet(orderId = null) {
   if (!body) return;
   body.innerHTML = reviewSkeletonHTML(2);
   if (!userId) return;
+
+  // FIX: если пришли из review prompt — не перезапрашиваем reviewable_orders,
+  // потому что бэк уже пометил заказ как review_started и исключит его из списка.
+  if (skipFetch && orderId) {
+    const order = orderHint || { id: orderId, title: '', received_at: null };
+    // Соберём reviewableOrdersCache так, чтобы рендер формы отработал корректно
+    reviewableOrdersCache = [{
+      id: order.id,
+      title: order.title || '',
+      received_at: order.received_at || null,
+    }];
+    renderReviewForm();
+    return;
+  }
+
   try {
     const data = await apiFetch('/api/me/reviewable_orders', {}, {timeoutMs: 10000, retries: 1});
     if (!data.ok) throw new Error('bad response');
     reviewableOrdersCache = data.orders || [];
     if (selectedReviewOrderId && !reviewableOrdersCache.some(o => String(o.id) === String(selectedReviewOrderId))) {
+      // Заказ мог быть исключён из reviewable (уже отзыв, не доставлен) — не сбрасываем,
+      // а показываем пустое состояние, чтобы не вводить в заблуждение.
       selectedReviewOrderId = null;
     }
     if (selectedReviewOrderId) renderReviewForm();
@@ -3166,7 +3182,9 @@ function startReviewFromPrompt() {
   reviewPromptOpen = false;
   if (!order?.id) return;
   apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'started'}).catch(()=>{});
-  openReviewSheet(order.id);
+  // FIX: не перезапрашиваем reviewable_orders — бэк уже пометил заказ как review_started
+  // и исключил бы его из списка. Передаём order как hint.
+  openReviewSheet(String(order.id), { skipFetch: true, orderHint: order });
 }
 let reviewPromptInflight = false;
 async function checkReviewPrompt() {
@@ -3289,13 +3307,11 @@ async function bootstrap() {
   await minDelay;
   hidePreloader();
 
-  // Проверяем review prompt после показа приложения
   setTimeout(() => checkReviewPrompt(), 800);
 }
 
 bootstrap();
 
-// Polling только когда вкладка видима и нет открытых sheet
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
   if (document.querySelector('.bottom-sheet.open')) return;
@@ -3306,7 +3322,6 @@ setInterval(() => {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     loadOrders(false);
-    // При возврате в приложение проверяем review prompt
     setTimeout(() => checkReviewPrompt(), 600);
   }
 });
