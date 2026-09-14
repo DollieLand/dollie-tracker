@@ -474,10 +474,25 @@
   .reviews-photos-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
   .reviews-photos-title { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .reviews-photos-title .icon { width: 15px; height: 15px; color: var(--pink-accent); }
-  .reviews-photos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  /* FIX: горизонтальная лента фото — свайп влево-вправо */
+  .reviews-photos-grid {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+  .reviews-photos-grid::-webkit-scrollbar { display: none; }
   .reviews-photo-cell {
-    position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+    flex: 0 0 auto;
+    width: 88px; height: 88px;
+    position: relative; border-radius: 10px; overflow: hidden;
     background: var(--surface-soft); cursor: pointer; padding: 0;
+    scroll-snap-align: start;
   }
   .reviews-photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .reviews-photo-cell-more {
@@ -800,6 +815,21 @@
   .sheet-content { padding: 8px 20px 4px; }
   .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
 
+  /* FIX: крестик в шапке sheet */
+  .sheet-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .sheet-header h2 { margin-bottom: 0; flex: 1; min-width: 0; }
+  .sheet-close-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg); color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .sheet-close-btn:active { transform: scale(0.92); background: var(--surface-soft); }
+  .sheet-close-btn .icon { width: 18px; height: 18px; }
+
   .toast {
     position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 14px); left: 50%;
     transform: translateX(-50%) translateY(80px);
@@ -1054,7 +1084,10 @@
 <div class="bottom-sheet" id="sheet-notifications">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Уведомления</h2>
+    <div class="sheet-header">
+      <h2>Уведомления</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <div id="notifications-content"></div>
   </div>
 </div>
@@ -1062,7 +1095,10 @@
 <div class="bottom-sheet" id="sheet-my-reviews">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Мои отзывы</h2>
+    <div class="sheet-header">
+      <h2>Мои отзывы</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <div id="my-reviews-list"></div>
   </div>
 </div>
@@ -1071,7 +1107,10 @@
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
     <div class="dollie-sheet-page active" id="dollie-page-overview">
-      <h2 style="margin-bottom:2px">Dollie Club</h2>
+      <div class="sheet-header">
+        <h2>Dollie Club</h2>
+        <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+      </div>
       <p class="dollie-subtitle">Твои Dollies — твоя маленькая привилегия ♡</p>
 
       <div class="dollie-hero">
@@ -1110,10 +1149,13 @@
     </div>
 
     <div class="dollie-sheet-page" id="dollie-page-history">
+      <div class="sheet-header">
+        <h2>История Dollies</h2>
+        <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+      </div>
       <button class="dollie-back-btn" onclick="switchDolliePage('overview')">
         <svg class="icon"><use href="#icon-chevron-right"/></svg> Dollie Club
       </button>
-      <h2 style="margin-bottom:6px">История Dollies</h2>
       <div class="dollie-history-balance-line">Баланс: <b id="dollie-history-balance">— Dollies</b></div>
 
       <div class="dollie-filters">
@@ -1135,7 +1177,10 @@
 <div class="bottom-sheet" id="sheet-referral">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2 style="margin-bottom:12px">Приглашайте друзей</h2>
+    <div class="sheet-header">
+      <h2>Приглашайте друзей</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <p class="dollie-subtitle" id="referral-hero-subtitle">Получайте Dollies, а ваш друг — свой бонус за первую покупку.</p>
 
     <div class="referral-stepper">
@@ -1162,8 +1207,11 @@
 <div class="bottom-sheet" id="sheet-review">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2 style="margin-bottom:2px">Оставить отзыв</h2>
-    <p class="dollie-subtitle">Расскажите, как прошёл ваш заказ, и получите Dollies.</p>
+    <div class="sheet-header">
+      <h2>Оставить отзыв</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <p class="dollie-subtitle" style="margin-top:-8px">Расскажите, как прошёл ваш заказ, и получите Dollies.</p>
     <div id="review-sheet-body"></div>
   </div>
 </div>
@@ -1171,8 +1219,11 @@
 <div class="bottom-sheet" id="sheet-review-sort">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Сортировка</h2>
-    <p class="dollie-subtitle">Как показывать отзывы</p>
+    <div class="sheet-header">
+      <h2>Сортировка</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <p class="dollie-subtitle" style="margin-top:-8px">Как показывать отзывы</p>
     <div class="review-sort-sheet-list" id="review-sort-list"></div>
   </div>
 </div>
@@ -1180,8 +1231,11 @@
 <div class="bottom-sheet" id="sheet-orders-sort">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Сортировка заказов</h2>
-    <p class="dollie-subtitle">Как показывать ваши заказы</p>
+    <div class="sheet-header">
+      <h2>Сортировка заказов</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <p class="dollie-subtitle" style="margin-top:-8px">Как показывать ваши заказы</p>
     <div class="orders-sort-list" id="orders-sort-list"></div>
   </div>
 </div>
@@ -1231,7 +1285,10 @@
 <div class="bottom-sheet" id="sheet-theme">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Оформление</h2>
+    <div class="sheet-header">
+      <h2>Оформление</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <p style="font-size:12.5px;color:var(--text-secondary);margin:-8px 0 14px;">Выберите, как должен выглядеть DollieLand на этом устройстве</p>
     <div id="theme-options-list"></div>
   </div>
@@ -1240,7 +1297,10 @@
 <div class="bottom-sheet" id="sheet-help">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Помощь</h2>
+    <div class="sheet-header">
+      <h2>Помощь</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <div id="help-list"></div>
   </div>
 </div>
@@ -1248,8 +1308,11 @@
 <div class="bottom-sheet" id="sheet-track">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Найти заказ по номеру</h2>
-    <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px">Введите номер заказа из чата с ботом.</p>
+    <div class="sheet-header">
+      <h2>Найти заказ по номеру</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <p style="font-size:12.5px;color:var(--text-secondary);margin:-8px 0 12px">Введите номер заказа из чата с ботом.</p>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <input id="track-input" placeholder="Номер заказа" style="flex:1;border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;background:var(--surface);color:var(--text);">
     </div>
@@ -1261,7 +1324,10 @@
 <div class="bottom-sheet" id="sheet-contact">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
-    <h2>Связаться с нами</h2>
+    <div class="sheet-header">
+      <h2>Связаться с нами</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <div class="contact-card">
       <div class="avatar big"><svg class="icon"><use href="#icon-user"/></svg></div>
       <div class="contact-name">@Darielune</div>
@@ -1644,7 +1710,10 @@ function orderDetailHTML(order) {
   }).join('');
 
   return `
-    <h2>${orderTitle(order)}</h2>
+    <div class="sheet-header">
+      <h2>${orderTitle(order)}</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <div class="order-id" style="margin-bottom:2px">№ ${escapeHtml(String(order.id))}</div>
     <div class="timeline">${timeline}</div>
     ${order.delivery_date ? `<div class="info-row"><svg class="icon"><use href="#icon-map-pin"/></svg>Ориентировочная дата: <b>&nbsp;${escapeHtml(order.delivery_date)}</b></div>` : ''}
@@ -2275,6 +2344,10 @@ function openTxDetail(idx, source) {
   const sign = tx.amount > 0 ? '+' : '';
   const content = document.getElementById('sheet-tx-detail-content');
   content.innerHTML = `
+    <div class="sheet-header">
+      <h2>Операция</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
     <div class="tx-detail-amount">
       <div class="num ${meta.isPositive ? 'pos' : 'neg'}">${sign}${Number(tx.amount) || 0} Dollies</div>
       <div class="sub">${meta.title} · ${meta.subtitle}</div>
@@ -2387,6 +2460,8 @@ let reviewsLoadedOnce = false;
 let reviewsRenderFingerprint = '';
 let reviewPromptOrder = null;
 let reviewSubmitInFlight = false;
+let lastReviewsStats = null;
+let lastReviewsHasMore = false;
 const REVIEW_MAX_PHOTOS = 8;
 const REVIEW_MAX_TEXT = 5000;
 const REVIEW_DRAFT_PREFIX = 'dollieland_review_draft_';
@@ -2424,17 +2499,27 @@ function formatReviewDate(iso) {
   return d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
 }
 
+/* FIX: имя пользователя вместо "Покупатель" */
 function publicReviewName(review) {
   if (review.is_anonymous) return 'Анонимный покупатель';
-  const name = review.display_name || '';
-  if (/аноним/i.test(name)) return 'Анонимный покупатель';
-  return name || review.username || 'Покупатель';
+  const name = (review.display_name || '').trim();
+  // Если есть реальное имя (не «покупатель», не «аноним») — показываем его
+  if (name && !/аноним/i.test(name) && !/^покупатель$/i.test(name)) return name;
+  // Fallback: username без @
+  const uname = (review.username || '').trim().replace(/^@/, '');
+  if (uname) return uname;
+  return 'Покупатель';
 }
 function publicReviewUsername(review) {
   if (review.is_anonymous) return '';
-  const name = review.display_name || '';
+  const name = (review.display_name || '').trim();
   if (/аноним/i.test(name)) return '';
-  return review.username || '';
+  const uname = (review.username || '').trim();
+  if (!uname) return '';
+  const unameBare = uname.replace(/^@/, '');
+  // Не дублируем, если имя совпадает с username
+  if (name && name === unameBare) return '';
+  return uname;
 }
 
 function reviewPhotoGridHTML(review, source) {
@@ -2508,11 +2593,10 @@ function collectAllReviewPhotos() {
   return result;
 }
 
+/* FIX: горизонтальная лента фото */
 function renderAllPhotosGallery() {
   const allPhotos = collectAllReviewPhotos();
   if (!allPhotos.length) return '';
-  const preview = allPhotos.slice(0, 8);
-  const extra = Math.max(0, allPhotos.length - 8);
   return `
     <div class="reviews-photos-block">
       <div class="reviews-photos-head">
@@ -2526,20 +2610,46 @@ function renderAllPhotosGallery() {
         </button>
       </div>
       <div class="reviews-photos-grid">
-        ${preview.map((p, i) => `
+        ${allPhotos.map((p, i) => `
           <button class="reviews-photo-cell" onclick="openPhotoLightbox('allPhotos', 0, ${i})">
             <img src="${escapeAttr(p.url)}" alt="" loading="lazy" decoding="async">
-            ${i === preview.length - 1 && extra > 0 ? `<span class="reviews-photo-cell-more">+${extra}</span>` : ''}
           </button>`).join('')}
       </div>
     </div>`;
 }
 
+/* FIX: клиентская сортировка отзывов */
+function sortReviewsClientSide(list, sortKey) {
+  const arr = [...list];
+  if (sortKey === 'newest') {
+    arr.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+  } else if (sortKey === 'oldest') {
+    arr.sort((a, b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
+  } else if (sortKey === 'positive') {
+    arr.sort((a, b) => {
+      const d = Number(b.rating || 0) - Number(a.rating || 0);
+      if (d !== 0) return d;
+      return String(b.created_at || '').localeCompare(String(a.created_at || ''));
+    });
+  } else if (sortKey === 'negative') {
+    arr.sort((a, b) => {
+      const d = Number(a.rating || 0) - Number(b.rating || 0);
+      if (d !== 0) return d;
+      return String(b.created_at || '').localeCompare(String(a.created_at || ''));
+    });
+  }
+  return arr;
+}
+
 function renderReviewsPage(data) {
   const content = document.getElementById('reviews-content');
   if (!content) return;
-  const stats = data?.stats || {total_reviews: 0};
+  const stats = data?.stats || lastReviewsStats || { total_reviews: 0 };
   const canWrite = reviewableOrdersCache.length > 0;
+
+  // Всегда применяем клиентскую сортировку
+  reviewListCache = sortReviewsClientSide(reviewListCache, reviewSort);
+
   let html = renderReviewsStats(stats);
   html += renderAllPhotosGallery();
   if (canWrite) {
@@ -2614,7 +2724,10 @@ async function loadReviews(isManual = false, opts = {}) {
 
     const newFingerprint = computeReviewsFingerprint(publicData, mineData, eligibleData);
 
-    if (silentIfSame && reviewsLoadedOnce && newFingerprint === reviewsRenderFingerprint) {
+    // Если данные не изменились и сортировка не менялась — не перерисовываем DOM,
+    // чтобы фото не перезагружались
+    const sortChanged = (publicData.sort || 'newest') !== reviewSort;
+    if (silentIfSame && reviewsLoadedOnce && newFingerprint === reviewsRenderFingerprint && !sortChanged) {
       reviewsLoadInflight = false;
       btn?.classList.remove('spinning');
       btn?.removeAttribute('disabled');
@@ -2624,6 +2737,8 @@ async function loadReviews(isManual = false, opts = {}) {
     reviewListCache = publicData.reviews || [];
     myReviewsCache = mineData?.ok ? (mineData.reviews || []) : [];
     reviewableOrdersCache = eligibleData?.ok ? (eligibleData.orders || []) : [];
+    lastReviewsStats = publicData.stats || { total_reviews: 0 };
+    lastReviewsHasMore = !!publicData.has_more;
     reviewsLoadedOnce = true;
     reviewsRenderFingerprint = newFingerprint;
     renderReviewsPage(publicData);
@@ -2667,12 +2782,12 @@ function openReviewSortSheet() {
   openSheet('review-sort');
 }
 
+/* FIX: работает моментально — клиентская сортировка уже загруженных данных */
 function selectReviewSort(key) {
   reviewSort = key;
   closeSheet();
   hapticSelection();
-  reviewsRenderFingerprint = '';
-  loadReviews(true);
+  renderReviewsPage({ stats: lastReviewsStats, has_more: lastReviewsHasMore });
 }
 
 /* MY REVIEWS SHEET */
@@ -2862,11 +2977,9 @@ async function openReviewSheet(orderId = null, opts = {}) {
   body.innerHTML = reviewSkeletonHTML(2);
   if (!userId) return;
 
-  // FIX: если пришли из review prompt — не перезапрашиваем reviewable_orders,
-  // потому что бэк уже пометил заказ как review_started и исключит его из списка.
+  // Если пришли из review prompt — не перезапрашиваем reviewable_orders
   if (skipFetch && orderId) {
     const order = orderHint || { id: orderId, title: '', received_at: null };
-    // Соберём reviewableOrdersCache так, чтобы рендер формы отработал корректно
     reviewableOrdersCache = [{
       id: order.id,
       title: order.title || '',
@@ -2881,8 +2994,6 @@ async function openReviewSheet(orderId = null, opts = {}) {
     if (!data.ok) throw new Error('bad response');
     reviewableOrdersCache = data.orders || [];
     if (selectedReviewOrderId && !reviewableOrdersCache.some(o => String(o.id) === String(selectedReviewOrderId))) {
-      // Заказ мог быть исключён из reviewable (уже отзыв, не доставлен) — не сбрасываем,
-      // а показываем пустое состояние, чтобы не вводить в заблуждение.
       selectedReviewOrderId = null;
     }
     if (selectedReviewOrderId) renderReviewForm();
@@ -3182,8 +3293,6 @@ function startReviewFromPrompt() {
   reviewPromptOpen = false;
   if (!order?.id) return;
   apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'started'}).catch(()=>{});
-  // FIX: не перезапрашиваем reviewable_orders — бэк уже пометил заказ как review_started
-  // и исключил бы его из списка. Передаём order как hint.
   openReviewSheet(String(order.id), { skipFetch: true, orderHint: order });
 }
 let reviewPromptInflight = false;
