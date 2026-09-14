@@ -474,7 +474,8 @@
   .reviews-photos-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
   .reviews-photos-title { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .reviews-photos-title .icon { width: 15px; height: 15px; color: var(--pink-accent); }
-  /* FIX: горизонтальная лента фото — свайп влево-вправо */
+
+  /* FIX: горизонтальная лента фото покупателей — свайп влево-вправо */
   .reviews-photos-grid {
     display: flex;
     gap: 6px;
@@ -541,10 +542,47 @@
   .review-text.clamped { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
   .review-read-more { color: var(--pink-accent); font-size: 12px; font-weight: 700; margin-top: 5px; }
   .review-order-meta { font-size: 10.5px; color: var(--text-secondary); margin-top: 10px; }
-  .review-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 11px; }
-  .review-photo-thumb { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--surface-soft); cursor: pointer; padding: 0; }
-  .review-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .review-photo-more { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(30,20,24,.46); color: white; font-size: 15px; font-weight: 800; }
+
+  /* FIX: горизонтальная лента фотографий внутри одного отзыва */
+  .review-photos {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    margin-top: 11px;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+  .review-photos::-webkit-scrollbar { display: none; }
+  .review-photo-thumb {
+    flex: 0 0 auto;
+    width: 96px; height: 96px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface-soft);
+    cursor: pointer;
+    padding: 0;
+    scroll-snap-align: start;
+  }
+  .review-photo-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .review-photo-more {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(30, 20, 24, .48);
+    color: white; font-size: 15px; font-weight: 800;
+  }
+  @media (max-width: 360px) {
+    .review-photo-thumb { width: 80px; height: 80px; }
+    .reviews-photo-cell { width: 76px; height: 76px; }
+  }
 
   .review-sort-sheet-list { display: grid; gap: 8px; }
   .review-sort-option {
@@ -2503,9 +2541,7 @@ function formatReviewDate(iso) {
 function publicReviewName(review) {
   if (review.is_anonymous) return 'Анонимный покупатель';
   const name = (review.display_name || '').trim();
-  // Если есть реальное имя (не «покупатель», не «аноним») — показываем его
   if (name && !/аноним/i.test(name) && !/^покупатель$/i.test(name)) return name;
-  // Fallback: username без @
   const uname = (review.username || '').trim().replace(/^@/, '');
   if (uname) return uname;
   return 'Покупатель';
@@ -2517,7 +2553,6 @@ function publicReviewUsername(review) {
   const uname = (review.username || '').trim();
   if (!uname) return '';
   const unameBare = uname.replace(/^@/, '');
-  // Не дублируем, если имя совпадает с username
   if (name && name === unameBare) return '';
   return uname;
 }
@@ -2724,8 +2759,6 @@ async function loadReviews(isManual = false, opts = {}) {
 
     const newFingerprint = computeReviewsFingerprint(publicData, mineData, eligibleData);
 
-    // Если данные не изменились и сортировка не менялась — не перерисовываем DOM,
-    // чтобы фото не перезагружались
     const sortChanged = (publicData.sort || 'newest') !== reviewSort;
     if (silentIfSame && reviewsLoadedOnce && newFingerprint === reviewsRenderFingerprint && !sortChanged) {
       reviewsLoadInflight = false;
@@ -2782,12 +2815,17 @@ function openReviewSortSheet() {
   openSheet('review-sort');
 }
 
-/* FIX: работает моментально — клиентская сортировка уже загруженных данных */
+/* FIX: полный сброс кэша + перезагрузка с сервера */
 function selectReviewSort(key) {
+  if (key === reviewSort) { closeSheet(); return; }
   reviewSort = key;
   closeSheet();
   hapticSelection();
-  renderReviewsPage({ stats: lastReviewsStats, has_more: lastReviewsHasMore });
+  // Полный сброс кэша, чтобы новый порядок пришёл с сервера
+  reviewListCache = [];
+  reviewsRenderFingerprint = '';
+  reviewsLoadedOnce = false;
+  loadReviews(true);
 }
 
 /* MY REVIEWS SHEET */
@@ -2977,7 +3015,6 @@ async function openReviewSheet(orderId = null, opts = {}) {
   body.innerHTML = reviewSkeletonHTML(2);
   if (!userId) return;
 
-  // Если пришли из review prompt — не перезапрашиваем reviewable_orders
   if (skipFetch && orderId) {
     const order = orderHint || { id: orderId, title: '', received_at: null };
     reviewableOrdersCache = [{
