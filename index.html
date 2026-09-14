@@ -671,18 +671,39 @@
   .review-star-btn:active { transform: scale(.92); }
   .review-rating-hint { text-align: center; font-size: 11.5px; color: var(--text-secondary); margin: -10px 0 13px; }
 
+  /* Review editor: stable on mobile keyboards, roomy and easy to select/edit. */
+  #sheet-review .sheet-content {
+    padding-bottom: max(18px, calc(18px + var(--safe-b));
+  }
+  #sheet-review .sheet-header {
+    position: sticky; top: 0; z-index: 3;
+    background: var(--surface);
+    padding-bottom: 10px;
+  }
+  #sheet-review .sheet-content > .dollie-subtitle {
+    margin-bottom: 14px !important;
+  }
   .review-textarea {
-    width: 100%; height: 132px; min-height: 132px; max-height: 132px;
+    width: 100%; height: 168px; min-height: 168px; max-height: 168px;
     box-sizing: border-box;
-    border: 1px solid var(--border); border-radius: 16px;
-    padding: 13px 14px; font-size: 13.5px; line-height: 1.5;
+    border: 1px solid var(--border); border-radius: 17px;
+    padding: 15px 15px 16px; font-size: 14px; line-height: 1.55;
     resize: none; outline: none; color: var(--text); background: var(--surface);
     display: block; overflow-y: auto; overflow-x: hidden;
     -webkit-appearance: none; appearance: none;
+    -webkit-user-select: text; user-select: text;
+    -webkit-touch-callout: default;
+    touch-action: pan-y;
+    caret-color: var(--pink-accent);
     transition: border-color .15s ease, box-shadow .15s ease;
     scrollbar-width: thin;
+    overscroll-behavior: contain;
   }
+  .review-textarea::placeholder { color: var(--text-secondary); opacity: .82; }
   .review-textarea:focus { border-color: var(--pink-accent); box-shadow: 0 0 0 3px var(--pink-soft); }
+  @media (max-width: 380px) {
+    .review-textarea { height: 154px; min-height: 154px; max-height: 154px; font-size: 13.5px; }
+  }
   .review-char-count { text-align: right; font-size: 10.5px; color: var(--text-secondary); margin-top: 5px; }
 
   .review-photo-picker { margin-top: 12px; }
@@ -3723,6 +3744,20 @@ function renderReviewForm() {
   textarea?.addEventListener('input', () => {
     const c = document.getElementById('review-char-count'); if (c) c.textContent = textarea.value.length;
     saveReviewDraft();
+  });
+  textarea?.addEventListener('focus', () => {
+    // Let Telegram/iOS open the keyboard first, then only scroll the sheet itself.
+    // We deliberately do not resize the textarea on input, so the layout never jumps.
+    setTimeout(() => {
+      const sheet = document.getElementById('sheet-review');
+      if (!sheet || !textarea) return;
+      const r = textarea.getBoundingClientRect();
+      const viewportH = window.visualViewport?.height || window.innerHeight;
+      const keyboardSafeBottom = Math.max(12, viewportH - r.bottom);
+      if (r.bottom > viewportH - 18) {
+        sheet.scrollTo({ top: sheet.scrollTop + (r.bottom - viewportH) + 28, behavior: 'smooth' });
+      }
+    }, 220);
   });
   document.querySelectorAll('input[name="review-anon"]').forEach(el => el.addEventListener('change', saveReviewDraft));
   document.getElementById('review-photo-input')?.addEventListener('change', onReviewPhotoChange);
