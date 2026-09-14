@@ -3234,31 +3234,7 @@ function publicProfileHTML(profile) {
   const ordersCount = Number(profile.orders_count || 0);
   const reviewsCount = Number(profile.reviews_count || 0);
   const avg = Number(profile.average_rating || 0);
-  const orders = Array.isArray(profile.orders) ? profile.orders : [];
   const reviews = Array.isArray(profile.reviews) ? profile.reviews : [];
-
-  const ordersBlock = orders.length
-    ? `<div class="profile-orders">
-        <div class="profile-orders-title">Заказы</div>
-        <div class="profile-order-list">
-          ${orders.map(o => {
-            const id = String(o.id || '').trim();
-            const title = String(o.title || '').trim();
-            const date = String(o.created_date || '').trim();
-            return `<div class="profile-order-card">
-              <div class="profile-order-icon"><svg class="icon"><use href="#icon-package"/></svg></div>
-              <div class="profile-order-main">
-                <div class="profile-order-meta">
-                  ${id ? `<span class="profile-order-number">Заказ №${escapeHtml(id)}</span>` : ''}
-                  ${date ? `<span class="profile-order-date">${escapeHtml(date)}</span>` : ''}
-                </div>
-                <div class="profile-order-title ${title ? '' : 'muted'}">${escapeHtml(title || 'Название заказа не указано')}</div>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`
-    : '';
 
   const reviewsBlock = reviews.length
     ? `<div class="profile-review-list">
@@ -3272,6 +3248,8 @@ function publicProfileHTML(profile) {
             ${rawText ? `<div class="review-text ${long ? 'clamped' : ''}" id="review-text-${escapeAttr(rid)}">${escapeHtml(rawText)}</div>` : ''}
             ${long ? `<button type="button" class="review-read-more" id="review-read-more-${escapeAttr(rid)}" onclick="toggleReviewText('${escapeAttr(rid)}')" aria-expanded="false">Читать полностью</button>` : ''}
             ${reviewPhotoGridHTML({...r, photos: r.photos || []}, 'profile')}
+            <div class="review-order-meta">${r.order_title ? escapeHtml(r.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(r.order_id || ''))}</div>
+            <div class="review-date" style="margin-top:6px;">${formatReviewDate(r.created_at)}</div>
           </article>`;
         }).join('')}
       </div>`
@@ -3302,7 +3280,6 @@ function publicProfileHTML(profile) {
       </div>
     </div>
 
-    ${ordersBlock}
     <div class="profile-reviews-title">Отзывы</div>
     ${reviewsBlock}
   `;
