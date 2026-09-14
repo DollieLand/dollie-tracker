@@ -403,6 +403,8 @@
   .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 280px; }
 
   .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
+  .profile-card .avatar { overflow: hidden; }
+  .profile-card .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
   .avatar.big { width: 58px; height: 58px; margin: 0 auto 10px; }
   .profile-name { font-size: 15.5px; font-weight: 700; color: var(--text); }
@@ -559,8 +561,8 @@
   .review-author { flex: 1; min-width: 0; }
   .review-author-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .review-author-user { display: block; font-size: 10.5px; color: var(--text-secondary); margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .review-profile-link { display: inline-flex; align-items: center; justify-content: flex-start; gap: 3px; margin-top: 3px; padding: 0; border: 0; background: transparent; color: var(--pink-accent); font-size: 10.5px; font-weight: 700; line-height: 14px; vertical-align: middle; white-space: nowrap; }
-  .review-author-chevron { color: currentColor; width: 12px; height: 12px; flex: 0 0 12px; margin: 0; display: block; }
+  .review-profile-link { display: inline-flex; align-items: center; justify-content: flex-start; gap: 3px; margin-top: 5px; padding: 0; border: 0; background: transparent; color: var(--pink-accent); font-size: 10.5px; font-weight: 700; line-height: 14px; vertical-align: middle; white-space: nowrap; }
+  .review-author-chevron { color: currentColor; width: 12px; height: 12px; flex: 0 0 12px; margin: 0; display: block; position: relative; top: 1px; }
   .review-author-chevron-wrap { display: inline-flex; align-items: center; justify-content: center; gap: 3px; max-width: 100%; }
 
 
@@ -907,13 +909,20 @@
     font-size: 12px; color: var(--text-secondary); margin-top: 5px;
     max-width: 100%; overflow-wrap: anywhere;
   }
-  .profile-hero-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    margin-top: 11px; padding: 6px 10px; border-radius: 999px;
-    background: var(--surface-soft); border: 1px solid var(--border);
-    color: var(--text-secondary); font-size: 10.5px; font-weight: 700;
-  }
-  .profile-hero-badge .icon { width: 12px; height: 12px; color: var(--pink-accent); }
+  .profile-hero-username-label { font-size: 11px; color: var(--text-secondary); margin-top: 5px; opacity: .78; }
+  .profile-orders { margin: 0 0 23px; }
+  .profile-orders-title { display:flex; align-items:center; justify-content:space-between; margin:0 0 10px; font-size:15px; font-weight:800; }
+  .profile-orders-title::after { content:'История'; font-size:10px; font-weight:700; color:var(--text-secondary); background:var(--surface-soft); border:1px solid var(--border); padding:5px 9px; border-radius:999px; }
+  .profile-order-list { display:grid; gap:9px; }
+  .profile-order-card { display:flex; align-items:center; gap:11px; padding:12px 13px; background:linear-gradient(180deg,var(--surface),var(--surface-soft)); border:1px solid var(--border); border-radius:15px; box-shadow:0 8px 22px rgba(30,20,28,.075),0 2px 6px rgba(30,20,28,.035); }
+  .profile-order-icon { width:34px; height:34px; flex:0 0 34px; display:flex; align-items:center; justify-content:center; border-radius:11px; background:var(--pink-soft); color:var(--pink-accent); }
+  .profile-order-icon .icon { width:17px; height:17px; }
+  .profile-order-main { min-width:0; flex:1; }
+  .profile-order-meta { display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:10.5px; color:var(--text-secondary); margin-bottom:3px; }
+  .profile-order-number { font-weight:800; color:var(--text); }
+  .profile-order-date { color:var(--text-secondary); }
+  .profile-order-title { font-size:12.5px; line-height:1.35; font-weight:700; color:var(--text); overflow-wrap:anywhere; }
+  .profile-order-title.muted { color:var(--text-secondary); font-weight:600; }
 
   .profile-stats {
     display: flex; justify-content: center; gap: 0;
@@ -1615,6 +1624,22 @@ if (user?.first_name) {
 }
 document.getElementById('profile-username').textContent = user?.username ? '@' + user.username : (userId ? 'ID ' + userId : 'DollieLand');
 
+function renderMyTelegramAvatar() {
+  const el = document.querySelector('#tab-profile .profile-card .avatar');
+  if (!el) return;
+  if (user?.photo_url) {
+    el.innerHTML = `<img src="${escapeAttr(user.photo_url)}" alt="" decoding="async">`;
+    el.classList.remove('letter');
+  } else {
+    el.innerHTML = `<svg class="icon"><use href="#icon-user"/></svg>`;
+  }
+}
+
+function syncMyTelegramProfile() {
+  if (!userId) return;
+  apiPost('/api/me/profile', {}).catch(() => {});
+}
+
 function hapticImpact(style) { tg?.HapticFeedback?.impactOccurred(style || 'light'); }
 function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
@@ -1657,6 +1682,9 @@ if (tg) {
 }
 
 /* API */
+renderMyTelegramAvatar();
+syncMyTelegramProfile();
+
 async function apiFetch(path, params, opts) {
   const { timeoutMs = 12000, retries = 1 } = opts || {};
   const url = new URL(API_BASE + path);
@@ -3200,14 +3228,37 @@ function publicProfileHTML(profile) {
   const uname = (profile.username || '').trim();
   const letter = initialFromName(name);
   const avatarHTML = profile.avatar_url
-    ? `<img src="${escapeAttr(profile.avatar_url)}" alt="">`
+    ? `<img src="${escapeAttr(profile.avatar_url)}" alt="" decoding="async" onerror="this.parentElement.innerHTML='${escapeAttr(letter)}'">`
     : escapeHtml(letter);
 
   const ordersCount = Number(profile.orders_count || 0);
   const reviewsCount = Number(profile.reviews_count || 0);
   const avg = Number(profile.average_rating || 0);
-
+  const orders = Array.isArray(profile.orders) ? profile.orders : [];
   const reviews = Array.isArray(profile.reviews) ? profile.reviews : [];
+
+  const ordersBlock = orders.length
+    ? `<div class="profile-orders">
+        <div class="profile-orders-title">Заказы</div>
+        <div class="profile-order-list">
+          ${orders.map(o => {
+            const id = String(o.id || '').trim();
+            const title = String(o.title || '').trim();
+            const date = String(o.created_date || '').trim();
+            return `<div class="profile-order-card">
+              <div class="profile-order-icon"><svg class="icon"><use href="#icon-package"/></svg></div>
+              <div class="profile-order-main">
+                <div class="profile-order-meta">
+                  ${id ? `<span class="profile-order-number">Заказ №${escapeHtml(id)}</span>` : ''}
+                  ${date ? `<span class="profile-order-date">${escapeHtml(date)}</span>` : ''}
+                </div>
+                <div class="profile-order-title ${title ? '' : 'muted'}">${escapeHtml(title || 'Название заказа не указано')}</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`
+    : '';
 
   const reviewsBlock = reviews.length
     ? `<div class="profile-review-list">
@@ -3233,7 +3284,7 @@ function publicProfileHTML(profile) {
     <div class="profile-hero">
       <div class="profile-hero-avatar">${avatarHTML}</div>
       <div class="profile-hero-name">${escapeHtml(name)}</div>
-      ${uname ? `<div class="profile-hero-username">${escapeHtml(uname)}</div>` : ''}
+      ${uname ? `<div class="profile-hero-username">${escapeHtml(uname)}</div>` : '<div class="profile-hero-username-label">Пользователь Telegram</div>'}
     </div>
 
     <div class="profile-stats">
@@ -3251,6 +3302,7 @@ function publicProfileHTML(profile) {
       </div>
     </div>
 
+    ${ordersBlock}
     <div class="profile-reviews-title">Отзывы</div>
     ${reviewsBlock}
   `;
