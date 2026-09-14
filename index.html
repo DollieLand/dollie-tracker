@@ -747,6 +747,162 @@
     padding: 9px 16px; font-size: 12.5px; font-weight: 600; color: var(--text);
   }
 
+
+  /* =========================================================
+     REVIEWS — premium mobile-first
+     ========================================================= */
+  .reviews-stat-card {
+    background: linear-gradient(145deg, var(--surface) 0%, var(--surface-soft) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+  }
+  .reviews-rating-head { display:flex; align-items:center; gap:14px; }
+  .reviews-average { font-size:34px; line-height:1; font-weight:800; letter-spacing:-1px; }
+  .reviews-stars { display:flex; gap:2px; color:#F5A623; }
+  .reviews-stars .icon { width:15px; height:15px; fill:currentColor; stroke:currentColor; }
+  .reviews-total { margin-top:5px; font-size:11.5px; color:var(--text-secondary); }
+  .rating-bars { flex:1; display:grid; gap:5px; }
+  .rating-bar-row { display:grid; grid-template-columns:28px 1fr 25px; align-items:center; gap:7px; font-size:10.5px; color:var(--text-secondary); }
+  .rating-track { height:5px; border-radius:999px; background:var(--border); overflow:hidden; }
+  .rating-fill { height:100%; border-radius:999px; background:var(--pink-accent); transition:width .35s ease; }
+  .reviews-toolbar { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:18px 0 10px; }
+  .reviews-toolbar-title { font-size:14.5px; font-weight:700; }
+  .review-sort-btn { max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .review-cta {
+    width:100%; display:flex; align-items:center; gap:12px; padding:14px 16px;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    box-shadow:var(--shadow-soft); margin-bottom:14px; text-align:left;
+  }
+  .review-cta .review-cta-icon { width:40px;height:40px;border-radius:14px;background:var(--pink-soft);
+    display:flex;align-items:center;justify-content:center;color:var(--pink-accent);flex-shrink:0; }
+  .review-cta .review-cta-icon .icon { width:20px;height:20px; }
+  .review-cta-main { flex:1; min-width:0; }
+  .review-cta-title { font-size:13.5px;font-weight:800; }
+  .review-cta-sub { font-size:11.5px;color:var(--text-secondary);margin-top:2px;line-height:1.4; }
+  .review-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:15px; margin-bottom:10px; box-shadow:var(--shadow-soft); overflow:hidden;
+  }
+  .review-card-head { display:flex;align-items:center;gap:10px; }
+  .review-avatar { width:36px;height:36px;border-radius:50%;background:var(--pink-soft);
+    display:flex;align-items:center;justify-content:center;color:var(--pink-accent);flex-shrink:0; }
+  .review-avatar .icon { width:18px;height:18px; }
+  .review-author { flex:1;min-width:0; }
+  .review-author-name { font-size:13px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .review-author-user { font-size:10.5px;color:var(--text-secondary);margin-top:1px; }
+  .review-date { font-size:10.5px;color:var(--text-secondary);align-self:flex-start;white-space:nowrap; }
+  .review-rating { display:flex;gap:2px;margin:10px 0 7px;color:#F5A623; }
+  .review-rating .icon { width:14px;height:14px;fill:currentColor;stroke:currentColor; }
+  .review-text { font-size:13px;line-height:1.55;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere; }
+  .review-text.clamped { display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden; }
+  .review-read-more { color:var(--pink-accent);font-size:12px;font-weight:750;margin-top:5px; }
+  .review-order-meta { font-size:10.5px;color:var(--text-secondary);margin-top:10px; }
+  .review-photos { display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px; }
+  .review-photo-thumb { position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--surface-soft);cursor:pointer; }
+  .review-photo-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+  .review-photo-more { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(30,20,24,.46);color:white;font-size:15px;font-weight:800; }
+  .review-mine-card { background:var(--surface-soft); border-radius:var(--r-lg); padding:14px 15px; margin-bottom:14px; }
+  .review-mine-head { display:flex;align-items:center;justify-content:space-between;gap:8px; }
+  .review-mine-title { font-size:13.5px;font-weight:800; }
+  .review-mine-count { font-size:11px;color:var(--text-secondary); }
+  .review-mine-list { margin-top:10px;display:grid;gap:7px; }
+  .review-mine-row { display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--border);
+    border-radius:12px;padding:9px 10px; }
+  .review-mine-row .icon { width:16px;height:16px;color:#F5A623;fill:currentColor;stroke:currentColor; }
+  .review-mine-row-main { flex:1;min-width:0; }
+  .review-mine-row-title { font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .review-mine-row-sub { font-size:10.5px;color:var(--text-secondary);margin-top:1px; }
+  .review-sort-sheet-list { display:grid;gap:8px; }
+  .review-sort-option { width:100%;display:flex;align-items:center;gap:12px;padding:14px 15px;background:var(--surface);
+    border:1px solid var(--border);border-radius:14px;text-align:left;font-size:13.5px;font-weight:650; }
+  .review-sort-option.selected { border-color:var(--pink-accent);background:var(--surface-soft); }
+  .review-sort-option .check { margin-left:auto;color:var(--pink-accent); }
+  .review-order-pick { width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--r-md);padding:13px 15px;margin-bottom:8px;color:var(--text); }
+  .review-order-pick-title { font-size:13.5px;font-weight:750; }
+  .review-order-pick-meta { font-size:10.5px;color:var(--text-secondary);margin-top:3px; }
+  .review-star-row { display:flex;justify-content:center;gap:6px;margin:8px 0 18px; }
+  .review-star-btn { width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:var(--border);
+    border-radius:14px;transition:transform .12s ease,background .15s ease,color .15s ease; }
+  .review-star-btn .icon { width:29px;height:29px; }
+  .review-star-btn.active { color:#F5A623;background:var(--surface-soft); }
+  .review-star-btn:active { transform:scale(.92); }
+  .review-rating-hint { text-align:center;font-size:11.5px;color:var(--text-secondary);margin:-10px 0 13px; }
+  .review-textarea { width:100%;min-height:104px;max-height:280px;border:1px solid var(--border);border-radius:16px;
+    padding:13px 14px;font-size:13.5px;line-height:1.5;resize:none;outline:none;color:var(--text);
+    background:var(--surface);display:block;overflow-y:auto; }
+  .review-textarea:focus { border-color:var(--pink-accent);box-shadow:0 0 0 3px var(--pink-soft); }
+  .review-char-count { text-align:right;font-size:10.5px;color:var(--text-secondary);margin-top:5px; }
+  .review-photo-picker { margin-top:12px; }
+  .review-photo-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px; }
+  .review-upload-tile,.review-upload-preview { position:relative;aspect-ratio:1;border-radius:13px;overflow:hidden; }
+  .review-upload-tile { border:1px dashed var(--pink-accent);background:var(--surface-soft);display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:3px;color:var(--pink-accent);font-size:10px;font-weight:700; }
+  .review-upload-tile .icon { width:19px;height:19px; }
+  .review-upload-preview { background:var(--surface-soft); }
+  .review-upload-preview img { width:100%;height:100%;object-fit:cover;display:block; }
+  .review-photo-remove { position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;
+    background:rgba(30,20,24,.72);color:white;display:flex;align-items:center;justify-content:center; }
+  .review-photo-remove .icon { width:12px;height:12px; }
+  .review-photo-move { position:absolute;bottom:4px;left:4px;display:flex;gap:3px; }
+  .review-photo-move button { width:23px;height:23px;border-radius:7px;background:rgba(30,20,24,.68);color:white;display:flex;align-items:center;justify-content:center; }
+  .review-photo-move .icon { width:11px;height:11px; }
+  .review-anon { margin-top:14px;padding:12px 13px;background:var(--surface-soft);border-radius:14px; }
+  .review-anon-title { font-size:12px;font-weight:750;margin-bottom:8px; }
+  .review-anon-options { display:grid;gap:7px; }
+  .review-anon-option { display:flex;align-items:center;gap:9px;font-size:12px;color:var(--text); }
+  .review-anon-option input { accent-color:var(--pink-accent);width:17px;height:17px; }
+  .review-form-note { font-size:10.5px;color:var(--text-secondary);line-height:1.45;margin-top:8px; }
+  .review-publish-btn { margin-top:15px; }
+  .review-publish-btn:disabled { opacity:.58; }
+  .review-skeleton { background:var(--surface);border-radius:var(--r-lg);padding:15px;margin-bottom:10px;box-shadow:var(--shadow-soft); }
+  .review-skeleton .sk-line { height:9px;border-radius:6px;margin-bottom:8px;background:linear-gradient(90deg,var(--pink-soft) 25%,var(--surface-soft) 37%,var(--pink-soft) 63%);
+    background-size:400% 100%;animation:shimmer 1.4s ease infinite; }
+  .review-skeleton .sk-line:last-child { margin-bottom:0; }
+  .review-skeleton .w35{width:35%}.review-skeleton .w55{width:55%}.review-skeleton .w90{width:90%}
+  .review-prompt-overlay { position:fixed;inset:0;background:rgba(57,44,49,.38);display:flex;align-items:flex-end;justify-content:center;
+    padding:18px;opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:80; }
+  .review-prompt-overlay.open { opacity:1;pointer-events:auto; }
+  .review-prompt-card { width:min(480px,100%);background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:22px 19px calc(19px + var(--safe-b));
+    box-shadow:0 -10px 45px rgba(57,44,49,.18);transform:translateY(18px);transition:transform .28s cubic-bezier(.22,1,.36,1); }
+  .review-prompt-overlay.open .review-prompt-card { transform:translateY(0); }
+  .review-prompt-icon { width:58px;height:58px;border-radius:20px;background:var(--pink-soft);color:var(--pink-accent);
+    display:flex;align-items:center;justify-content:center;margin-bottom:13px; }
+  .review-prompt-icon .icon { width:27px;height:27px; }
+  .review-prompt-card h2 { font-size:20px;letter-spacing:-.3px;margin-bottom:5px; }
+  .review-prompt-order { font-size:12px;color:var(--text-secondary);margin-bottom:13px; }
+  .review-prompt-card p { font-size:13px;line-height:1.55;color:var(--text-secondary); }
+  .review-prompt-reward { display:flex;align-items:center;gap:8px;margin:15px 0;padding:11px 12px;border-radius:13px;background:var(--surface-soft);
+    font-size:12.5px;font-weight:750;color:var(--text); }
+  .review-prompt-reward .icon { width:18px;height:18px;color:var(--pink-accent); }
+  .review-prompt-actions { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+  .photo-lightbox { position:fixed;inset:0;background:rgba(10,8,10,.96);display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:90; }
+  .photo-lightbox.open { opacity:1;pointer-events:auto; }
+  .photo-lightbox img { max-width:92vw;max-height:82vh;object-fit:contain;touch-action:pinch-zoom;user-select:none; }
+  .photo-lightbox-close,.photo-lightbox-prev,.photo-lightbox-next {
+    position:absolute;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    color:white;background:rgba(255,255,255,.12);backdrop-filter:blur(8px); }
+  .photo-lightbox-close { top:calc(var(--safe-t) + 14px);right:14px; }
+  .photo-lightbox-prev { left:12px;top:50%;transform:translateY(-50%); }
+  .photo-lightbox-next { right:12px;top:50%;transform:translateY(-50%); }
+  .photo-lightbox-counter { position:absolute;bottom:calc(var(--safe-b) + 18px);left:50%;transform:translateX(-50%);
+    color:white;background:rgba(255,255,255,.12);padding:6px 10px;border-radius:999px;font-size:11px; }
+  .review-detail-modal { position:fixed;inset:0;background:var(--bg);z-index:85;display:none;overflow:auto;padding:calc(var(--safe-t) + 14px) 18px calc(24px + var(--safe-b)); }
+  .review-detail-modal.open { display:block; }
+  .review-detail-close { position:sticky;top:0;margin-left:auto;width:40px;height:40px;border-radius:50%;background:var(--surface);
+    box-shadow:var(--shadow-soft);display:flex;align-items:center;justify-content:center;z-index:2; }
+  @media (min-width: 520px) {
+    .review-photo-grid { grid-template-columns:repeat(5,1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .review-prompt-overlay,.review-prompt-card,.review-star-btn,.rating-fill { transition:none; }
+  }
+
   .theme-option-row {
     width: 100%; display: flex; align-items: center; gap: 12px;
     padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text);
@@ -1168,6 +1324,20 @@
     <div id="orders-list"></div>
   </main>
 
+  <main class="tab-screen" id="tab-reviews">
+    <header class="screen-header">
+      <h1>Отзывы</h1>
+      <button class="pill-btn" id="reviews-refresh-btn" onclick="loadReviews(true)" aria-label="Обновить отзывы">
+        <svg class="icon"><use href="#icon-refresh"/></svg> Обновить
+      </button>
+    </header>
+
+    <div id="reviews-content">
+      <div class="review-skeleton"><div class="sk-line w35"></div><div class="sk-line w55"></div><div class="sk-line w90"></div></div>
+      <div class="review-skeleton"><div class="sk-line w55"></div><div class="sk-line w90"></div><div class="sk-line w90"></div></div>
+    </div>
+  </main>
+
   <main class="tab-screen" id="tab-profile">
     <header class="screen-header"><h1>Профиль</h1></header>
 
@@ -1252,6 +1422,9 @@
   </button>
   <button class="nav-item" data-tab="orders" onclick="switchTab('orders')">
     <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg><span>Мои заказы</span>
+  </button>
+  <button class="nav-item" data-tab="reviews" onclick="switchTab('reviews')">
+    <svg class="icon"><use href="#icon-star"/></svg><span>Отзывы</span>
   </button>
   <button class="nav-item" data-tab="profile" onclick="switchTab('profile')">
     <svg class="icon"><use href="#icon-user"/></svg><span>Профиль</span>
@@ -1402,6 +1575,45 @@
   </div>
 </div>
 
+<div class="bottom-sheet" id="sheet-review-sort">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <h2>Сортировка</h2>
+    <p class="dollie-subtitle">Как показывать отзывы</p>
+    <div class="review-sort-sheet-list" id="review-sort-list"></div>
+  </div>
+</div>
+
+<div class="review-prompt-overlay" id="review-prompt-overlay">
+  <div class="review-prompt-card" role="dialog" aria-modal="true" aria-labelledby="review-prompt-title">
+    <div class="review-prompt-icon"><svg class="icon"><use href="#icon-check"/></svg></div>
+    <h2 id="review-prompt-title">Заказ получен!</h2>
+    <div class="review-prompt-order" id="review-prompt-order"></div>
+    <p>Как вам покупка? Поделитесь впечатлениями — это поможет другим коллекционерам и нам стать ещё лучше.</p>
+    <div class="review-prompt-reward">
+      <svg class="icon"><use href="#icon-gift"/></svg>
+      <span>За опубликованный отзыв — <b id="review-prompt-reward">+10 Dollies</b></span>
+    </div>
+    <div class="review-prompt-actions">
+      <button class="btn btn-secondary" onclick="dismissReviewPrompt()">Позже</button>
+      <button class="btn btn-primary" onclick="startReviewFromPrompt()">Оставить отзыв</button>
+    </div>
+  </div>
+</div>
+
+<div class="photo-lightbox" id="review-photo-lightbox">
+  <button class="photo-lightbox-close" onclick="closeReviewLightbox()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+  <button class="photo-lightbox-prev" onclick="stepReviewLightbox(-1)" aria-label="Предыдущая"><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
+  <img id="review-lightbox-image" alt="">
+  <button class="photo-lightbox-next" onclick="stepReviewLightbox(1)" aria-label="Следующая"><svg class="icon"><use href="#icon-chevron-right"/></svg></button>
+  <div class="photo-lightbox-counter" id="review-lightbox-counter">1/1</div>
+</div>
+
+<div class="review-detail-modal" id="review-detail-modal">
+  <button class="review-detail-close" onclick="closeReviewDetail()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+  <div id="review-detail-content"></div>
+</div>
+
 <div class="bottom-sheet" id="sheet-theme">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
@@ -1533,10 +1745,12 @@ async function apiPost(path, body) {
 function switchTab(name) {
   closeSheet();
   document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+  const screen = document.getElementById('tab-' + name);
+  if (screen) screen.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   window.scrollTo(0, 0);
   hapticSelection();
+  if (name === 'reviews') loadReviews(false);
 }
 
 function comingSoon(label) { showToast(`${label} — совсем скоро`); }
@@ -2480,6 +2694,7 @@ async function loadOrders(isManualRefresh) {
 
     updateHomePanels();
     updateProfileStats();
+    if (!isManualRefresh) checkReviewPrompt();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
     if (summaryText && !ordersCache.length) summaryText.textContent = 'Не удалось загрузить заказы';
@@ -3087,160 +3302,622 @@ function shareReferralLink() {
 }
 
 /* =========================================================
-   REVIEW
+   REVIEWS
    ========================================================= */
 
 let reviewableOrdersCache = [];
 let selectedReviewOrderId = null;
 let selectedReviewRating = 0;
-let selectedReviewPhotoFile = null;
+let selectedReviewPhotoFiles = [];
+let reviewSort = 'newest';
+let reviewListCache = [];
+let myReviewsCache = [];
+let reviewsLoadedOnce = false;
+let reviewPromptOrder = null;
+let reviewLightboxPhotos = [];
+let reviewLightboxIndex = 0;
+let reviewSubmitInFlight = false;
+const REVIEW_MAX_PHOTOS = 8;
+const REVIEW_MAX_TEXT = 5000;
+const REVIEW_DRAFT_PREFIX = 'dollieland_review_draft_';
 
-async function openReviewSheet() {
+const REVIEW_SORT_OPTIONS = [
+  { key: 'newest', label: 'Сначала новые' },
+  { key: 'oldest', label: 'Сначала старые' },
+  { key: 'positive', label: 'Положительные' },
+  { key: 'negative', label: 'Отрицательные' },
+];
+
+function reviewSortLabel(key) {
+  return REVIEW_SORT_OPTIONS.find(x => x.key === key)?.label || 'Сначала новые';
+}
+
+function reviewSkeletonHTML(count = 3) {
+  return Array.from({length: count}, () => `
+    <div class="review-skeleton">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:13px">
+        <div class="skeleton-thumb" style="width:36px;height:36px;border-radius:50%"></div>
+        <div style="flex:1"><div class="sk-line w35"></div><div class="sk-line w55"></div></div>
+      </div>
+      <div class="sk-line w55"></div><div class="sk-line w90"></div><div class="sk-line w90"></div>
+    </div>`).join('');
+}
+
+function starsHTML(rating, sizeClass = '') {
+  return `<div class="review-rating ${sizeClass}" aria-label="${rating} из 5">${
+    [1,2,3,4,5].map(n => `<svg class="icon" style="${n > rating ? 'opacity:.25' : ''}"><use href="#icon-star"/></svg>`).join('')
+  }</div>`;
+}
+
+function formatReviewDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+}
+
+function reviewPhotoGridHTML(review) {
+  const photos = Array.isArray(review.photos) ? review.photos : [];
+  if (!photos.length) return '';
+  const shown = photos.slice(0, 3);
+  return `<div class="review-photos">
+    ${shown.map((src, i) => `
+      <button class="review-photo-thumb" onclick='openReviewLightbox(${JSON.stringify(photos)}, ${i})'>
+        <img src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async">
+        ${i === 2 && photos.length > 3 ? `<span class="review-photo-more">+${photos.length - 3}</span>` : ''}
+      </button>`).join('')}
+  </div>`;
+}
+
+function reviewCardHTML(review) {
+  const long = (review.text || '').length > 260;
+  const text = escapeHtml(review.text || '');
+  return `
+    <article class="review-card">
+      <div class="review-card-head">
+        <div class="review-avatar"><svg class="icon"><use href="#icon-user"/></svg></div>
+        <div class="review-author">
+          <div class="review-author-name">${escapeHtml(review.display_name || 'Покупатель')}</div>
+          ${review.username ? `<div class="review-author-user">${escapeHtml(review.username)}</div>` : ''}
+        </div>
+        <div class="review-date">${formatReviewDate(review.created_at)}</div>
+      </div>
+      ${starsHTML(Number(review.rating || 0))}
+      ${text ? `<div class="review-text ${long ? 'clamped' : ''}" id="review-text-${review.id}">${text}</div>
+        ${long ? `<button class="review-read-more" onclick="openReviewDetail(${review.id})">Читать полностью</button>` : ''}` : ''}
+      ${reviewPhotoGridHTML(review)}
+      <div class="review-order-meta">${review.order_title ? escapeHtml(review.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(review.order_id || ''))}</div>
+    </article>`;
+}
+
+function renderReviewsStats(stats) {
+  const total = Number(stats?.total_reviews || 0);
+  const avg = Number(stats?.average_rating || 0);
+  const counts = [5,4,3,2,1].map(n => Number(stats?.['count_' + n] || 0));
+  const max = Math.max(1, ...counts);
+  return `
+    <div class="reviews-stat-card">
+      <div class="reviews-rating-head">
+        <div>
+          <div class="reviews-average">${avg ? avg.toFixed(1) : '—'}</div>
+          <div class="reviews-stars">${[1,2,3,4,5].map(() => `<svg class="icon"><use href="#icon-star"/></svg>`).join('')}</div>
+          <div class="reviews-total">${total ? `На основе ${total} ${pluralizeReviews(total)}` : 'Пока нет опубликованных отзывов'}</div>
+        </div>
+        <div class="rating-bars">
+          ${[5,4,3,2,1].map((n, idx) => `
+            <div class="rating-bar-row">
+              <span>${n} ★</span>
+              <div class="rating-track"><div class="rating-fill" style="width:${Math.round((counts[idx] / max) * 100)}%"></div></div>
+              <span>${counts[idx]}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function pluralizeReviews(n) {
+  const m10=n%10,m100=n%100;
+  if(m10===1&&m100!==11)return'отзыва';
+  if([2,3,4].includes(m10)&&![12,13,14].includes(m100))return'отзыва';
+  return'отзывов';
+}
+
+function renderMyReviews() {
+  if (!myReviewsCache.length) return '';
+  const recent = myReviewsCache.slice(0,2);
+  return `
+    <div class="review-mine-card">
+      <div class="review-mine-head">
+        <div class="review-mine-title">Мои отзывы</div>
+        <div class="review-mine-count">${myReviewsCache.length}</div>
+      </div>
+      <div class="review-mine-list">
+        ${recent.map(r => `
+          <button class="review-mine-row" onclick="openReviewDetail(${r.id}, true)">
+            ${starsHTML(Number(r.rating || 0))}
+            <div class="review-mine-row-main">
+              <div class="review-mine-row-title">${escapeHtml(r.order_title || ('Заказ №' + r.order_id))}</div>
+              <div class="review-mine-row-sub">${formatReviewDate(r.created_at)}</div>
+            </div>
+            <svg class="icon" style="width:15px;height:15px;color:var(--text-secondary)"><use href="#icon-chevron-right"/></svg>
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderReviewsPage(data) {
+  const content = document.getElementById('reviews-content');
+  if (!content) return;
+  const stats = data?.stats || {total_reviews:0};
+  const canWrite = reviewableOrdersCache.length > 0;
+  let html = renderReviewsStats(stats);
+  if (canWrite) {
+    html += `
+      <button class="review-cta" onclick="openReviewSheet()">
+        <span class="review-cta-icon"><svg class="icon"><use href="#icon-star"/></svg></span>
+        <span class="review-cta-main">
+          <span class="review-cta-title">Оставить отзыв</span>
+          <span class="review-cta-sub">${reviewableOrdersCache.length === 1 ? 'Есть заказ, который можно оценить' : `Доступно заказов: ${reviewableOrdersCache.length}`}</span>
+        </span>
+        <svg class="icon" style="color:var(--text-secondary)"><use href="#icon-chevron-right"/></svg>
+      </button>`;
+  }
+  html += renderMyReviews();
+  if (!reviewListCache.length) {
+    html += `<div class="empty-state">${emptyIllustration()}<h3>${stats.total_reviews ? 'Ничего не найдено' : 'Пока здесь тихо'}</h3>
+      <p>${stats.total_reviews ? 'Попробуйте изменить сортировку.' : 'Станьте первым, кто поделится впечатлениями.'}</p>
+      ${canWrite ? '' : ''}</div>`;
+  } else {
+    html += `<div class="reviews-toolbar"><div class="reviews-toolbar-title">Все отзывы</div>
+      <button class="pill-btn review-sort-btn" onclick="openReviewSortSheet()">
+        <svg class="icon"><use href="#icon-filter"/></svg>${reviewSortLabel(reviewSort)}
+      </button></div>`;
+    html += reviewListCache.map(reviewCardHTML).join('');
+    if (data?.has_more) {
+      html += `<button class="btn btn-secondary btn-block" onclick="loadMoreReviews()">Показать ещё</button>`;
+    }
+  }
+  content.innerHTML = html;
+  stripAutoDetectLinks(content);
+}
+
+async function loadReviews(isManual = false) {
+  const content = document.getElementById('reviews-content');
+  const btn = document.getElementById('reviews-refresh-btn');
+  if (!content || !userId) return;
+  if (isManual) btn?.classList.add('spinning');
+  if (!reviewsLoadedOnce) content.innerHTML = reviewSkeletonHTML(3);
+  try {
+    const [publicData, mineData, eligibleData] = await Promise.all([
+      apiFetch('/api/reviews', {sort: reviewSort, limit: 30, offset: 0}, {timeoutMs:10000,retries:1}),
+      apiFetch('/api/me/reviews', {}, {timeoutMs:10000,retries:1}),
+      apiFetch('/api/me/reviewable_orders', {}, {timeoutMs:10000,retries:1}),
+    ]);
+    if (!publicData?.ok) throw new Error('reviews');
+    reviewListCache = publicData.reviews || [];
+    myReviewsCache = mineData?.ok ? (mineData.reviews || []) : [];
+    reviewableOrdersCache = eligibleData?.ok ? (eligibleData.orders || []) : [];
+    reviewsLoadedOnce = true;
+    renderReviewsPage(publicData);
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить отзывы —', e);
+    if (!reviewsLoadedOnce) content.innerHTML = `<div class="empty-state">${emptyIllustration()}<h3>Не удалось загрузить отзывы</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadReviews(true)">Повторить</button></div>`;
+    else showToast('Не удалось обновить отзывы');
+  } finally {
+    btn?.classList.remove('spinning');
+  }
+}
+
+async function loadMoreReviews() {
+  try {
+    const offset = reviewListCache.length;
+    const data = await apiFetch('/api/reviews', {sort: reviewSort, limit:30, offset}, {timeoutMs:10000,retries:1});
+    if (!data?.ok) throw new Error('reviews');
+    reviewListCache = reviewListCache.concat(data.reviews || []);
+    renderReviewsPage(data);
+  } catch (_) { showToast('Не удалось загрузить ещё отзывы'); }
+}
+
+function openReviewSortSheet() {
+  const list = document.getElementById('review-sort-list');
+  if (!list) return;
+  list.innerHTML = REVIEW_SORT_OPTIONS.map(opt => `
+    <button class="review-sort-option ${opt.key === reviewSort ? 'selected' : ''}" onclick="selectReviewSort('${opt.key}')">
+      <svg class="icon"><use href="#icon-filter"/></svg><span>${opt.label}</span>
+      <span class="check">${opt.key === reviewSort ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</span>
+    </button>`).join('');
+  openSheet('review-sort');
+}
+
+function selectReviewSort(key) {
+  reviewSort = key;
+  closeSheet();
+  hapticSelection();
+  loadReviews(false);
+}
+
+async function openReviewSheet(orderId = null) {
   openSheet('review');
-  selectedReviewOrderId = null;
+  selectedReviewOrderId = orderId;
   selectedReviewRating = 0;
-  selectedReviewPhotoFile = null;
-
+  selectedReviewPhotoFiles = [];
+  reviewSubmitInFlight = false;
   const body = document.getElementById('review-sheet-body');
-  body.innerHTML = dollieHistorySkeletonHTML(2);
+  if (!body) return;
+  body.innerHTML = reviewSkeletonHTML(2);
 
   if (!userId) return;
-
   try {
-    const data = await apiFetch('/api/me/reviewable_orders', {}, { timeoutMs: 10000, retries: 1 });
+    const data = await apiFetch('/api/me/reviewable_orders', {}, {timeoutMs:10000,retries:1});
     if (!data.ok) throw new Error('bad response');
     reviewableOrdersCache = data.orders || [];
-
-    if (reviewableOrdersCache.length === 0) {
-      body.innerHTML = `
-        <div class="empty-state" style="padding-top:6px;">
-          ${emptyIllustration()}
-          <h3>Пока нечего оценить</h3>
-          <p>Отзыв можно оставить после получения заказа — как только он появится, вы сможете рассказать о своих впечатлениях здесь.</p>
-        </div>`;
+    if (selectedReviewOrderId && !reviewableOrdersCache.some(o => String(o.id) === String(selectedReviewOrderId))) {
+      selectedReviewOrderId = null;
+    }
+    if (selectedReviewOrderId) renderReviewForm();
+    else if (reviewableOrdersCache.length === 0) {
+      body.innerHTML = `<div class="empty-state" style="padding-top:6px;">${emptyIllustration()}<h3>Пока нечего оценить</h3><p>Отзыв можно оставить после получения заказа.</p></div>`;
     } else if (reviewableOrdersCache.length === 1) {
       selectedReviewOrderId = reviewableOrdersCache[0].id;
       renderReviewForm();
-    } else {
-      renderReviewOrderPicker();
-    }
+    } else renderReviewOrderPicker();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы для отзыва —', e);
-    body.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить заказы</p>`;
+    body.innerHTML = `<div class="empty-state" style="padding-top:8px;"><h3>Не удалось загрузить заказы</h3><p>Попробуйте ещё раз.</p><button class="btn btn-secondary" onclick="openReviewSheet()">Повторить</button></div>`;
   }
 }
 
 function renderReviewOrderPicker() {
   const body = document.getElementById('review-sheet-body');
-  body.innerHTML = `
-    <div class="dollie-section-title">О каком заказе рассказать?</div>
+  body.innerHTML = `<div class="dollie-section-title">О каком заказе рассказать?</div>
     ${reviewableOrdersCache.map(o => `
-      <button class="review-order-pick" onclick="selectReviewOrder('${o.id}')">
-        ${escapeHtml(o.title || ('Заказ №' + o.id))}
-      </button>`).join('')}
-  `;
+      <button class="review-order-pick" onclick="selectReviewOrder('${escapeHtml(String(o.id))}')">
+        <div class="review-order-pick-title">${escapeHtml(o.title || ('Заказ №' + o.id))}</div>
+        <div class="review-order-pick-meta">№ ${escapeHtml(String(o.id))}${o.received_at ? ' · получен ' + escapeHtml(formatReviewDate(o.received_at)) : ''}</div>
+      </button>`).join('')}`;
 }
 
 function selectReviewOrder(orderId) {
   selectedReviewOrderId = orderId;
+  selectedReviewRating = 0;
+  selectedReviewPhotoFiles = [];
   hapticSelection();
   renderReviewForm();
 }
 
+function reviewDraftKey(orderId) { return REVIEW_DRAFT_PREFIX + String(orderId); }
+
+function loadReviewDraft(orderId) {
+  try { return JSON.parse(localStorage.getItem(reviewDraftKey(orderId)) || '{}'); } catch (_) { return {}; }
+}
+function saveReviewDraft() {
+  if (!selectedReviewOrderId) return;
+  const text = document.getElementById('review-text-input')?.value || '';
+  const anon = document.querySelector('input[name="review-anon"]:checked')?.value === 'anonymous';
+  try {
+    localStorage.setItem(reviewDraftKey(selectedReviewOrderId), JSON.stringify({text, rating:selectedReviewRating, is_anonymous:anon}));
+  } catch (_) {}
+}
+function clearReviewDraft(orderId) {
+  try { localStorage.removeItem(reviewDraftKey(orderId)); } catch (_) {}
+}
+
+function autoGrowReviewTextarea(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 280) + 'px';
+}
+
 function renderReviewForm() {
   const body = document.getElementById('review-sheet-body');
-  const order = reviewableOrdersCache.find(o => o.id === selectedReviewOrderId);
+  const order = reviewableOrdersCache.find(o => String(o.id) === String(selectedReviewOrderId));
+  if (!order) return;
+  const draft = loadReviewDraft(order.id);
+  selectedReviewRating = Number(draft.rating || 0);
+  selectedReviewPhotoFiles = [];
   body.innerHTML = `
-    ${order ? `<div class="dollie-section-title">${escapeHtml(order.title || ('Заказ №' + order.id))}</div>` : ''}
+    <div class="dollie-section-title">${escapeHtml(order.title || ('Заказ №' + order.id))}</div>
+    <div style="font-size:10.5px;color:var(--text-secondary);margin-top:-10px;margin-bottom:10px">Заказ №${escapeHtml(String(order.id))}</div>
     <div class="review-star-row" id="review-star-row">
-      ${[1,2,3,4,5].map(n => `
-        <button type="button" class="review-star-btn" data-star="${n}" onclick="setReviewRating(${n})">
-          <svg class="icon"><use href="${seasonalIconHref('star')}"/></svg>
-        </button>`).join('')}
+      ${[1,2,3,4,5].map(n => `<button type="button" class="review-star-btn ${selectedReviewRating >= n ? 'active' : ''}" data-star="${n}" onclick="setReviewRating(${n})" aria-label="${n} из 5"><svg class="icon"><use href="#icon-star"/></svg></button>`).join('')}
     </div>
-    <textarea class="review-textarea" id="review-text-input" placeholder="Расскажите, как прошёл ваш заказ (необязательно)"></textarea>
-    <div class="review-photo-row">
-      <label class="review-photo-btn">
-        <svg class="icon" style="width:16px;height:16px;"><use href="#icon-camera"/></svg>
-        Добавить фото
-        <input type="file" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="onReviewPhotoChange(this)">
-      </label>
-      <img class="review-photo-preview" id="review-photo-preview">
+    <div class="review-rating-hint" id="review-rating-hint">${selectedReviewRating ? reviewRatingText(selectedReviewRating) : 'Выберите оценку'}</div>
+    <textarea class="review-textarea" id="review-text-input" maxlength="${REVIEW_MAX_TEXT}" placeholder="Расскажите о покупке — что особенно понравилось?">${escapeHtml(draft.text || '')}</textarea>
+    <div class="review-char-count"><span id="review-char-count">${(draft.text || '').length}</span>/${REVIEW_MAX_TEXT}</div>
+
+    <div class="review-photo-picker">
+      <div class="dollie-section-title" style="margin-bottom:0">Фотографии <span style="font-weight:500;color:var(--text-secondary)">· до ${REVIEW_MAX_PHOTOS}</span></div>
+      <div class="review-photo-grid" id="review-photo-grid">
+        <label class="review-upload-tile" id="review-upload-tile">
+          <svg class="icon"><use href="#icon-camera"/></svg><span>Добавить</span>
+          <input id="review-photo-input" type="file" accept="image/jpeg,image/png,image/webp" multiple style="display:none">
+        </label>
+      </div>
     </div>
-    <button class="btn btn-primary btn-block" style="margin-top:16px" onclick="submitReview()">
-      <svg class="icon" style="width:16px;height:16px;"><use href="#icon-send"/></svg>Отправить отзыв
+
+    <div class="review-anon">
+      <div class="review-anon-title">Показывать данные в опубликованном отзыве</div>
+      <div class="review-anon-options">
+        <label class="review-anon-option"><input type="radio" name="review-anon" value="public" ${draft.is_anonymous ? '' : 'checked'}> Показывать моё имя и @username</label>
+        <label class="review-anon-option"><input type="radio" name="review-anon" value="anonymous" ${draft.is_anonymous ? 'checked' : ''}> Скрыть имя и @username</label>
+      </div>
+      <div class="review-form-note">При анонимном отзыве другие пользователи увидят только «Анонимный покупатель». Администратор всё равно видит автора.</div>
+    </div>
+
+    <button class="btn btn-primary btn-block review-publish-btn" id="review-submit-btn" onclick="submitReview()">
+      <svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg>Опубликовать отзыв
     </button>
   `;
+  const textarea = document.getElementById('review-text-input');
+  textarea?.addEventListener('input', () => {
+    autoGrowReviewTextarea(textarea);
+    const c = document.getElementById('review-char-count'); if (c) c.textContent = textarea.value.length;
+    saveReviewDraft();
+  }, {passive:true});
+  document.querySelectorAll('input[name="review-anon"]').forEach(el => el.addEventListener('change', saveReviewDraft));
+  document.getElementById('review-photo-input')?.addEventListener('change', onReviewPhotoChange);
+  autoGrowReviewTextarea(textarea);
+  renderReviewPhotoPreviews();
+}
+
+function reviewRatingText(n) {
+  return ['', 'Совсем не понравилось', 'Есть что улучшить', 'Нормально', 'Очень понравилось', 'Всё прекрасно'][n] || 'Выберите оценку';
 }
 
 function setReviewRating(n) {
   selectedReviewRating = n;
   hapticSelection();
-  document.querySelectorAll('#review-star-row .review-star-btn').forEach(btn => {
-    btn.classList.toggle('active', Number(btn.dataset.star) <= n);
-  });
+  document.querySelectorAll('#review-star-row .review-star-btn').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.star) <= n));
+  const hint = document.getElementById('review-rating-hint'); if (hint) hint.textContent = reviewRatingText(n);
+  saveReviewDraft();
 }
 
-function onReviewPhotoChange(input) {
-  const file = input.files && input.files[0];
-  if (!file) return;
-  selectedReviewPhotoFile = file;
-  const preview = document.getElementById('review-photo-preview');
-  const reader = new FileReader();
-  reader.onload = e => {
-    preview.src = e.target.result;
-    preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+async function compressReviewImage(file) {
+  if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('bad_photo_format');
+  if (file.size > 12 * 1024 * 1024) throw new Error('photo_too_large');
+  const bitmap = await createImageBitmap(file);
+  const maxSide = 2200;
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  const ctx = canvas.getContext('2d', {alpha:false});
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close?.();
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', .86));
+  if (!blob) throw new Error('photo_processing_failed');
+  return new File([blob], `dollie-review-${Date.now()}-${Math.random().toString(16).slice(2)}.jpg`, {type:'image/jpeg'});
+}
+
+async function onReviewPhotoChange(e) {
+  const input = e.target;
+  const incoming = Array.from(input.files || []);
+  input.value = '';
+  if (!incoming.length) return;
+  const remaining = REVIEW_MAX_PHOTOS - selectedReviewPhotoFiles.length;
+  if (incoming.length > remaining) showToast(`Можно добавить максимум ${REVIEW_MAX_PHOTOS} фото`);
+  const files = incoming.slice(0, remaining);
+  for (const file of files) {
+    try {
+      const compressed = await compressReviewImage(file);
+      selectedReviewPhotoFiles.push({file:compressed, url:URL.createObjectURL(compressed)});
+      renderReviewPhotoPreviews();
+    } catch (err) {
+      const msg = err?.message === 'photo_too_large' ? 'Фото слишком большое' : 'Не удалось обработать фото';
+      showToast(msg);
+    }
+  }
+}
+
+function renderReviewPhotoPreviews() {
+  const grid = document.getElementById('review-photo-grid');
+  const tile = document.getElementById('review-upload-tile');
+  if (!grid || !tile) return;
+  grid.querySelectorAll('.review-upload-preview').forEach(x => x.remove());
+  selectedReviewPhotoFiles.forEach((item, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'review-upload-preview';
+    wrap.innerHTML = `
+      <img src="${item.url}" alt="">
+      <button class="review-photo-remove" onclick="removeReviewPhoto(${i})" aria-label="Удалить"><svg class="icon"><use href="#icon-x"/></svg></button>
+      <div class="review-photo-move">
+        <button onclick="moveReviewPhoto(${i},-1)" ${i===0?'disabled':''}><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
+        <button onclick="moveReviewPhoto(${i},1)" ${i===selectedReviewPhotoFiles.length-1?'disabled':''}><svg class="icon"><use href="#icon-chevron-right"/></svg></button>
+      </div>`;
+    grid.insertBefore(wrap, tile);
+  });
+  tile.style.display = selectedReviewPhotoFiles.length >= REVIEW_MAX_PHOTOS ? 'none' : 'flex';
+}
+
+function removeReviewPhoto(index) {
+  const item = selectedReviewPhotoFiles[index];
+  if (item?.url) URL.revokeObjectURL(item.url);
+  selectedReviewPhotoFiles.splice(index,1);
+  renderReviewPhotoPreviews();
+}
+function moveReviewPhoto(index, delta) {
+  const target = index + delta;
+  if (target < 0 || target >= selectedReviewPhotoFiles.length) return;
+  [selectedReviewPhotoFiles[index], selectedReviewPhotoFiles[target]] = [selectedReviewPhotoFiles[target], selectedReviewPhotoFiles[index]];
+  renderReviewPhotoPreviews();
+  hapticSelection();
 }
 
 async function submitReview() {
+  if (reviewSubmitInFlight) return;
   if (!selectedReviewOrderId) { showToast('Выберите заказ'); return; }
   if (!selectedReviewRating) { showToast('Поставьте оценку'); hapticNotification('warning'); return; }
 
-  const text = document.getElementById('review-text-input')?.value.trim() || '';
+  const textEl = document.getElementById('review-text-input');
+  const text = textEl?.value.trim() || '';
+  const isAnonymous = document.querySelector('input[name="review-anon"]:checked')?.value === 'anonymous';
+  const btn = document.getElementById('review-submit-btn');
+  reviewSubmitInFlight = true;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="icon" style="width:16px;height:16px"><use href="#icon-refresh"/></svg>Публикуем…'; }
+
+  saveReviewDraft();
+
   const fd = new FormData();
   fd.append('order_id', selectedReviewOrderId);
   fd.append('rating', String(selectedReviewRating));
   fd.append('text', text);
-  if (selectedReviewPhotoFile) fd.append('photo', selectedReviewPhotoFile);
+  fd.append('is_anonymous', isAnonymous ? 'true' : 'false');
+  selectedReviewPhotoFiles.forEach(item => fd.append('photos', item.file, item.file.name));
 
   const headers = {};
   if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
 
   try {
-    const res = await fetch(API_BASE + '/api/me/reviews', { method: 'POST', headers, body: fd });
+    const res = await fetch(API_BASE + '/api/me/reviews', {method:'POST', headers, body:fd});
     const data = await res.json();
-
     if (!data.ok) {
       const messages = {
-        already_reviewed: 'На этот заказ уже есть отзыв',
-        order_not_completed: 'Отзыв можно оставить только на полученный заказ',
-        not_your_order: 'Это не ваш заказ',
-        invalid_rating: 'Поставьте оценку от 1 до 5',
-        bad_photo_format: 'Неподдерживаемый формат фото',
+        already_reviewed:'На этот заказ уже есть отзыв',
+        order_not_completed:'Отзыв можно оставить только на полученный заказ',
+        not_your_order:'Это не ваш заказ',
+        invalid_rating:'Поставьте оценку от 1 до 5',
+        bad_photo_format:'Один из файлов имеет неподдерживаемый формат',
+        photo_too_large:'Одно из фото слишком большое',
+        photo_too_small:'Одно из фото слишком маленькое',
+        too_many_photos:`Можно прикрепить максимум ${REVIEW_MAX_PHOTOS} фото`,
+        photo_processing_failed:'Не удалось обработать одно из фото',
+        text_too_long:`Текст не должен быть длиннее ${REVIEW_MAX_TEXT} символов`,
       };
       showToast(messages[data.error] || 'Не удалось отправить отзыв');
       hapticNotification('error');
+      if (btn) { btn.disabled=false; btn.innerHTML='<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg>Опубликовать отзыв'; }
+      reviewSubmitInFlight = false;
       return;
     }
 
+    clearReviewDraft(selectedReviewOrderId);
+    selectedReviewPhotoFiles.forEach(item => item.url && URL.revokeObjectURL(item.url));
+    selectedReviewPhotoFiles = [];
     hapticNotification('success');
-    const awarded = data.review?.awarded_amount || 0;
+    const awarded = Number(data.review?.awarded_amount || 0);
     document.getElementById('review-sheet-body').innerHTML = `
       <div class="empty-state" style="padding-top:10px;">
         ${emptyIllustration()}
-        <h3>Спасибо за отзыв ♡</h3>
+        <h3>Спасибо за отзыв</h3>
         <p>${awarded > 0 ? `+${awarded} Dollies уже начислены на ваш баланс.` : 'Ваш отзыв опубликован.'}</p>
+        <button class="btn btn-primary btn-block" onclick="closeSheet();switchTab('reviews')">Смотреть отзывы</button>
       </div>`;
-    showToast(awarded > 0 ? `+${awarded} Dollies начислено` : 'Отзыв опубликован');
     loadLoyalty();
     if (dollieHistoryLoadedOnce) loadLoyaltyHistory(true);
     loadDollieRecent();
+    reviewSubmitInFlight = false;
+    reviewableOrdersCache = reviewableOrdersCache.filter(o => String(o.id) !== String(selectedReviewOrderId));
+    selectedReviewOrderId = null;
+    await loadReviews(false);
   } catch (e) {
     console.error('DollieLand: не удалось отправить отзыв —', e);
-    showToast('Не удалось отправить отзыв');
+    showToast('Не удалось отправить отзыв. Текст и выбранные фото сохранены — попробуйте ещё раз.');
     hapticNotification('error');
+    if (btn) { btn.disabled=false; btn.innerHTML='<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg>Повторить публикацию'; }
+    reviewSubmitInFlight = false;
+  }
+}
+
+function openReviewDetail(id, mine = false) {
+  const review = (mine ? myReviewsCache : reviewListCache).find(r => Number(r.id) === Number(id));
+  if (!review) return;
+  const modal = document.getElementById('review-detail-modal');
+  const content = document.getElementById('review-detail-content');
+  content.innerHTML = `
+    <div style="padding:6px 0 16px">
+      <div class="review-card" style="margin-top:8px">
+        <div class="review-card-head">
+          <div class="review-avatar"><svg class="icon"><use href="#icon-user"/></svg></div>
+          <div class="review-author"><div class="review-author-name">${escapeHtml(review.display_name || 'Покупатель')}</div>
+            ${review.username ? `<div class="review-author-user">${escapeHtml(review.username)}</div>` : ''}</div>
+          <div class="review-date">${formatReviewDate(review.created_at)}</div>
+        </div>
+        ${starsHTML(Number(review.rating || 0))}
+        ${review.text ? `<div class="review-text">${escapeHtml(review.text)}</div>` : ''}
+        ${reviewPhotoGridHTML(review)}
+        <div class="review-order-meta">${review.order_title ? escapeHtml(review.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(review.order_id || ''))}</div>
+      </div>
+    </div>`;
+  modal.classList.add('open');
+  hapticImpact('light');
+}
+
+function closeReviewDetail() {
+  document.getElementById('review-detail-modal')?.classList.remove('open');
+}
+
+function openReviewLightbox(photos, index) {
+  if (!Array.isArray(photos) || !photos.length) return;
+  reviewLightboxPhotos = photos;
+  reviewLightboxIndex = Math.max(0, Math.min(index || 0, photos.length - 1));
+  renderReviewLightbox();
+  document.getElementById('review-photo-lightbox')?.classList.add('open');
+  hapticImpact('light');
+}
+function renderReviewLightbox() {
+  const img = document.getElementById('review-lightbox-image');
+  const counter = document.getElementById('review-lightbox-counter');
+  if (!img) return;
+  img.src = reviewLightboxPhotos[reviewLightboxIndex] || '';
+  if (counter) counter.textContent = `${reviewLightboxIndex + 1}/${reviewLightboxPhotos.length}`;
+}
+function stepReviewLightbox(delta) {
+  if (!reviewLightboxPhotos.length) return;
+  reviewLightboxIndex = (reviewLightboxIndex + delta + reviewLightboxPhotos.length) % reviewLightboxPhotos.length;
+  renderReviewLightbox();
+  hapticSelection();
+}
+function closeReviewLightbox() {
+  document.getElementById('review-photo-lightbox')?.classList.remove('open');
+  reviewLightboxPhotos = [];
+}
+
+(function setupReviewLightboxSwipe() {
+  let startX = 0;
+  const box = document.getElementById('review-photo-lightbox');
+  box?.addEventListener('touchstart', e => { startX = e.touches[0]?.clientX || 0; }, {passive:true});
+  box?.addEventListener('touchend', e => {
+    const endX = e.changedTouches[0]?.clientX || 0;
+    const dx = endX - startX;
+    if (Math.abs(dx) > 45) stepReviewLightbox(dx < 0 ? 1 : -1);
+  }, {passive:true});
+  box?.addEventListener('click', e => { if (e.target === box) closeReviewLightbox(); });
+})();
+
+function openReviewPrompt(order) {
+  reviewPromptOrder = order;
+  const overlay = document.getElementById('review-prompt-overlay');
+  document.getElementById('review-prompt-order').textContent = `${order.title || 'Заказ'} · №${order.id}`;
+  document.getElementById('review-prompt-reward').textContent = `+${order.reward || 10} Dollies`;
+  overlay?.classList.add('open');
+  hapticNotification('success');
+}
+
+function dismissReviewPrompt() {
+  const order = reviewPromptOrder;
+  document.getElementById('review-prompt-overlay')?.classList.remove('open');
+  reviewPromptOrder = null;
+  if (order?.id) apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'later'}).catch(()=>{});
+}
+
+function startReviewFromPrompt() {
+  const order = reviewPromptOrder;
+  document.getElementById('review-prompt-overlay')?.classList.remove('open');
+  reviewPromptOrder = null;
+  if (!order?.id) return;
+  apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'started'}).catch(()=>{});
+  openReviewSheet(order.id);
+}
+
+async function checkReviewPrompt() {
+  if (!userId) return;
+  try {
+    const data = await apiFetch('/api/me/review_prompt', {}, {timeoutMs:8000,retries:0});
+    if (data?.ok && data.show && data.order) {
+      openReviewPrompt({...data.order, reward:Number(data.reward || 10)});
+    }
+  } catch (e) {
+    console.debug('DollieLand: review prompt unavailable', e);
   }
 }
 
@@ -3342,6 +4019,16 @@ loadLoyalty();
 loadBanners();
 loadThemeConfig();
 loadNotifications(false);
+
+// Ненавязчиво проверяем новые статусы, пока Mini App открыт.
+// Это позволяет показать review prompt вскоре после перехода заказа в финальный статус.
+setInterval(() => {
+  if (document.visibilityState === 'visible') loadOrders(false);
+}, 60000);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') loadOrders(false);
+});
 </script>
 
 </body>
