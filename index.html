@@ -89,7 +89,7 @@
 
   .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 
-  .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: #B4708F; letter-spacing: 0.2px; }
+  .brand { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: var(--pink-accent); letter-spacing: 0.2px; }
 
   .icon-btn {
     width: 44px; height: 44px;
@@ -128,7 +128,7 @@
   .scroll-row::-webkit-scrollbar { display: none; }
 
   .hero-card {
-    background: linear-gradient(155deg, #FCE5ED 0%, #FFF4F8 55%, #FFFFFF 100%);
+    background: linear-gradient(155deg, var(--pink-soft) 0%, var(--surface-soft) 55%, var(--surface) 100%);
     border-radius: var(--r-xl);
     padding: 22px 20px;
     box-shadow: var(--shadow-card);
@@ -215,7 +215,7 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .dollie-card {
-    background: linear-gradient(150deg, #FDF1F5 0%, #FFF9FB 60%, #FFFFFF 100%);
+    background: linear-gradient(150deg, var(--surface-soft) 0%, var(--bg) 60%, var(--surface) 100%);
     border: 1px solid var(--border);
     border-radius: var(--r-xl);
     padding: 18px 20px;
@@ -260,7 +260,7 @@
   }
 
   .dollie-hero {
-    background: linear-gradient(160deg, #FDF1F5 0%, #FFFCFD 55%, #FFFFFF 100%);
+    background: linear-gradient(160deg, var(--surface-soft) 0%, var(--surface) 55%, var(--surface) 100%);
     border: 1px solid var(--border);
     border-radius: 24px;
     padding: 26px 24px 22px;
@@ -329,7 +329,6 @@
     transform: rotate(180deg);
   }
 
-  /* ===== Универсальный text-link — синий (розовый акцент), без подчёркивания ===== */
   .text-link {
     display: inline-flex;
     align-items: center;
@@ -365,7 +364,7 @@
   .howitworks-card {
     flex: 0 0 auto; scroll-snap-align: start;
     width: 148px;
-    background: var(--card, #FFFFFF);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 18px;
     padding: 16px 14px;
@@ -441,7 +440,7 @@
     padding: 7px 14px;
     border-radius: var(--r-pill);
     border: 1px solid var(--border);
-    background: var(--card, #FFFFFF);
+    background: var(--surface);
     font-size: 12.5px; font-weight: 600; color: var(--text-secondary);
   }
   .dollie-filter-pill.active { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
@@ -465,7 +464,7 @@
 
   .dollie-skeleton-num {
     width: 120px; height: 44px; border-radius: 10px; margin: 6px auto 0;
-    background: linear-gradient(90deg, #FCE5ED 25%, #FFF6F9 37%, #FCE5ED 63%);
+    background: linear-gradient(90deg, var(--pink-soft) 25%, var(--surface-soft) 37%, var(--pink-soft) 63%);
     background-size: 400% 100%;
     animation: shimmer 1.4s ease infinite;
   }
@@ -481,7 +480,7 @@
     width: calc(100% - 44px);
     max-width: 340px;
     min-height: 152px;
-    background: linear-gradient(150deg, #FDF1F5 0%, #FFFFFF 100%);
+    background: linear-gradient(150deg, var(--surface-soft) 0%, var(--surface) 100%);
     border: 1px solid var(--border);
     border-radius: 22px;
     overflow: hidden;
@@ -629,7 +628,7 @@
   .skeleton-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
   .skeleton-thumb { width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0; }
   .skeleton-thumb, .skeleton-line {
-    background: linear-gradient(90deg, #FCE5ED 25%, #FFF6F9 37%, #FCE5ED 63%);
+    background: linear-gradient(90deg, var(--pink-soft) 25%, var(--surface-soft) 37%, var(--pink-soft) 63%);
     background-size: 400% 100%;
     animation: shimmer 1.4s ease infinite;
   }
@@ -765,16 +764,13 @@
   .seasonal-banner > * { position: relative; z-index: 1; }
 
   #theme-decorations {
-    /* z-index: -1 (not 1!) — a positive z-index paints ABOVE normal in-flow content
-       (cards, text), which is exactly what caused decorations to visually sit on top
-       of the UI. Negative z-index paints behind all of .app's content, sheets and nav
-       (all of which use z-index 40+), so decorations only ever show through the gaps
-       between cards, never over text or open bottom sheets. */
     position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden;
   }
   #theme-decorations .deco-item { position: absolute; opacity: 0.5; }
   @keyframes deco-fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
   @keyframes deco-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
+  @keyframes deco-sway { 0%, 100% { transform: translateX(-8px); } 50% { transform: translateX(8px); } }
+  @keyframes deco-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
   .contact-card { text-align: center; padding: 6px 0 4px; }
   .contact-name { font-size: 16.5px; font-weight: 700; }
@@ -888,82 +884,6 @@
     -webkit-text-fill-color: currentColor;
   }
 
-  .order-title,
-  .order-title *,
-  .order-title a,
-  .order-title span {
-    color: #392C31 !important;
-    -webkit-text-fill-color: #392C31 !important;
-    text-decoration: none !important;
-    background: transparent !important;
-  }
-
-  .order-id,
-  .order-id *,
-  .order-id a,
-  .order-id span,
-  .order-meta,
-  .order-meta *,
-  .order-meta a,
-  .order-meta span,
-  .timeline-date,
-  .timeline-date *,
-  .timeline-date a,
-  .tx-date,
-  .tx-date *,
-  .tx-date a {
-    color: #907D84 !important;
-    -webkit-text-fill-color: #907D84 !important;
-    text-decoration: none !important;
-    background: transparent !important;
-  }
-
-  .timeline-label,
-  .timeline-label *,
-  .timeline-label a,
-  .info-row,
-  .info-row b,
-  .info-row *,
-  .info-row a,
-  .tx-title,
-  .tx-title *,
-  .tx-title a,
-  .tx-subtitle,
-  .tx-subtitle *,
-  .tx-subtitle a {
-    text-decoration: none !important;
-    background: transparent !important;
-  }
-
-  .timeline-label,
-  .timeline-label *,
-  .timeline-label a,
-  .tx-title,
-  .tx-title *,
-  .tx-title a {
-    color: #392C31 !important;
-    -webkit-text-fill-color: #392C31 !important;
-  }
-
-  .tx-subtitle,
-  .tx-subtitle *,
-  .tx-subtitle a {
-    color: #907D84 !important;
-    -webkit-text-fill-color: #907D84 !important;
-  }
-
-  .info-row,
-  .info-row *,
-  .info-row a {
-    color: #907D84 !important;
-    -webkit-text-fill-color: #907D84 !important;
-  }
-  .info-row b,
-  .info-row b * {
-    color: #392C31 !important;
-    -webkit-text-fill-color: #392C31 !important;
-  }
-
   .toast:not(.show),
   .bottom-sheet:not(.open),
   .sheet-overlay:not(.open) {
@@ -985,7 +905,12 @@
   <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
 </div>
 
+<!-- ============================================================
+     ПОЛНЫЙ SVG-НАБОР: базовые + сезонные иконки
+     ============================================================ -->
 <svg style="display:none" aria-hidden="true">
+
+  <!-- ===== БАЗОВЫЕ (STANDARD) ИКОНКИ ===== -->
   <symbol id="icon-house" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
   <symbol id="icon-package" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></symbol>
   <symbol id="icon-user" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></symbol>
@@ -1018,13 +943,80 @@
   <symbol id="icon-send" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10.5 13.5"/><path d="M21 3l-6.5 18-4-8-8-4z"/></symbol>
   <symbol id="icon-users" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17" cy="9" r="3"/><path d="M15.5 14.3c2.8.4 5 2.2 5 5.2"/></symbol>
 
-  <!-- =====================================================================
-       SEASONAL ICON SET — genuinely different silhouettes per theme, not
-       the base icon recolored. Standard uses the base icon-heart/star/bell/gift
-       above unchanged. Resolved at runtime by seasonalIconHref() in the script.
-       ===================================================================== -->
+  <!-- ============================================================
+       СЕЗОННЫЕ ИКОНКИ — реальные силуэты, а не перекраска
+       ============================================================ -->
 
-  <!-- HEART variants -->
+  <!-- ================= PACKAGE / ORDER ================= -->
+
+  <!-- AUTUMN: harvest parcel with leaves -->
+  <symbol id="icon-package-autumn" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-4 9 4-9 4-9-4z"/>
+    <path d="M3 9v8l9 4 9-4V9"/>
+    <path d="M12 13v8"/>
+    <path d="M6 5.5C4.5 4.5 4 3 5 2c1-1 2.5-.5 3.5 1" stroke-width="1.3"/>
+    <path d="M8.5 3.2c-.3-1.3.4-2.2 1.4-2 .9.1 1.4 1 1.1 2.2" stroke-width="1.1"/>
+  </symbol>
+
+  <!-- WINTER: snow-globe parcel -->
+  <symbol id="icon-package-winter" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="11" r="8"/>
+    <path d="M4 11h16"/>
+    <path d="M8 21h8"/>
+    <path d="M12 7v-2M11 6l2 1M13 6l-2 1M9 9v-1.4M15 9v-1.4" stroke-width="1.1"/>
+    <path d="M9 13.5c.8.8 1.6 1.2 3 1.2s2.2-.4 3-1.2" stroke-width="1.2"/>
+  </symbol>
+
+  <!-- SPRING: blooming parcel -->
+  <symbol id="icon-package-spring" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10l8-3.5 8 3.5-8 3.5-8-3.5z"/>
+    <path d="M4 10v7l8 4 8-4v-7"/>
+    <path d="M12 13.5v7.5"/>
+    <circle cx="9" cy="5" r="1.6" stroke-width="1.1"/>
+    <circle cx="12" cy="3.6" r="1.6" stroke-width="1.1"/>
+    <circle cx="15" cy="5" r="1.6" stroke-width="1.1"/>
+    <circle cx="12" cy="6.4" r="1.6" stroke-width="1.1"/>
+    <circle cx="12" cy="5" r="0.8" stroke-width="1"/>
+  </symbol>
+
+  <!-- SUMMER: sunny floral parcel -->
+  <symbol id="icon-package-summer" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 10l8-3.5 8 3.5-8 3.5-8-3.5z"/>
+    <path d="M4 10v7l8 4 8-4v-7"/>
+    <path d="M12 13.5v7.5"/>
+    <circle cx="12" cy="4" r="2.2" stroke-width="1.2"/>
+    <path d="M12 1.5v1M12 5.5v1M9.5 4h1M13.5 4h1M10.2 2.2l.7.7M13.1 5.1l.7.7M13.8 2.2l-.7.7M10.9 5.1l-.7.7" stroke-width="0.9"/>
+  </symbol>
+
+  <!-- HALLOWEEN: JACK-O'-LANTERN — коробка ПОЛНОСТЬЮ заменена тыквой -->
+  <symbol id="icon-package-halloween" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 4c0-1 1-1.5 1.5-1 .5-.8 2-.8 2.5 0 .5-.5 1.5 0 1.5 1 .8-.3 1.5.3 1.5 1 0 .7-.5 1.2-1 1.5H8c-.6-.3-1-.8-1-1.5 0-.7.7-1.3 1-1z" stroke-width="1.2"/>
+    <path d="M5 10c0-3 3-5 7-5s7 2 7 5c0 5-2.5 11-7 11S5 15 5 10z"/>
+    <path d="M9.5 9.5l1.5 2-2 .3z"/>
+    <path d="M14.5 9.5l-1.5 2 2 .3z"/>
+    <path d="M8 15c1.2 1.5 2.4 2 4 2s2.8-.5 4-2c-1.2.4-2.6.6-4 .6s-2.8-.2-4-.6z"/>
+    <path d="M12 5V3" stroke-width="1.2"/>
+  </symbol>
+
+  <!-- CHRISTMAS: christmas gift box -->
+  <symbol id="icon-package-christmas" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="9" width="18" height="12"/>
+    <path d="M12 9v12"/>
+    <path d="M3 13h18"/>
+    <path d="M19 9V7a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 7.4 2.4 2.4 0 0 0 16.4 9H19zM5 9V7a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 7.4 2.4 2.4 0 0 1 7.6 9H5z"/>
+    <path d="M12 3l.7 1.8L14.5 5l-1.8.7L12 7.5l-.7-1.8L9.5 5l1.8-.2z" stroke-width="1.1"/>
+  </symbol>
+
+  <!-- VALENTINE: heart-shaped gift box -->
+  <symbol id="icon-package-valentine" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21c-.3 0-.6-.1-.8-.3C7.6 17.8 3 14.1 3 9.8 3 6.9 5.2 4.5 8 4.5c1.7 0 3.2.9 4 2.3.8-1.4 2.3-2.3 4-2.3 2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+    <path d="M12 8v13" stroke-width="1.1"/>
+    <path d="M7 10.5h10" stroke-width="1.1"/>
+    <path d="M12 5.5c-.6-1-1.5-1.3-2.2-.8-.7.5-.6 1.5.2 2.2" stroke-width="1.1"/>
+    <path d="M12 5.5c.6-1 1.5-1.3 2.2-.8.7.5.6 1.5-.2 2.2" stroke-width="1.1"/>
+  </symbol>
+
+  <!-- ================= HEART ================= -->
   <symbol id="icon-heart-autumn" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/><path d="M15.5 4.8c1-1.3 2.6-1.7 3.4-.8.8.9.3 2.4-1 3.3M17.2 5.4l.9.9" stroke-width="1.4"/></symbol>
   <symbol id="icon-heart-winter" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5 8.5 16 5 12l1-4 3-2.5 3 1.5 3-1.5 3 2.5 1 4-3.5 4z"/></symbol>
   <symbol id="icon-heart-spring" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/><circle cx="17" cy="5" r="1" stroke-width="1.4"/><circle cx="18.6" cy="4.2" r="1" stroke-width="1.4"/><circle cx="18.6" cy="6" r="1" stroke-width="1.4"/><circle cx="17" cy="7" r="1" stroke-width="1.4"/></symbol>
@@ -1033,16 +1025,16 @@
   <symbol id="icon-heart-christmas" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/><path d="M9.5 3.5c-1.2-1-2.8-1-3.4.1-.6 1.1.4 2.2 1.7 2.4M14.5 3.5c1.2-1 2.8-1 3.4.1.6 1.1-.4 2.2-1.7 2.4M12 4.5v1.5" stroke-width="1.3"/></symbol>
   <symbol id="icon-heart-valentine" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/><path d="M17.5 8.6c-.15 0-.3-.05-.4-.15-1.4-1.2-3.1-2.5-3.1-4a2 2 0 0 1 2-2c.65 0 1.2.3 1.5.8.3-.5.85-.8 1.5-.8a2 2 0 0 1 2 2c0 1.5-1.7 2.8-3.1 4-.1.1-.25.15-.4.15z" stroke-width="1.3"/></symbol>
 
-  <!-- STAR / decorative sparkle variants -->
-  <symbol id="icon-star-autumn" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 1 7 4 7 8a7 7 0 0 1-7 7 7 7 0 0 1-7-7c0-4 3-7 7-8z"/><path d="M12 4v14"/></symbol>
-  <symbol id="icon-star-winter" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4.5 6l15 12M19.5 6l-15 12"/><path d="M12 5l-1.5 1M12 5l1.5 1M12 19l-1.5-1M12 19l1.5-1" stroke-width="1.1"/></symbol>
-  <symbol id="icon-star-spring" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c1.2 1 1.2 3 0 4-1.2-1-1.2-3 0-4zM12 16c1.2 1 1.2 3 0 4-1.2-1-1.2-3 0-4zM4 12c1-1.2 3-1.2 4 0-1 1.2-3 1.2-4 0zM16 12c1-1.2 3-1.2 4 0-1 1.2-3 1.2-4 0z"/><circle cx="12" cy="12" r="1.6"/></symbol>
-  <symbol id="icon-star-summer" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></symbol>
-  <symbol id="icon-star-halloween" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.2 7.8L21 12l-7.8 2.2L12 22l-1.2-7.8L3 12l7.8-2.2z"/></symbol>
+  <!-- ================= STAR ================= -->
+  <symbol id="icon-star-autumn" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c4 2 7 5.5 7 10 0 5-3 9-7 10-4-1-7-5-7-10 0-4.5 3-8 7-10z"/><path d="M12 4v16M5.5 12h13" stroke-width="1"/><path d="M8 6l1 1M16 6l-1 1M8 18l1-1M16 18l-1-1" stroke-width="0.9"/></symbol>
+  <symbol id="icon-star-winter" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M3.5 6.5l17 11M20.5 6.5l-17 11"/><path d="M12 5.5l-1.5 1M12 5.5l1.5 1M12 18.5l-1.5-1M12 18.5l1.5-1" stroke-width="1"/></symbol>
+  <symbol id="icon-star-spring" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c1.2 1 1.2 3 0 4-1.2-1-1.2-3 0-4z"/><path d="M12 16c1.2 1 1.2 3 0 4-1.2-1-1.2-3 0-4z"/><path d="M4 12c1-1.2 3-1.2 4 0-1 1.2-3 1.2-4 0z"/><path d="M16 12c1-1.2 3-1.2 4 0-1 1.2-3 1.2-4 0z"/><circle cx="12" cy="12" r="1.6"/></symbol>
+  <symbol id="icon-star-summer" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></symbol>
+  <symbol id="icon-star-halloween" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.2 7.8L21 12l-7.8 2.2L12 22l-1.2-7.8L3 12l7.8-2.2z"/><path d="M12 6.5l.4 2.6 2.6.4-2.6.4-.4 2.6-.4-2.6-2.6-.4 2.6-.4z" stroke-width="0.9" fill="currentColor" fill-opacity="0.15"/></symbol>
   <symbol id="icon-star-christmas" viewBox="0 0 24 24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/><circle cx="12" cy="12" r="1.6" stroke-width="1.6"/></symbol>
-  <symbol id="icon-star-valentine" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3 4 4 4 4s-3 1-4 4c-1-3-4-4-4-4s3-1 4-4z"/><path d="M12 10.3c-.1 0-.2 0-.3-.1-.9-.8-2-1.7-2-2.7a1.3 1.3 0 0 1 2.3-.8 1.3 1.3 0 0 1 2.3.8c0 1-1.1 1.9-2 2.7-.1.1-.2.1-.3.1z" stroke-width="1.2"/></symbol>
+  <symbol id="icon-star-valentine" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c1 3 4 4 4 4s-3 1-4 4c-1-3-4-4-4-4s3-1 4-4z"/><path d="M12 10.3c-.1 0-.2 0-.3-.1-.9-.8-2-1.7-2-2.7a1.3 1.3 0 0 1 2.3-.8 1.3 1.3 0 0 1 2.3.8c0 1-1.1 1.9-2 2.7-.1.1-.2.1-.3.1z" stroke-width="1.1"/></symbol>
 
-  <!-- BELL / notification variants -->
+  <!-- ================= BELL ================= -->
   <symbol id="icon-bell-autumn" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><path d="M6.5 6c1.4-.6 2.8 0 3 1.2-1.4.6-2.8 0-3-1.2z" stroke-width="1.3"/></symbol>
   <symbol id="icon-bell-winter" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><path d="M12 2v1.4M9.8 2.6l.6 1.3M14.2 2.6l-.6 1.3" stroke-width="1.2"/></symbol>
   <symbol id="icon-bell-spring" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><circle cx="11.3" cy="2.4" r=".9" stroke-width="1.2"/><circle cx="12.7" cy="2.4" r=".9" stroke-width="1.2"/><circle cx="12" cy="1.6" r=".9" stroke-width="1.2"/><circle cx="12" cy="3.2" r=".9" stroke-width="1.2"/></symbol>
@@ -1051,7 +1043,7 @@
   <symbol id="icon-bell-christmas" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><path d="M8 5.5c-1.3-.8-2.6-.3-2.8.8-.2 1.1 1 1.8 2.3 1.5M8 5.5c.3 1 .1 2-1 2.3" stroke-width="1.2"/><circle cx="9.3" cy="6.7" r=".7" stroke-width="1.2"/></symbol>
   <symbol id="icon-bell-valentine" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/><path d="M12 2.2c-.1 0-.2 0-.25-.1-.6-.5-1.3-1.1-1.3-1.7a.85.85 0 0 1 1.55-.5.85.85 0 0 1 1.55.5c0 .6-.7 1.2-1.3 1.7-.05.1-.15.1-.25.1z" stroke-width="1.1"/></symbol>
 
-  <!-- GIFT / reward variants -->
+  <!-- ================= GIFT ================= -->
   <symbol id="icon-gift-autumn" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/><path d="M12 4c1.2-.6 2.4 0 2.4 1s-1.2 1.6-2.4 1" stroke-width="1.1"/></symbol>
   <symbol id="icon-gift-winter" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/><path d="M12 3v2M11 3.6l2 .8M13 3.6l-2 .8" stroke-width="1.1"/></symbol>
   <symbol id="icon-gift-spring" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/><circle cx="11.3" cy="3.4" r=".7" stroke-width="1.1"/><circle cx="12.7" cy="3.4" r=".7" stroke-width="1.1"/><circle cx="12" cy="2.7" r=".7" stroke-width="1.1"/><circle cx="12" cy="4.1" r=".7" stroke-width="1.1"/></symbol>
@@ -1059,9 +1051,28 @@
   <symbol id="icon-gift-halloween" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3h4M11 3v4l-3.5 6.5A3 3 0 0 0 10.1 18h3.8a3 3 0 0 0 2.6-4.5L13 7V3"/><path d="M9 13h6" stroke-width="1.2"/></symbol>
   <symbol id="icon-gift-christmas" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/><path d="M12 2l.6 1.6L14 4l-1.4.4L12 6l-.6-1.6L10 4l1.4-.4z" stroke-width="1.1"/></symbol>
   <symbol id="icon-gift-valentine" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/><path d="M12 3.4c-.1 0-.2 0-.25-.1-.6-.5-1.3-1.1-1.3-1.7a.85.85 0 0 1 1.55-.5.85.85 0 0 1 1.55.5c0 .6-.7 1.2-1.3 1.7-.05.1-.15.1-.25.1z" stroke-width="1.1"/></symbol>
+
+  <!-- ================= TRUCK / DELIVERY ================= -->
+  <symbol id="icon-truck-autumn" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><path d="M5 4c1.5-1 2.5-2 4-1.5" stroke-width="1.2"/></symbol>
+  <symbol id="icon-truck-winter" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><path d="M7 3v1.4M5.8 3.6l1 .8M8.2 3.6l-1 .8" stroke-width="1"/></symbol>
+  <symbol id="icon-truck-spring" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><circle cx="7" cy="3.5" r="1.3" stroke-width="1"/><circle cx="9.3" cy="3.5" r="1.3" stroke-width="1"/><circle cx="8.15" cy="2.3" r="1.3" stroke-width="1"/><circle cx="8.15" cy="4.7" r="1.3" stroke-width="1"/></symbol>
+  <symbol id="icon-truck-summer" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><circle cx="7" cy="3.5" r="2" stroke-width="1.1"/><path d="M7 0.8v1M7 5.2v1M4.5 3.5h1M9.5 3.5h1" stroke-width="0.8"/></symbol>
+  <symbol id="icon-truck-halloween" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><path d="M6 3.5l1.5-1.5 1.5 1.5-1.5 1z" stroke-width="1.1"/></symbol>
+  <symbol id="icon-truck-christmas" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><path d="M5 3.5c1.5-1 2.5-2 3.5-1.5" stroke-width="1.1"/><circle cx="8.7" cy="2" r="0.9" stroke-width="1"/></symbol>
+  <symbol id="icon-truck-valentine" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h12v10H1z"/><path d="M13 9h4l4 4v3h-8"/><circle cx="5.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/><path d="M7 3.5c-.1 0-.15 0-.2-.08-.35-.3-.75-.65-.75-1a.5.5 0 0 1 .93-.28.5.5 0 0 1 .93.28c0 .35-.4.7-.75 1-.05.08-.1.08-.16.08z" stroke-width="1"/></symbol>
+
+  <!-- ================= CHECK / COMPLETED ================= -->
+  <symbol id="icon-check-autumn" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><path d="M18 3c1.2-.6 2.5 0 2.5 1.2" stroke-width="1.2"/></symbol>
+  <symbol id="icon-check-winter" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><path d="M18 3v2M17 4l2 1M19 4l-2 1" stroke-width="1.1"/></symbol>
+  <symbol id="icon-check-spring" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><circle cx="19" cy="3.5" r="1.4" stroke-width="1.1"/><circle cx="20.6" cy="3.5" r="1.4" stroke-width="1.1"/><circle cx="19.8" cy="2" r="1.4" stroke-width="1.1"/><circle cx="19.8" cy="5" r="1.4" stroke-width="1.1"/></symbol>
+  <symbol id="icon-check-summer" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><circle cx="19" cy="4" r="2" stroke-width="1.1"/></symbol>
+  <symbol id="icon-check-halloween" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><path d="M18.5 3l1-1 1 1-1 1z" stroke-width="1"/></symbol>
+  <symbol id="icon-check-christmas" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><path d="M19 3v2M18 4h2" stroke-width="1.2"/></symbol>
+  <symbol id="icon-check-valentine" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><path d="M19 3.5c-.05 0-.1 0-.12-.05-.2-.18-.4-.37-.4-.55a.26.26 0 0 1 .5-.15.26.26 0 0 1 .5.15c0 .18-.2.37-.4.55-.03.05-.05.05-.08.05z" stroke-width="0.9"/></symbol>
+
 </svg>
 
-<div class="app">
+  <div class="app">
 
   <main class="tab-screen active" id="tab-home">
     <header class="app-header">
@@ -1098,7 +1109,9 @@
     </button>
 
     <button class="orders-summary-card" id="orders-summary-card" onclick="switchTab('orders')">
-      <div class="orders-summary-icon"><svg class="icon"><use href="#icon-package"/></svg></div>
+      <div class="orders-summary-icon">
+        <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg>
+      </div>
       <div class="orders-summary-text" id="orders-summary-text">Загружаем заказы…</div>
       <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
     </button>
@@ -1154,7 +1167,7 @@
 
     <div class="menu-list">
       <button class="menu-item" onclick="switchTab('orders')">
-        <svg class="icon"><use href="#icon-package"/></svg>
+        <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg>
         <span class="label">Мои заказы</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
@@ -1206,7 +1219,7 @@
     <svg class="icon"><use href="#icon-house"/></svg><span>Главная</span>
   </button>
   <button class="nav-item" data-tab="orders" onclick="switchTab('orders')">
-    <svg class="icon"><use href="#icon-package"/></svg><span>Мои заказы</span>
+    <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg><span>Мои заказы</span>
   </button>
   <button class="nav-item" data-tab="profile" onclick="switchTab('profile')">
     <svg class="icon"><use href="#icon-user"/></svg><span>Профиль</span>
@@ -1407,6 +1420,8 @@
 <script>
 /* =========================================================
    DollieLand — Personal Order Tracking Mini App
+   Сезонная система v2: реальная замена иконок, иллюстраций,
+   анимаций. Никакой косметической перекраски.
    ========================================================= */
 
 const tg = window.Telegram?.WebApp;
@@ -1441,7 +1456,6 @@ function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
 
 const API_BASE = 'https://dollieland.pythonanywhere.com';
-// ⚠️ ЗАМЕНИ на реальный username твоего бота (без @)
 const BOT_USERNAME = 'DollieHelper_bot';
 
 async function apiFetch(path, params, opts) {
@@ -1458,7 +1472,6 @@ async function apiFetch(path, params, opts) {
     try {
       const res = await fetch(url.toString(), { headers, signal: controller.signal });
       clearTimeout(timer);
-
       if (!res.ok) {
         let bodyPreview = '';
         try { bodyPreview = (await res.text()).slice(0, 160); } catch (_) {}
@@ -1476,6 +1489,13 @@ async function apiFetch(path, params, opts) {
     }
   }
   throw lastError;
+}
+
+async function apiPost(path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
+  const res = await fetch(API_BASE + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
+  return res.json();
 }
 
 function switchTab(name) {
@@ -1544,11 +1564,9 @@ function setupSheetDrag(sheetEl) {
     if (!dragging) return;
     const delta = startY - clientY;
     if (Math.abs(delta) > 4) movedEnough = true;
-
     const maxExpanded = currentMaxHeightPx(true);
     let newHeight = startHeight + delta;
     newHeight = Math.min(maxExpanded, newHeight);
-
     if (delta < 0) {
       const pull = Math.min(140, -delta);
       sheetEl.style.transform = `translateY(${pull}px)`;
@@ -1566,7 +1584,6 @@ function setupSheetDrag(sheetEl) {
 
     const delta = startY - clientY;
     const translateActive = sheetEl.style.transform && sheetEl.style.transform !== '';
-
     sheetEl.style.transform = '';
 
     if (!movedEnough) {
@@ -1574,24 +1591,18 @@ function setupSheetDrag(sheetEl) {
       sheetEl.classList.toggle('expanded');
       return;
     }
-
     if (translateActive && -delta > 90) {
       sheetEl.style.maxHeight = '';
       closeSheet();
       return;
     }
-
     const collapsedH = currentMaxHeightPx(false);
     const expandedH = currentMaxHeightPx(true);
     const finishHeight = Math.min(expandedH, startHeight + delta);
     const midPoint = (collapsedH + expandedH) / 2;
-
     sheetEl.style.maxHeight = '';
-    if (finishHeight > midPoint) {
-      sheetEl.classList.add('expanded');
-    } else {
-      sheetEl.classList.remove('expanded');
-    }
+    if (finishHeight > midPoint) sheetEl.classList.add('expanded');
+    else sheetEl.classList.remove('expanded');
   }
 
   handleArea.addEventListener('touchstart', e => onDragStart(e.touches[0].clientY), { passive: true });
@@ -1660,58 +1671,520 @@ function escapeHtml(str) {
 
 function orderTitle(order) { return escapeHtml(order.title || `Заказ №${order.id}`); }
 
-function stripAutoDetectLinks(root) {
-  if (!root) return;
-  const anchors = root.querySelectorAll(
-    'a[x-apple-data-detectors],' +
-    'a[x-apple-data-detectors-type],' +
-    'a[href^="tel:"],' +
-    'a[href^="mailto:"],' +
-    'a[href^="date:"],' +
-    'a[href^="address:"]'
-  );
-  anchors.forEach(a => {
-    const parent = a.parentNode;
-    if (!parent) return;
-    parent.replaceChild(document.createTextNode(a.textContent), a);
+/* =========================================================
+   THEME SYSTEM v2 — сезонные иконки, иллюстрации, декор
+   ========================================================= */
+
+let themeConfig = { theme: null };
+let themeMode = 'light';
+
+const CSS_VAR_MAP = {
+  background: '--bg', surface: '--surface', elevated_surface: '--surface-soft',
+  text: '--text', secondary_text: '--text-secondary', border: '--border',
+};
+
+function activeThemeSlug() {
+  return (themeConfig.theme && themeConfig.theme.slug) || 'standard';
+}
+
+// Ключевая функция: для семантических иконок (package/heart/star/bell/gift/truck/check)
+// возвращает id сезонного символа, если он существует для активной темы.
+// Иначе — базовый id. Standard всегда отдаёт базовый.
+function seasonalIconHref(baseKey) {
+  const slug = activeThemeSlug();
+  if (slug === 'standard') return '#icon-' + baseKey;
+  const themedId = 'icon-' + baseKey + '-' + slug;
+  return document.getElementById(themedId) ? '#' + themedId : '#icon-' + baseKey;
+}
+
+// Свапает href у всех <use> внутри <svg data-seasonal-icon="..."> по всему DOM.
+// Вызывается после применения темы и после каждой перерисовки динамических списков.
+function applySeasonalIcons() {
+  document.querySelectorAll('[data-seasonal-icon]').forEach(svg => {
+    const use = svg.querySelector('use');
+    if (!use) return;
+    use.setAttribute('href', seasonalIconHref(svg.dataset.seasonalIcon));
   });
 }
 
-function watchAutoDetectLinks() {
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(m => {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType === 1) {
-          if (node.tagName === 'A' && (
-            node.hasAttribute('x-apple-data-detectors') ||
-            node.hasAttribute('x-apple-data-detectors-type') ||
-            /^(tel|mailto|date|address):/.test(node.getAttribute('href') || '')
-          )) {
-            const parent = node.parentNode;
-            if (parent) parent.replaceChild(document.createTextNode(node.textContent), node);
-          } else {
-            stripAutoDetectLinks(node);
-          }
-        }
-      });
+function applyTheme() {
+  const mode = (themeMode === 'dark') ? 'dark' : 'light';
+  const active = themeConfig.theme;
+  const colors = (active && active['colors_' + mode]) || null;
+  const root = document.documentElement;
+
+  root.dataset.theme = mode;
+
+  if (colors) {
+    Object.entries(CSS_VAR_MAP).forEach(([field, cssVar]) => {
+      if (colors[field]) root.style.setProperty(cssVar, colors[field]);
     });
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
+    if (colors.accent) root.style.setProperty('--pink-accent', colors.accent);
+    if (colors.dollies) root.style.setProperty('--dollies-color', colors.dollies);
+  }
+
+  updateThemeMetaColors(colors && colors.background);
+  renderThemeOptionsList();
+  renderSeasonalBanner();
+  renderThemeDecorations();
+  applySeasonalIcons();
+
+  // Обновляем иконки в уже отрисованных списках
+  if (loyaltyRewards) renderDollieRewards();
+  if (dollieRecentCache.length) loadDollieRecent();
+  if (loyaltyTxCache.length) renderHistoryList();
+  if (ordersCache.length) {
+    document.getElementById('orders-list').innerHTML = ordersCache.map(orderCardHTML).join('');
+  }
 }
+
+function updateThemeMetaColors(bgColor) {
+  if (tg && bgColor) {
+    tg.setHeaderColor(bgColor);
+    tg.setBackgroundColor(bgColor);
+  }
+}
+
+async function loadThemeConfig() {
+  try {
+    const [activeRes, prefRes] = await Promise.all([
+      apiFetch('/api/theme/active', {}, { timeoutMs: 8000, retries: 1 }),
+      userId ? apiFetch('/api/me/theme_preference', {}, { timeoutMs: 8000, retries: 1 }) : Promise.resolve(null),
+    ]);
+    if (activeRes && activeRes.ok) {
+      themeConfig = { theme: activeRes.theme };
+    }
+    if (prefRes && prefRes.ok && (prefRes.mode === 'light' || prefRes.mode === 'dark')) {
+      themeMode = prefRes.mode;
+    }
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить конфиг темы —', e);
+  }
+  applyTheme();
+}
+
+const THEME_MODE_OPTIONS = [
+  { key: 'light', icon: 'sun', title: 'Светлая', desc: 'Всегда светлое оформление' },
+  { key: 'dark', icon: 'moon', title: 'Тёмная', desc: 'Всегда тёмное оформление' },
+];
+
+function renderThemeOptionsList() {
+  const container = document.getElementById('theme-options-list');
+  if (!container) return;
+  container.innerHTML = THEME_MODE_OPTIONS.map(opt => `
+    <button class="theme-option-row ${themeMode === opt.key ? 'selected' : ''}" onclick="selectThemeMode('${opt.key}')">
+      <svg class="icon"><use href="#icon-${opt.icon}"/></svg>
+      <div class="label-wrap">
+        <div class="title">${opt.title}</div>
+        <div class="desc">${opt.desc}</div>
+      </div>
+      <div class="check-dot">${themeMode === opt.key ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</div>
+    </button>
+  `).join('');
+}
+
+async function selectThemeMode(mode) {
+  if (mode === themeMode) return;
+  hapticSelection();
+  themeMode = mode;
+  applyTheme();
+  if (!userId) return;
+  try {
+    await apiPost('/api/me/theme_preference', { mode });
+  } catch (e) {
+    console.error('DollieLand: не удалось сохранить предпочтение темы —', e);
+  }
+}
+
+function renderSeasonalBanner() {
+  const slot = document.getElementById('seasonal-banner-slot');
+  if (!slot) return;
+  const active = themeConfig.theme;
+  const texts = (active && active.texts) || {};
+  if (!active || active.slug === 'standard' || (!texts.banner_title && !texts.banner_subtitle)) {
+    slot.innerHTML = '';
+    return;
+  }
+  slot.innerHTML = `
+    <div class="seasonal-banner">
+      <div class="seasonal-banner-eyebrow">${escapeHtml(active.name || 'DollieLand')}</div>
+      ${texts.banner_title ? `<div class="seasonal-banner-title">${escapeHtml(texts.banner_title)}</div>` : ''}
+      ${texts.banner_subtitle ? `<div class="seasonal-banner-subtitle">${escapeHtml(texts.banner_subtitle)}</div>` : ''}
+    </div>`;
+}
+
+/* =========================================================
+   DECORATION RENDERERS — фоновый слой с сезонными анимациями.
+   Все элементы pointer-events: none, z-index: -1 (позади UI).
+   ========================================================= */
+
+const DECORATION_RENDERERS = {
+  // AUTUMN — падающие листья + лёгкое покачивание
+  autumn_leaves: () => {
+    const colors = ['#C97A3D', '#B8563A', '#D9A441', '#8B4A2B'];
+    const leaves = Array.from({ length: 14 }, (_, i) => {
+      const left = Math.round(Math.random() * 100);
+      const delay = (Math.random() * 8).toFixed(1);
+      const duration = (11 + Math.random() * 7).toFixed(1);
+      const size = 10 + Math.round(Math.random() * 8);
+      const color = colors[i % colors.length];
+      const rot = Math.round(Math.random() * 360);
+      return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" stroke="none" style="transform:rotate(${rot}deg);animation:deco-spin ${duration * 0.4}s linear ${delay}s infinite;">
+          <path d="M12 2c5 4 8 9 8 13a8 8 0 1 1-16 0c0-4 3-9 8-13z"/>
+        </svg>
+      </div>`;
+    }).join('');
+    // ветка в правом верхнем углу — крупный элемент композиции
+    const branch = `
+      <svg class="deco-item" style="top:-20px;right:-30px;width:220px;height:220px;opacity:0.14;" viewBox="0 0 200 200" fill="none" stroke="var(--pink-accent)" stroke-width="2" stroke-linecap="round">
+        <path d="M20 180 C60 140, 100 110, 160 60"/>
+        <path d="M60 140 C70 120, 90 115, 105 125"/>
+        <path d="M100 110 C115 90, 135 90, 148 100"/>
+        <path d="M130 82 C148 70, 165 72, 178 84"/>
+      </svg>`;
+    return leaves + branch;
+  },
+
+  // WINTER — крупные SVG-снежинки + мерцающие искры
+  winter_sparkle: () => {
+    const snowflakes = Array.from({ length: 12 }, (_, i) => {
+      const left = Math.round(Math.random() * 100);
+      const delay = (Math.random() * 8).toFixed(1);
+      const duration = (13 + Math.random() * 9).toFixed(1);
+      const size = 8 + Math.round(Math.random() * 14);
+      return `<div class="deco-item" style="left:${left}%;top:-8%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" style="animation:deco-spin ${duration * 0.6}s linear infinite;">
+          <path d="M12 2v20M3.5 6.5l17 11M20.5 6.5l-17 11"/>
+        </svg>
+      </div>`;
+    }).join('');
+    const sparkles = Array.from({ length: 8 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const top = Math.round(Math.random() * 40);
+      const delay = (Math.random() * 4).toFixed(1);
+      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3.5s ease ${delay}s infinite;">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="#EAF4FA" stroke="none"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
+      </div>`;
+    }).join('');
+    // большая полупрозрачная снежинка за карточками
+    const bigFlake = `
+      <svg class="deco-item" style="top:5%;right:-60px;width:280px;height:280px;opacity:0.06;animation:deco-spin 60s linear infinite;" viewBox="0 0 100 100" fill="none" stroke="var(--pink-accent)" stroke-width="1">
+        <path d="M50 5v90M10 30l80 40M90 30L10 70"/>
+        <path d="M50 20l-8 8M50 20l8 8M50 80l-8-8M50 80l8-8"/>
+      </svg>`;
+    return snowflakes + sparkles + bigFlake;
+  },
+
+  // SPRING — падающие лепестки, слегка покачивающиеся
+  petals: () => Array.from({ length: 12 }, (_, i) => {
+    const left = Math.round(Math.random() * 100);
+    const delay = (Math.random() * 7).toFixed(1);
+    const duration = (13 + Math.random() * 8).toFixed(1);
+    const colors = ['#D98CAE', '#E8B8CE', '#F2D6E4', '#C9829A'];
+    const color = colors[i % colors.length];
+    const size = 10 + Math.round(Math.random() * 6);
+    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite, deco-sway 4s ease-in-out infinite;">
+      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" stroke="none">
+        <path d="M12 2c3 3 3 7 0 10-3-3-3-7 0-10zM12 12c3 3 3 7 0 10-3-3-3-7 0-10zM2 12c3-3 7-3 10 0-3 3-7 3-10 0zM12 12c3-3 7-3 10 0-3 3-7 3-10 0z"/>
+      </svg>
+    </div>`;
+  }).join(''),
+
+  // SUMMER — солнечные лучи + мягкие искры
+  sun_rays: () => {
+    const rays = `
+      <svg class="deco-item" style="top:-80px;right:-80px;width:300px;height:300px;opacity:0.12;animation:deco-spin 120s linear infinite;" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="30" fill="var(--pink-accent)"/>
+        <path d="M50 5v90M5 50h90M18 18l64 64M82 18L18 82" stroke="var(--pink-accent)" stroke-width="1.5" opacity="0.4"/>
+      </svg>`;
+    const sparkles = Array.from({ length: 10 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const top = Math.round(Math.random() * 60);
+      const delay = (Math.random() * 4).toFixed(1);
+      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.6s ease ${delay}s infinite;">
+        <svg width="6" height="6" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+      </div>`;
+    }).join('');
+    return rays + sparkles;
+  },
+
+  // HALLOWEEN — луна + летучие мыши + паутина
+  spiderweb_bats: () => {
+    const moon = `
+      <svg class="deco-item" style="top:6%;right:-30px;width:180px;height:180px;opacity:0.85;" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="28" fill="#F4E7D8"/>
+        <circle cx="42" cy="46" r="4" fill="#B89A82" opacity="0.5"/>
+        <circle cx="58" cy="42" r="3" fill="#B89A82" opacity="0.5"/>
+        <circle cx="56" cy="60" r="5" fill="#B89A82" opacity="0.4"/>
+      </svg>`;
+    const web = `
+      <svg class="deco-item" style="bottom:-40px;left:-50px;width:200px;height:200px;opacity:0.18;" viewBox="0 0 100 100" fill="none" stroke="var(--pink-accent)" stroke-width="1">
+        <path d="M0 0 L100 100 M0 0 L100 60 M0 0 L60 100 M0 0 L100 30 M0 0 L30 100"/>
+        <path d="M10 10 Q20 25 40 30 M20 20 Q40 40 60 40 M30 30 Q50 55 70 55"/>
+      </svg>`;
+    const bats = Array.from({ length: 6 }, (_, i) => {
+      const top = 10 + Math.round(Math.random() * 60);
+      const delay = (Math.random() * 10).toFixed(1);
+      const duration = (14 + Math.random() * 8).toFixed(1);
+      const size = 14 + Math.round(Math.random() * 8);
+      return `<div class="deco-item" style="top:${top}%;left:-10%;animation:deco-fly ${duration}s linear ${delay}s infinite;">
+        <svg width="${size}" height="${size * 0.6}" viewBox="0 0 24 16" fill="#2A1F22" stroke="none">
+          <path d="M12 4c-2-3-6-4-9-2 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 2z"/>
+        </svg>
+      </div>`;
+    }).join('');
+    return moon + web + bats;
+  },
+
+  // CHRISTMAS — снежинки + мерцающие огоньки + подвесные ornament
+  ornaments_lights: () => {
+    const snowflakes = Array.from({ length: 8 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const delay = (Math.random() * 8).toFixed(1);
+      const duration = (14 + Math.random() * 8).toFixed(1);
+      const size = 6 + Math.round(Math.random() * 8);
+      return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="#FFFFFF" stroke="none"><circle cx="12" cy="12" r="6"/></svg>
+      </div>`;
+    }).join('');
+    const lights = Array.from({ length: 10 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const top = Math.round(Math.random() * 45);
+      const delay = (Math.random() * 3).toFixed(1);
+      const colors = ['#D9B86A', '#C9A24A', '#F3D9A0', '#B3262D', '#1F5A3C'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.8s ease ${delay}s infinite;">
+        <svg width="7" height="7" viewBox="0 0 24 24" fill="${color}" stroke="none"><circle cx="12" cy="12" r="9"/></svg>
+      </div>`;
+    }).join('');
+    const ornaments = Array.from({ length: 4 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const delay = (Math.random() * 6).toFixed(1);
+      const duration = (17 + Math.random() * 6).toFixed(1);
+      const colors = ['#7A2E38', '#3E5C46', '#C9A24A'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      return `<div class="deco-item" style="left:${left}%;top:-10%;opacity:0.55;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+        <svg width="14" height="18" viewBox="0 0 24 28" fill="none">
+          <rect x="10" y="0" width="4" height="5" fill="#D9B86A"/>
+          <circle cx="12" cy="16" r="10" fill="${color}"/>
+          <circle cx="9" cy="13" r="2" fill="#FFFFFF" opacity="0.4"/>
+        </svg>
+      </div>`;
+    }).join('');
+    return snowflakes + lights + ornaments;
+  },
+
+  // VALENTINE — лепестки роз + маленькие сердечки + искры
+  hearts: () => {
+    const hearts = Array.from({ length: 8 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const delay = (Math.random() * 7).toFixed(1);
+      const duration = (12 + Math.random() * 7).toFixed(1);
+      const size = 12 + Math.round(Math.random() * 6);
+      return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite, deco-sway 3.5s ease-in-out infinite;">
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none">
+          <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
+        </svg>
+      </div>`;
+    }).join('');
+    const petals = Array.from({ length: 8 }, (_, i) => {
+      const left = Math.round(Math.random() * 100);
+      const delay = (Math.random() * 6).toFixed(1);
+      const duration = (14 + Math.random() * 7).toFixed(1);
+      const colors = ['#F2B7C1', '#E56B86', '#C92E4B'];
+      const color = colors[i % colors.length];
+      return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="${color}" stroke="none">
+          <path d="M12 2c3 3 3 7 0 10-3-3-3-7 0-10zM12 12c3 3 3 7 0 10-3-3-3-7 0-10zM2 12c3-3 7-3 10 0-3 3-7 3-10 0zM12 12c3-3 7-3 10 0-3 3-7 3-10 0z"/>
+        </svg>
+      </div>`;
+    }).join('');
+    const sparkles = Array.from({ length: 6 }, () => {
+      const left = Math.round(Math.random() * 100);
+      const top = Math.round(Math.random() * 40);
+      const delay = (Math.random() * 4).toFixed(1);
+      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3s ease ${delay}s infinite;">
+        <svg width="6" height="6" viewBox="0 0 24 24" fill="#C8A36A" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
+      </div>`;
+    }).join('');
+    return hearts + petals + sparkles;
+  },
+};
+
+// Дополнительные keyframes для decoration animations (добавляются динамически)
+(function injectDecoKeyframes() {
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes deco-fly {
+      0% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(60vw) translateY(-30px); }
+      100% { transform: translateX(120vw) translateY(10px); }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+function renderThemeDecorations() {
+  const container = document.getElementById('theme-decorations');
+  if (!container) return;
+  const active = themeConfig.theme;
+  const preset = (active && active.decoration_preset) || 'none';
+  const renderer = DECORATION_RENDERERS[preset];
+  container.innerHTML = renderer ? renderer() : '';
+}
+
+/* =========================================================
+   SEASONAL EMPTY STATES — реальные иллюстрации по теме
+   ========================================================= */
+
+function emptyIllustration() {
+  const slug = activeThemeSlug();
+  const illo = EMPTY_ILLUSTRATIONS[slug] || EMPTY_ILLUSTRATIONS.standard;
+  return illo();
+}
+
+const EMPTY_ILLUSTRATIONS = {
+  standard: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <circle cx="60" cy="48" r="28" fill="#FCE5ED"/>
+      <circle cx="60" cy="48" r="28" fill="none" stroke="#F2B3C7" stroke-width="2"/>
+      <path d="M48 44h24M48 54h16" stroke="#E78EAD" stroke-width="3" stroke-linecap="round"/>
+      <path d="M30 98c6-17 19-27 30-27s24 10 30 27" stroke="#F2B3C7" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+  autumn: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <path d="M30 90 L30 60 L60 45 L90 60 L90 90 Z" fill="#E9D5BF" stroke="#B55239" stroke-width="2"/>
+      <path d="M30 60 L90 60 M60 45 L60 90" stroke="#B55239" stroke-width="1.6"/>
+      <path d="M60 45 L60 60 M45 53 L60 60 M75 53 L60 60" stroke="#B55239" stroke-width="1.2"/>
+      <path d="M55 40c2-6 8-8 12-5-4 2-6 5-12 5z" fill="#C8753D"/>
+      <path d="M65 40c-2-6-8-8-12-5 4 2 6 5 12 5z" fill="#B55239"/>
+      <path d="M20 100c3-8 10-12 16-10-5 3-8 6-16 10z" fill="#65704A" opacity="0.7"/>
+    </svg>`,
+
+  winter: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <circle cx="60" cy="55" r="32" fill="#EAF3F8" stroke="#4A7898" stroke-width="2"/>
+      <ellipse cx="60" cy="88" rx="30" ry="6" fill="#DCEAF2" stroke="#4A7898" stroke-width="1.6"/>
+      <path d="M60 30v50M40 42l40 26M80 42L40 68" stroke="#4A7898" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="80" r="2" fill="#7FB6D2"/>
+      <circle cx="70" cy="78" r="2.5" fill="#7FB6D2"/>
+      <circle cx="60" cy="84" r="1.8" fill="#7FB6D2"/>
+    </svg>`,
+
+  spring: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <path d="M60 100 L60 40" stroke="#9BCB9C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="60" cy="35" r="10" fill="#E79AAA"/>
+      <circle cx="50" cy="30" r="7" fill="#F5E59A"/>
+      <circle cx="70" cy="30" r="7" fill="#F5E59A"/>
+      <circle cx="50" cy="45" r="7" fill="#BFA9D6"/>
+      <circle cx="70" cy="45" r="7" fill="#BFA9D6"/>
+      <circle cx="60" cy="38" r="3.5" fill="#FFF8F4" stroke="#E79AAA" stroke-width="1.4"/>
+      <path d="M40 70c6-4 12-4 18 0M62 70c6-4 12-4 18 0" stroke="#9BCB9C" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+  summer: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="28" fill="#FFD23F"/>
+      <path d="M60 20v6M60 94v6M20 60h6M94 60h6M31 31l4 4M85 85l4 4M31 89l4-4M85 35l4-4" stroke="#FF6F61" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="60" cy="60" r="14" fill="#FF6F61"/>
+      <circle cx="52" cy="56" r="2.4" fill="#FFFDF5"/>
+      <circle cx="68" cy="56" r="2.4" fill="#FFFDF5"/>
+      <path d="M54 66c4 3 8 3 12 0" stroke="#FFFDF5" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+  halloween: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <circle cx="72" cy="38" r="18" fill="#F4E7D8" opacity="0.9"/>
+      <circle cx="65" cy="35" r="3" fill="#B89A82" opacity="0.5"/>
+      <circle cx="78" cy="33" r="2.4" fill="#B89A82" opacity="0.5"/>
+      <path d="M40 95c0-16 6-28 14-28s14 12 14 28z" fill="#F47A20" stroke="#B84E19" stroke-width="1.8"/>
+      <path d="M40 75h28" stroke="#B84E19" stroke-width="1.6"/>
+      <path d="M48 75l1.5-8 1.5 8zM60 75l1.5-8 1.5 8z" fill="#2A1F22"/>
+      <path d="M46 82h4M50 82l-2 3M60 82h4M64 82l-2 3M54 88c1.5 1 3 1.4 4.5 1.4S60 89 61.5 88" stroke="#2A1F22" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M28 30l4 2M24 44l4 2" stroke="#2A1F22" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M100 85c2 4 5 6 8 6-3 1-6 3-8 7-2-4-5-6-8-7 3 0 6-2 8-6z" fill="#7B3FA1" opacity="0.6"/>
+    </svg>`,
+
+  christmas: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <rect x="34" y="60" width="52" height="40" rx="3" fill="#B3262D"/>
+      <rect x="34" y="72" width="52" height="6" fill="#D4AF5A"/>
+      <rect x="56" y="60" width="8" height="40" fill="#D4AF5A"/>
+      <path d="M46 60c-8-6-14-4-14 2s6 8 14 6z" fill="#B3262D" stroke="#7F1D27" stroke-width="1.2"/>
+      <path d="M74 60c8-6 14-4 14 2s-6 8-14 6z" fill="#B3262D" stroke="#7F1D27" stroke-width="1.2"/>
+      <path d="M60 32l3 8 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#D4AF5A"/>
+      <circle cx="34" cy="100" r="3" fill="#1F5A3C"/>
+      <circle cx="86" cy="100" r="3" fill="#1F5A3C"/>
+    </svg>`,
+
+  valentine: () => `
+    <svg class="empty-illustration" viewBox="0 0 120 120">
+      <path d="M30 44 L90 44 L90 96 L30 96 Z" fill="#FFF5F5" stroke="#C92E4B" stroke-width="2"/>
+      <path d="M30 44 L60 70 L90 44" fill="none" stroke="#C92E4B" stroke-width="2"/>
+      <path d="M60 70 L60 96" stroke="#C92E4B" stroke-width="1.2" opacity="0.4"/>
+      <path d="M60 30c-1.2 0-2.4-.4-3.2-1.4-4-4-10-9-10-14a6 6 0 0 1 10.8-3.6A6 6 0 0 1 68.4 14.6c0 5-6 10-10 14-0.8 1-2 1.4-3.2 1.4z" fill="#C92E4B"/>
+      <path d="M52 34c2-1 4 0 5 1.5" stroke="#E56B86" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    </svg>`,
+};
+
+function ordersEmptyHTML() {
+  return `
+    <div class="empty-state">
+      ${emptyIllustration()}
+      <h3>Пока нет заказов</h3>
+      <p>Когда появится новый заказ, он автоматически появится здесь.</p>
+      <button class="btn btn-tertiary" onclick="openSheet('track')">У меня есть номер заказа</button>
+    </div>`;
+}
+
+function ordersErrorHTML(errorDetail) {
+  return `
+    <div class="empty-state">
+      <svg class="empty-illustration" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="30" fill="var(--pink-soft)"/>
+        <line x1="60" y1="46" x2="60" y2="62" stroke="var(--pink-accent)" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="60" cy="74" r="2.4" fill="var(--pink-accent)"/>
+      </svg>
+      <h3>Не удалось загрузить заказы</h3>
+      <p>Проверьте соединение и попробуйте ещё раз.</p>
+      ${errorDetail ? `<p style="font-size:11px;color:var(--text-secondary);background:var(--bg);border-radius:10px;padding:8px 10px;word-break:break-word;">${errorDetail}</p>` : ''}
+      <button class="btn btn-primary" onclick="loadOrders(true)">Повторить</button>
+    </div>`;
+}
+
+function noUserHTML() {
+  return `
+    <div class="empty-state">
+      <h3>Не удалось определить пользователя</h3>
+      <p>Попробуйте перезапустить приложение из Telegram.</p>
+    </div>`;
+}
+
+/* =========================================================
+   ORDER CARDS — используют сезонный package/truck/check
+   ========================================================= */
 
 function orderCardHTML(order) {
   const step = matchStep(order.status);
   return `
     <button class="order-card" onclick="openOrderDetail('${order.id}')">
       <div class="order-card-top">
-        <div class="order-thumb"><svg class="icon"><use href="#icon-package"/></svg></div>
+        <div class="order-thumb">
+          <svg class="icon" data-seasonal-icon="package"><use href="${seasonalIconHref('package')}"/></svg>
+        </div>
         <div class="order-info">
           <div class="order-title">${orderTitle(order)}</div>
           <div class="order-id">№ ${order.id}</div>
         </div>
         <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
       </div>
-      <div class="order-status-line"><svg class="icon"><use href="#icon-truck"/></svg>${STATUS_STEPS[step].label}</div>
+      <div class="order-status-line">
+        <svg class="icon" data-seasonal-icon="truck"><use href="${seasonalIconHref('truck')}"/></svg>
+        ${STATUS_STEPS[step].label}
+      </div>
       <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progressPercent(step)}%"></div></div>
       ${order.delivery_date ? `<div class="order-meta">Ориентировочно: ${order.delivery_date}</div>` : ''}
     </button>`;
@@ -1724,7 +2197,7 @@ function orderDetailHTML(order) {
     const showCreated = i === 0 && order.created_date;
     return `
       <div class="timeline-step ${state}">
-        <div class="timeline-dot">${i <= step ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</div>
+        <div class="timeline-dot">${i <= step ? `<svg class="icon"><use href="${seasonalIconHref('check')}"/></svg>` : ''}</div>
         <div class="timeline-body">
           <div class="timeline-label">${s.label}</div>
           ${showCreated ? `<div class="timeline-date">${order.created_date}</div>` : ''}
@@ -1765,48 +2238,48 @@ function skeletonOrdersHTML(count) {
   return html;
 }
 
-function emptyIllustration() {
-  return `
-    <svg class="empty-illustration" viewBox="0 0 120 120">
-      <circle cx="60" cy="48" r="28" fill="#FCE5ED"/>
-      <circle cx="60" cy="48" r="28" fill="none" stroke="#F2B3C7" stroke-width="2"/>
-      <path d="M48 44h24M48 54h16" stroke="#E78EAD" stroke-width="3" stroke-linecap="round"/>
-      <path d="M30 98c6-17 19-27 30-27s24 10 30 27" stroke="#F2B3C7" stroke-width="3" fill="none" stroke-linecap="round"/>
-    </svg>`;
+function stripAutoDetectLinks(root) {
+  if (!root) return;
+  const anchors = root.querySelectorAll(
+    'a[x-apple-data-detectors],' +
+    'a[x-apple-data-detectors-type],' +
+    'a[href^="tel:"],' +
+    'a[href^="mailto:"],' +
+    'a[href^="date:"],' +
+    'a[href^="address:"]'
+  );
+  anchors.forEach(a => {
+    const parent = a.parentNode;
+    if (!parent) return;
+    parent.replaceChild(document.createTextNode(a.textContent), a);
+  });
 }
 
-function ordersEmptyHTML() {
-  return `
-    <div class="empty-state">
-      ${emptyIllustration()}
-      <h3>Пока нет заказов</h3>
-      <p>Когда появится новый заказ, он автоматически появится здесь.</p>
-      <button class="btn btn-tertiary" onclick="openSheet('track')">У меня есть номер заказа</button>
-    </div>`;
+function watchAutoDetectLinks() {
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          if (node.tagName === 'A' && (
+            node.hasAttribute('x-apple-data-detectors') ||
+            node.hasAttribute('x-apple-data-detectors-type') ||
+            /^(tel|mailto|date|address):/.test(node.getAttribute('href') || '')
+          )) {
+            const parent = node.parentNode;
+            if (parent) parent.replaceChild(document.createTextNode(node.textContent), node);
+          } else {
+            stripAutoDetectLinks(node);
+          }
+        }
+      });
+    });
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
-function ordersErrorHTML(errorDetail) {
-  return `
-    <div class="empty-state">
-      <svg class="empty-illustration" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="30" fill="#FCE5ED"/>
-        <line x1="60" y1="46" x2="60" y2="62" stroke="#E78EAD" stroke-width="4" stroke-linecap="round"/>
-        <circle cx="60" cy="74" r="2.4" fill="#E78EAD"/>
-      </svg>
-      <h3>Не удалось загрузить заказы</h3>
-      <p>Проверьте соединение и попробуйте ещё раз.</p>
-      ${errorDetail ? `<p style="font-size:11px;color:var(--text-secondary);background:var(--bg);border-radius:10px;padding:8px 10px;word-break:break-word;">${errorDetail}</p>` : ''}
-      <button class="btn btn-primary" onclick="loadOrders(true)">Повторить</button>
-    </div>`;
-}
-
-function noUserHTML() {
-  return `
-    <div class="empty-state">
-      <h3>Не удалось определить пользователя</h3>
-      <p>Попробуйте перезапустить приложение из Telegram.</p>
-    </div>`;
-}
+/* =========================================================
+   BANNERS
+   ========================================================= */
 
 let bannersCache = [];
 let bannerScrollTimeout = null;
@@ -1893,7 +2366,6 @@ function handleBannerImgError(imgEl, idx) {
   const attempts = Number(imgEl.dataset.retry || 0);
   const banner = bannersCache[idx];
   const baseSrc = banner?.image_url;
-
   if (attempts < 2 && baseSrc) {
     imgEl.dataset.retry = String(attempts + 1);
     setTimeout(() => {
@@ -1902,7 +2374,6 @@ function handleBannerImgError(imgEl, idx) {
     }, 700 * (attempts + 1));
     return;
   }
-
   const wrap = imgEl.closest('.banner-image-wrap');
   if (wrap) wrap.classList.add('img-failed');
 }
@@ -1929,6 +2400,10 @@ function onBannerScroll(e) {
     document.querySelectorAll('.banner-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
   }, 80);
 }
+
+/* =========================================================
+   ORDERS LOADING
+   ========================================================= */
 
 async function loadOrders(isManualRefresh) {
   const summaryText = document.getElementById('orders-summary-text');
@@ -1987,14 +2462,30 @@ function updateProfileStats() {
   const activeEl = document.getElementById('stat-active');
   const totalEl = document.getElementById('stat-total');
   if (!activeEl || !totalEl) return;
-
   const lastStepIndex = STATUS_STEPS.length - 1;
   const total = ordersCache.length;
   const active = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
-
   totalEl.textContent = total;
   activeEl.textContent = active;
 }
+
+function updateHomePanels() {
+  const panel = document.getElementById('update-panel');
+  const panelText = document.getElementById('update-panel-text');
+  if (!lastUpdatedAt || ordersCache.length === 0) {
+    panel.hidden = true;
+    return;
+  }
+  const timeStr = lastUpdatedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  const order = ordersCache[0];
+  const step = matchStep(order.status);
+  panel.hidden = false;
+  panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
+}
+
+/* =========================================================
+   DOLLIE CLUB — LOYALTY
+   ========================================================= */
 
 let loyaltyBalance = null;
 let loyaltyRewards = null;
@@ -2006,6 +2497,7 @@ let loyaltyTxCache = [];
 let dollieRecentCache = [];
 let dollieHistoryLoadedOnce = false;
 let dollieFilter = 'all';
+let firstOrderCompleted = false;
 const LOYALTY_HISTORY_PAGE_SIZE = 20;
 
 const FILTER_TYPE_GROUPS = {
@@ -2071,22 +2563,17 @@ async function loadLoyalty() {
 
 function updateLoyaltyBalanceUI() {
   const balance = loyaltyBalance ?? 0;
-
   animateNumber(document.getElementById('dollie-balance-home'), balance);
   animateNumber(document.getElementById('dollie-balance-profile'), balance);
   animateNumber(document.getElementById('dollie-hero-balance'), balance);
-
   const rubText = `≈ ${balance} ₽ скидки`;
   ['dollie-value-home', 'dollie-value-profile', 'dollie-hero-rub'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = rubText;
   });
-
   const historyBalanceEl = document.getElementById('dollie-history-balance');
   if (historyBalanceEl) historyBalanceEl.textContent = `${balance} Dollies`;
 }
-
-let firstOrderCompleted = false;
 
 const REWARD_DEFS = [
   {
@@ -2148,6 +2635,349 @@ function dollieRewardAction(key) {
   if (def) def.action();
 }
 
+function openDolliesSheet() {
+  openSheet('dollies');
+  switchDolliePage('overview');
+  loadDollieRecent();
+}
+
+function switchDolliePage(page) {
+  document.getElementById('dollie-page-overview').classList.toggle('active', page === 'overview');
+  document.getElementById('dollie-page-history').classList.toggle('active', page === 'history');
+  hapticSelection();
+  if (page === 'history' && !dollieHistoryLoadedOnce) {
+    dollieHistoryLoadedOnce = true;
+    loadLoyaltyHistory(true);
+  }
+}
+
+function setDollieFilter(filter) {
+  dollieFilter = filter;
+  document.querySelectorAll('.dollie-filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
+  renderHistoryList();
+  hapticSelection();
+}
+
+function filteredTxCache() {
+  if (dollieFilter === 'all') return loyaltyTxCache;
+  const group = FILTER_TYPE_GROUPS[dollieFilter] || [];
+  return loyaltyTxCache.filter(tx => group.includes(tx.type));
+}
+
+function dollieHistorySkeletonHTML(count) {
+  let html = '';
+  for (let i = 0; i < (count || 3); i++) {
+    html += `
+      <div class="tx-row" style="border-bottom:1px solid var(--border)">
+        <div class="skeleton-thumb" style="width:38px;height:38px;border-radius:999px;"></div>
+        <div style="flex:1">
+          <div class="skeleton-line w-40"></div>
+          <div class="skeleton-line w-70"></div>
+        </div>
+      </div>`;
+  }
+  return html;
+}
+
+function dollieHistoryEmptyHTML() {
+  const balance = loyaltyBalance ?? 0;
+  if (balance === 0) {
+    return `
+      <div class="empty-state">
+        ${emptyIllustration()}
+        <h3>0 Dollies</h3>
+        <p>Здесь будут появляться твои Dollies после завершённых заказов.</p>
+      </div>`;
+  }
+  return `
+    <div class="empty-state">
+      ${emptyIllustration()}
+      <h3>Пока нет операций</h3>
+      <p>Здесь появится история начислений и использования Dollies.</p>
+    </div>`;
+}
+
+function dollieHistoryErrorHTML() {
+  return `
+    <div class="empty-state">
+      <h3>Не удалось загрузить историю</h3>
+      <p>Проверьте соединение и попробуйте ещё раз.</p>
+      <button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button>
+    </div>`;
+}
+
+function txMeta(tx) {
+  const isPositive = tx.amount > 0;
+  const orderPart = tx.order_id ? `Заказ №${escapeHtml(tx.order_id)}` : null;
+  let title, subtitle, icon;
+
+  switch (tx.type) {
+    case 'first_order':
+      title = 'Начисление за первый заказ';
+      subtitle = orderPart || 'Первый заказ';
+      icon = 'heart';
+      break;
+    case 'repeat_order':
+      title = 'Начисление за заказ';
+      subtitle = orderPart || 'Повторная покупка';
+      icon = 'heart';
+      break;
+    case 'referral_inviter':
+      title = 'Начисление за приглашение';
+      subtitle = 'Друг совершил покупку';
+      icon = 'user-plus';
+      break;
+    case 'referral_friend':
+      title = 'Начисление по реферальной программе';
+      subtitle = 'Бонус за покупку по приглашению';
+      icon = 'user-plus';
+      break;
+    case 'review_reward':
+      title = 'Начисление за отзыв';
+      subtitle = orderPart || 'Спасибо за отзыв!';
+      icon = 'star';
+      break;
+    case 'earn':
+      title = orderPart ? `Начисление · ${orderPart}` : 'Начисление';
+      subtitle = 'Завершённый заказ';
+      icon = 'heart';
+      break;
+    case 'manual_add':
+      title = 'Начисление';
+      subtitle = escapeHtml(tx.description || 'От администратора');
+      icon = 'heart';
+      break;
+    case 'refund':
+      title = 'Возврат Dollies';
+      subtitle = orderPart || 'Возврат';
+      icon = 'heart';
+      break;
+    case 'promotion':
+      title = 'Начисление за акцию';
+      subtitle = escapeHtml(tx.description || 'Акция');
+      icon = 'gift';
+      break;
+    case 'spend':
+      title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies';
+      subtitle = 'Скидка на заказ';
+      icon = 'minus';
+      break;
+    case 'manual_remove':
+      title = 'Списание';
+      subtitle = escapeHtml(tx.description || 'От администратора');
+      icon = 'minus';
+      break;
+    default:
+      if (isPositive) {
+        title = 'Начисление';
+        subtitle = escapeHtml(tx.description || '');
+        icon = 'heart';
+      } else {
+        title = 'Списание';
+        subtitle = escapeHtml(tx.description || '');
+        icon = 'minus';
+      }
+  }
+  return { title, subtitle, icon, isPositive };
+}
+
+function txRowHTML(tx, idx, source) {
+  const meta = txMeta(tx);
+  const sign = tx.amount > 0 ? '+' : '';
+  const colorClass = meta.isPositive ? 'pos' : 'neg';
+  return `
+    <button class="tx-row" onclick="openTxDetail(${idx}, '${source || 'history'}')">
+      <div class="tx-icon ${colorClass}"><svg class="icon"><use href="${seasonalIconHref(meta.icon)}"/></svg></div>
+      <div class="tx-main">
+        <div class="tx-title">${meta.title}</div>
+        <div class="tx-subtitle">${meta.subtitle}</div>
+      </div>
+      <div class="tx-side">
+        <div class="tx-amount ${colorClass}">${sign}${tx.amount}</div>
+        <div class="tx-date">${formatTxDate(tx.created_at)}</div>
+      </div>
+    </button>`;
+}
+
+async function loadDollieRecent() {
+  const container = document.getElementById('dollie-recent-content');
+  if (!container) return;
+  container.innerHTML = dollieHistorySkeletonHTML(3);
+  try {
+    const data = await apiFetch('/api/me/loyalty/history', { limit: 3, offset: 0 }, { timeoutMs: 10000, retries: 1 });
+    if (!data.ok) throw new Error('bad response');
+    dollieRecentCache = data.transactions || [];
+    container.innerHTML = dollieRecentCache.length
+      ? dollieRecentCache.map((tx, i) => txRowHTML(tx, i, 'recent')).join('')
+      : dollieHistoryEmptyHTML();
+    stripAutoDetectLinks(container);
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить последние операции —', e);
+    container.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить операции</p>`;
+  }
+}
+
+function renderHistoryList() {
+  const container = document.getElementById('dollies-history-content');
+  if (!container) return;
+  const list = filteredTxCache();
+  container.innerHTML = list.length
+    ? list.map(tx => txRowHTML(tx, loyaltyTxCache.indexOf(tx), 'history')).join('')
+    : dollieHistoryEmptyHTML();
+
+  if (loyaltyHistoryOffset < loyaltyHistoryTotal) {
+    container.insertAdjacentHTML('beforeend', `
+      <button class="btn btn-secondary btn-block tx-load-more" onclick="loadLoyaltyHistory(false)">Показать ещё</button>
+    `);
+  }
+  stripAutoDetectLinks(container);
+}
+
+async function loadLoyaltyHistory(reset) {
+  if (loyaltyHistoryLoading) return;
+  const container = document.getElementById('dollies-history-content');
+
+  if (reset) {
+    loyaltyHistoryOffset = 0;
+    loyaltyHistoryTotal = 0;
+    loyaltyTxCache = [];
+    if (container) container.innerHTML = dollieHistorySkeletonHTML(4);
+  }
+
+  loyaltyHistoryLoading = true;
+
+  try {
+    const data = await apiFetch('/api/me/loyalty/history', {
+      limit: LOYALTY_HISTORY_PAGE_SIZE,
+      offset: loyaltyHistoryOffset,
+    }, { timeoutMs: 10000, retries: 1 });
+
+    if (!data.ok) throw new Error('bad response');
+    const txs = data.transactions || [];
+    loyaltyHistoryTotal = data.total || 0;
+    loyaltyHistoryOffset += txs.length;
+    loyaltyTxCache = loyaltyTxCache.concat(txs);
+    renderHistoryList();
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить историю Dollies —', e);
+    if (reset && container) container.innerHTML = dollieHistoryErrorHTML();
+    else showToast('Не удалось загрузить ещё операции');
+  } finally {
+    loyaltyHistoryLoading = false;
+  }
+}
+
+function openTxDetail(idx, source) {
+  const cache = source === 'recent' ? dollieRecentCache : loyaltyTxCache;
+  const tx = cache[idx];
+  if (!tx) return;
+
+  const meta = txMeta(tx);
+  const sign = tx.amount > 0 ? '+' : '';
+  const colorClass = meta.isPositive ? 'pos' : 'neg';
+  const rubLine = !meta.isPositive
+    ? `<div class="info-row"><svg class="icon"><use href="${seasonalIconHref('heart')}"/></svg>Сэкономлено: <b>&nbsp;${Math.abs(tx.amount)} ₽</b></div>`
+    : '';
+
+  const content = document.getElementById('sheet-tx-detail-content');
+  content.innerHTML = `
+    <div class="tx-detail-amount">
+      <div class="num ${colorClass}">${sign}${tx.amount} Dollies</div>
+      <div class="sub">${meta.title} · ${meta.subtitle}</div>
+    </div>
+    <div class="info-row"><svg class="icon"><use href="#icon-clock"/></svg>Дата: <b>&nbsp;${formatFullDate(tx.created_at)}</b></div>
+    ${tx.order_id ? `<div class="info-row"><svg class="icon"><use href="${seasonalIconHref('package')}"/></svg>Заказ: <b>&nbsp;№${escapeHtml(tx.order_id)}</b></div>` : ''}
+    ${rubLine}
+    <div class="info-row"><svg class="icon"><use href="${seasonalIconHref('heart')}"/></svg>Баланс после операции: <b>&nbsp;${tx.balance_after} Dollies</b></div>
+  `;
+  stripAutoDetectLinks(content);
+  openSheet('tx-detail');
+}
+
+/* =========================================================
+   NOTIFICATIONS — сезонные иконки типов уведомлений
+   ========================================================= */
+
+const NOTIF_ICON_BY_TYPE = {
+  order_status: 'truck',
+  dollies: 'heart',
+  referral_joined: 'user-plus',
+};
+
+function notifIcon(type) {
+  return NOTIF_ICON_BY_TYPE[type] || 'bell';
+}
+
+const RU_MONTHS_GEN_NOTIF = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+function formatNotifTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  const timeStr = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  if (sameDay) return `Сегодня, ${timeStr}`;
+  return `${d.getDate()} ${RU_MONTHS_GEN_NOTIF[d.getMonth()]}, ${timeStr}`;
+}
+
+function notificationsEmptyHTML() {
+  return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса заказов, начисления Dollies и другие события.</p></div>`;
+}
+
+function notificationRowHTML(n) {
+  return `
+    <div class="info-row" style="border-top:none;padding:10px 0;align-items:flex-start;">
+      <div class="tx-icon pos" style="width:32px;height:32px;flex-shrink:0;">
+        <svg class="icon" style="width:15px;height:15px;"><use href="${seasonalIconHref(notifIcon(n.type))}"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13.5px;font-weight:700;color:var(--text);">${escapeHtml(n.title || '')}</div>
+        <div style="font-size:12.5px;color:var(--text-secondary);margin-top:2px;line-height:1.4;">${escapeHtml(n.body || '')}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">${formatNotifTime(n.created_at)}</div>
+      </div>
+    </div>`;
+}
+
+async function openNotificationsSheet() {
+  openSheet('notifications');
+  await loadNotifications(true);
+}
+
+async function loadNotifications(markRead) {
+  const notifDot = document.getElementById('notif-dot');
+  const notifContent = document.getElementById('notifications-content');
+  if (!userId) {
+    if (notifContent) notifContent.innerHTML = notificationsEmptyHTML();
+    return;
+  }
+  try {
+    const data = await apiFetch('/api/me/notifications', { limit: 30 }, { timeoutMs: 10000, retries: 1 });
+    if (!data.ok) throw new Error('bad response');
+    const items = data.notifications || [];
+    if (notifDot) notifDot.hidden = !(data.unread_count > 0);
+    if (notifContent) {
+      notifContent.innerHTML = items.length
+        ? items.map(notificationRowHTML).join('')
+        : notificationsEmptyHTML();
+      stripAutoDetectLinks(notifContent);
+    }
+    if (markRead && data.unread_count > 0) {
+      apiPost('/api/me/notifications/read', {}).catch(() => {});
+      if (notifDot) notifDot.hidden = true;
+    }
+  } catch (e) {
+    console.error('DollieLand: не удалось загрузить уведомления —', e);
+    if (notifContent && !notifContent.innerHTML) {
+      notifContent.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить уведомления</p>`;
+    }
+  }
+}
+
+/* =========================================================
+   REFERRAL
+   ========================================================= */
+
 let referralData = null;
 
 function referralLink(code) {
@@ -2190,11 +3020,6 @@ async function openReferralSheet() {
   }
 }
 
-function copyReferralLink() {
-  if (!referralData) return;
-  copyTextToClipboard(referralLink(referralData.referral_code), 'Ссылка скопирована');
-}
-
 function copyTextToClipboard(text, toastMsg) {
   hapticImpact('light');
   const done = () => { showToast(toastMsg); hapticNotification('success'); };
@@ -2225,6 +3050,10 @@ function shareReferralLink() {
     window.open(shareUrl, '_blank');
   }
 }
+
+/* =========================================================
+   REVIEW
+   ========================================================= */
 
 let reviewableOrdersCache = [];
 let selectedReviewOrderId = null;
@@ -2291,7 +3120,7 @@ function renderReviewForm() {
     <div class="review-star-row" id="review-star-row">
       ${[1,2,3,4,5].map(n => `
         <button type="button" class="review-star-btn" data-star="${n}" onclick="setReviewRating(${n})">
-          <svg class="icon"><use href="#icon-star"/></svg>
+          <svg class="icon"><use href="${seasonalIconHref('star')}"/></svg>
         </button>`).join('')}
     </div>
     <textarea class="review-textarea" id="review-text-input" placeholder="Расскажите, как прошёл ваш заказ (необязательно)"></textarea>
@@ -2370,12 +3199,8 @@ async function submitReview() {
         <p>${awarded > 0 ? `+${awarded} Dollies уже начислены на ваш баланс.` : 'Ваш отзыв опубликован.'}</p>
       </div>`;
     showToast(awarded > 0 ? `+${awarded} Dollies начислено` : 'Отзыв опубликован');
-    // После отзыва сразу подтягиваем обновлённый баланс и историю
     loadLoyalty();
-    // Если открыт экран истории Dollies — перезагружаем её
-    if (dollieHistoryLoadedOnce) {
-      loadLoyaltyHistory(true);
-    }
+    if (dollieHistoryLoadedOnce) loadLoyaltyHistory(true);
     loadDollieRecent();
   } catch (e) {
     console.error('DollieLand: не удалось отправить отзыв —', e);
@@ -2384,387 +3209,15 @@ async function submitReview() {
   }
 }
 
-function openDolliesSheet() {
-  openSheet('dollies');
-  switchDolliePage('overview');
-  loadDollieRecent();
-}
-
-function switchDolliePage(page) {
-  document.getElementById('dollie-page-overview').classList.toggle('active', page === 'overview');
-  document.getElementById('dollie-page-history').classList.toggle('active', page === 'history');
-  hapticSelection();
-  if (page === 'history' && !dollieHistoryLoadedOnce) {
-    dollieHistoryLoadedOnce = true;
-    loadLoyaltyHistory(true);
-  }
-}
-
-function setDollieFilter(filter) {
-  dollieFilter = filter;
-  document.querySelectorAll('.dollie-filter-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
-  renderHistoryList();
-  hapticSelection();
-}
-
-function filteredTxCache() {
-  if (dollieFilter === 'all') return loyaltyTxCache;
-  const group = FILTER_TYPE_GROUPS[dollieFilter] || [];
-  return loyaltyTxCache.filter(tx => group.includes(tx.type));
-}
-
-function dollieHistorySkeletonHTML(count) {
-  let html = '';
-  for (let i = 0; i < (count || 3); i++) {
-    html += `
-      <div class="tx-row" style="border-bottom:1px solid var(--border)">
-        <div class="skeleton-thumb" style="width:38px;height:38px;border-radius:999px;"></div>
-        <div style="flex:1">
-          <div class="skeleton-line w-40"></div>
-          <div class="skeleton-line w-70"></div>
-        </div>
-      </div>`;
-  }
-  return html;
-}
-
-function dollieHistoryEmptyHTML() {
-  const balance = loyaltyBalance ?? 0;
-  if (balance === 0) {
-    return `
-      <div class="empty-state">
-        ${emptyIllustration()}
-        <h3>0 Dollies</h3>
-        <p>Здесь будут появляться твои Dollies после завершённых заказов.</p>
-      </div>`;
-  }
-  return `
-    <div class="empty-state">
-      ${emptyIllustration()}
-      <h3>Пока нет операций</h3>
-      <p>Здесь появится история начислений и использования Dollies.</p>
-    </div>`;
-}
-
-function dollieHistoryErrorHTML() {
-  return `
-    <div class="empty-state">
-      <h3>Не удалось загрузить историю</h3>
-      <p>Проверьте соединение и попробуйте ещё раз.</p>
-      <button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button>
-    </div>`;
-}
-
 /* =========================================================
-   txMeta — определяет, как выглядит операция в списке.
-   Ключевое: для ВСЕХ начислений (первый заказ, повторный,
-   реферальный, отзыв, ручное начисление, возврат, акция)
-   показываем «Начисление» (а не «Корректировка»).
+   TRACK / CONTACT / HELP / TOAST
    ========================================================= */
-function txMeta(tx) {
-  const isPositive = tx.amount > 0;
-  const orderPart = tx.order_id ? `Заказ №${escapeHtml(tx.order_id)}` : null;
-  let title, subtitle, icon;
-
-  switch (tx.type) {
-    // ===== Начисления =====
-    case 'first_order':
-      title = 'Начисление за первый заказ';
-      subtitle = orderPart || 'Первый заказ';
-      icon = 'heart';
-      break;
-    case 'repeat_order':
-      title = 'Начисление за заказ';
-      subtitle = orderPart || 'Повторная покупка';
-      icon = 'heart';
-      break;
-    case 'referral_inviter':
-      title = 'Начисление за приглашение';
-      subtitle = 'Друг совершил покупку';
-      icon = 'user-plus';
-      break;
-    case 'referral_friend':
-      title = 'Начисление по реферальной программе';
-      subtitle = 'Бонус за покупку по приглашению';
-      icon = 'user-plus';
-      break;
-    case 'review_reward':
-      title = 'Начисление за отзыв';
-      subtitle = orderPart || 'Спасибо за отзыв!';
-      icon = 'star';
-      break;
-    case 'earn':
-      title = orderPart ? `Начисление · ${orderPart}` : 'Начисление';
-      subtitle = 'Завершённый заказ';
-      icon = 'heart';
-      break;
-    case 'manual_add':
-      title = 'Начисление';
-      subtitle = escapeHtml(tx.description || 'От администратора');
-      icon = 'heart';
-      break;
-    case 'refund':
-      title = 'Возврат Dollies';
-      subtitle = orderPart || 'Возврат';
-      icon = 'heart';
-      break;
-    case 'promotion':
-      title = 'Начисление за акцию';
-      subtitle = escapeHtml(tx.description || 'Акция');
-      icon = 'gift';
-      break;
-    // ===== Списания =====
-    case 'spend':
-      title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies';
-      subtitle = 'Скидка на заказ';
-      icon = 'minus';
-      break;
-    case 'manual_remove':
-      title = 'Списание';
-      subtitle = escapeHtml(tx.description || 'От администратора');
-      icon = 'minus';
-      break;
-    // ===== Фолбэк =====
-    default:
-      if (isPositive) {
-        title = 'Начисление';
-        subtitle = escapeHtml(tx.description || '');
-        icon = 'heart';
-      } else {
-        title = 'Списание';
-        subtitle = escapeHtml(tx.description || '');
-        icon = 'minus';
-      }
-  }
-  return { title, subtitle, icon, isPositive };
-}
-
-function txRowHTML(tx, idx, source) {
-  const meta = txMeta(tx);
-  const sign = tx.amount > 0 ? '+' : '';
-  const colorClass = meta.isPositive ? 'pos' : 'neg';
-  return `
-    <button class="tx-row" onclick="openTxDetail(${idx}, '${source || 'history'}')">
-      <div class="tx-icon ${colorClass}"><svg class="icon"><use href="${seasonalIconHref(meta.icon)}"/></svg></div>
-      <div class="tx-main">
-        <div class="tx-title">${meta.title}</div>
-        <div class="tx-subtitle">${meta.subtitle}</div>
-      </div>
-      <div class="tx-side">
-        <div class="tx-amount ${colorClass}">${sign}${tx.amount}</div>
-        <div class="tx-date">${formatTxDate(tx.created_at)}</div>
-      </div>
-    </button>`;
-}
-
-async function loadDollieRecent() {
-  const container = document.getElementById('dollie-recent-content');
-  if (!container) return;
-  container.innerHTML = dollieHistorySkeletonHTML(3);
-  try {
-    const data = await apiFetch('/api/me/loyalty/history', { limit: 3, offset: 0 }, { timeoutMs: 10000, retries: 1 });
-    if (!data.ok) throw new Error('bad response');
-    dollieRecentCache = data.transactions || [];
-    container.innerHTML = dollieRecentCache.length
-      ? dollieRecentCache.map((tx, i) => txRowHTML(tx, i, 'recent')).join('')
-      : dollieHistoryEmptyHTML();
-    stripAutoDetectLinks(container);
-  } catch (e) {
-    console.error('DollieLand: не удалось загрузить последние операции —', e);
-    container.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить операции</p>`;
-  }
-}
-
-function renderHistoryList() {
-  const container = document.getElementById('dollies-history-content');
-  if (!container) return;
-
-  const list = filteredTxCache();
-  container.innerHTML = list.length
-    ? list.map(tx => txRowHTML(tx, loyaltyTxCache.indexOf(tx), 'history')).join('')
-    : dollieHistoryEmptyHTML();
-
-  if (loyaltyHistoryOffset < loyaltyHistoryTotal) {
-    container.insertAdjacentHTML('beforeend', `
-      <button class="btn btn-secondary btn-block tx-load-more" onclick="loadLoyaltyHistory(false)">Показать ещё</button>
-    `);
-  }
-  stripAutoDetectLinks(container);
-}
-
-async function loadLoyaltyHistory(reset) {
-  if (loyaltyHistoryLoading) return;
-  const container = document.getElementById('dollies-history-content');
-
-  if (reset) {
-    loyaltyHistoryOffset = 0;
-    loyaltyHistoryTotal = 0;
-    loyaltyTxCache = [];
-    if (container) container.innerHTML = dollieHistorySkeletonHTML(4);
-  }
-
-  loyaltyHistoryLoading = true;
-
-  try {
-    const data = await apiFetch('/api/me/loyalty/history', {
-      limit: LOYALTY_HISTORY_PAGE_SIZE,
-      offset: loyaltyHistoryOffset,
-    }, { timeoutMs: 10000, retries: 1 });
-
-    if (!data.ok) throw new Error('bad response');
-
-    const txs = data.transactions || [];
-    loyaltyHistoryTotal = data.total || 0;
-    loyaltyHistoryOffset += txs.length;
-    loyaltyTxCache = loyaltyTxCache.concat(txs);
-
-    renderHistoryList();
-  } catch (e) {
-    console.error('DollieLand: не удалось загрузить историю Dollies —', e);
-    if (reset && container) container.innerHTML = dollieHistoryErrorHTML();
-    else showToast('Не удалось загрузить ещё операции');
-  } finally {
-    loyaltyHistoryLoading = false;
-  }
-}
-
-function openTxDetail(idx, source) {
-  const cache = source === 'recent' ? dollieRecentCache : loyaltyTxCache;
-  const tx = cache[idx];
-  if (!tx) return;
-
-  const meta = txMeta(tx);
-  const sign = tx.amount > 0 ? '+' : '';
-  const colorClass = meta.isPositive ? 'pos' : 'neg';
-  const rubLine = !meta.isPositive
-    ? `<div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Сэкономлено: <b>&nbsp;${Math.abs(tx.amount)} ₽</b></div>`
-    : '';
-
-  const content = document.getElementById('sheet-tx-detail-content');
-  content.innerHTML = `
-    <div class="tx-detail-amount">
-      <div class="num ${colorClass}">${sign}${tx.amount} Dollies</div>
-      <div class="sub">${meta.title} · ${meta.subtitle}</div>
-    </div>
-    <div class="info-row"><svg class="icon"><use href="#icon-clock"/></svg>Дата: <b>&nbsp;${formatFullDate(tx.created_at)}</b></div>
-    ${tx.order_id ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Заказ: <b>&nbsp;№${escapeHtml(tx.order_id)}</b></div>` : ''}
-    ${rubLine}
-    <div class="info-row"><svg class="icon"><use href="#icon-heart"/></svg>Баланс после операции: <b>&nbsp;${tx.balance_after} Dollies</b></div>
-  `;
-  stripAutoDetectLinks(content);
-  openSheet('tx-detail');
-}
-
-function updateHomePanels() {
-  const panel = document.getElementById('update-panel');
-  const panelText = document.getElementById('update-panel-text');
-
-  if (!lastUpdatedAt || ordersCache.length === 0) {
-    panel.hidden = true;
-    return;
-  }
-
-  const timeStr = lastUpdatedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  const order = ordersCache[0];
-  const step = matchStep(order.status);
-
-  panel.hidden = false;
-  panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
-}
-
-const NOTIF_ICON_BY_TYPE = {
-  order_status: 'truck',
-  dollies: 'heart',
-  referral_joined: 'user-plus',
-};
-
-function notifIcon(type) {
-  return NOTIF_ICON_BY_TYPE[type] || 'bell';
-}
-
-const RU_MONTHS_GEN_NOTIF = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-
-function formatNotifTime(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  const now = new Date();
-  const sameDay = d.toDateString() === now.toDateString();
-  const timeStr = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  if (sameDay) return `Сегодня, ${timeStr}`;
-  return `${d.getDate()} ${RU_MONTHS_GEN_NOTIF[d.getMonth()]}, ${timeStr}`;
-}
-
-function notificationsEmptyHTML() {
-  return `<div class="empty-state">${emptyIllustration()}<h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса заказов, начисления Dollies и другие события.</p></div>`;
-}
-
-function notificationRowHTML(n) {
-  return `
-    <div class="info-row" style="border-top:none;padding:10px 0;align-items:flex-start;">
-      <div class="tx-icon pos" style="width:32px;height:32px;flex-shrink:0;">
-        <svg class="icon" style="width:15px;height:15px;"><use href="${seasonalIconHref(notifIcon(n.type))}"/></svg>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13.5px;font-weight:700;color:var(--text);">${escapeHtml(n.title || '')}</div>
-        <div style="font-size:12.5px;color:var(--text-secondary);margin-top:2px;line-height:1.4;">${escapeHtml(n.body || '')}</div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:4px;">${formatNotifTime(n.created_at)}</div>
-      </div>
-    </div>`;
-}
-
-async function openNotificationsSheet() {
-  openSheet('notifications');
-  await loadNotifications(true);
-}
-
-async function loadNotifications(markRead) {
-  const notifDot = document.getElementById('notif-dot');
-  const notifContent = document.getElementById('notifications-content');
-  if (!userId) {
-    if (notifContent) notifContent.innerHTML = notificationsEmptyHTML();
-    return;
-  }
-
-  try {
-    const data = await apiFetch('/api/me/notifications', { limit: 30 }, { timeoutMs: 10000, retries: 1 });
-    if (!data.ok) throw new Error('bad response');
-
-    const items = data.notifications || [];
-    if (notifDot) notifDot.hidden = !(data.unread_count > 0);
-
-    if (notifContent) {
-      notifContent.innerHTML = items.length
-        ? items.map(notificationRowHTML).join('')
-        : notificationsEmptyHTML();
-      stripAutoDetectLinks(notifContent);
-    }
-
-    if (markRead && data.unread_count > 0) {
-      apiPost('/api/me/notifications/read', {}).catch(() => {});
-      if (notifDot) notifDot.hidden = true;
-    }
-  } catch (e) {
-    console.error('DollieLand: не удалось загрузить уведомления —', e);
-    if (notifContent && !notifContent.innerHTML) {
-      notifContent.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить уведомления</p>`;
-    }
-  }
-}
-
-async function apiPost(path, body) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
-  const res = await fetch(API_BASE + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
-  return res.json();
-}
 
 async function trackOrder() {
   const input = document.getElementById('track-input').value.trim();
   const result = document.getElementById('track-result');
 
   if (!input) { showToast('Введите номер заказа'); hapticNotification('warning'); return; }
-
   result.innerHTML = skeletonOrdersHTML(1);
 
   try {
@@ -2842,274 +3295,9 @@ function showToast(msg) {
 
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
-/* =========================================================================
-   THEME SYSTEM v2 — фиксированный каталог из 8 готовых тем на бэкенде.
-   Клиент ничего не сочиняет сам: хранит только выбор Light/Dark и
-   применяет то, что прислал сервер. Никакого "system"-режима.
-   ========================================================================= */
-
-const CSS_VAR_MAP = {
-  background: '--bg', surface: '--surface', elevated_surface: '--surface-soft',
-  text: '--text', secondary_text: '--text-secondary', border: '--border',
-};
-
-let themeConfig = { theme: null };
-let themeMode = 'light'; // только 'light' | 'dark'
-
-function applyTheme() {
-  const mode = (themeMode === 'dark') ? 'dark' : 'light';
-  const active = themeConfig.theme;
-  const colors = (active && active['colors_' + mode]) || null;
-  const root = document.documentElement;
-
-  root.dataset.theme = mode;
-
-  if (colors) {
-    Object.entries(CSS_VAR_MAP).forEach(([field, cssVar]) => {
-      if (colors[field]) root.style.setProperty(cssVar, colors[field]);
-    });
-    if (colors.accent) root.style.setProperty('--pink-accent', colors.accent);
-    if (colors.dollies) root.style.setProperty('--dollies-color', colors.dollies);
-  }
-
-  updateThemeMetaColors(colors && colors.background);
-  renderThemeOptionsList();
-  renderSeasonalBanner();
-  renderThemeDecorations();
-  applySeasonalIcons();
-
-  // Re-render already-open dynamic lists so their icons pick up the new theme too
-  // (they call seasonalIconHref() themselves, but only take effect on next render).
-  if (loyaltyRewards) renderDollieRewards();
-  if (dollieRecentCache.length) loadDollieRecent();
-  if (loyaltyTxCache.length) renderHistoryList();
-}
-
-/* =========================================================================
-   SEASONAL ICONS — semantic icons (heart / star / bell / gift) get a
-   genuinely different SVG silhouette per theme, not just a recolor.
-   Standard always uses the base #icon-heart / #icon-star / #icon-bell /
-   #icon-gift symbols, untouched.
-   ========================================================================= */
-function activeThemeSlug() {
-  return (themeConfig.theme && themeConfig.theme.slug) || 'standard';
-}
-
-function seasonalIconHref(baseKey) {
-  const slug = activeThemeSlug();
-  if (slug === 'standard') return '#icon-' + baseKey;
-  const themedId = 'icon-' + baseKey + '-' + slug;
-  return document.getElementById(themedId) ? '#' + themedId : '#icon-' + baseKey;
-}
-
-// Swaps the <use href> of every static icon marked data-seasonal-icon="heart|star|bell|gift"
-function applySeasonalIcons() {
-  document.querySelectorAll('[data-seasonal-icon]').forEach(svg => {
-    const use = svg.querySelector('use');
-    if (!use) return;
-    use.setAttribute('href', seasonalIconHref(svg.dataset.seasonalIcon));
-  });
-}
-
-function updateThemeMetaColors(bgColor) {
-  if (tg && bgColor) {
-    tg.setHeaderColor(bgColor);
-    tg.setBackgroundColor(bgColor);
-  }
-}
-
-async function loadThemeConfig() {
-  try {
-    const [activeRes, prefRes] = await Promise.all([
-      apiFetch('/api/theme/active', {}, { timeoutMs: 8000, retries: 1 }),
-      userId ? apiFetch('/api/me/theme_preference', {}, { timeoutMs: 8000, retries: 1 }) : Promise.resolve(null),
-    ]);
-    if (activeRes && activeRes.ok) {
-      themeConfig = { theme: activeRes.theme };
-    }
-    if (prefRes && prefRes.ok && (prefRes.mode === 'light' || prefRes.mode === 'dark')) {
-      themeMode = prefRes.mode;
-    }
-  } catch (e) {
-    console.error('DollieLand: не удалось загрузить конфиг темы —', e);
-  }
-  applyTheme();
-}
-
-const THEME_MODE_OPTIONS = [
-  { key: 'light', icon: 'sun', title: 'Светлая', desc: 'Всегда светлое оформление' },
-  { key: 'dark', icon: 'moon', title: 'Тёмная', desc: 'Всегда тёмное оформление' },
-];
-
-function renderThemeOptionsList() {
-  const container = document.getElementById('theme-options-list');
-  if (!container) return;
-  container.innerHTML = THEME_MODE_OPTIONS.map(opt => `
-    <button class="theme-option-row ${themeMode === opt.key ? 'selected' : ''}" onclick="selectThemeMode('${opt.key}')">
-      <svg class="icon"><use href="#icon-${opt.icon}"/></svg>
-      <div class="label-wrap">
-        <div class="title">${opt.title}</div>
-        <div class="desc">${opt.desc}</div>
-      </div>
-      <div class="check-dot">${themeMode === opt.key ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</div>
-    </button>
-  `).join('');
-}
-
-async function selectThemeMode(mode) {
-  if (mode === themeMode) return;
-  hapticSelection();
-  themeMode = mode;
-  applyTheme();
-
-  if (!userId) return;
-  try {
-    const url = new URL(API_BASE + '/api/me/theme_preference');
-    const headers = { 'Content-Type': 'application/json' };
-    if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
-    await fetch(url.toString(), { method: 'POST', headers, body: JSON.stringify({ mode }) });
-  } catch (e) {
-    console.error('DollieLand: не удалось сохранить предпочтение темы —', e);
-  }
-}
-
-function renderSeasonalBanner() {
-  const slot = document.getElementById('seasonal-banner-slot');
-  if (!slot) return;
-  const active = themeConfig.theme;
-  const texts = (active && active.texts) || {};
-  if (!active || active.slug === 'standard' || (!texts.banner_title && !texts.banner_subtitle)) {
-    slot.innerHTML = '';
-    return;
-  }
-  slot.innerHTML = `
-    <div class="seasonal-banner">
-      <div class="seasonal-banner-eyebrow">${escapeHtml(active.name || 'DollieLand')}</div>
-      ${texts.banner_title ? `<div class="seasonal-banner-title">${escapeHtml(texts.banner_title)}</div>` : ''}
-      ${texts.banner_subtitle ? `<div class="seasonal-banner-subtitle">${escapeHtml(texts.banner_subtitle)}</div>` : ''}
-    </div>`;
-}
-
-const DECORATION_RENDERERS = {
-  snow: () => Array.from({ length: 14 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 6).toFixed(1);
-    const duration = (10 + Math.random() * 8).toFixed(1);
-    const size = 3 + Math.round(Math.random() * 3);
-    return `<div class="deco-item" style="left:${left}%;top:-5%;width:${size}px;height:${size}px;border-radius:50%;background:#FFFFFF;animation:deco-fall ${duration}s linear ${delay}s infinite;"></div>`;
-  }).join(''),
-
-  hearts: () => Array.from({ length: 10 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 5).toFixed(1);
-    const duration = (12 + Math.random() * 6).toFixed(1);
-    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
-    </div>`;
-  }).join(''),
-
-  stars: () => Array.from({ length: 12 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const top = Math.round(Math.random() * 40);
-    const delay = (Math.random() * 4).toFixed(1);
-    return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3s ease ${delay}s infinite;">
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="#FFFFFF" stroke="none"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
-    </div>`;
-  }).join(''),
-
-  spiderweb_bats: () => `
-    <svg class="deco-item" style="top:-2%;right:-2%;width:120px;height:120px;opacity:0.35;" viewBox="0 0 100 100" fill="none" stroke="#FFFFFF" stroke-width="1">
-      <path d="M100 0 L20 100 M100 0 L60 100 M100 0 L100 40 M100 0 L100 80"/>
-      <path d="M100 20 Q60 20 20 60 M100 45 Q75 45 45 80"/>
-    </svg>
-    <div class="deco-item" style="top:12%;left:20%;animation:deco-fall 16s linear infinite;">
-      <svg width="16" height="10" viewBox="0 0 24 16" fill="#2A1F22" stroke="none"><path d="M12 4c-2-3-6-4-9-2 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 2z"/></svg>
-    </div>`,
-
-  autumn_leaves: () => Array.from({ length: 10 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 6).toFixed(1);
-    const duration = (11 + Math.random() * 7).toFixed(1);
-    const colors = ['#C97A3D', '#B8563A', '#D9A441'];
-    const color = colors[i % colors.length];
-    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}" stroke="none"><path d="M12 2c5 4 8 9 8 13a8 8 0 1 1-16 0c0-4 3-9 8-13z"/></svg>
-    </div>`;
-  }).join(''),
-
-  sun_rays: () => `
-    <svg class="deco-item" style="top:-5%;right:-5%;width:160px;height:160px;opacity:0.18;" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="30" fill="#FFD36E"/>
-    </svg>`,
-
-  /* ---- новые пресеты ---- */
-
-  // Winter: снежинки + редкие мерцающие искры — холоднее и спокойнее, чем чистый snow
-  winter_sparkle: () => {
-    const flakes = Array.from({ length: 10 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const delay = (Math.random() * 6).toFixed(1);
-      const duration = (13 + Math.random() * 9).toFixed(1);
-      const size = 3 + Math.round(Math.random() * 2);
-      return `<div class="deco-item" style="left:${left}%;top:-5%;width:${size}px;height:${size}px;border-radius:50%;background:#FFFFFF;opacity:0.7;animation:deco-fall ${duration}s linear ${delay}s infinite;"></div>`;
-    }).join('');
-    const sparkles = Array.from({ length: 6 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 35);
-      const delay = (Math.random() * 4).toFixed(1);
-      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3.5s ease ${delay}s infinite;">
-        <svg width="8" height="8" viewBox="0 0 24 24" fill="#EAF4FA" stroke="none"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></svg>
-      </div>`;
-    }).join('');
-    return flakes + sparkles;
-  },
-
-  // Spring: медленно падающие лепестки
-  petals: () => Array.from({ length: 10 }, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 6).toFixed(1);
-    const duration = (13 + Math.random() * 8).toFixed(1);
-    const colors = ['#D98CAE', '#E8B8CE', '#F2D6E4'];
-    const color = colors[i % colors.length];
-    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}" stroke="none"><path d="M12 2c3 3 3 7 0 10-3-3-3-7 0-10zM12 12c3 3 3 7 0 10-3-3-3-7 0-10zM2 12c3-3 7-3 10 0-3 3-7 3-10 0zM12 12c3-3 7-3 10 0-3 3-7 3-10 0z"/></svg>
-    </div>`;
-  }).join(''),
-
-  // Christmas: маленькие мерцающие огоньки + редкие подвесные ornament-шарики
-  ornaments_lights: () => {
-    const lights = Array.from({ length: 8 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 45);
-      const delay = (Math.random() * 3).toFixed(1);
-      const colors = ['#D9B86A', '#C9A24A', '#F3D9A0'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.8s ease ${delay}s infinite;">
-        <svg width="7" height="7" viewBox="0 0 24 24" fill="${color}" stroke="none"><circle cx="12" cy="12" r="9"/></svg>
-      </div>`;
-    }).join('');
-    const ornaments = Array.from({ length: 4 }, () => {
-      const left = Math.round(Math.random() * 100);
-      const delay = (Math.random() * 5).toFixed(1);
-      const duration = (17 + Math.random() * 6).toFixed(1);
-      const colors = ['#7A2E38', '#3E5C46', '#C9A24A'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return `<div class="deco-item" style="left:${left}%;top:-8%;opacity:0.5;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-        <svg width="13" height="16" viewBox="0 0 24 28" fill="none"><rect x="10" y="0" width="4" height="5" fill="#D9B86A"/><circle cx="12" cy="16" r="10" fill="${color}"/></svg>
-      </div>`;
-    }).join('');
-    return lights + ornaments;
-  },
-};
-
-function renderThemeDecorations() {
-  const container = document.getElementById('theme-decorations');
-  if (!container) return;
-  const active = themeConfig.theme;
-  const preset = (active && active.decoration_preset) || 'none';
-  const renderer = DECORATION_RENDERERS[preset];
-  container.innerHTML = renderer ? renderer() : '';
-}
+/* =========================================================
+   INIT
+   ========================================================= */
 
 renderHelpList();
 watchAutoDetectLinks();
