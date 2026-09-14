@@ -331,14 +331,6 @@
     display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0;
   }
   .orders-summary-text { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text); }
-  .update-panel {
-    background: var(--surface); border-radius: var(--r-lg);
-    padding: 14px 16px; box-shadow: var(--shadow-soft);
-    margin-top: 22px; display: flex; gap: 12px; align-items: flex-start;
-  }
-  .update-panel .icon { color: var(--pink-accent); width: 19px; height: 19px; margin-top: 1px; }
-  .update-panel .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
-  .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; color: var(--text); }
 
   .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 8px; flex-wrap: nowrap; }
   .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; color: var(--text); flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -482,7 +474,6 @@
   .reviews-photos-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
   .reviews-photos-title { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .reviews-photos-title .icon { width: 15px; height: 15px; color: var(--pink-accent); }
-  .reviews-photos-count { font-size: 11.5px; color: var(--text-secondary); }
   .reviews-photos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .reviews-photo-cell {
     position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden;
@@ -932,14 +923,6 @@
       <div class="orders-summary-text" id="orders-summary-text">Загружаем заказы…</div>
       <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
     </button>
-
-    <div class="update-panel" id="update-panel" hidden>
-      <svg class="icon"><use href="#icon-clock"/></svg>
-      <div>
-        <div class="label">Последнее обновление</div>
-        <div class="value" id="update-panel-text">—</div>
-      </div>
-    </div>
   </main>
 
   <main class="tab-screen" id="tab-orders">
@@ -1327,9 +1310,7 @@ function hapticImpact(style) { tg?.HapticFeedback?.impactOccurred(style || 'ligh
 function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
 
-/* =========================================================
-   Escaping
-   ========================================================= */
+/* Escaping */
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);
@@ -1344,9 +1325,7 @@ function escapeAttr(str) {
     .replace(/>/g, '&gt;');
 }
 
-/* =========================================================
-   Back button
-   ========================================================= */
+/* Back button */
 let lightboxOpen = false;
 let reviewPromptOpen = false;
 
@@ -1368,9 +1347,7 @@ if (tg) {
   tg.BackButton.hide();
 }
 
-/* =========================================================
-   API
-   ========================================================= */
+/* API */
 async function apiFetch(path, params, opts) {
   const { timeoutMs = 12000, retries = 1 } = opts || {};
   const url = new URL(API_BASE + path);
@@ -1409,9 +1386,7 @@ async function apiPost(path, body) {
   return res.json();
 }
 
-/* =========================================================
-   Utilities
-   ========================================================= */
+/* Utilities */
 function pluralize(n, one, few, many) {
   const m10 = n % 10, m100 = n % 100;
   if (m10 === 1 && m100 !== 11) return one;
@@ -1448,9 +1423,7 @@ function watchAutoDetectLinks() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-/* =========================================================
-   Tab / Sheet management
-   ========================================================= */
+/* Tab / Sheet management */
 function switchTab(name) {
   closeSheet();
   document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
@@ -1459,7 +1432,7 @@ function switchTab(name) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   window.scrollTo(0, 0);
   hapticSelection();
-  if (name === 'reviews') loadReviews(false);
+  if (name === 'reviews') loadReviews(false, { silentIfSame: true });
   if (name === 'orders' && !ordersCache.length) loadOrders(false);
 }
 
@@ -1499,7 +1472,7 @@ function closeSheet() {
   syncBackButton();
 }
 
-function setupSheetDrag(sheetEl, signal) {
+function setupSheetDrag(sheetEl) {
   const handleArea = sheetEl.querySelector('.sheet-handle-area');
   if (!handleArea) return;
   let dragging = false, startY = 0, startHeight = 0, movedEnough = false;
@@ -1535,16 +1508,14 @@ function setupSheetDrag(sheetEl, signal) {
     if (translateActive && -delta > 90) { sheetEl.style.maxHeight = ''; closeSheet(); return; }
     sheetEl.style.maxHeight = '';
   }
-  handleArea.addEventListener('touchstart', e => start(e.touches[0].clientY), { passive: true, signal });
-  handleArea.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true, signal });
-  handleArea.addEventListener('touchend', e => end(e.changedTouches[0].clientY), { signal });
-  handleArea.addEventListener('touchcancel', () => { dragging = false; sheetEl.classList.remove('dragging'); sheetEl.style.transform = ''; sheetEl.style.maxHeight = ''; }, { signal });
+  handleArea.addEventListener('touchstart', e => start(e.touches[0].clientY), { passive: true });
+  handleArea.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
+  handleArea.addEventListener('touchend', e => end(e.changedTouches[0].clientY));
+  handleArea.addEventListener('touchcancel', () => { dragging = false; sheetEl.classList.remove('dragging'); sheetEl.style.transform = ''; sheetEl.style.maxHeight = ''; });
 }
 document.querySelectorAll('.bottom-sheet').forEach(s => setupSheetDrag(s));
 
-/* =========================================================
-   Orders
-   ========================================================= */
+/* Orders */
 const STATUS_STEPS = [
   { label: 'Заказ оформлен' },
   { label: 'Продавец подготовил посылку' },
@@ -1578,7 +1549,6 @@ function matchStep(status) {
 function progressPercent(step) { return Math.round((step / (STATUS_STEPS.length - 1)) * 100); }
 
 let ordersCache = [];
-let lastUpdatedAt = null;
 
 const ORDERS_SORT_OPTIONS = [
   { key: 'newest', label: 'Сначала новые', icon: 'arrow-down' },
@@ -1779,10 +1749,8 @@ async function loadOrders(isManualRefresh) {
   try {
     const data = await apiFetch('/api/user_orders', {}, { timeoutMs: 12000, retries: 1 });
     ordersCache = data.orders || [];
-    lastUpdatedAt = new Date();
     renderOrdersList();
-    updateHomePanels();
-    // FIX: review prompt только по инициативе пользователя, не в polling
+    // При ручном обновлении проверяем review prompt (статус мог измениться)
     if (isManualRefresh) checkReviewPrompt();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
@@ -1804,21 +1772,7 @@ function updateProfileStats() {
   activeEl.textContent = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
 }
 
-function updateHomePanels() {
-  const panel = document.getElementById('update-panel');
-  const panelText = document.getElementById('update-panel-text');
-  if (!lastUpdatedAt || !ordersCache.length) { panel.hidden = true; return; }
-  const timeStr = lastUpdatedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  // FIX: берём заказ с самым свежим created_at, а не по id
-  const latest = [...ordersCache].sort((a, b) => String(b.created_date || '').localeCompare(String(a.created_date || '')))[0];
-  const step = matchStep(latest.status);
-  panel.hidden = false;
-  panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(latest)}: ${escapeHtml(STATUS_STEPS[step].label)}`;
-}
-
-/* =========================================================
-   Theme
-   ========================================================= */
+/* Theme */
 let themeConfig = { theme: null };
 let themeMode = 'light';
 
@@ -1992,9 +1946,7 @@ function renderThemeDecorations() {
   container.innerHTML = renderer ? renderer() : '';
 }
 
-/* =========================================================
-   Banners
-   ========================================================= */
+/* Banners */
 let bannersCache = [];
 let bannerScrollTimeout = null;
 
@@ -2080,9 +2032,7 @@ function onBannerScroll(e) {
   }, 80);
 }
 
-/* =========================================================
-   Loyalty
-   ========================================================= */
+/* Loyalty */
 let loyaltyBalance = null;
 let loyaltyRewards = null;
 let loyaltyHistoryOffset = 0;
@@ -2338,9 +2288,7 @@ function openTxDetail(idx, source) {
   openSheet('tx-detail');
 }
 
-/* =========================================================
-   Notifications
-   ========================================================= */
+/* Notifications */
 const NOTIF_ICON = { order_status: 'truck', dollies: 'heart', referral_joined: 'user-plus' };
 function notifIcon(type) { return NOTIF_ICON[type] || 'bell'; }
 function formatNotifTime(iso) {
@@ -2392,9 +2340,7 @@ async function loadNotifications(markRead) {
   } catch (e) {}
 }
 
-/* =========================================================
-   Referral
-   ========================================================= */
+/* Referral */
 let referralData = null;
 function referralLink(code) { return `https://t.me/${BOT_USERNAME}?start=ref_${encodeURIComponent(code)}`; }
 async function openReferralSheet() {
@@ -2430,9 +2376,7 @@ function shareReferralLink() {
   else window.open(shareUrl, '_blank');
 }
 
-/* =========================================================
-   Reviews
-   ========================================================= */
+/* ============ Reviews ============ */
 let reviewableOrdersCache = [];
 let selectedReviewOrderId = null;
 let selectedReviewRating = 0;
@@ -2441,9 +2385,9 @@ let reviewSort = 'newest';
 let reviewListCache = [];
 let myReviewsCache = [];
 let reviewsLoadedOnce = false;
+let reviewsRenderFingerprint = '';
 let reviewPromptOrder = null;
 let reviewSubmitInFlight = false;
-let reviewPromptCheckedThisSession = false;
 const REVIEW_MAX_PHOTOS = 8;
 const REVIEW_MAX_TEXT = 5000;
 const REVIEW_DRAFT_PREFIX = 'dollieland_review_draft_';
@@ -2484,7 +2428,6 @@ function formatReviewDate(iso) {
 function publicReviewName(review) {
   if (review.is_anonymous) return 'Анонимный покупатель';
   const name = review.display_name || '';
-  // FIX: если бэк вернул "Анонимный покупатель" в display_name — тоже скрываем username
   if (/аноним/i.test(name)) return 'Анонимный покупатель';
   return name || review.username || 'Покупатель';
 }
@@ -2611,7 +2554,6 @@ function renderReviewsPage(data) {
         <svg class="icon" style="color:var(--text-secondary)"><use href="#icon-chevron-right"/></svg>
       </button>`;
   } else if (Number(stats.total_reviews) === 0) {
-    // FIX: пустое состояние + CTA, если нет ни отзывов, ни права писать
     html += `<div class="empty-state">
       <h3>Пока здесь тихо</h3>
       <p>Здесь появятся отзывы покупателей после первых заказов.</p>
@@ -2635,18 +2577,34 @@ function renderReviewsPage(data) {
   stripAfterInsert(content);
 }
 
+function computeReviewsFingerprint(publicData, mine, eligible) {
+  const pub = (publicData?.reviews || []).map(r =>
+    `${r.id}:${r.updated_at || r.created_at || ''}:${(r.photos || []).length}`
+  ).join('|');
+  const own = (mine?.reviews || []).map(r =>
+    `${r.id}:${r.updated_at || r.created_at || ''}:${(r.photos || []).length}`
+  ).join('|');
+  const el = (eligible?.orders || []).map(o => String(o.id)).join(',');
+  const stats = publicData?.stats ? JSON.stringify(publicData.stats) : '';
+  const sort = publicData?.sort || '';
+  return pub + '##' + own + '##' + el + '##' + stats + '##' + sort;
+}
+
 let reviewsLoadInflight = false;
-async function loadReviews(isManual = false) {
+async function loadReviews(isManual = false, opts = {}) {
+  const { silentIfSame = false } = opts;
   if (reviewsLoadInflight) return;
   reviewsLoadInflight = true;
   const content = document.getElementById('reviews-content');
   const btn = document.getElementById('reviews-refresh-btn');
   if (!content) { reviewsLoadInflight = false; return; }
+
   if (isManual) {
     btn?.classList.add('spinning');
     btn?.setAttribute('disabled', '');
   }
   if (!reviewsLoadedOnce) content.innerHTML = reviewSkeletonHTML(3);
+
   try {
     const [publicData, mineData, eligibleData] = await Promise.all([
       apiFetch('/api/reviews', {sort: reviewSort, limit: 30, offset: 0}, {timeoutMs: 10000, retries: 1}),
@@ -2654,10 +2612,22 @@ async function loadReviews(isManual = false) {
       userId ? apiFetch('/api/me/reviewable_orders', {}, {timeoutMs: 10000, retries: 1}) : Promise.resolve({ok:true, orders:[]}),
     ]);
     if (!publicData?.ok) throw new Error('reviews');
+
+    const newFingerprint = computeReviewsFingerprint(publicData, mineData, eligibleData);
+
+    // Если данные не изменились — не перерисовываем DOM, чтобы фото не перезагружались
+    if (silentIfSame && reviewsLoadedOnce && newFingerprint === reviewsRenderFingerprint) {
+      reviewsLoadInflight = false;
+      btn?.classList.remove('spinning');
+      btn?.removeAttribute('disabled');
+      return;
+    }
+
     reviewListCache = publicData.reviews || [];
     myReviewsCache = mineData?.ok ? (mineData.reviews || []) : [];
     reviewableOrdersCache = eligibleData?.ok ? (eligibleData.orders || []) : [];
     reviewsLoadedOnce = true;
+    reviewsRenderFingerprint = newFingerprint;
     renderReviewsPage(publicData);
     updateMyReviewsBadge();
   } catch (e) {
@@ -2677,6 +2647,7 @@ async function loadMoreReviews() {
     const data = await apiFetch('/api/reviews', {sort: reviewSort, limit: 30, offset}, {timeoutMs: 10000, retries: 1});
     if (!data?.ok) throw new Error('reviews');
     reviewListCache = reviewListCache.concat(data.reviews || []);
+    reviewsRenderFingerprint = '';
     renderReviewsPage(data);
   } catch (_) { showToast('Не удалось загрузить ещё отзывы'); }
 }
@@ -2702,7 +2673,8 @@ function selectReviewSort(key) {
   reviewSort = key;
   closeSheet();
   hapticSelection();
-  loadReviews(false);
+  reviewsRenderFingerprint = '';
+  loadReviews(true);
 }
 
 /* MY REVIEWS SHEET */
@@ -2733,14 +2705,10 @@ function renderMyReviewsList() {
         <div style="font-size:10.5px;color:var(--text-secondary);margin-top:8px;">${r.is_anonymous ? 'Опубликован как анонимный' : 'Опубликован под вашим именем'}</div>
       </div>`).join('')}
   </div>`;
-  stripAfterDetectLinks(container);
-}
-
-function stripAfterDetectLinks(container) {
   stripAfterInsert(container);
 }
 
-/* LIGHTBOX */
+/* Lightbox */
 let lightboxState = { photos: [], index: 0, source: 'reviews', reviewId: null };
 
 function getReviewById(id, source) {
@@ -2883,7 +2851,7 @@ function closePhotoLightbox() {
   window.addEventListener('mouseup', () => { if (mouseDown) { mouseDown = false; onEnd(); } });
 })();
 
-/* REVIEW FORM */
+/* Review form */
 async function openReviewSheet(orderId = null) {
   openSheet('review');
   selectedReviewOrderId = orderId;
@@ -2954,6 +2922,11 @@ function reviewRatingText(n) {
 }
 
 let lastStarPointerTime = 0;
+function onStarPointerDown(ev, n) {
+  const now = performance.now();
+  if (now - lastStarPointerTime < 300) return;
+  lastStarPointerTime = now;
+}
 
 function renderReviewForm() {
   const body = document.getElementById('review-sheet-body');
@@ -3007,13 +2980,6 @@ function renderReviewForm() {
   renderReviewPhotoPreviews();
 }
 
-function onStarPointerDown(ev, n) {
-  // FIX: гасим двойной haptic на тап по svg внутри button
-  const now = performance.now();
-  if (now - lastStarPointerTime < 300) return;
-  lastStarPointerTime = now;
-}
-
 function setReviewRating(n) {
   selectedReviewRating = n;
   hapticSelection();
@@ -3053,7 +3019,6 @@ async function onReviewPhotoChange(e) {
   const remaining = REVIEW_MAX_PHOTOS - selectedReviewPhotoFiles.length;
   if (incoming.length > remaining) showToast(`Можно добавить максимум ${REVIEW_MAX_PHOTOS} фото`);
   const files = incoming.slice(0, remaining);
-  // FIX: продолжаем обработку остальных фото даже при ошибке одного
   for (const file of files) {
     try {
       const compressed = await compressReviewImage(file);
@@ -3104,7 +3069,6 @@ async function submitReview() {
   if (!selectedReviewOrderId) { showToast('Выберите заказ'); return; }
   if (!selectedReviewRating) { showToast('Поставьте оценку'); hapticNotification('warning'); return; }
 
-  // FIX: флаг ставится до любых асинхронных операций
   reviewSubmitInFlight = true;
 
   const textEl = document.getElementById('review-text-input');
@@ -3164,6 +3128,7 @@ async function submitReview() {
     loadDollieRecent();
     reviewableOrdersCache = reviewableOrdersCache.filter(o => String(o.id) !== String(selectedReviewOrderId));
     selectedReviewOrderId = null;
+    reviewsRenderFingerprint = '';
     await loadReviews(false);
   } catch (e) {
     showToast('Не удалось отправить отзыв. Текст сохранён — попробуйте ещё раз.');
@@ -3174,7 +3139,7 @@ async function submitReview() {
   }
 }
 
-/* REVIEW PROMPT */
+/* Review prompt */
 function openReviewPrompt(order) {
   reviewPromptOrder = order;
   const overlay = document.getElementById('review-prompt-overlay');
@@ -3203,17 +3168,25 @@ function startReviewFromPrompt() {
   apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'started'}).catch(()=>{});
   openReviewSheet(order.id);
 }
+let reviewPromptInflight = false;
 async function checkReviewPrompt() {
   if (!userId) return;
-  if (reviewPromptCheckedThisSession) return;
-  reviewPromptCheckedThisSession = true;
+  if (reviewPromptInflight) return;
+  if (reviewPromptOpen) return;
+  if (document.querySelector('.bottom-sheet.open')) return;
+  reviewPromptInflight = true;
   try {
     const data = await apiFetch('/api/me/review_prompt', {}, {timeoutMs: 8000, retries: 0});
-    if (data?.ok && data.show && data.order) openReviewPrompt({...data.order, reward: Number(data.reward || 10)});
-  } catch (e) {}
+    if (data?.ok && data.show && data.order) {
+      setTimeout(() => openReviewPrompt({...data.order, reward: Number(data.reward || 10)}), 400);
+    }
+  } catch (e) {
+  } finally {
+    reviewPromptInflight = false;
+  }
 }
 
-/* TRACK / CONTACT / HELP / TOAST */
+/* Track / Contact / Help / Toast */
 async function trackOrder() {
   const input = document.getElementById('track-input').value.trim();
   const result = document.getElementById('track-result');
@@ -3289,9 +3262,7 @@ function showToast(msg) {
 
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
-/* =========================================================
-   Init
-   ========================================================= */
+/* Init */
 function hidePreloader() {
   const p = document.getElementById('preloader');
   if (!p) return;
@@ -3317,11 +3288,14 @@ async function bootstrap() {
 
   await minDelay;
   hidePreloader();
+
+  // Проверяем review prompt после показа приложения
+  setTimeout(() => checkReviewPrompt(), 800);
 }
 
 bootstrap();
 
-// FIX: polling только когда вкладка видима и нет открытых sheet
+// Polling только когда вкладка видима и нет открытых sheet
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
   if (document.querySelector('.bottom-sheet.open')) return;
@@ -3330,7 +3304,11 @@ setInterval(() => {
 }, 60000);
 
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') loadOrders(false);
+  if (document.visibilityState === 'visible') {
+    loadOrders(false);
+    // При возврате в приложение проверяем review prompt
+    setTimeout(() => checkReviewPrompt(), 600);
+  }
 });
 
 window.addEventListener('error', (e) => {
