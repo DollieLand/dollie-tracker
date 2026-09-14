@@ -911,7 +911,7 @@
     font-size: 14.5px; font-weight: 700; color: var(--text);
     margin: 4px 0 10px;
   }
-  .profile-review-list { display: grid; gap: 10px; }
+  .profile-review-list { display: grid; gap: 10px; padding-bottom: 8px; }
 
   @media (max-width: 360px) {
     .profile-hero-avatar { width: 76px; height: 76px; font-size: 32px; }
@@ -2751,7 +2751,10 @@ function initialFromName(name) {
 function reviewAuthorAvatarHTML(review) {
   const name = publicReviewName(review);
   const letter = initialFromName(name);
-  return `<div class="review-avatar letter">${escapeHtml(letter)}</div>`;
+  const avatar = (!review.is_anonymous && review.author_profile_available && review.author_avatar_url)
+    ? `<img src="${escapeAttr(review.author_avatar_url)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`
+    : '';
+  return `<div class="review-avatar ${avatar ? '' : 'letter'}">${avatar || escapeHtml(letter)}</div>`;
 }
 
 /* Кнопка-блок автора: кликабельна только если профиль доступен */
@@ -2807,7 +2810,7 @@ function reviewCardHTML(review) {
       ${text ? `
         <div class="review-text ${long ? 'clamped' : ''}" id="review-text-${rid}" data-review-text="${rid}">${text}</div>
         ${long ? `
-          <button type="button" class="review-read-more" id="review-read-more-${rid}" data-review-toggle="${rid}" aria-expanded="false">
+          <button type="button" class="review-read-more" id="review-read-more-${rid}" data-review-toggle="${rid}" onclick="toggleReviewText('${rid}')" aria-expanded="false">
             Читать полностью
           </button>` : ''}
       ` : ''}
@@ -2845,6 +2848,7 @@ function toggleReviewText(reviewId) {
 
   const isExpanded = textEl.classList.contains('expanded');
 
+  // Keep the operation idempotent for both direct and delegated click handling.
   if (isExpanded) {
     textEl.classList.remove('expanded');
     textEl.classList.add('clamped');
@@ -3123,6 +3127,7 @@ function renderMyReviewsList() {
 /* ============ PUBLIC USER PROFILE ============ */
 let publicProfileCache = {};
 let publicProfileInflight = null;
+let publicProfileLastUid = null;
 
 function publicProfileSkeletonHTML() {
   return `
@@ -3162,14 +3167,19 @@ function publicProfileHTML(profile) {
 
   const reviewsBlock = reviews.length
     ? `<div class="profile-review-list">
-        ${reviews.map(r => `
+        ${reviews.map((r, index) => {
+          const rid = `profile-${String(r.id || index)}`;
+          const rawText = String(r.text || '');
+          const long = rawText.length > 260;
+          return `
           <article class="review-card">
             ${starsHTML(r.rating)}
-            ${r.text ? `<div class="review-text">${escapeHtml(r.text)}</div>` : ''}
+            ${rawText ? `<div class="review-text ${long ? 'clamped' : ''}" id="review-text-${escapeAttr(rid)}">${escapeHtml(rawText)}</div>` : ''}
+            ${long ? `<button type="button" class="review-read-more" id="review-read-more-${escapeAttr(rid)}" onclick="toggleReviewText('${escapeAttr(rid)}')" aria-expanded="false">Читать полностью</button>` : ''}
             ${reviewPhotoGridHTML({...r, photos: r.photos || []}, 'profile')}
             <div class="review-order-meta">${r.order_title ? escapeHtml(r.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(r.order_id || ''))}</div>
-          </article>
-        `).join('')}
+          </article>`;
+        }).join('')}
       </div>`
     : `<div class="empty-state" style="padding-top:8px;">
         <h3>Пока нет опубликованных отзывов</h3>
@@ -3205,6 +3215,7 @@ function publicProfileHTML(profile) {
 
 async function openUserProfile(uid) {
   if (!uid) return;
+  publicProfileLastUid = String(uid);
   const content = document.getElementById('user-profile-content');
   const headerTitle = document.getElementById('user-profile-header-title');
   if (!content) return;
@@ -3255,15 +3266,12 @@ async function openUserProfile(uid) {
 }
 
 function retryUserProfile() {
-  const uid = publicProfileInflight;
-  // Сброс кэша для повторной попытки
-  if (uid) delete publicProfileCache[uid];
-  // Попробуем найти последний uid из открытого профиля
+  const uid = publicProfileLastUid;
+  if (!uid) return;
+  delete publicProfileCache[uid];
   const content = document.getElementById('user-profile-content');
   if (content) content.innerHTML = publicProfileSkeletonHTML();
-  // Найдём uid из кнопки, которая открыла профиль
-  const lastUid = content?.dataset?.lastUid;
-  if (lastUid) openUserProfile(lastUid);
+  openUserProfile(uid);
 }
 
 function renderPublicProfileInto(content, headerTitle, profile) {
@@ -3278,7 +3286,7 @@ let privacyState = null;
 let privacyInflight = false;
 
 function privacyHTML() {
-  const on = !!(privacyState && privacyState.public_profile);
+  const on = privacyState ? !!privacyState.public_profile : false;
   const me = tg?.initDataUnsafe?.user;
   const myName = me?.first_name ? `${me.first_name}${me.last_name ? ' ' + me.last_name : ''}` : 'Вы';
   const myUname = me?.username ? '@' + me.username : '';
@@ -3296,7 +3304,7 @@ function privacyHTML() {
           <div class="privacy-row-title">Публичный профиль</div>
           <div class="privacy-row-desc">
             ${on
-              ? 'Другие пользователи смогут открыть ваш профиль из опубликованных отзывов и увидеть ваши заказы и отзывы.'
+              ? 'Другие пользователи смогут открыть ваш профиль из опубликованных отзывов и увидеть общую статистику заказов и ваши опубликованные отзывы.'
               : 'Ваш профиль скрыт. Другие пользователи не смогут открыть его из ваших отзывов.'}
           </div>
         </div>
@@ -3337,7 +3345,11 @@ async function openPrivacySheet() {
     const data = await apiFetch('/api/me/privacy', {}, { timeoutMs: 8000, retries: 1 });
     privacyState = data?.ok ? { public_profile: !!data.public_profile } : { public_profile: true };
   } catch (e) {
-    privacyState = { public_profile: true };
+    privacyState = null;
+    if (container) {
+      container.innerHTML = `<div class="empty-state" style="padding-top:8px;"><h3>Не удалось загрузить настройку</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="openPrivacySheet()">Повторить</button></div>`;
+    }
+    return;
   }
   renderPrivacyContent();
 }
