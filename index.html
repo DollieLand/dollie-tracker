@@ -558,8 +558,10 @@
 
   .review-author { flex: 1; min-width: 0; }
   .review-author-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .review-author-user { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
-  .review-author-chevron { color: var(--text-secondary); width: 16px; height: 16px; flex-shrink: 0; margin-left: 2px; }
+  .review-author-user { display: inline-flex; align-items: center; gap: 2px; font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; max-width: 100%; }
+  .review-author-chevron { color: var(--text-secondary); width: 13px; height: 13px; flex: 0 0 13px; margin: 0; }
+  .review-author-chevron-wrap { display: inline-flex; align-items: center; gap: 1px; max-width: 100%; }
+
 
   .review-date { font-size: 10.5px; color: var(--text-secondary); align-self: flex-start; white-space: nowrap; }
 
@@ -667,11 +669,15 @@
   .review-rating-hint { text-align: center; font-size: 11.5px; color: var(--text-secondary); margin: -10px 0 13px; }
 
   .review-textarea {
-    width: 100%; min-height: 104px; max-height: 280px;
+    width: 100%; height: 132px; min-height: 132px; max-height: 132px;
+    box-sizing: border-box;
     border: 1px solid var(--border); border-radius: 16px;
     padding: 13px 14px; font-size: 13.5px; line-height: 1.5;
     resize: none; outline: none; color: var(--text); background: var(--surface);
-    display: block; overflow-y: auto;
+    display: block; overflow-y: auto; overflow-x: hidden;
+    -webkit-appearance: none; appearance: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    scrollbar-width: thin;
   }
   .review-textarea:focus { border-color: var(--pink-accent); box-shadow: 0 0 0 3px var(--pink-soft); }
   .review-char-count { text-align: right; font-size: 10.5px; color: var(--text-secondary); margin-top: 5px; }
@@ -867,34 +873,52 @@
   .privacy-preview-rating { display: inline-flex; align-items: center; gap: 3px; color: var(--star); font-size: 11.5px; font-weight: 700; margin-top: 4px; }
   .privacy-preview-rating .icon { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; }
 
-  /* PUBLIC PROFILE SHEET */
+  /* PUBLIC PROFILE SHEET — modern compact profile */
   .profile-hero {
+    position: relative;
     text-align: center;
-    padding: 4px 0 20px;
+    padding: 2px 0 18px;
+  }
+  .profile-hero::before {
+    content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    width: 92px; height: 92px; border-radius: 50%;
+    background: var(--pink-soft); opacity: .72; filter: blur(18px); z-index: -1;
   }
   .profile-hero-avatar {
-    width: 88px; height: 88px; border-radius: 50%;
+    width: 84px; height: 84px; border-radius: 50%;
     background: var(--pink-soft); color: var(--pink-accent);
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 14px;
+    margin: 0 auto 13px;
     font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
-    font-size: 38px; overflow: hidden;
-    box-shadow: 0 8px 24px rgba(231,142,173,0.18);
+    font-size: 36px; overflow: hidden;
+    border: 3px solid var(--surface);
+    box-shadow: 0 7px 22px rgba(57,44,49,0.10);
   }
   .profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .profile-hero-avatar .icon { width: 40px; height: 40px; }
   .profile-hero-name {
     font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
-    font-size: 24px; color: var(--text); letter-spacing: 0.1px;
-    overflow-wrap: anywhere;
+    font-size: 23px; color: var(--text); letter-spacing: 0.1px;
+    overflow-wrap: anywhere; line-height: 1.15;
   }
-  .profile-hero-username { font-size: 13px; color: var(--text-secondary); margin-top: 3px; overflow-wrap: anywhere; }
+  .profile-hero-username {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--text-secondary); margin-top: 5px;
+    max-width: 100%; overflow-wrap: anywhere;
+  }
+  .profile-hero-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 11px; padding: 6px 10px; border-radius: 999px;
+    background: var(--surface-soft); border: 1px solid var(--border);
+    color: var(--text-secondary); font-size: 10.5px; font-weight: 700;
+  }
+  .profile-hero-badge .icon { width: 12px; height: 12px; color: var(--pink-accent); }
 
   .profile-stats {
     display: flex; justify-content: center; gap: 0;
-    margin: 18px auto 22px; max-width: 340px;
-    background: var(--surface-soft); border-radius: var(--r-lg);
-    padding: 14px 6px;
+    margin: 17px auto 23px; max-width: 360px;
+    background: var(--surface-soft); border: 1px solid var(--border); border-radius: 18px;
+    padding: 15px 5px;
   }
   .profile-stat { flex: 1; text-align: center; position: relative; }
   .profile-stat + .profile-stat::before {
@@ -908,10 +932,16 @@
   .profile-stat-rating .icon { width: 15px; height: 15px; fill: currentColor; stroke: currentColor; }
 
   .profile-reviews-title {
-    font-size: 14.5px; font-weight: 700; color: var(--text);
-    margin: 4px 0 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 14.5px; font-weight: 800; color: var(--text);
+    margin: 4px 1px 10px;
   }
-  .profile-review-list { display: grid; gap: 10px; padding-bottom: 8px; }
+  .profile-reviews-title::after {
+    content: 'Публичные'; font-size: 10px; font-weight: 600; color: var(--text-secondary);
+    background: var(--surface-soft); padding: 5px 8px; border-radius: 999px;
+  }
+  .profile-review-list { display: grid; gap: 10px; padding-bottom: 14px; }
+  .profile-review-list .review-card { box-shadow: none; padding: 14px; }
 
   @media (max-width: 360px) {
     .profile-hero-avatar { width: 76px; height: 76px; font-size: 32px; }
@@ -2722,7 +2752,7 @@ function formatReviewDate(iso) {
 
 /* Единая логика отображения имени */
 function publicReviewName(review) {
-  if (review.is_anonymous) return 'Анонимный покупатель';
+  if (review.is_anonymous) return 'Аноним';
   const name = (review.display_name || '').trim();
   if (name && !/аноним/i.test(name) && !/^покупатель$/i.test(name)) return name;
   const uname = (review.username || '').trim().replace(/^@/, '');
@@ -2765,13 +2795,15 @@ function reviewAuthorBlockHTML(review) {
   const chevron = canOpen
     ? `<svg class="icon review-author-chevron"><use href="#icon-chevron-right"/></svg>`
     : '';
+  const usernameLine = uname
+    ? `<div class="review-author-user"><span>${escapeHtml(uname)}</span>${chevron}</div>`
+    : (canOpen ? `<div class="review-author-user"><span>Открыть профиль</span>${chevron}</div>` : '');
   const inner = `
     ${reviewAuthorAvatarHTML(review)}
     <div class="review-author">
       <div class="review-author-name">${escapeHtml(name)}</div>
-      ${uname ? `<div class="review-author-user">${escapeHtml(uname)}</div>` : ''}
+      ${usernameLine}
     </div>
-    ${chevron}
   `;
   if (canOpen) {
     return `<button type="button" class="review-author-hit" onclick="openUserProfile('${escapeAttr(String(review.author_user_id))}')" aria-label="Открыть профиль">${inner}</button>`;
@@ -3177,7 +3209,6 @@ function publicProfileHTML(profile) {
             ${rawText ? `<div class="review-text ${long ? 'clamped' : ''}" id="review-text-${escapeAttr(rid)}">${escapeHtml(rawText)}</div>` : ''}
             ${long ? `<button type="button" class="review-read-more" id="review-read-more-${escapeAttr(rid)}" onclick="toggleReviewText('${escapeAttr(rid)}')" aria-expanded="false">Читать полностью</button>` : ''}
             ${reviewPhotoGridHTML({...r, photos: r.photos || []}, 'profile')}
-            <div class="review-order-meta">${r.order_title ? escapeHtml(r.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(r.order_id || ''))}</div>
           </article>`;
         }).join('')}
       </div>`
@@ -3191,6 +3222,7 @@ function publicProfileHTML(profile) {
       <div class="profile-hero-avatar">${avatarHTML}</div>
       <div class="profile-hero-name">${escapeHtml(name)}</div>
       ${uname ? `<div class="profile-hero-username">${escapeHtml(uname)}</div>` : ''}
+      <div class="profile-hero-badge"><svg class="icon"><use href="#icon-heart"/></svg>Покупатель DollieLand</div>
     </div>
 
     <div class="profile-stats">
@@ -3602,11 +3634,6 @@ function saveReviewDraft() {
 }
 function clearReviewDraft(orderId) { try { localStorage.removeItem(reviewDraftKey(orderId)); } catch (_) {} }
 
-function autoGrowReviewTextarea(el) {
-  if (!el) return;
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 280) + 'px';
-}
 
 function reviewRatingText(n) {
   return ['', 'Совсем не понравилось', 'Есть что улучшить', 'Нормально', 'Очень понравилось', 'Всё прекрасно'][n] || 'Выберите оценку';
@@ -3645,7 +3672,7 @@ function renderReviewForm() {
         <label class="review-anon-option"><input type="radio" name="review-anon" value="public" ${draft.is_anonymous ? '' : 'checked'}> Показывать моё имя и @username</label>
         <label class="review-anon-option"><input type="radio" name="review-anon" value="anonymous" ${draft.is_anonymous ? 'checked' : ''}> Скрыть имя и @username</label>
       </div>
-      <div class="review-form-note">При анонимном отзыве другие пользователи увидят только «Анонимный покупатель». Администратор всё равно видит автора.</div>
+      <div class="review-form-note">При анонимном отзыве другие пользователи увидят только «Аноним». Профиль автора и @username недоступны. Администратор всё равно видит автора.</div>
     </div>
 
     <button class="btn btn-primary btn-block review-publish-btn" id="review-submit-btn" onclick="submitReview()">
@@ -3654,13 +3681,11 @@ function renderReviewForm() {
   `;
   const textarea = document.getElementById('review-text-input');
   textarea?.addEventListener('input', () => {
-    autoGrowReviewTextarea(textarea);
     const c = document.getElementById('review-char-count'); if (c) c.textContent = textarea.value.length;
     saveReviewDraft();
   });
   document.querySelectorAll('input[name="review-anon"]').forEach(el => el.addEventListener('change', saveReviewDraft));
   document.getElementById('review-photo-input')?.addEventListener('change', onReviewPhotoChange);
-  autoGrowReviewTextarea(textarea);
   renderReviewPhotoPreviews();
 }
 
