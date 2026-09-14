@@ -475,7 +475,7 @@
   .reviews-photos-title { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .reviews-photos-title .icon { width: 15px; height: 15px; color: var(--pink-accent); }
 
-  /* FIX: горизонтальная лента фото покупателей — свайп влево-вправо */
+  /* Горизонтальная лента фото покупателей */
   .reviews-photos-grid {
     display: flex;
     gap: 6px;
@@ -496,10 +496,6 @@
     scroll-snap-align: start;
   }
   .reviews-photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .reviews-photo-cell-more {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: rgba(30, 20, 24, 0.55); color: #fff; font-size: 14px; font-weight: 800;
-  }
   .reviews-photos-all-btn {
     display: inline-flex; align-items: center; gap: 4px;
     font-size: 12px; font-weight: 700; color: var(--pink-accent);
@@ -512,16 +508,17 @@
   .review-sort-btn { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .review-sort-btn .icon { width: 14px; height: 14px; }
 
+  /* FIX #2: воздух между заголовком и подписью CTA */
   .review-cta {
-    width: 100%; display: flex; align-items: center; gap: 12px;
+    width: 100%; display: flex; align-items: center; gap: 14px;
     padding: 14px 16px; background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r-lg); box-shadow: var(--shadow-soft); margin-bottom: 14px; text-align: left;
   }
   .review-cta .review-cta-icon { width: 40px; height: 40px; border-radius: 14px; background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
   .review-cta .review-cta-icon .icon { width: 20px; height: 20px; }
-  .review-cta-main { flex: 1; min-width: 0; }
-  .review-cta-title { font-size: 13.5px; font-weight: 800; }
-  .review-cta-sub { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+  .review-cta-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .review-cta-title { font-size: 13.5px; font-weight: 800; line-height: 1.2; }
+  .review-cta-sub { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; margin-top: 0; display: block; }
 
   .review-card {
     background: var(--surface); border: 1px solid var(--border);
@@ -529,21 +526,51 @@
     box-shadow: var(--shadow-soft); overflow: hidden;
   }
   .review-card-head { display: flex; align-items: center; gap: 10px; }
-  .review-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
+
+  /* FIX #3: кликабельный блок автора как одна зона */
+  .review-author-hit {
+    flex: 1; min-width: 0;
+    display: flex; align-items: center; gap: 10px;
+    padding: 4px 6px 4px 0;
+    margin: -4px 0;
+    background: none; border: none;
+    text-align: left; color: inherit;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+    cursor: pointer;
+  }
+  .review-author-hit:active { background: var(--surface-soft); }
+  .review-author-hit.is-static { cursor: default; }
+  .review-author-hit.is-static:active { background: none; }
+
+  .review-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; overflow: hidden; }
   .review-avatar .icon { width: 18px; height: 18px; }
+  .review-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .review-avatar.letter { font-weight: 800; font-size: 15px; color: var(--pink-accent); }
+
   .review-author { flex: 1; min-width: 0; }
   .review-author-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .review-author-user { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
+  .review-author-chevron { color: var(--text-secondary); width: 16px; height: 16px; flex-shrink: 0; margin-left: 2px; }
+
   .review-date { font-size: 10.5px; color: var(--text-secondary); align-self: flex-start; white-space: nowrap; }
+
   .review-rating { display: flex; gap: 2px; margin: 10px 0 7px; color: var(--star); }
   .review-rating .icon { width: 14px; height: 14px; fill: currentColor; stroke: currentColor; }
   .review-rating .icon.off { opacity: 0.25; fill: none; }
+
+  /* FIX #1: разворачивание текста внутри карточки */
   .review-text { font-size: 13px; line-height: 1.55; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
   .review-text.clamped { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
-  .review-read-more { color: var(--pink-accent); font-size: 12px; font-weight: 700; margin-top: 5px; }
+  .review-read-more {
+    color: var(--pink-accent); font-size: 12px; font-weight: 700;
+    margin-top: 6px; background: none; border: none; padding: 0;
+    cursor: pointer;
+  }
+
   .review-order-meta { font-size: 10.5px; color: var(--text-secondary); margin-top: 10px; }
 
-  /* FIX: горизонтальная лента фотографий внутри одного отзыва */
+  /* Горизонтальная лента фотографий внутри одного отзыва */
   .review-photos {
     display: flex;
     gap: 6px;
@@ -568,11 +595,7 @@
     padding: 0;
     scroll-snap-align: start;
   }
-  .review-photo-thumb img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  .review-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .review-photo-more {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
@@ -781,6 +804,94 @@
   .theme-option-row.selected .check-dot { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
   .theme-option-row.selected .check-dot .icon { width: 12px; height: 12px; color: #FFFFFF; }
 
+  /* PRIVACY */
+  .privacy-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 16px; margin-bottom: 14px;
+    box-shadow: var(--shadow-soft);
+  }
+  .privacy-row { display: flex; align-items: center; gap: 12px; }
+  .privacy-row-text { flex: 1; min-width: 0; }
+  .privacy-row-title { font-size: 14px; font-weight: 700; }
+  .privacy-row-desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.45; }
+  .toggle-switch {
+    position: relative; width: 48px; height: 28px; border-radius: 999px;
+    background: var(--border); flex-shrink: 0; cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .toggle-switch.on { background: var(--pink-accent); }
+  .toggle-switch::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 22px; height: 22px; border-radius: 50%; background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.18);
+    transition: transform 0.2s cubic-bezier(.22,1,.36,1);
+  }
+  .toggle-switch.on::after { transform: translateX(20px); }
+  .toggle-switch.busy { opacity: 0.6; pointer-events: none; }
+  .privacy-preview-label { font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: 4px 0 10px; }
+  .privacy-preview {
+    background: var(--surface-soft); border-radius: var(--r-md);
+    padding: 14px; display: flex; align-items: center; gap: 12px;
+  }
+  .privacy-preview .avatar { width: 46px; height: 46px; }
+  .privacy-preview-main { flex: 1; min-width: 0; }
+  .privacy-preview-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .privacy-preview-stats { font-size: 11.5px; color: var(--text-secondary); margin-top: 3px; }
+  .privacy-preview-rating { display: inline-flex; align-items: center; gap: 3px; color: var(--star); font-size: 11.5px; font-weight: 700; margin-top: 4px; }
+  .privacy-preview-rating .icon { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; }
+
+  /* PUBLIC PROFILE SHEET */
+  .profile-hero {
+    text-align: center;
+    padding: 4px 0 20px;
+  }
+  .profile-hero-avatar {
+    width: 88px; height: 88px; border-radius: 50%;
+    background: var(--pink-soft); color: var(--pink-accent);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 38px; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(231,142,173,0.18);
+  }
+  .profile-hero-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .profile-hero-avatar .icon { width: 40px; height: 40px; }
+  .profile-hero-name {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 24px; color: var(--text); letter-spacing: 0.1px;
+    overflow-wrap: anywhere;
+  }
+  .profile-hero-username { font-size: 13px; color: var(--text-secondary); margin-top: 3px; overflow-wrap: anywhere; }
+
+  .profile-stats {
+    display: flex; justify-content: center; gap: 0;
+    margin: 18px auto 22px; max-width: 340px;
+    background: var(--surface-soft); border-radius: var(--r-lg);
+    padding: 14px 6px;
+  }
+  .profile-stat { flex: 1; text-align: center; position: relative; }
+  .profile-stat + .profile-stat::before {
+    content: ''; position: absolute; left: 0; top: 15%; bottom: 15%;
+    width: 1px; background: var(--border);
+  }
+  .profile-stat-num { font-size: 20px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+  .profile-stat-num.accent { color: var(--pink-accent); }
+  .profile-stat-label { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; letter-spacing: 0.2px; }
+  .profile-stat-rating { display: inline-flex; align-items: center; gap: 3px; font-size: 20px; font-weight: 800; color: var(--pink-accent); }
+  .profile-stat-rating .icon { width: 15px; height: 15px; fill: currentColor; stroke: currentColor; }
+
+  .profile-reviews-title {
+    font-size: 14.5px; font-weight: 700; color: var(--text);
+    margin: 4px 0 10px;
+  }
+  .profile-review-list { display: grid; gap: 10px; }
+
+  @media (max-width: 360px) {
+    .profile-hero-avatar { width: 76px; height: 76px; font-size: 32px; }
+    .profile-hero-name { font-size: 21px; }
+    .profile-stat-num { font-size: 18px; }
+  }
+
   .seasonal-banner {
     border-radius: var(--r-xl); padding: 18px 20px;
     margin-bottom: 18px; color: #FFFFFF;
@@ -797,7 +908,6 @@
   @keyframes deco-fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
   @keyframes deco-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.75; } }
   @keyframes deco-sway { 0%, 100% { transform: translateX(-8px); } 50% { transform: translateX(8px); } }
-  @keyframes deco-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes deco-fly {
     0% { transform: translateX(0) translateY(0); }
     50% { transform: translateX(60vw) translateY(-30px); }
@@ -853,7 +963,6 @@
   .sheet-content { padding: 8px 20px 4px; }
   .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
 
-  /* FIX: крестик в шапке sheet */
   .sheet-header {
     display: flex; align-items: flex-start; justify-content: space-between;
     gap: 10px; margin-bottom: 14px;
@@ -946,6 +1055,8 @@
   <symbol id="icon-filter" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 4 21 4 14 12 14 20 10 18 10 12 3 4"/></symbol>
   <symbol id="icon-sort" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="12" x2="12" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/></symbol>
   <symbol id="icon-image" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="1.8"/><path d="M4 19l5-5 4 4 3-3 4 4"/></symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8.5-8 9.5-4.5-1-8-4.5-8-9.5V6l8-3z"/></symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
 </svg>
 
 <div class="app">
@@ -1064,10 +1175,10 @@
         <span class="label">Уведомления</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
-      <button class="menu-item" onclick="comingSoon('Моя коллекция')">
-        <svg class="icon"><use href="#icon-layers"/></svg>
-        <span class="label">Моя коллекция</span>
-        <span class="badge">скоро</span>
+      <button class="menu-item" onclick="openPrivacySheet()">
+        <svg class="icon"><use href="#icon-shield"/></svg>
+        <span class="label">Конфиденциальность</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
       <button class="menu-item" onclick="comingSoon('Избранное')">
         <svg class="icon" data-seasonal-icon="heart"><use href="#icon-heart"/></svg>
@@ -1138,6 +1249,31 @@
       <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
     </div>
     <div id="my-reviews-list"></div>
+  </div>
+</div>
+
+<!-- НОВОЕ: публичный профиль -->
+<div class="bottom-sheet" id="sheet-user-profile">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <h2 id="user-profile-header-title">Профиль</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div id="user-profile-content"></div>
+  </div>
+</div>
+
+<!-- НОВОЕ: конфиденциальность -->
+<div class="bottom-sheet" id="sheet-privacy">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <h2>Конфиденциальность</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <p class="dollie-subtitle" style="margin-top:-8px">Управляйте тем, что видят другие пользователи.</p>
+    <div id="privacy-content"></div>
   </div>
 </div>
 
@@ -1469,11 +1605,14 @@ async function apiFetch(path, params, opts) {
       if (!res.ok) {
         let bodyPreview = '';
         try { bodyPreview = (await res.text()).slice(0, 160); } catch (_) {}
-        throw new Error(`HTTP ${res.status}${bodyPreview ? ' — ' + bodyPreview : ''}`);
+        const err = new Error(`HTTP ${res.status}${bodyPreview ? ' — ' + bodyPreview : ''}`);
+        err.status = res.status;
+        throw err;
       }
       return await res.json();
     } catch (err) {
       clearTimeout(timer);
+      if (err.status) { lastError = err; break; }
       lastError = err?.name === 'AbortError'
         ? new Error('NETWORK: превышено время ожидания')
         : (err instanceof TypeError ? new Error('NETWORK: ' + (err?.message || 'ошибка сети')) : err);
@@ -1483,11 +1622,24 @@ async function apiFetch(path, params, opts) {
   throw lastError;
 }
 
+async function apiPatch(path, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
+  const res = await fetch(API_BASE + path, { method: 'PATCH', headers, body: JSON.stringify(body || {}) });
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+  data.__status = res.status;
+  return data;
+}
+
 async function apiPost(path, body) {
   const headers = { 'Content-Type': 'application/json' };
   if (tg?.initData) headers['Authorization'] = `tma ${tg.initData}`;
   const res = await fetch(API_BASE + path, { method: 'POST', headers, body: JSON.stringify(body || {}) });
-  return res.json();
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+  data.__status = res.status;
+  return data;
 }
 
 /* Utilities */
@@ -2537,7 +2689,7 @@ function formatReviewDate(iso) {
   return d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
 }
 
-/* FIX: имя пользователя вместо "Покупатель" */
+/* Единая логика отображения имени */
 function publicReviewName(review) {
   if (review.is_anonymous) return 'Анонимный покупатель';
   const name = (review.display_name || '').trim();
@@ -2557,6 +2709,42 @@ function publicReviewUsername(review) {
   return uname;
 }
 
+/* Инициал для fallback-аватара */
+function initialFromName(name) {
+  const s = String(name || '').trim();
+  if (!s) return 'D';
+  const first = s.replace(/^@/, '').charAt(0);
+  return first ? first.toUpperCase() : 'D';
+}
+
+function reviewAuthorAvatarHTML(review) {
+  const name = publicReviewName(review);
+  const letter = initialFromName(name);
+  return `<div class="review-avatar letter">${escapeHtml(letter)}</div>`;
+}
+
+/* Кнопка-блок автора: кликабельна только если профиль доступен */
+function reviewAuthorBlockHTML(review) {
+  const name = publicReviewName(review);
+  const uname = publicReviewUsername(review);
+  const canOpen = !review.is_anonymous && review.author_profile_available && review.author_user_id;
+  const chevron = canOpen
+    ? `<svg class="icon review-author-chevron"><use href="#icon-chevron-right"/></svg>`
+    : '';
+  const inner = `
+    ${reviewAuthorAvatarHTML(review)}
+    <div class="review-author">
+      <div class="review-author-name">${escapeHtml(name)}</div>
+      ${uname ? `<div class="review-author-user">${escapeHtml(uname)}</div>` : ''}
+    </div>
+    ${chevron}
+  `;
+  if (canOpen) {
+    return `<button type="button" class="review-author-hit" onclick="openUserProfile('${escapeAttr(String(review.author_user_id))}')" aria-label="Открыть профиль">${inner}</button>`;
+  }
+  return `<div class="review-author-hit is-static">${inner}</div>`;
+}
+
 function reviewPhotoGridHTML(review, source) {
   const photos = Array.isArray(review.photos) ? review.photos : [];
   if (!photos.length) return '';
@@ -2571,27 +2759,35 @@ function reviewPhotoGridHTML(review, source) {
   </div>`;
 }
 
+/* FIX #1: «Читать полностью» разворачивает текст в карточке */
 function reviewCardHTML(review) {
   const long = (review.text || '').length > 260;
   const text = escapeHtml(review.text || '');
-  const publicName = publicReviewName(review);
-  const publicUsername = publicReviewUsername(review);
+  const rid = Number(review.id) || 0;
   return `
-    <article class="review-card">
+    <article class="review-card" data-review-id="${rid}">
       <div class="review-card-head">
-        <div class="review-avatar"><svg class="icon"><use href="#icon-user"/></svg></div>
-        <div class="review-author">
-          <div class="review-author-name">${escapeHtml(publicName)}</div>
-          ${publicUsername ? `<div class="review-author-user">${escapeHtml(publicUsername)}</div>` : ''}
-        </div>
+        ${reviewAuthorBlockHTML(review)}
         <div class="review-date">${formatReviewDate(review.created_at)}</div>
       </div>
       ${starsHTML(review.rating)}
-      ${text ? `<div class="review-text ${long ? 'clamped' : ''}">${text}</div>
-        ${long ? `<button class="review-read-more" onclick="openPhotoLightbox('reviews', ${Number(review.id) || 0}, 0)">Читать полностью</button>` : ''}` : ''}
+      ${text ? `
+        <div class="review-text ${long ? 'clamped' : ''}" id="review-text-${rid}">${text}</div>
+        ${long ? `<button class="review-read-more" id="review-read-more-${rid}" onclick="toggleReviewText(${rid})">Читать полностью</button>` : ''}
+      ` : ''}
       ${reviewPhotoGridHTML(review, 'reviews')}
       <div class="review-order-meta">${review.order_title ? escapeHtml(review.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(review.order_id || ''))}</div>
     </article>`;
+}
+
+/* Разворот текста внутри карточки отзыва — без открытия lightbox */
+function toggleReviewText(reviewId) {
+  const textEl = document.getElementById('review-text-' + reviewId);
+  const btn = document.getElementById('review-read-more-' + reviewId);
+  if (!textEl || !btn) return;
+  const expanded = textEl.classList.toggle('clamped') === false;
+  btn.textContent = expanded ? 'Свернуть' : 'Читать полностью';
+  hapticSelection();
 }
 
 function renderReviewsStats(stats) {
@@ -2628,7 +2824,6 @@ function collectAllReviewPhotos() {
   return result;
 }
 
-/* FIX: горизонтальная лента фото */
 function renderAllPhotosGallery() {
   const allPhotos = collectAllReviewPhotos();
   if (!allPhotos.length) return '';
@@ -2653,7 +2848,6 @@ function renderAllPhotosGallery() {
     </div>`;
 }
 
-/* FIX: клиентская сортировка отзывов */
 function sortReviewsClientSide(list, sortKey) {
   const arr = [...list];
   if (sortKey === 'newest') {
@@ -2682,12 +2876,12 @@ function renderReviewsPage(data) {
   const stats = data?.stats || lastReviewsStats || { total_reviews: 0 };
   const canWrite = reviewableOrdersCache.length > 0;
 
-  // Всегда применяем клиентскую сортировку
   reviewListCache = sortReviewsClientSide(reviewListCache, reviewSort);
 
   let html = renderReviewsStats(stats);
   html += renderAllPhotosGallery();
   if (canWrite) {
+    /* FIX #2: gap увеличен, чтобы подпись не липла к заголовку */
     html += `
       <button class="review-cta" onclick="openReviewSheet()">
         <span class="review-cta-icon"><svg class="icon"><use href="#icon-star"/></svg></span>
@@ -2723,7 +2917,7 @@ function renderReviewsPage(data) {
 
 function computeReviewsFingerprint(publicData, mine, eligible) {
   const pub = (publicData?.reviews || []).map(r =>
-    `${r.id}:${r.updated_at || r.created_at || ''}:${(r.photos || []).length}`
+    `${r.id}:${r.updated_at || r.created_at || ''}:${(r.photos || []).length}:${r.author_profile_available ? 1 : 0}`
   ).join('|');
   const own = (mine?.reviews || []).map(r =>
     `${r.id}:${r.updated_at || r.created_at || ''}:${(r.photos || []).length}`
@@ -2758,7 +2952,6 @@ async function loadReviews(isManual = false, opts = {}) {
     if (!publicData?.ok) throw new Error('reviews');
 
     const newFingerprint = computeReviewsFingerprint(publicData, mineData, eligibleData);
-
     const sortChanged = (publicData.sort || 'newest') !== reviewSort;
     if (silentIfSame && reviewsLoadedOnce && newFingerprint === reviewsRenderFingerprint && !sortChanged) {
       reviewsLoadInflight = false;
@@ -2815,13 +3008,11 @@ function openReviewSortSheet() {
   openSheet('review-sort');
 }
 
-/* FIX: полный сброс кэша + перезагрузка с сервера */
 function selectReviewSort(key) {
   if (key === reviewSort) { closeSheet(); return; }
   reviewSort = key;
   closeSheet();
   hapticSelection();
-  // Полный сброс кэша, чтобы новый порядок пришёл с сервера
   reviewListCache = [];
   reviewsRenderFingerprint = '';
   reviewsLoadedOnce = false;
@@ -2857,6 +3048,264 @@ function renderMyReviewsList() {
       </div>`).join('')}
   </div>`;
   stripAfterInsert(container);
+}
+
+/* ============ PUBLIC USER PROFILE ============ */
+let publicProfileCache = {};
+let publicProfileInflight = null;
+
+function publicProfileSkeletonHTML() {
+  return `
+    <div class="profile-hero">
+      <div class="profile-hero-avatar" style="background:var(--surface-soft); color:transparent;">·</div>
+      <div class="skeleton-line" style="width:120px;height:14px;margin:0 auto 8px;"></div>
+      <div class="skeleton-line" style="width:80px;height:10px;margin:0 auto;"></div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="skeleton-line" style="width:40px;height:16px;margin:0 auto 6px;"></div><div class="skeleton-line" style="width:56px;height:8px;margin:0 auto;"></div></div>
+      <div class="profile-stat"><div class="skeleton-line" style="width:40px;height:16px;margin:0 auto 6px;"></div><div class="skeleton-line" style="width:56px;height:8px;margin:0 auto;"></div></div>
+      <div class="profile-stat"><div class="skeleton-line" style="width:40px;height:16px;margin:0 auto 6px;"></div><div class="skeleton-line" style="width:56px;height:8px;margin:0 auto;"></div></div>
+    </div>`;
+}
+
+function publicProfileErrorHTML(message, canRetry) {
+  return `
+    <div class="empty-state">
+      <h3>${escapeHtml(message)}</h3>
+      ${canRetry ? `<button class="btn btn-primary" onclick="retryUserProfile()">Повторить</button>` : ''}
+    </div>`;
+}
+
+function publicProfileHTML(profile) {
+  const name = (profile.display_name || 'Покупатель').trim() || 'Покупатель';
+  const uname = (profile.username || '').trim();
+  const letter = initialFromName(name);
+  const avatarHTML = profile.avatar_url
+    ? `<img src="${escapeAttr(profile.avatar_url)}" alt="">`
+    : escapeHtml(letter);
+
+  const ordersCount = Number(profile.orders_count || 0);
+  const reviewsCount = Number(profile.reviews_count || 0);
+  const avg = Number(profile.average_rating || 0);
+
+  const reviews = Array.isArray(profile.reviews) ? profile.reviews : [];
+
+  const reviewsBlock = reviews.length
+    ? `<div class="profile-review-list">
+        ${reviews.map(r => `
+          <article class="review-card">
+            ${starsHTML(r.rating)}
+            ${r.text ? `<div class="review-text">${escapeHtml(r.text)}</div>` : ''}
+            ${reviewPhotoGridHTML({...r, photos: r.photos || []}, 'profile')}
+            <div class="review-order-meta">${r.order_title ? escapeHtml(r.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(r.order_id || ''))}</div>
+          </article>
+        `).join('')}
+      </div>`
+    : `<div class="empty-state" style="padding-top:8px;">
+        <h3>Пока нет опубликованных отзывов</h3>
+        <p>Когда пользователь оставит первый публичный отзыв, он появится здесь.</p>
+      </div>`;
+
+  return `
+    <div class="profile-hero">
+      <div class="profile-hero-avatar">${avatarHTML}</div>
+      <div class="profile-hero-name">${escapeHtml(name)}</div>
+      ${uname ? `<div class="profile-hero-username">${escapeHtml(uname)}</div>` : ''}
+    </div>
+
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-num">${ordersCount}</div>
+        <div class="profile-stat-label">${pluralize(ordersCount, 'заказ', 'заказа', 'заказов')}</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-num">${reviewsCount}</div>
+        <div class="profile-stat-label">${pluralize(reviewsCount, 'отзыв', 'отзыва', 'отзывов')}</div>
+      </div>
+      <div class="profile-stat">
+        ${avg ? `<div class="profile-stat-rating"><svg class="icon"><use href="#icon-star"/></svg>${avg.toFixed(1)}</div>` : `<div class="profile-stat-num accent">—</div>`}
+        <div class="profile-stat-label">средний рейтинг</div>
+      </div>
+    </div>
+
+    <div class="profile-reviews-title">Отзывы</div>
+    ${reviewsBlock}
+  `;
+}
+
+async function openUserProfile(uid) {
+  if (!uid) return;
+  const content = document.getElementById('user-profile-content');
+  const headerTitle = document.getElementById('user-profile-header-title');
+  if (!content) return;
+
+  headerTitle.textContent = 'Профиль';
+  content.innerHTML = publicProfileSkeletonHTML();
+
+  // Кэш
+  if (publicProfileCache[uid]) {
+    const cached = publicProfileCache[uid];
+    if (cached.__hidden) {
+      content.innerHTML = publicProfileErrorHTML('Профиль скрыт пользователем', false);
+    } else if (cached.__notfound) {
+      content.innerHTML = publicProfileErrorHTML('Профиль не найден', false);
+    } else {
+      renderPublicProfileInto(content, headerTitle, cached);
+    }
+    openSheet('user-profile');
+    return;
+  }
+
+  openSheet('user-profile');
+
+  if (publicProfileInflight === uid) return;
+  publicProfileInflight = uid;
+
+  try {
+    const data = await apiFetch('/api/users/' + encodeURIComponent(uid) + '/public-profile', {}, { timeoutMs: 10000, retries: 1 });
+    if (!data?.ok || !data.profile) {
+      content.innerHTML = publicProfileErrorHTML('Профиль недоступен', false);
+      return;
+    }
+    publicProfileCache[uid] = data.profile;
+    renderPublicProfileInto(content, headerTitle, data.profile);
+  } catch (e) {
+    const status = e?.status;
+    if (status === 404 || /profile_hidden/.test(e?.message || '')) {
+      publicProfileCache[uid] = { __hidden: true };
+      content.innerHTML = publicProfileErrorHTML('Профиль скрыт пользователем', false);
+    } else if (status === 403) {
+      content.innerHTML = publicProfileErrorHTML('Профиль недоступен', false);
+    } else {
+      content.innerHTML = publicProfileErrorHTML('Не удалось загрузить профиль', true);
+    }
+  } finally {
+    if (publicProfileInflight === uid) publicProfileInflight = null;
+  }
+}
+
+function retryUserProfile() {
+  const uid = publicProfileInflight;
+  // Сброс кэша для повторной попытки
+  if (uid) delete publicProfileCache[uid];
+  // Попробуем найти последний uid из открытого профиля
+  const content = document.getElementById('user-profile-content');
+  if (content) content.innerHTML = publicProfileSkeletonHTML();
+  // Найдём uid из кнопки, которая открыла профиль
+  const lastUid = content?.dataset?.lastUid;
+  if (lastUid) openUserProfile(lastUid);
+}
+
+function renderPublicProfileInto(content, headerTitle, profile) {
+  const name = (profile.display_name || 'Покупатель').trim() || 'Покупатель';
+  headerTitle.textContent = name;
+  content.innerHTML = publicProfileHTML(profile);
+  stripAfterInsert(content);
+}
+
+/* ============ PRIVACY ============ */
+let privacyState = null;
+let privacyInflight = false;
+
+function privacyHTML() {
+  const on = !!(privacyState && privacyState.public_profile);
+  const me = tg?.initDataUnsafe?.user;
+  const myName = me?.first_name ? `${me.first_name}${me.last_name ? ' ' + me.last_name : ''}` : 'Вы';
+  const myUname = me?.username ? '@' + me.username : '';
+
+  const totalOrders = ordersCache.length;
+  const totalReviews = myReviewsCache.length;
+  const avg = totalReviews
+    ? (myReviewsCache.reduce((s, r) => s + (Number(r.rating) || 0), 0) / totalReviews).toFixed(1)
+    : '';
+
+  return `
+    <div class="privacy-card">
+      <div class="privacy-row">
+        <div class="privacy-row-text">
+          <div class="privacy-row-title">Публичный профиль</div>
+          <div class="privacy-row-desc">
+            ${on
+              ? 'Другие пользователи смогут открыть ваш профиль из опубликованных отзывов и увидеть ваши заказы и отзывы.'
+              : 'Ваш профиль скрыт. Другие пользователи не смогут открыть его из ваших отзывов.'}
+          </div>
+        </div>
+        <button type="button" class="toggle-switch ${on ? 'on' : ''}" id="privacy-toggle" onclick="togglePublicProfile()" aria-pressed="${on ? 'true' : 'false'}" aria-label="Публичный профиль"></button>
+      </div>
+    </div>
+
+    <div class="privacy-preview-label">Так вас будут видеть другие</div>
+    <div class="privacy-preview">
+      <div class="avatar letter">${escapeHtml(initialFromName(myName))}</div>
+      <div class="privacy-preview-main">
+        <div class="privacy-preview-name">${escapeHtml(myName)}</div>
+        ${myUname ? `<div class="privacy-preview-stats">${escapeHtml(myUname)}</div>` : ''}
+        <div class="privacy-preview-stats">${totalOrders} ${pluralize(totalOrders, 'заказ', 'заказа', 'заказов')} · ${totalReviews} ${pluralize(totalReviews, 'отзыв', 'отзыва', 'отзывов')}</div>
+        ${avg ? `<div class="privacy-preview-rating"><svg class="icon"><use href="#icon-star"/></svg>${avg}</div>` : ''}
+      </div>
+    </div>
+
+    <p style="font-size:11.5px;color:var(--text-secondary);margin-top:16px;line-height:1.5;">
+      Ваши Dollies, история транзакций и суммы заказов никогда не показываются другим пользователям.
+    </p>
+  `;
+}
+
+function renderPrivacyContent() {
+  const container = document.getElementById('privacy-content');
+  if (!container) return;
+  container.innerHTML = privacyHTML();
+}
+
+async function openPrivacySheet() {
+  openSheet('privacy');
+  const container = document.getElementById('privacy-content');
+  if (container) {
+    container.innerHTML = `<div class="privacy-card"><div class="privacy-row"><div class="privacy-row-text"><div class="skeleton-line" style="width:160px;height:14px;margin-bottom:8px;"></div><div class="skeleton-line" style="width:100%;height:10px;"></div></div></div></div>`;
+  }
+  try {
+    const data = await apiFetch('/api/me/privacy', {}, { timeoutMs: 8000, retries: 1 });
+    privacyState = data?.ok ? { public_profile: !!data.public_profile } : { public_profile: true };
+  } catch (e) {
+    privacyState = { public_profile: true };
+  }
+  renderPrivacyContent();
+}
+
+async function togglePublicProfile() {
+  if (privacyInflight) return;
+  const toggleEl = document.getElementById('privacy-toggle');
+  const current = !!(privacyState && privacyState.public_profile);
+  const next = !current;
+  privacyInflight = true;
+  toggleEl?.classList.add('busy');
+
+  // Оптимистично
+  privacyState = { public_profile: next };
+  renderPrivacyContent();
+  document.getElementById('privacy-toggle')?.classList.add('busy');
+
+  try {
+    const res = await apiPatch('/api/me/privacy', { public_profile: next });
+    if (!res?.ok) throw new Error(res?.error || 'save_failed');
+    privacyState = { public_profile: !!res.public_profile };
+    hapticNotification('success');
+    showToast(next ? 'Публичный профиль включён' : 'Публичный профиль скрыт');
+    // Сбросить кэш отзывов, чтобы chevron-ы обновились
+    reviewsRenderFingerprint = '';
+    publicProfileCache = {};
+    // Перезагрузить отзывы, чтобы увидеть актуальное состояние
+    if (reviewsLoadedOnce) loadReviews(true);
+  } catch (e) {
+    // Откат
+    privacyState = { public_profile: current };
+    hapticNotification('error');
+    showToast('Не удалось сохранить настройку');
+  } finally {
+    privacyInflight = false;
+    renderPrivacyContent();
+    document.getElementById('privacy-toggle')?.classList.remove('busy');
+  }
 }
 
 /* Lightbox */
@@ -3017,11 +3466,7 @@ async function openReviewSheet(orderId = null, opts = {}) {
 
   if (skipFetch && orderId) {
     const order = orderHint || { id: orderId, title: '', received_at: null };
-    reviewableOrdersCache = [{
-      id: order.id,
-      title: order.title || '',
-      received_at: order.received_at || null,
-    }];
+    reviewableOrdersCache = [{ id: order.id, title: order.title || '', received_at: order.received_at || null }];
     renderReviewForm();
     return;
   }
@@ -3085,13 +3530,6 @@ function reviewRatingText(n) {
   return ['', 'Совсем не понравилось', 'Есть что улучшить', 'Нормально', 'Очень понравилось', 'Всё прекрасно'][n] || 'Выберите оценку';
 }
 
-let lastStarPointerTime = 0;
-function onStarPointerDown(ev, n) {
-  const now = performance.now();
-  if (now - lastStarPointerTime < 300) return;
-  lastStarPointerTime = now;
-}
-
 function renderReviewForm() {
   const body = document.getElementById('review-sheet-body');
   const order = reviewableOrdersCache.find(o => String(o.id) === String(selectedReviewOrderId));
@@ -3103,7 +3541,7 @@ function renderReviewForm() {
     <div class="dollie-section-title">${escapeHtml(order.title || ('Заказ №' + order.id))}</div>
     <div style="font-size:10.5px;color:var(--text-secondary);margin-top:-10px;margin-bottom:10px">Заказ №${escapeHtml(String(order.id))}</div>
     <div class="review-star-row" id="review-star-row">
-      ${[1,2,3,4,5].map(n => `<button type="button" class="review-star-btn ${selectedReviewRating >= n ? 'active' : ''}" data-star="${n}" onclick="setReviewRating(${n})" onpointerdown="onStarPointerDown(event, ${n})" aria-label="${n} из 5"><svg class="icon"><use href="#icon-star"/></svg></button>`).join('')}
+      ${[1,2,3,4,5].map(n => `<button type="button" class="review-star-btn ${selectedReviewRating >= n ? 'active' : ''}" data-star="${n}" onclick="setReviewRating(${n})" aria-label="${n} из 5"><svg class="icon"><use href="#icon-star"/></svg></button>`).join('')}
     </div>
     <div class="review-rating-hint" id="review-rating-hint">${selectedReviewRating ? reviewRatingText(selectedReviewRating) : 'Выберите оценку'}</div>
     <textarea class="review-textarea" id="review-text-input" maxlength="${REVIEW_MAX_TEXT}" placeholder="Расскажите о покупке — что особенно понравилось?">${escapeHtml(draft.text || '')}</textarea>
@@ -3157,11 +3595,8 @@ async function compressReviewImage(file) {
   if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) throw new Error('bad_photo_format');
   if (file.size > 12 * 1024 * 1024) throw new Error('photo_too_large');
   let bitmap;
-  try {
-    bitmap = await createImageBitmap(file);
-  } catch (_) {
-    throw new Error('photo_processing_failed');
-  }
+  try { bitmap = await createImageBitmap(file); }
+  catch (_) { throw new Error('photo_processing_failed'); }
   const maxSide = 2200;
   const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement('canvas');
