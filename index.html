@@ -1792,6 +1792,13 @@ async function apiPost(path, body) {
   return data;
 }
 
+// Record one real Mini App open after Telegram authentication is available.
+function recordMiniAppOpen() {
+  if (!userId) return;
+  apiPost('/api/me/app-open', {}).catch(() => {});
+}
+recordMiniAppOpen();
+
 /* Utilities */
 function pluralize(n, one, few, many) {
   const m10 = n % 10, m100 = n % 100;
