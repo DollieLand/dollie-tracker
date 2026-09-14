@@ -51,6 +51,63 @@
   .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; flex-shrink: 0; }
   .icon.filled { fill: currentColor; stroke: currentColor; }
 
+  /* ========= PRELOADER ========= */
+  #preloader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 24px;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+  }
+  #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .preloader-logo {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 34px; color: var(--pink-accent); letter-spacing: 0.5px;
+    animation: preloader-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes preloader-pulse {
+    0%, 100% { opacity: 0.5; transform: scale(0.97); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+  .preloader-spinner {
+    width: 44px; height: 44px; position: relative;
+  }
+  .preloader-spinner::before,
+  .preloader-spinner::after {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 50%; border: 2.5px solid transparent;
+  }
+  .preloader-spinner::before {
+    border-top-color: var(--pink-accent);
+    border-right-color: var(--pink-accent);
+    animation: spin 1s linear infinite;
+  }
+  .preloader-spinner::after {
+    inset: 7px;
+    border-bottom-color: var(--pink);
+    border-left-color: var(--pink);
+    animation: spin 1.5s linear infinite reverse;
+  }
+  .preloader-text {
+    font-size: 13px; color: var(--text-secondary); font-weight: 600;
+    letter-spacing: 0.3px;
+    animation: preloader-pulse 2s ease-in-out infinite;
+  }
+  .preloader-hearts {
+    display: flex; gap: 8px; margin-top: -8px;
+  }
+  .preloader-hearts svg {
+    width: 10px; height: 10px; color: var(--pink-accent);
+    animation: preloader-heart 1.4s ease-in-out infinite;
+  }
+  .preloader-hearts svg:nth-child(2) { animation-delay: 0.15s; }
+  .preloader-hearts svg:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes preloader-heart {
+    0%, 100% { opacity: 0.3; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ========= APP ========= */
   .app {
     max-width: 480px; margin: 0 auto;
     padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px);
@@ -88,16 +145,6 @@
   .greeting h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.2px; }
   .greeting p { font-size: 13.5px; color: var(--text-secondary); margin-top: 2px; margin-bottom: 18px; }
 
-  .section-head { display: flex; align-items: center; justify-content: space-between; margin: 24px 0 10px; }
-  .section-head h3 { font-size: 14.5px; font-weight: 700; }
-
-  .scroll-row {
-    display: flex; gap: 12px; overflow-x: auto;
-    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-    padding: 2px 2px 6px; scrollbar-width: none;
-  }
-  .scroll-row::-webkit-scrollbar { display: none; }
-
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     padding: 13px 22px; border-radius: var(--r-pill);
@@ -119,12 +166,12 @@
     font-size: 12.5px; font-weight: 600; color: var(--text);
     box-shadow: var(--shadow-soft);
   }
-  .pill-btn .icon { width: 16px; height: 16px; }
+  .pill-btn .icon { width: 15px; height: 15px; }
   .pill-btn:active { transform: scale(0.96); }
   .pill-btn.spinning .icon { animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ============ Dollie card ============ */
+  /* Dollie card */
   .dollie-card {
     background: linear-gradient(150deg, var(--surface-soft) 0%, var(--bg) 60%, var(--surface) 100%);
     border: 1px solid var(--border); border-radius: var(--r-xl);
@@ -193,7 +240,7 @@
     font-size: 12.5px; font-weight: 700; color: var(--pink-accent);
     background: none; border: none; padding: 0; cursor: pointer;
   }
-  .text-link .icon { width: 13px; height: 13px; color: var(--pink-accent); }
+  .text-link .icon { width: 13px; height: 13px; }
 
   .dollie-section { margin-bottom: 24px; }
   .dollie-section-title { font-size: 14.5px; font-weight: 700; color: var(--text); margin: 0 0 12px; }
@@ -207,6 +254,13 @@
   .howitworks-index { font-size: 11px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.5px; }
   .howitworks-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-top: 8px; }
   .howitworks-desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.4; }
+
+  .scroll-row {
+    display: flex; gap: 12px; overflow-x: auto;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    padding: 2px 2px 6px; scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar { display: none; }
 
   .reward-row {
     display: flex; align-items: center; gap: 12px;
@@ -272,7 +326,7 @@
   .tx-detail-amount .num.neg { color: var(--text); }
   .tx-detail-amount .sub { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; }
 
-  /* ============ Banners ============ */
+  /* Banners */
   .banner-row { scroll-snap-type: x mandatory; margin-bottom: 8px; }
   .banner-card {
     flex: 0 0 auto; scroll-snap-align: start;
@@ -292,24 +346,18 @@
   .banner-image-wrap { width: 108px; flex-shrink: 0; position: relative; background: var(--pink-soft); }
   .banner-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.25s ease; }
   .banner-image-wrap img.loaded { opacity: 1; }
-  .banner-image-wrap.img-failed img { display: none; }
   .banner-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 18px; }
   .banner-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.2s ease; }
   .banner-dot.active { background: var(--pink-accent); width: 16px; border-radius: 3px; }
-  .banner-placeholder {
-    width: 100%; text-align: center; padding: 22px 16px;
-    color: var(--text-secondary); background: var(--pink-soft);
-    border-radius: 20px; font-size: 12.5px; margin-bottom: 18px;
-  }
+  .banner-placeholder { width: 100%; text-align: center; padding: 22px 16px; color: var(--text-secondary); background: var(--pink-soft); border-radius: 20px; font-size: 12.5px; margin-bottom: 18px; }
 
-  /* ============ Home summary ============ */
+  /* Home summary */
   .orders-summary-card {
     display: flex; align-items: center; gap: 12px;
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r-lg); padding: 14px 16px; width: 100%;
     text-align: left; box-shadow: var(--shadow-soft); margin-bottom: 14px;
   }
-  .orders-summary-card:active { transform: scale(0.98); }
   .orders-summary-icon {
     width: 38px; height: 38px; border-radius: 999px; background: var(--pink-soft);
     display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0;
@@ -324,9 +372,10 @@
   .update-panel .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
   .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; color: var(--text); }
 
-  /* ============ Orders ============ */
-  .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  /* Orders */
+  .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 8px; }
   .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; color: var(--text); }
+  .screen-header-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .order-card {
     background: var(--surface); border-radius: var(--r-lg);
     padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-soft);
@@ -376,7 +425,7 @@
   .info-row .icon { width: 17px; height: 17px; color: var(--pink-accent); flex-shrink: 0; }
   .info-row b { color: var(--text); }
 
-  /* ============ Skeletons ============ */
+  /* Skeletons */
   .skeleton-card { background: var(--surface); border-radius: var(--r-lg); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow-soft); }
   .skeleton-row { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
   .skeleton-thumb { width: 44px; height: 44px; border-radius: var(--r-md); flex-shrink: 0; }
@@ -394,9 +443,9 @@
   .empty-state { text-align: center; padding: 30px 16px 8px; }
   .empty-illustration { width: 96px; height: 96px; margin-bottom: 4px; }
   .empty-state h3 { font-size: 15.5px; font-weight: 700; margin-top: 8px; color: var(--text); }
-  .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 270px; }
+  .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 280px; }
 
-  /* ============ Profile ============ */
+  /* Profile */
   .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
   .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
   .avatar.big { width: 58px; height: 58px; margin: 0 auto 10px; }
@@ -418,7 +467,7 @@
   .menu-item .icon.chev { color: var(--text-secondary); width: 18px; height: 18px; }
   .menu-item .badge { font-size: 10.5px; font-weight: 700; color: var(--text-secondary); background: var(--bg); padding: 3px 8px; border-radius: var(--r-pill); }
 
-  /* ============ Help ============ */
+  /* Help */
   .help-item { background: var(--surface); border-radius: var(--r-md); margin-bottom: 8px; overflow: hidden; box-shadow: var(--shadow-soft); }
   .help-item-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 13.5px; font-weight: 700; min-height: 48px; color: var(--text); }
   .help-item-head .icon { color: var(--pink-accent); }
@@ -428,7 +477,7 @@
   .help-item-body { display: none; padding: 0 16px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
   .help-item.open .help-item-body { display: block; }
 
-  /* ============ Referral ============ */
+  /* Referral */
   .referral-stepper { margin-bottom: 22px; }
   .referral-step { display: flex; gap: 14px; position: relative; padding-bottom: 18px; }
   .referral-step:last-child { padding-bottom: 0; }
@@ -447,7 +496,7 @@
   .referral-stat-box .num { font-size: 20px; font-weight: 800; color: var(--pink-accent); }
   .referral-stat-box .label { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; }
 
-  /* ============ Reviews ============ */
+  /* ========= REVIEWS ========= */
   .reviews-stat-card {
     background: linear-gradient(145deg, var(--surface) 0%, var(--surface-soft) 100%);
     border: 1px solid var(--border); border-radius: var(--r-xl);
@@ -462,9 +511,48 @@
   .rating-bar-row { display: grid; grid-template-columns: 28px 1fr 25px; align-items: center; gap: 7px; font-size: 10.5px; color: var(--text-secondary); }
   .rating-track { height: 5px; border-radius: 999px; background: var(--border); overflow: hidden; }
   .rating-fill { height: 100%; border-radius: 999px; background: var(--pink-accent); transition: width .35s ease; }
+
+  /* Photo gallery (Ozon-style) */
+  .reviews-photos-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-lg); padding: 14px; margin-bottom: 14px;
+    box-shadow: var(--shadow-soft);
+  }
+  .reviews-photos-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .reviews-photos-title {
+    font-size: 13.5px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .reviews-photos-title .icon { width: 15px; height: 15px; color: var(--pink-accent); }
+  .reviews-photos-count { font-size: 11.5px; color: var(--text-secondary); }
+  .reviews-photos-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;
+  }
+  .reviews-photo-cell {
+    position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+    background: var(--surface-soft); cursor: pointer;
+  }
+  .reviews-photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .reviews-photo-cell-more {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(30, 20, 24, 0.55); color: #fff;
+    font-size: 14px; font-weight: 800;
+  }
+  .reviews-photos-all-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 700; color: var(--pink-accent);
+    background: none; border: none; padding: 0;
+  }
+  .reviews-photos-all-btn .icon { width: 12px; height: 12px; }
+
   .reviews-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 18px 0 10px; }
   .reviews-toolbar-title { font-size: 14.5px; font-weight: 700; }
   .review-sort-btn { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .review-sort-btn .icon { width: 14px; height: 14px; }
+
   .review-cta {
     width: 100%; display: flex; align-items: center; gap: 12px;
     padding: 14px 16px; background: var(--surface); border: 1px solid var(--border);
@@ -475,6 +563,7 @@
   .review-cta-main { flex: 1; min-width: 0; }
   .review-cta-title { font-size: 13.5px; font-weight: 800; }
   .review-cta-sub { font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4; }
+
   .review-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r-lg); padding: 15px; margin-bottom: 10px;
@@ -495,22 +584,25 @@
   .review-read-more { color: var(--pink-accent); font-size: 12px; font-weight: 700; margin-top: 5px; }
   .review-order-meta { font-size: 10.5px; color: var(--text-secondary); margin-top: 10px; }
   .review-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 11px; }
-  .review-photo-thumb { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--surface-soft); cursor: pointer; }
+  .review-photo-thumb { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: var(--surface-soft); cursor: pointer; padding: 0; }
   .review-photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .review-photo-more { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(30,20,24,.46); color: white; font-size: 15px; font-weight: 800; }
-  .review-mine-card { background: var(--surface-soft); border-radius: var(--r-lg); padding: 14px 15px; margin-bottom: 14px; }
-  .review-mine-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .review-mine-title { font-size: 13.5px; font-weight: 800; }
-  .review-mine-count { font-size: 11px; color: var(--text-secondary); }
-  .review-mine-list { margin-top: 10px; display: grid; gap: 7px; }
-  .review-mine-row { display: flex; align-items: center; gap: 9px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 9px 10px; width: 100%; text-align: left; }
-  .review-mine-row-main { flex: 1; min-width: 0; }
-  .review-mine-row-title { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .review-mine-row-sub { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
+
   .review-sort-sheet-list { display: grid; gap: 8px; }
-  .review-sort-option { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; text-align: left; font-size: 13.5px; font-weight: 600; }
+  .review-sort-option {
+    width: 100%; display: flex; align-items: center; gap: 12px;
+    padding: 14px 15px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; text-align: left; font-size: 13.5px; font-weight: 600;
+  }
   .review-sort-option.selected { border-color: var(--pink-accent); background: var(--surface-soft); }
+  .review-sort-option .sort-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--pink-soft); color: var(--pink-accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .review-sort-option .sort-icon .icon { width: 16px; height: 16px; }
   .review-sort-option .check { margin-left: auto; color: var(--pink-accent); }
+  .review-sort-option .check .icon { width: 18px; height: 18px; }
 
   .review-order-pick { width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 13px 15px; margin-bottom: 8px; color: var(--text); }
   .review-order-pick-title { font-size: 13.5px; font-weight: 700; }
@@ -522,7 +614,7 @@
     color: var(--border); border-radius: 14px;
     transition: transform .12s ease, background .15s ease, color .15s ease;
   }
-  .review-star-btn .icon { width: 29px; height: 29px; }
+  .review-star-btn .icon { width: 29px; height: 29px; transition: fill 0.15s ease, stroke 0.15s ease, transform 0.15s ease; }
   .review-star-btn.active { color: var(--star); background: var(--surface-soft); }
   .review-star-btn.active .icon { fill: currentColor; stroke: currentColor; }
   .review-star-btn:active { transform: scale(.92); }
@@ -549,10 +641,10 @@
   .review-upload-tile .icon { width: 19px; height: 19px; }
   .review-upload-preview { background: var(--surface-soft); }
   .review-upload-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .review-photo-remove { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; background: rgba(30,20,24,.72); color: white; display: flex; align-items: center; justify-content: center; }
+  .review-photo-remove { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; background: rgba(30,20,24,.72); color: white; display: flex; align-items: center; justify-content: center; padding: 0; }
   .review-photo-remove .icon { width: 12px; height: 12px; }
   .review-photo-move { position: absolute; bottom: 4px; left: 4px; display: flex; gap: 3px; }
-  .review-photo-move button { width: 23px; height: 23px; border-radius: 7px; background: rgba(30,20,24,.68); color: white; display: flex; align-items: center; justify-content: center; }
+  .review-photo-move button { width: 23px; height: 23px; border-radius: 7px; background: rgba(30,20,24,.68); color: white; display: flex; align-items: center; justify-content: center; padding: 0; }
   .review-photo-move button[disabled] { opacity: 0.4; }
   .review-photo-move .icon { width: 11px; height: 11px; }
 
@@ -571,6 +663,7 @@
   .review-skeleton .sk-line:last-child { margin-bottom: 0; }
   .review-skeleton .w35{width:35%} .review-skeleton .w55{width:55%} .review-skeleton .w90{width:90%}
 
+  /* Review prompt */
   .review-prompt-overlay {
     position: fixed; inset: 0; background: rgba(57,44,49,.38);
     display: flex; align-items: flex-end; justify-content: center;
@@ -595,24 +688,109 @@
   .review-prompt-reward .icon { width: 18px; height: 18px; color: var(--pink-accent); }
   .review-prompt-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-  .photo-lightbox { position: fixed; inset: 0; background: rgba(10,8,10,.96); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .18s ease; z-index: 90; }
-  .photo-lightbox.open { opacity: 1; pointer-events: auto; }
-  .photo-lightbox img { max-width: 92vw; max-height: 82vh; object-fit: contain; user-select: none; }
-  .photo-lightbox-close, .photo-lightbox-prev, .photo-lightbox-next {
-    position: absolute; width: 42px; height: 42px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: white; background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+  /* ========= PHOTO LIGHTBOX (swipe-only) ========= */
+  .photo-lightbox {
+    position: fixed; inset: 0; background: rgba(10,8,10,.97);
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease;
+    z-index: 90;
   }
-  .photo-lightbox-close { top: calc(var(--safe-t) + 14px); right: 14px; }
-  .photo-lightbox-prev { left: 12px; top: 50%; transform: translateY(-50%); }
-  .photo-lightbox-next { right: 12px; top: 50%; transform: translateY(-50%); }
-  .photo-lightbox-counter { position: absolute; bottom: calc(var(--safe-b) + 18px); left: 50%; transform: translateX(-50%); color: white; background: rgba(255,255,255,.12); padding: 6px 10px; border-radius: 999px; font-size: 11px; }
+  .photo-lightbox.open { opacity: 1; pointer-events: auto; }
 
-  .review-detail-modal { position: fixed; inset: 0; background: var(--bg); z-index: 85; display: none; overflow: auto; padding: calc(var(--safe-t) + 14px) 18px calc(24px + var(--safe-b)); }
-  .review-detail-modal.open { display: block; }
-  .review-detail-close { position: sticky; top: 0; margin-left: auto; width: 40px; height: 40px; border-radius: 50%; background: var(--surface); box-shadow: var(--shadow-soft); display: flex; align-items: center; justify-content: center; z-index: 2; }
+  .photo-lightbox-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: calc(var(--safe-t) + 12px) 14px 8px;
+    color: #fff; flex-shrink: 0;
+  }
+  .photo-lightbox-close {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; background: rgba(255,255,255,.14);
+    backdrop-filter: blur(8px);
+  }
+  .photo-lightbox-close .icon { width: 20px; height: 20px; }
+  .photo-lightbox-counter {
+    font-size: 12.5px; font-weight: 700; color: rgba(255,255,255,.85);
+    background: rgba(255,255,255,.12); padding: 6px 12px; border-radius: 999px;
+  }
 
-  /* ============ Theme ============ */
+  .photo-lightbox-viewport {
+    flex: 1; position: relative; overflow: hidden;
+    touch-action: pan-y;
+  }
+  .photo-lightbox-track {
+    position: absolute; inset: 0;
+    display: flex; align-items: center;
+    transition: transform 0.32s cubic-bezier(.22,1,.36,1);
+    will-change: transform;
+  }
+  .photo-lightbox-track.dragging { transition: none; }
+  .photo-lightbox-slide {
+    flex: 0 0 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 8px;
+  }
+  .photo-lightbox-slide img {
+    max-width: 100%; max-height: 100%; object-fit: contain;
+    user-select: none; -webkit-user-drag: none; pointer-events: none;
+  }
+
+  .photo-lightbox-bottom {
+    flex-shrink: 0;
+    padding: 12px 18px calc(var(--safe-b) + 14px);
+    background: linear-gradient(to top, rgba(10,8,10,.98), rgba(10,8,10,.6));
+    color: #fff;
+    max-height: 34vh; overflow-y: auto;
+  }
+  .photo-lightbox-author {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  }
+  .photo-lightbox-author .avatar-mini {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,.14); color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .photo-lightbox-author .avatar-mini .icon { width: 15px; height: 15px; }
+  .photo-lightbox-author-name { font-size: 12.5px; font-weight: 700; }
+  .photo-lightbox-author-user { font-size: 10.5px; color: rgba(255,255,255,.65); }
+  .photo-lightbox-stars { display: flex; gap: 2px; color: var(--star); margin-bottom: 6px; }
+  .photo-lightbox-stars .icon { width: 13px; height: 13px; fill: currentColor; stroke: currentColor; }
+  .photo-lightbox-stars .icon.off { opacity: 0.3; fill: none; }
+  .photo-lightbox-text {
+    font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.88);
+    white-space: pre-wrap;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .photo-lightbox-text.expanded { -webkit-line-clamp: unset; display: block; }
+  .photo-lightbox-text-toggle {
+    color: var(--pink-accent); font-size: 11.5px; font-weight: 700;
+    margin-top: 4px; background: none; border: none; padding: 0;
+  }
+  .photo-lightbox-order-meta {
+    font-size: 10.5px; color: rgba(255,255,255,.55); margin-top: 8px;
+  }
+
+  /* ========= MY REVIEWS SHEET ========= */
+  .my-reviews-list { display: grid; gap: 10px; }
+  .my-review-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 13px 14px;
+  }
+  .my-review-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .my-review-title { font-size: 13px; font-weight: 700; }
+  .my-review-date { font-size: 10.5px; color: var(--text-secondary); }
+  .my-review-stars { display: flex; gap: 2px; color: var(--star); margin-bottom: 6px; }
+  .my-review-stars .icon { width: 13px; height: 13px; fill: currentColor; stroke: currentColor; }
+  .my-review-stars .icon.off { opacity: 0.3; fill: none; }
+  .my-review-text { font-size: 12.5px; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
+  .my-review-photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 9px; }
+  .my-review-photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; }
+
+  /* ========= ORDERS SORT SHEET ========= */
+  .orders-sort-list { display: grid; gap: 8px; }
+
+  /* Theme */
   .theme-option-row {
     width: 100%; display: flex; align-items: center; gap: 12px;
     padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text);
@@ -654,7 +832,7 @@
   .contact-name { font-size: 16.5px; font-weight: 700; color: var(--text); }
   .contact-desc { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
 
-  /* ============ Bottom nav ============ */
+  /* Bottom nav */
   .bottom-nav {
     position: fixed; left: 0; right: 0; bottom: 0;
     max-width: 480px; margin: 0 auto;
@@ -665,6 +843,7 @@
     border-radius: 24px 24px 0 0; box-shadow: var(--shadow-nav);
     display: flex; z-index: 40;
   }
+  html[data-theme="dark"] .bottom-nav { background: rgba(36,26,30,0.92); }
   .nav-item {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 3px; color: var(--text-secondary); font-size: 10.5px; font-weight: 600; min-height: 44px;
@@ -672,7 +851,7 @@
   .nav-item .icon { width: 22px; height: 22px; }
   .nav-item.active { color: var(--pink-accent); }
 
-  /* ============ Sheet ============ */
+  /* Sheet */
   .sheet-overlay {
     position: fixed; inset: 0; background: rgba(57,44,49,0.32);
     opacity: 0; pointer-events: none; transition: opacity 0.25s ease; z-index: 50;
@@ -683,12 +862,12 @@
     position: fixed; left: 0; right: 0; bottom: 0;
     max-width: 480px; margin: 0 auto;
     height: auto; max-height: 82vh;
-    max-height: calc(var(--tg-vh, 100vh) * 0.82);
+    max-height: calc(var(--tg-vh, 100vh) * 0.92);
     background: var(--surface);
     border-radius: 26px 26px 0 0;
     box-shadow: 0 -12px 40px rgba(57,44,49,0.16);
     transform: translateY(100%);
-    transition: transform 0.32s cubic-bezier(.22,1,.36,1), max-height 0.32s cubic-bezier(.22,1,.36,1);
+    transition: transform 0.36s cubic-bezier(.22,1,.36,1), max-height 0.36s cubic-bezier(.22,1,.36,1);
     z-index: 51;
     padding-bottom: calc(20px + var(--safe-b));
     overflow-y: auto; -webkit-overflow-scrolling: touch;
@@ -713,7 +892,6 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-  /* Prevent iOS auto-link colors */
   a[x-apple-data-detectors], a[href^="tel:"], a[href^="mailto:"], a[href^="date:"], a[href^="address:"], .app a {
     color: inherit !important; text-decoration: none !important;
     -webkit-text-fill-color: inherit !important;
@@ -726,8 +904,19 @@
 </head>
 <body>
 
+<!-- PRELOADER -->
+<div id="preloader" role="status" aria-live="polite">
+  <div class="preloader-logo">DollieLand</div>
+  <div class="preloader-spinner"></div>
+  <div class="preloader-hearts">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
+  </div>
+  <div class="preloader-text">Открываем DollieLand…</div>
+</div>
+
 <svg style="display:none" aria-hidden="true">
-  <!-- base icons -->
   <symbol id="icon-house" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
   <symbol id="icon-package" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></symbol>
   <symbol id="icon-user" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></symbol>
@@ -736,6 +925,10 @@
   <symbol id="icon-chevron-right" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></symbol>
   <symbol id="icon-chevron-left" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></symbol>
   <symbol id="icon-chevron-down" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="icon-arrow-up" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="6 11 12 5 18 11"/></symbol>
+  <symbol id="icon-arrow-down" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></symbol>
+  <symbol id="icon-thumbs-up" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v11"/><path d="M7 11l4-8a3 3 0 0 1 3 3v3h5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.8 21H7"/></symbol>
+  <symbol id="icon-thumbs-down" viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V3"/><path d="M17 13l-4 8a3 3 0 0 1-3-3v-3H5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.2 3H17"/></symbol>
   <symbol id="icon-truck" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="15" height="13"/><path d="M16 8h4l3 3v6h-3"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></symbol>
   <symbol id="icon-map-pin" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-7.5 7-12a7 7 0 1 0-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
   <symbol id="icon-clock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><polyline points="12 7 12 12 15.5 14"/></symbol>
@@ -748,17 +941,18 @@
   <symbol id="icon-layers" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
   <symbol id="icon-heart" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></symbol>
   <symbol id="icon-gift" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13"/><path d="M19 8V6a2 2 0 0 0-2-2h-.6A2.4 2.4 0 0 0 14 6.4 2.4 2.4 0 0 0 16.4 8H19zM5 8V6a2 2 0 0 1 2-2h.6A2.4 2.4 0 0 1 10 6.4 2.4 2.4 0 0 1 7.6 8H5z"/></symbol>
-  <symbol id="icon-plus-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
   <symbol id="icon-minus" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></symbol>
   <symbol id="icon-star" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></symbol>
   <symbol id="icon-sun" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></symbol>
   <symbol id="icon-moon" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></symbol>
-  <symbol id="icon-copy" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M5.5 15.5h-1a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
   <symbol id="icon-share" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="8.3" y1="10.7" x2="15.7" y2="6.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="17.7"/></symbol>
   <symbol id="icon-camera" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 8z"/><circle cx="12" cy="14" r="3.5"/></symbol>
   <symbol id="icon-send" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10.5 13.5"/><path d="M21 3l-6.5 18-4-8-8-4z"/></symbol>
   <symbol id="icon-alert-circle" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.1"/></symbol>
   <symbol id="icon-filter" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 4 21 4 14 12 14 20 10 18 10 12 3 4"/></symbol>
+  <symbol id="icon-sort" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="16" y2="6"/><line x1="4" y1="12" x2="12" y2="12"/><line x1="4" y1="18" x2="8" y2="18"/></symbol>
+  <symbol id="icon-image" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="1.8"/><path d="M4 19l5-5 4 4 3-3 4 4"/></symbol>
+  <symbol id="icon-grid" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
 </svg>
 
 <div class="app">
@@ -817,9 +1011,14 @@
   <main class="tab-screen" id="tab-orders">
     <header class="screen-header">
       <h1>Мои заказы</h1>
-      <button class="pill-btn" id="refresh-btn" onclick="loadOrders(true)" aria-label="Обновить">
-        <svg class="icon"><use href="#icon-refresh"/></svg> Обновить
-      </button>
+      <div class="screen-header-actions">
+        <button class="pill-btn" id="orders-sort-btn" onclick="openOrdersSortSheet()" aria-label="Сортировка">
+          <svg class="icon"><use href="#icon-sort"/></svg> <span id="orders-sort-label">Сначала новые</span>
+        </button>
+        <button class="pill-btn" id="refresh-btn" onclick="loadOrders(true)" aria-label="Обновить">
+          <svg class="icon"><use href="#icon-refresh"/></svg>
+        </button>
+      </div>
     </header>
     <div id="orders-list"></div>
   </main>
@@ -831,10 +1030,7 @@
         <svg class="icon"><use href="#icon-refresh"/></svg> Обновить
       </button>
     </header>
-    <div id="reviews-content">
-      <div class="review-skeleton"><div class="sk-line w35"></div><div class="sk-line w55"></div><div class="sk-line w90"></div></div>
-      <div class="review-skeleton"><div class="sk-line w55"></div><div class="sk-line w90"></div><div class="sk-line w90"></div></div>
-    </div>
+    <div id="reviews-content"></div>
   </main>
 
   <main class="tab-screen" id="tab-profile">
@@ -870,6 +1066,12 @@
       <button class="menu-item" onclick="switchTab('orders')">
         <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg>
         <span class="label">Мои заказы</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
+      <button class="menu-item" onclick="openMyReviewsSheet()">
+        <svg class="icon"><use href="#icon-star"/></svg>
+        <span class="label">Мои отзывы</span>
+        <span class="badge" id="my-reviews-count">0</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
       <button class="menu-item" onclick="openNotificationsSheet()">
@@ -945,6 +1147,14 @@
   </div>
 </div>
 
+<div class="bottom-sheet" id="sheet-my-reviews">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <h2>Мои отзывы</h2>
+    <div id="my-reviews-list"></div>
+  </div>
+</div>
+
 <div class="bottom-sheet" id="sheet-dollies">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
@@ -967,21 +1177,9 @@
       <div class="dollie-section">
         <div class="dollie-section-title">Как работают Dollies</div>
         <div class="scroll-row">
-          <div class="howitworks-card">
-            <div class="howitworks-index">01</div>
-            <div class="howitworks-title">Получай</div>
-            <div class="howitworks-desc">Dollies за завершённые заказы</div>
-          </div>
-          <div class="howitworks-card">
-            <div class="howitworks-index">02</div>
-            <div class="howitworks-title">Храни</div>
-            <div class="howitworks-desc">их до следующей покупки</div>
-          </div>
-          <div class="howitworks-card">
-            <div class="howitworks-index">03</div>
-            <div class="howitworks-title">Используй</div>
-            <div class="howitworks-desc">как небольшую скидку</div>
-          </div>
+          <div class="howitworks-card"><div class="howitworks-index">01</div><div class="howitworks-title">Получай</div><div class="howitworks-desc">Dollies за завершённые заказы</div></div>
+          <div class="howitworks-card"><div class="howitworks-index">02</div><div class="howitworks-title">Храни</div><div class="howitworks-desc">их до следующей покупки</div></div>
+          <div class="howitworks-card"><div class="howitworks-index">03</div><div class="howitworks-title">Используй</div><div class="howitworks-desc">как небольшую скидку</div></div>
         </div>
       </div>
 
@@ -1067,6 +1265,15 @@
   </div>
 </div>
 
+<div class="bottom-sheet" id="sheet-orders-sort">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <h2>Сортировка заказов</h2>
+    <p class="dollie-subtitle">Как показывать ваши заказы</p>
+    <div class="orders-sort-list" id="orders-sort-list"></div>
+  </div>
+</div>
+
 <div class="review-prompt-overlay" id="review-prompt-overlay">
   <div class="review-prompt-card" role="dialog" aria-modal="true">
     <div class="review-prompt-icon"><svg class="icon"><use href="#icon-check"/></svg></div>
@@ -1084,17 +1291,30 @@
   </div>
 </div>
 
-<div class="photo-lightbox" id="review-photo-lightbox">
-  <button class="photo-lightbox-close" onclick="closeReviewLightbox()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
-  <button class="photo-lightbox-prev" onclick="stepReviewLightbox(-1)" aria-label="Предыдущая"><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
-  <img id="review-lightbox-image" alt="">
-  <button class="photo-lightbox-next" onclick="stepReviewLightbox(1)" aria-label="Следующая"><svg class="icon"><use href="#icon-chevron-right"/></svg></button>
-  <div class="photo-lightbox-counter" id="review-lightbox-counter">1/1</div>
-</div>
-
-<div class="review-detail-modal" id="review-detail-modal">
-  <button class="review-detail-close" onclick="closeReviewDetail()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
-  <div id="review-detail-content"></div>
+<!-- PHOTO LIGHTBOX: swipe-only -->
+<div class="photo-lightbox" id="photo-lightbox">
+  <div class="photo-lightbox-top">
+    <button class="photo-lightbox-close" onclick="closePhotoLightbox()" aria-label="Закрыть">
+      <svg class="icon"><use href="#icon-x"/></svg>
+    </button>
+    <div class="photo-lightbox-counter" id="photo-lightbox-counter">1/1</div>
+  </div>
+  <div class="photo-lightbox-viewport" id="photo-lightbox-viewport">
+    <div class="photo-lightbox-track" id="photo-lightbox-track"></div>
+  </div>
+  <div class="photo-lightbox-bottom">
+    <div class="photo-lightbox-author">
+      <div class="avatar-mini"><svg class="icon"><use href="#icon-user"/></svg></div>
+      <div>
+        <div class="photo-lightbox-author-name" id="photo-lightbox-author">—</div>
+        <div class="photo-lightbox-author-user" id="photo-lightbox-username"></div>
+      </div>
+    </div>
+    <div class="photo-lightbox-stars" id="photo-lightbox-stars"></div>
+    <div class="photo-lightbox-text" id="photo-lightbox-text"></div>
+    <button class="photo-lightbox-text-toggle" id="photo-lightbox-text-toggle" hidden onclick="toggleLightboxText()">Читать полностью</button>
+    <div class="photo-lightbox-order-meta" id="photo-lightbox-order"></div>
+  </div>
 </div>
 
 <div class="bottom-sheet" id="sheet-theme">
@@ -1180,40 +1400,15 @@ function hapticSelection() { tg?.HapticFeedback?.selectionChanged(); }
 function hapticNotification(type) { tg?.HapticFeedback?.notificationOccurred(type || 'success'); }
 
 /* =========================================================
-   Back button — сначала закрывает верхний слой, потом ничего
+   Back button
    ========================================================= */
-let backHandlerStack = [];
-
-function pushBackHandler(fn) {
-  backHandlerStack.push(fn);
-  if (tg) tg.BackButton.show();
-}
-function popBackHandler(fn) {
-  backHandlerStack = backHandlerStack.filter(x => x !== fn);
-  if (!backHandlerStack.length && tg) tg.BackButton.hide();
-}
-function clearBackHandlers() {
-  backHandlerStack = [];
-  if (tg) tg.BackButton.hide();
-}
-
 if (tg) {
   tg.BackButton.onClick(() => {
     hapticImpact('light');
-    // Приоритет закрытия: lightbox > review-detail > review-prompt > sheet
-    if (document.getElementById('review-photo-lightbox')?.classList.contains('open')) {
-      closeReviewLightbox(); return;
-    }
-    if (document.getElementById('review-detail-modal')?.classList.contains('open')) {
-      closeReviewDetail(); return;
-    }
-    if (document.getElementById('review-prompt-overlay')?.classList.contains('open')) {
-      dismissReviewPrompt(); return;
-    }
+    if (document.getElementById('photo-lightbox')?.classList.contains('open')) { closePhotoLightbox(); return; }
+    if (document.getElementById('review-prompt-overlay')?.classList.contains('open')) { dismissReviewPrompt(); return; }
     const openSheet = document.querySelector('.bottom-sheet.open');
     if (openSheet) { closeSheet(); return; }
-    const top = backHandlerStack[backHandlerStack.length - 1];
-    if (top) { top(); }
   });
   tg.BackButton.hide();
 }
@@ -1273,6 +1468,32 @@ function pluralize(n, one, few, many) {
   if ([2,3,4].includes(m10) && ![12,13,14].includes(m100)) return few;
   return many;
 }
+function stripAutoDetectLinks(root) {
+  if (!root) return;
+  const anchors = root.querySelectorAll('a[x-apple-data-detectors], a[href^="tel:"], a[href^="mailto:"], a[href^="date:"], a[href^="address:"]');
+  anchors.forEach(a => {
+    const parent = a.parentNode;
+    if (!parent) return;
+    parent.replaceChild(document.createTextNode(a.textContent), a);
+  });
+}
+function watchAutoDetectLinks() {
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => m.addedNodes.forEach(node => {
+      if (node.nodeType === 1) {
+        if (node.tagName === 'A' && (
+          node.hasAttribute('x-apple-data-detectors') ||
+          node.hasAttribute('x-apple-data-detectors-type') ||
+          /^(tel|mailto|date|address):/.test(node.getAttribute('href') || '')
+        )) {
+          const parent = node.parentNode;
+          if (parent) parent.replaceChild(document.createTextNode(node.textContent), node);
+        } else stripAutoDetectLinks(node);
+      }
+    }));
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
 
 /* =========================================================
    Tab / Sheet management
@@ -1298,7 +1519,7 @@ function openSheet(id) {
     s.classList.remove('open');
     resetSheetGeometry(s);
   });
-  sheetEl.classList.add('open');
+  sheetEl.classList.add('open', 'expanded');
   sheetEl.scrollTop = 0;
   document.getElementById('sheet-overlay').classList.add('open');
   hapticImpact('light');
@@ -1317,8 +1538,7 @@ function closeSheet() {
     resetSheetGeometry(s);
   });
   document.getElementById('sheet-overlay').classList.remove('open');
-  if (!backHandlerStack.length && !document.getElementById('review-photo-lightbox')?.classList.contains('open')
-      && !document.getElementById('review-detail-modal')?.classList.contains('open')
+  if (!document.getElementById('photo-lightbox')?.classList.contains('open')
       && !document.getElementById('review-prompt-overlay')?.classList.contains('open')) {
     if (tg) tg.BackButton.hide();
   }
@@ -1332,7 +1552,7 @@ function setupSheetDrag(sheetEl) {
   function maxHeightPx(expanded) {
     const vh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tg-vh')) || window.innerHeight;
     const safeT = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-t')) || 0;
-    return expanded ? (vh - safeT - 14) : vh * 0.82;
+    return expanded ? (vh - safeT - 14) : vh * 0.92;
   }
   function start(clientY) { dragging = true; movedEnough = false; startY = clientY; startHeight = sheetEl.getBoundingClientRect().height; sheetEl.classList.add('dragging'); }
   function move(clientY) {
@@ -1358,16 +1578,10 @@ function setupSheetDrag(sheetEl) {
     sheetEl.style.transform = '';
     if (!movedEnough) {
       sheetEl.style.maxHeight = '';
-      sheetEl.classList.toggle('expanded');
       return;
     }
     if (translateActive && -delta > 90) { sheetEl.style.maxHeight = ''; closeSheet(); return; }
-    const collapsedH = maxHeightPx(false), expandedH = maxHeightPx(true);
-    const finishHeight = Math.min(expandedH, startHeight + delta);
-    const mid = (collapsedH + expandedH) / 2;
     sheetEl.style.maxHeight = '';
-    if (finishHeight > mid) sheetEl.classList.add('expanded');
-    else sheetEl.classList.remove('expanded');
   }
   handleArea.addEventListener('touchstart', e => start(e.touches[0].clientY), { passive: true });
   handleArea.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
@@ -1420,6 +1634,65 @@ function progressPercent(step) { return Math.round((step / (STATUS_STEPS.length 
 
 let ordersCache = [];
 let lastUpdatedAt = null;
+
+const ORDERS_SORT_OPTIONS = [
+  { key: 'newest', label: 'Сначала новые', icon: 'arrow-down' },
+  { key: 'oldest', label: 'Сначала старые', icon: 'arrow-up' },
+  { key: 'completed', label: 'Завершённые', icon: 'check' },
+  { key: 'active', label: 'Активные', icon: 'truck' },
+];
+let ordersSort = 'newest';
+
+function sortedOrders() {
+  const list = [...ordersCache];
+  const lastStep = STATUS_STEPS.length - 1;
+  if (ordersSort === 'newest') {
+    list.sort((a, b) => String(b.id).localeCompare(String(a.id)));
+  } else if (ordersSort === 'oldest') {
+    list.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  } else if (ordersSort === 'completed') {
+    list.sort((a, b) => {
+      const aDone = matchStep(a.status) === lastStep ? 1 : 0;
+      const bDone = matchStep(b.status) === lastStep ? 1 : 0;
+      if (aDone !== bDone) return bDone - aDone;
+      return String(b.id).localeCompare(String(a.id));
+    });
+  } else if (ordersSort === 'active') {
+    list.sort((a, b) => {
+      const aActive = matchStep(a.status) < lastStep ? 1 : 0;
+      const bActive = matchStep(b.status) < lastStep ? 1 : 0;
+      if (aActive !== bActive) return bActive - aActive;
+      return String(b.id).localeCompare(String(a.id));
+    });
+  }
+  return list;
+}
+
+function updateOrdersSortLabel() {
+  const label = document.getElementById('orders-sort-label');
+  if (!label) return;
+  label.textContent = ORDERS_SORT_OPTIONS.find(o => o.key === ordersSort)?.label || 'Сначала новые';
+}
+
+function openOrdersSortSheet() {
+  const list = document.getElementById('orders-sort-list');
+  if (!list) return;
+  list.innerHTML = ORDERS_SORT_OPTIONS.map(opt => `
+    <button class="review-sort-option ${opt.key === ordersSort ? 'selected' : ''}" onclick="selectOrdersSort('${opt.key}')">
+      <span class="sort-icon"><svg class="icon"><use href="#icon-${opt.icon}"/></svg></span>
+      <span>${opt.label}</span>
+      <span class="check">${opt.key === ordersSort ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</span>
+    </button>`).join('');
+  openSheet('orders-sort');
+}
+
+function selectOrdersSort(key) {
+  ordersSort = key;
+  updateOrdersSortLabel();
+  closeSheet();
+  hapticSelection();
+  renderOrdersList();
+}
 
 function orderTitle(order) { return escapeHtml(order.title || `Заказ №${order.id}`); }
 
@@ -1517,51 +1790,49 @@ function ordersErrorHTML(errorDetail) {
     </div>`;
 }
 
-async function loadOrders(isManualRefresh) {
+function renderOrdersList() {
+  const ordersList = document.getElementById('orders-list');
   const summaryText = document.getElementById('orders-summary-text');
+  if (!ordersList) return;
+  if (!ordersCache.length) {
+    ordersList.innerHTML = ordersEmptyHTML();
+    if (summaryText) summaryText.textContent = 'Нет активных заказов';
+    return;
+  }
+  const lastStepIndex = STATUS_STEPS.length - 1;
+  const activeCount = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
+  if (summaryText) {
+    summaryText.textContent = activeCount > 0
+      ? `${activeCount} ${pluralize(activeCount, 'активный заказ', 'активных заказа', 'активных заказов')}`
+      : `Все заказы получены (${ordersCache.length})`;
+  }
+  ordersList.innerHTML = sortedOrders().map(orderCardHTML).join('');
+  stripAutoDetectLinks(ordersList);
+  applySeasonalIcons();
+  updateProfileStats();
+}
+
+async function loadOrders(isManualRefresh) {
   const ordersList = document.getElementById('orders-list');
   const refreshBtn = document.getElementById('refresh-btn');
 
   if (!userId) {
-    if (summaryText) summaryText.textContent = 'Не удалось определить пользователя';
     ordersList.innerHTML = `<div class="empty-state"><h3>Откройте приложение из Telegram</h3></div>`;
     return;
   }
 
   if (isManualRefresh) refreshBtn?.classList.add('spinning');
-  if (!ordersCache.length) {
-    if (summaryText) summaryText.textContent = 'Загружаем заказы…';
-    ordersList.innerHTML = skeletonOrdersHTML(2);
-  }
+  if (!ordersCache.length) ordersList.innerHTML = skeletonOrdersHTML(2);
 
   try {
     const data = await apiFetch('/api/user_orders', { user_id: userId }, { timeoutMs: 12000, retries: 1 });
-    const orders = data.orders || [];
-    ordersCache = orders;
+    ordersCache = data.orders || [];
     lastUpdatedAt = new Date();
-
-    if (orders.length === 0) {
-      if (summaryText) summaryText.textContent = 'Нет активных заказов';
-      ordersList.innerHTML = ordersEmptyHTML();
-    } else {
-      const lastStepIndex = STATUS_STEPS.length - 1;
-      const activeCount = orders.filter(o => matchStep(o.status) < lastStepIndex).length;
-      if (summaryText) {
-        summaryText.textContent = activeCount > 0
-          ? `${activeCount} ${pluralize(activeCount, 'активный заказ', 'активных заказа', 'активных заказов')}`
-          : `Все заказы получены (${orders.length})`;
-      }
-      ordersList.innerHTML = orders.map(orderCardHTML).join('');
-      stripAutoDetectLinks(ordersList);
-    }
-
-    applySeasonalIcons();
+    renderOrdersList();
     updateHomePanels();
-    updateProfileStats();
     if (!isManualRefresh) checkReviewPrompt();
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
-    if (summaryText && !ordersCache.length) summaryText.textContent = 'Не удалось загрузить заказы';
     if (!ordersCache.length) ordersList.innerHTML = ordersErrorHTML(e?.message);
     else showToast('Не удалось обновить заказы');
   } finally {
@@ -1574,10 +1845,8 @@ function updateProfileStats() {
   const totalEl = document.getElementById('stat-total');
   if (!activeEl || !totalEl) return;
   const lastStepIndex = STATUS_STEPS.length - 1;
-  const total = ordersCache.length;
-  const active = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
-  totalEl.textContent = total;
-  activeEl.textContent = active;
+  totalEl.textContent = ordersCache.length;
+  activeEl.textContent = ordersCache.filter(o => matchStep(o.status) < lastStepIndex).length;
 }
 
 function updateHomePanels() {
@@ -1585,7 +1854,7 @@ function updateHomePanels() {
   const panelText = document.getElementById('update-panel-text');
   if (!lastUpdatedAt || ordersCache.length === 0) { panel.hidden = true; return; }
   const timeStr = lastUpdatedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-  const order = ordersCache[0];
+  const order = sortedOrders()[0];
   const step = matchStep(order.status);
   panel.hidden = false;
   panelText.textContent = `Сегодня, ${timeStr} · ${orderTitle(order)}: ${STATUS_STEPS[step].label}`;
@@ -1697,7 +1966,7 @@ function renderSeasonalBanner() {
 const DECORATION_RENDERERS = {
   autumn_leaves: () => {
     const colors = ['#C97A3D', '#B8563A', '#D9A441', '#8B4A2B'];
-    const leaves = Array.from({length: 14}, (_, i) => {
+    return Array.from({length: 14}, (_, i) => {
       const left = Math.round(Math.random() * 100);
       const delay = (Math.random() * 8).toFixed(1);
       const duration = (11 + Math.random() * 7).toFixed(1);
@@ -1707,7 +1976,6 @@ const DECORATION_RENDERERS = {
         <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" stroke="none"><path d="M12 2c5 4 8 9 8 13a8 8 0 1 1-16 0c0-4 3-9 8-13z"/></svg>
       </div>`;
     }).join('');
-    return leaves;
   },
   winter_sparkle: () => {
     const snowflakes = Array.from({length: 12}, () => {
@@ -1716,89 +1984,55 @@ const DECORATION_RENDERERS = {
       const duration = (13 + Math.random() * 9).toFixed(1);
       const size = 8 + Math.round(Math.random() * 14);
       return `<div class="deco-item" style="left:${left}%;top:-8%;animation:deco-fall ${duration}s linear ${delay}s infinite;">
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" style="animation:deco-spin ${duration * 0.6}s linear infinite;">
+        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round">
           <path d="M12 2v20M3.5 6.5l17 11M20.5 6.5l-17 11"/>
-        </svg>
-      </div>`;
+        </svg></div>`;
     }).join('');
     const sparkles = Array.from({length: 8}, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 40);
-      const delay = (Math.random() * 4).toFixed(1);
+      const left = Math.round(Math.random() * 100), top = Math.round(Math.random() * 40), delay = (Math.random() * 4).toFixed(1);
       return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 3.5s ease ${delay}s infinite;">
-        <svg width="8" height="8" viewBox="0 0 24 24" fill="#EAF4FA" stroke="none"><circle cx="12" cy="12" r="9"/></svg>
-      </div>`;
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="#EAF4FA" stroke="none"><circle cx="12" cy="12" r="9"/></svg></div>`;
     }).join('');
     return snowflakes + sparkles;
   },
   petals: () => Array.from({length: 12}, (_, i) => {
-    const left = Math.round(Math.random() * 100);
-    const delay = (Math.random() * 7).toFixed(1);
-    const duration = (13 + Math.random() * 8).toFixed(1);
+    const left = Math.round(Math.random() * 100), delay = (Math.random() * 7).toFixed(1), duration = (13 + Math.random() * 8).toFixed(1);
     const colors = ['#D98CAE', '#E8B8CE', '#F2D6E4', '#C9829A'];
-    const color = colors[i % colors.length];
     return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite, deco-sway 4s ease-in-out infinite;">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="${color}" stroke="none">
-        <path d="M12 2c3 3 3 7 0 10-3-3-3-7 0-10zM12 12c3 3 3 7 0 10-3-3-3-7 0-10zM2 12c3-3 7-3 10 0-3 3-7 3-10 0zM12 12c3-3 7-3 10 0-3 3-7 3-10 0z"/>
-      </svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="${colors[i % colors.length]}" stroke="none">
+        <path d="M12 2c3 3 3 7 0 10-3-3-3-7 0-10zM12 12c3 3 3 7 0 10-3-3-3-7 0-10zM2 12c3-3 7-3 10 0-3 3-7 3-10 0zM12 12c3-3 7-3 10 0-3 3-7 3-10 0z"/></svg>
     </div>`;
   }).join(''),
   sun_rays: () => {
-    const rays = `<svg class="deco-item" style="top:-80px;right:-80px;width:300px;height:300px;opacity:0.22;animation:deco-spin 120s linear infinite;" viewBox="0 0 100 100">
+    const rays = `<svg class="deco-item" style="top:-80px;right:-80px;width:300px;height:300px;opacity:0.22;" viewBox="0 0 100 100">
       <circle cx="50" cy="50" r="30" fill="var(--pink-accent)"/>
       <path d="M50 5v90M5 50h90M18 18l64 64M82 18L18 82" stroke="var(--pink-accent)" stroke-width="1.5" opacity="0.4"/>
     </svg>`;
-    const sparkles = Array.from({length: 10}, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 60);
-      const delay = (Math.random() * 4).toFixed(1);
-      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.6s ease ${delay}s infinite;">
-        <svg width="6" height="6" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none"><circle cx="12" cy="12" r="10"/></svg>
-      </div>`;
-    }).join('');
-    return rays + sparkles;
+    return rays;
   },
-  spiderweb_bats: () => {
-    const bats = Array.from({length: 6}, () => {
-      const top = 10 + Math.round(Math.random() * 60);
-      const delay = (Math.random() * 10).toFixed(1);
-      const duration = (14 + Math.random() * 8).toFixed(1);
-      const size = 14 + Math.round(Math.random() * 8);
-      return `<div class="deco-item" style="top:${top}%;left:-10%;animation:deco-fly ${duration}s linear ${delay}s infinite;">
-        <svg width="${size}" height="${size * 0.6}" viewBox="0 0 24 16" fill="#2A1F22" stroke="none">
-          <path d="M12 4c-2-3-6-4-9-2 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 2z"/>
-        </svg>
-      </div>`;
-    }).join('');
-    return bats;
-  },
-  ornaments_lights: () => {
-    const lights = Array.from({length: 10}, () => {
-      const left = Math.round(Math.random() * 100);
-      const top = Math.round(Math.random() * 45);
-      const delay = (Math.random() * 3).toFixed(1);
-      const colors = ['#D9B86A', '#C9A24A', '#F3D9A0', '#B3262D', '#1F5A3C'];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.8s ease ${delay}s infinite;">
-        <svg width="7" height="7" viewBox="0 0 24 24" fill="${color}" stroke="none"><circle cx="12" cy="12" r="9"/></svg>
-      </div>`;
-    }).join('');
-    return lights;
-  },
-  hearts: () => {
-    const hearts = Array.from({length: 8}, () => {
-      const left = Math.round(Math.random() * 100);
-      const delay = (Math.random() * 7).toFixed(1);
-      const duration = (12 + Math.random() * 7).toFixed(1);
-      const size = 12 + Math.round(Math.random() * 6);
-      return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite, deco-sway 3.5s ease-in-out infinite;">
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none">
-          <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/>
-        </svg>
-      </div>`;
-    }).join('');
-    return hearts;
-  },
+  spiderweb_bats: () => Array.from({length: 6}, () => {
+    const top = 10 + Math.round(Math.random() * 60), delay = (Math.random() * 10).toFixed(1), duration = (14 + Math.random() * 8).toFixed(1);
+    const size = 14 + Math.round(Math.random() * 8);
+    return `<div class="deco-item" style="top:${top}%;left:-10%;animation:deco-fly ${duration}s linear ${delay}s infinite;">
+      <svg width="${size}" height="${size * 0.6}" viewBox="0 0 24 16" fill="#2A1F22" stroke="none">
+        <path d="M12 4c-2-3-6-4-9-2 2 0 4 1 5 2-3 0-6 1-8 3 3-1 6-1 8 0-3 1-5 3-6 5 3-2 6-3 10-3 4 0 7 1 10 3-1-2-3-4-6-5 2-1 5-1 8 0-2-2-5-3-8-3 1-1 3-2 5-2-3-2-7-1-9 2z"/></svg>
+    </div>`;
+  }).join(''),
+  ornaments_lights: () => Array.from({length: 10}, () => {
+    const left = Math.round(Math.random() * 100), top = Math.round(Math.random() * 45), delay = (Math.random() * 3).toFixed(1);
+    const colors = ['#D9B86A', '#C9A24A', '#F3D9A0', '#B3262D', '#1F5A3C'];
+    return `<div class="deco-item" style="left:${left}%;top:${top}%;animation:deco-twinkle 2.8s ease ${delay}s infinite;">
+      <svg width="7" height="7" viewBox="0 0 24 24" fill="${colors[Math.floor(Math.random() * colors.length)]}" stroke="none"><circle cx="12" cy="12" r="9"/></svg>
+    </div>`;
+  }).join(''),
+  hearts: () => Array.from({length: 8}, () => {
+    const left = Math.round(Math.random() * 100), delay = (Math.random() * 7).toFixed(1), duration = (12 + Math.random() * 7).toFixed(1);
+    const size = 12 + Math.round(Math.random() * 6);
+    return `<div class="deco-item" style="left:${left}%;top:-6%;animation:deco-fall ${duration}s linear ${delay}s infinite, deco-sway 3.5s ease-in-out infinite;">
+      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="var(--pink-accent)" stroke="none">
+        <path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
+    </div>`;
+  }).join(''),
 };
 
 function renderThemeDecorations() {
@@ -1823,10 +2057,7 @@ async function loadBanners() {
     if (!data.ok) throw new Error('bad response');
     bannersCache = data.banners || [];
     renderBanners();
-  } catch (e) {
-    console.error('DollieLand: не удалось загрузить баннеры —', e);
-    section.hidden = true;
-  }
+  } catch (e) { section.hidden = true; }
 }
 
 function renderBanners() {
@@ -1844,11 +2075,8 @@ function renderBanners() {
   if (bannersCache.length > 1) {
     dotsWrap.hidden = false;
     dotsWrap.innerHTML = bannersCache.map((_, i) => `<span class="banner-dot ${i === 0 ? 'active' : ''}"></span>`).join('');
-    row.removeEventListener('scroll', onBannerScroll);
     row.addEventListener('scroll', onBannerScroll, { passive: true });
-  } else {
-    dotsWrap.hidden = true;
-  }
+  } else dotsWrap.hidden = true;
 }
 
 function bannerCardHTML(banner, idx) {
@@ -1857,11 +2085,7 @@ function bannerCardHTML(banner, idx) {
   const btnText = escapeHtml(banner.button_text || 'Смотреть');
   const hasLink = !!banner.link;
   const imageHTML = banner.image_url
-    ? `<div class="banner-image-wrap" id="banner-img-wrap-${idx}">
-         <img src="${banner.image_url}" alt="" loading="lazy" decoding="async"
-              onload="this.classList.add('loaded')"
-              onerror="handleBannerImgError(this, ${idx})">
-       </div>`
+    ? `<div class="banner-image-wrap"><img src="${banner.image_url}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="handleBannerImgError(this, ${idx})"></div>`
     : '';
   return `
     <div class="banner-card" ${hasLink ? `onclick="openBannerLink(${idx})"` : ''}>
@@ -1879,22 +2103,16 @@ function bannerCardHTML(banner, idx) {
 
 function handleBannerImgError(imgEl, idx) {
   const attempts = Number(imgEl.dataset.retry || 0);
-  const banner = bannersCache[idx];
-  const baseSrc = banner?.image_url;
+  const baseSrc = bannersCache[idx]?.image_url;
   if (attempts < 2 && baseSrc) {
     imgEl.dataset.retry = String(attempts + 1);
-    setTimeout(() => {
-      const sep = baseSrc.includes('?') ? '&' : '?';
-      imgEl.src = baseSrc + sep + '_retry=' + Date.now();
-    }, 700 * (attempts + 1));
-    return;
+    setTimeout(() => { imgEl.src = baseSrc + (baseSrc.includes('?') ? '&' : '?') + '_retry=' + Date.now(); }, 700 * (attempts + 1));
   }
-  imgEl.closest('.banner-image-wrap')?.classList.add('img-failed');
 }
 
 function openBannerLink(idx) {
   const banner = bannersCache[idx];
-  if (!banner || !banner.link) return;
+  if (!banner?.link) return;
   hapticImpact('light');
   if (tg && /^https:\/\/t\.me\//.test(banner.link)) tg.openTelegramLink(banner.link);
   else window.open(banner.link, '_blank');
@@ -1942,7 +2160,6 @@ function formatFullDate(iso) {
   const d = new Date(iso);
   return isNaN(d.getTime()) ? '' : `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}`;
 }
-
 function animateNumber(el, to) {
   if (!el) return;
   const from = parseInt(el.textContent, 10);
@@ -1951,8 +2168,7 @@ function animateNumber(el, to) {
   const duration = 500, start = performance.now();
   function step(now) {
     const p = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(from + (to - from) * eased);
+    el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
     if (p < 1) requestAnimationFrame(step);
     else el.textContent = to;
   }
@@ -1970,7 +2186,7 @@ async function loadLoyalty() {
       updateLoyaltyBalanceUI();
       renderDollieRewards();
     }
-  } catch (e) { console.error('DollieLand: loyalty balance —', e); }
+  } catch (e) {}
 }
 
 function updateLoyaltyBalanceUI() {
@@ -1988,31 +2204,10 @@ function updateLoyaltyBalanceUI() {
 }
 
 const REWARD_DEFS = [
-  {
-    key: 'order', icon: 'package', title: 'Первый заказ',
-    subtitle: 'Получите бонус за первую покупку в DollieLand',
-    completed: () => firstOrderCompleted,
-    amountHTML: (r) => `+${r.first_order_bonus}`,
-    action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
-  },
-  {
-    key: 'repeat', icon: 'refresh', title: 'Повторная покупка',
-    subtitle: (r) => `Каждые ${r.repeat_tier_step_rub || 5000} ₽ суммы заказа → +${r.repeat_tier_bonus || 25} Dollies`,
-    amountHTML: (r) => `+${r.repeat_tier_bonus}/шаг`,
-    action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); },
-  },
-  {
-    key: 'referral', icon: 'user-plus', title: 'Пригласить друга',
-    subtitle: (r) => `Друг получит +${r.referral_friend_bonus} Dollies`,
-    amountHTML: (r) => `+${r.referral_inviter_bonus}`,
-    action: () => openReferralSheet(),
-  },
-  {
-    key: 'review', icon: 'star', title: 'Оставить отзыв',
-    subtitle: 'Расскажите о полученном заказе',
-    amountHTML: (r) => `+${r.review_bonus}`,
-    action: () => openReviewSheet(),
-  },
+  { key: 'order', icon: 'package', title: 'Первый заказ', subtitle: 'Получите бонус за первую покупку', completed: () => firstOrderCompleted, amountHTML: (r) => `+${r.first_order_bonus}`, action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); } },
+  { key: 'repeat', icon: 'refresh', title: 'Повторная покупка', subtitle: (r) => `Каждые ${r.repeat_tier_step_rub || 5000} ₽ → +${r.repeat_tier_bonus || 25} Dollies`, amountHTML: (r) => `+${r.repeat_tier_bonus}/шаг`, action: () => { closeSheet(); showToast('Напишите «Заказать куклу» в чате с ботом'); } },
+  { key: 'referral', icon: 'user-plus', title: 'Пригласить друга', subtitle: (r) => `Друг получит +${r.referral_friend_bonus}`, amountHTML: (r) => `+${r.referral_inviter_bonus}`, action: () => openReferralSheet() },
+  { key: 'review', icon: 'star', title: 'Оставить отзыв', subtitle: 'Расскажите о полученном заказе', amountHTML: (r) => `+${r.review_bonus}`, action: () => openReviewSheet() },
 ];
 
 function renderDollieRewards() {
@@ -2081,17 +2276,13 @@ function dollieHistorySkeletonHTML(count) {
   }
   return html;
 }
-
 function dollieHistoryEmptyHTML() {
   const balance = loyaltyBalance ?? 0;
-  if (balance === 0) {
-    return `<div class="empty-state"><h3>0 Dollies</h3><p>Здесь будут появляться твои Dollies после завершённых заказов.</p></div>`;
-  }
-  return `<div class="empty-state"><h3>Пока нет операций</h3><p>Здесь появится история начислений и использования Dollies.</p></div>`;
+  if (balance === 0) return `<div class="empty-state"><h3>0 Dollies</h3><p>Здесь будут появляться твои Dollies после завершённых заказов.</p></div>`;
+  return `<div class="empty-state"><h3>Пока нет операций</h3></div>`;
 }
-
 function dollieHistoryErrorHTML() {
-  return `<div class="empty-state"><h3>Не удалось загрузить историю</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button></div>`;
+  return `<div class="empty-state"><h3>Не удалось загрузить историю</h3><button class="btn btn-primary" onclick="loadLoyaltyHistory(true)">Повторить</button></div>`;
 }
 
 function txMeta(tx) {
@@ -2104,15 +2295,12 @@ function txMeta(tx) {
     case 'referral_inviter': title = 'Начисление за приглашение'; subtitle = 'Друг совершил покупку'; icon = 'user-plus'; break;
     case 'referral_friend': title = 'Начисление по реферальной программе'; subtitle = 'Бонус за покупку по приглашению'; icon = 'user-plus'; break;
     case 'review_reward': title = 'Начисление за отзыв'; subtitle = orderPart || 'Спасибо за отзыв!'; icon = 'star'; break;
-    case 'manual_add': title = 'Начисление'; subtitle = escapeHtml(tx.description || 'От администратора'); icon = 'heart'; break;
+    case 'manual_add': title = 'Начисление'; subtitle = escapeHtml(tx.description || ''); icon = 'heart'; break;
     case 'refund': title = 'Возврат Dollies'; subtitle = orderPart || 'Возврат'; icon = 'heart'; break;
-    case 'promotion': title = 'Начисление за акцию'; subtitle = escapeHtml(tx.description || 'Акция'); icon = 'gift'; break;
+    case 'promotion': title = 'Начисление за акцию'; subtitle = escapeHtml(tx.description || ''); icon = 'gift'; break;
     case 'spend': title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies'; subtitle = 'Скидка на заказ'; icon = 'minus'; break;
-    case 'manual_remove': title = 'Списание'; subtitle = escapeHtml(tx.description || 'От администратора'); icon = 'minus'; break;
-    default:
-      title = isPositive ? 'Начисление' : 'Списание';
-      subtitle = escapeHtml(tx.description || '');
-      icon = isPositive ? 'heart' : 'minus';
+    case 'manual_remove': title = 'Списание'; subtitle = escapeHtml(tx.description || ''); icon = 'minus'; break;
+    default: title = isPositive ? 'Начисление' : 'Списание'; subtitle = escapeHtml(tx.description || ''); icon = isPositive ? 'heart' : 'minus';
   }
   return { title, subtitle, icon, isPositive };
 }
@@ -2120,18 +2308,11 @@ function txMeta(tx) {
 function txRowHTML(tx, idx, source) {
   const meta = txMeta(tx);
   const sign = tx.amount > 0 ? '+' : '';
-  const colorClass = meta.isPositive ? 'pos' : 'neg';
   return `
     <button class="tx-row" onclick="openTxDetail(${idx}, '${source || 'history'}')">
-      <div class="tx-icon ${colorClass}"><svg class="icon"><use href="#icon-${meta.icon}"/></svg></div>
-      <div class="tx-main">
-        <div class="tx-title">${meta.title}</div>
-        <div class="tx-subtitle">${meta.subtitle}</div>
-      </div>
-      <div class="tx-side">
-        <div class="tx-amount ${colorClass}">${sign}${tx.amount}</div>
-        <div class="tx-date">${formatTxDate(tx.created_at)}</div>
-      </div>
+      <div class="tx-icon ${meta.isPositive ? 'pos' : 'neg'}"><svg class="icon"><use href="#icon-${meta.icon}"/></svg></div>
+      <div class="tx-main"><div class="tx-title">${meta.title}</div><div class="tx-subtitle">${meta.subtitle}</div></div>
+      <div class="tx-side"><div class="tx-amount ${meta.isPositive ? 'pos' : 'neg'}">${sign}${tx.amount}</div><div class="tx-date">${formatTxDate(tx.created_at)}</div></div>
     </button>`;
 }
 
@@ -2148,7 +2329,7 @@ async function loadDollieRecent() {
       : dollieHistoryEmptyHTML();
     stripAutoDetectLinks(container);
   } catch (e) {
-    container.innerHTML = `<p style="font-size:12.5px;color:var(--text-secondary);text-align:center;padding:14px 0;">Не удалось загрузить операции</p>`;
+    container.innerHTML = `<p style="text-align:center;padding:14px 0;color:var(--text-secondary);font-size:12.5px;">Не удалось загрузить операции</p>`;
   }
 }
 
@@ -2184,9 +2365,7 @@ async function loadLoyaltyHistory(reset) {
   } catch (e) {
     if (reset && container) container.innerHTML = dollieHistoryErrorHTML();
     else showToast('Не удалось загрузить ещё операции');
-  } finally {
-    loyaltyHistoryLoading = false;
-  }
+  } finally { loyaltyHistoryLoading = false; }
 }
 
 function openTxDetail(idx, source) {
@@ -2223,9 +2402,8 @@ function formatNotifTime(iso) {
   if (d.toDateString() === now.toDateString()) return `Сегодня, ${timeStr}`;
   return `${d.getDate()} ${RU_MONTHS_GEN[d.getMonth()]}, ${timeStr}`;
 }
-
 function notificationsEmptyHTML() {
-  return `<div class="empty-state"><h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статуса заказов, начисления Dollies и другие события.</p></div>`;
+  return `<div class="empty-state"><h3>Пока нет уведомлений</h3><p>Здесь будут появляться изменения статусов, начисления Dollies и другие события.</p></div>`;
 }
 function notificationRowHTML(n) {
   return `
@@ -2240,12 +2418,10 @@ function notificationRowHTML(n) {
       </div>
     </div>`;
 }
-
 async function openNotificationsSheet() {
   openSheet('notifications');
   await loadNotifications(true);
 }
-
 async function loadNotifications(markRead) {
   const dot = document.getElementById('notif-dot');
   const content = document.getElementById('notifications-content');
@@ -2263,9 +2439,7 @@ async function loadNotifications(markRead) {
       apiPost('/api/me/notifications/read', {}).catch(() => {});
       if (dot) dot.hidden = true;
     }
-  } catch (e) {
-    if (content && !content.innerHTML) content.innerHTML = `<p style="text-align:center;padding:14px 0;color:var(--text-secondary);font-size:12.5px;">Не удалось загрузить уведомления</p>`;
-  }
+  } catch (e) {}
 }
 
 /* =========================================================
@@ -2273,7 +2447,6 @@ async function loadNotifications(markRead) {
    ========================================================= */
 let referralData = null;
 function referralLink(code) { return `https://t.me/${BOT_USERNAME}?start=ref_${code}`; }
-
 async function openReferralSheet() {
   openSheet('referral');
   const statsContainer = document.getElementById('referral-stats-content');
@@ -2295,11 +2468,8 @@ async function openReferralSheet() {
     } else {
       statsContainer.innerHTML = `<div class="empty-state" style="padding-top:6px;"><h3>Пока нет приглашений</h3><p>Поделитесь DollieLand с другом и получите +${data.inviter_bonus} Dollies после его первой покупки.</p></div>`;
     }
-  } catch (e) {
-    statsContainer.innerHTML = `<p style="text-align:center;padding:14px 0;color:var(--text-secondary);font-size:12.5px;">Не удалось загрузить статистику</p>`;
-  }
+  } catch (e) {}
 }
-
 function shareReferralLink() {
   if (!referralData) { showToast('Загрузка…'); return; }
   hapticImpact('light');
@@ -2311,7 +2481,7 @@ function shareReferralLink() {
 }
 
 /* =========================================================
-   Reviews — главное обновление
+   Reviews
    ========================================================= */
 let reviewableOrdersCache = [];
 let selectedReviewOrderId = null;
@@ -2322,18 +2492,16 @@ let reviewListCache = [];
 let myReviewsCache = [];
 let reviewsLoadedOnce = false;
 let reviewPromptOrder = null;
-let reviewLightboxPhotos = [];
-let reviewLightboxIndex = 0;
 let reviewSubmitInFlight = false;
 const REVIEW_MAX_PHOTOS = 8;
 const REVIEW_MAX_TEXT = 5000;
 const REVIEW_DRAFT_PREFIX = 'dollieland_review_draft_';
 
 const REVIEW_SORT_OPTIONS = [
-  { key: 'newest', label: 'Сначала новые' },
-  { key: 'oldest', label: 'Сначала старые' },
-  { key: 'positive', label: 'Положительные' },
-  { key: 'negative', label: 'Отрицательные' },
+  { key: 'newest', label: 'Сначала новые', icon: 'arrow-down' },
+  { key: 'oldest', label: 'Сначала старые', icon: 'arrow-up' },
+  { key: 'positive', label: 'Положительные', icon: 'thumbs-up' },
+  { key: 'negative', label: 'Отрицательные', icon: 'thumbs-down' },
 ];
 function reviewSortLabel(k) { return REVIEW_SORT_OPTIONS.find(x => x.key === k)?.label || 'Сначала новые'; }
 
@@ -2348,7 +2516,7 @@ function reviewSkeletonHTML(count = 3) {
     </div>`).join('');
 }
 
-function starsHTML(rating, small) {
+function starsHTML(rating) {
   const n = Math.round(Number(rating) || 0);
   return `<div class="review-rating" aria-label="${n} из 5">${
     [1,2,3,4,5].map(i => `<svg class="icon ${i > n ? 'off' : ''}"><use href="#icon-star"/></svg>`).join('')
@@ -2362,30 +2530,34 @@ function formatReviewDate(iso) {
   return d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
 }
 
-function reviewPhotoGridHTML(review) {
+function publicReviewName(review) {
+  if (review.is_anonymous) return 'Анонимный покупатель';
+  return review.display_name || review.username || 'Покупатель';
+}
+function publicReviewUsername(review) {
+  if (review.is_anonymous) return '';
+  return review.username || '';
+}
+
+function reviewPhotoGridHTML(review, source) {
   const photos = Array.isArray(review.photos) ? review.photos : [];
   if (!photos.length) return '';
   const shown = photos.slice(0, 3);
+  const src = source || 'reviews';
   return `<div class="review-photos">
-    ${shown.map((src, i) => `
-      <button class="review-photo-thumb" onclick='openReviewLightbox(${JSON.stringify(photos)}, ${i})'>
-        <img src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async">
+    ${shown.map((url, i) => `
+      <button class="review-photo-thumb" onclick="openPhotoLightbox('${src}', ${review.id}, ${i})">
+        <img src="${escapeHtml(url)}" alt="" loading="lazy" decoding="async">
         ${i === 2 && photos.length > 3 ? `<span class="review-photo-more">+${photos.length - 3}</span>` : ''}
       </button>`).join('')}
   </div>`;
 }
 
 function reviewCardHTML(review) {
-  const isAnon = !!review.is_anonymous;
-  // Публичное имя: если аноним — "Анонимный покупатель"; иначе display_name, а при его отсутствии username
-  const publicName = isAnon
-    ? 'Анонимный покупатель'
-    : (review.display_name || review.username || 'Покупатель');
-  // username показываем только для неанонимных
-  const publicUsername = (!isAnon && review.username) ? review.username : '';
-
   const long = (review.text || '').length > 260;
   const text = escapeHtml(review.text || '');
+  const publicName = publicReviewName(review);
+  const publicUsername = publicReviewUsername(review);
   return `
     <article class="review-card">
       <div class="review-card-head">
@@ -2399,7 +2571,7 @@ function reviewCardHTML(review) {
       ${starsHTML(review.rating)}
       ${text ? `<div class="review-text ${long ? 'clamped' : ''}">${text}</div>
         ${long ? `<button class="review-read-more" onclick="openReviewDetail(${review.id})">Читать полностью</button>` : ''}` : ''}
-      ${reviewPhotoGridHTML(review)}
+      ${reviewPhotoGridHTML(review, 'reviews')}
       <div class="review-order-meta">${review.order_title ? escapeHtml(review.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(review.order_id || ''))}</div>
     </article>`;
 }
@@ -2429,24 +2601,40 @@ function renderReviewsStats(stats) {
     </div>`;
 }
 
-function renderMyReviews() {
-  if (!myReviewsCache.length) return '';
-  const recent = myReviewsCache.slice(0, 2);
+// Собираем все фото из всех отзывов — для верхней галереи
+function collectAllReviewPhotos() {
+  const result = [];
+  reviewListCache.forEach(review => {
+    const photos = Array.isArray(review.photos) ? review.photos : [];
+    photos.forEach(url => {
+      result.push({ url, reviewId: review.id, source: 'reviews' });
+    });
+  });
+  return result;
+}
+
+function renderAllPhotosGallery() {
+  const allPhotos = collectAllReviewPhotos();
+  if (!allPhotos.length) return '';
+  const preview = allPhotos.slice(0, 8);
+  const extra = Math.max(0, allPhotos.length - 8);
   return `
-    <div class="review-mine-card">
-      <div class="review-mine-head">
-        <div class="review-mine-title">Мои отзывы</div>
-        <div class="review-mine-count">${myReviewsCache.length}</div>
+    <div class="reviews-photos-block">
+      <div class="reviews-photos-head">
+        <div class="reviews-photos-title">
+          <svg class="icon"><use href="#icon-image"/></svg>
+          Фото покупателей
+        </div>
+        <button class="reviews-photos-all-btn" onclick="openPhotoLightbox('allPhotos', 0, 0)">
+          Все фото (${allPhotos.length})
+          <svg class="icon"><use href="#icon-chevron-right"/></svg>
+        </button>
       </div>
-      <div class="review-mine-list">
-        ${recent.map(r => `
-          <button class="review-mine-row" onclick="openReviewDetail(${r.id}, true)">
-            ${starsHTML(r.rating)}
-            <div class="review-mine-row-main">
-              <div class="review-mine-row-title">${escapeHtml(r.order_title || ('Заказ №' + r.order_id))}</div>
-              <div class="review-mine-row-sub">${formatReviewDate(r.created_at)}</div>
-            </div>
-            <svg class="icon" style="width:15px;height:15px;color:var(--text-secondary)"><use href="#icon-chevron-right"/></svg>
+      <div class="reviews-photos-grid">
+        ${preview.map((p, i) => `
+          <button class="reviews-photo-cell" onclick="openPhotoLightbox('allPhotos', 0, ${i})">
+            <img src="${escapeHtml(p.url)}" alt="" loading="lazy" decoding="async">
+            ${i === preview.length - 1 && extra > 0 ? `<span class="reviews-photo-cell-more">+${extra}</span>` : ''}
           </button>`).join('')}
       </div>
     </div>`;
@@ -2458,6 +2646,7 @@ function renderReviewsPage(data) {
   const stats = data?.stats || {total_reviews: 0};
   const canWrite = reviewableOrdersCache.length > 0;
   let html = renderReviewsStats(stats);
+  html += renderAllPhotosGallery();
   if (canWrite) {
     html += `
       <button class="review-cta" onclick="openReviewSheet()">
@@ -2469,7 +2658,6 @@ function renderReviewsPage(data) {
         <svg class="icon" style="color:var(--text-secondary)"><use href="#icon-chevron-right"/></svg>
       </button>`;
   }
-  html += renderMyReviews();
   if (!reviewListCache.length) {
     html += `<div class="empty-state"><h3>${stats.total_reviews ? 'Ничего не найдено' : 'Пока здесь тихо'}</h3>
       <p>${stats.total_reviews ? 'Попробуйте изменить сортировку.' : 'Станьте первым, кто поделится впечатлениями.'}</p></div>`;
@@ -2477,13 +2665,12 @@ function renderReviewsPage(data) {
     html += `<div class="reviews-toolbar">
       <div class="reviews-toolbar-title">Все отзывы</div>
       <button class="pill-btn review-sort-btn" onclick="openReviewSortSheet()">
-        <svg class="icon"><use href="#icon-filter"/></svg> ${reviewSortLabel(reviewSort)}
+        <svg class="icon"><use href="#icon-${REVIEW_SORT_OPTIONS.find(o => o.key === reviewSort)?.icon || 'sort'}"/></svg>
+        ${reviewSortLabel(reviewSort)}
       </button>
     </div>`;
     html += reviewListCache.map(reviewCardHTML).join('');
-    if (data?.has_more) {
-      html += `<button class="btn btn-secondary btn-block" onclick="loadMoreReviews()">Показать ещё</button>`;
-    }
+    if (data?.has_more) html += `<button class="btn btn-secondary btn-block" onclick="loadMoreReviews()">Показать ещё</button>`;
   }
   content.innerHTML = html;
   stripAutoDetectLinks(content);
@@ -2507,8 +2694,8 @@ async function loadReviews(isManual = false) {
     reviewableOrdersCache = eligibleData?.ok ? (eligibleData.orders || []) : [];
     reviewsLoadedOnce = true;
     renderReviewsPage(publicData);
+    updateMyReviewsBadge();
   } catch (e) {
-    console.error('DollieLand: не удалось загрузить отзывы —', e);
     if (!reviewsLoadedOnce) {
       content.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить отзывы</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadReviews(true)">Повторить</button></div>`;
     } else showToast('Не удалось обновить отзывы');
@@ -2527,12 +2714,18 @@ async function loadMoreReviews() {
   } catch (_) { showToast('Не удалось загрузить ещё отзывы'); }
 }
 
+function updateMyReviewsBadge() {
+  const badge = document.getElementById('my-reviews-count');
+  if (badge) badge.textContent = myReviewsCache.length;
+}
+
 function openReviewSortSheet() {
   const list = document.getElementById('review-sort-list');
   if (!list) return;
   list.innerHTML = REVIEW_SORT_OPTIONS.map(opt => `
     <button class="review-sort-option ${opt.key === reviewSort ? 'selected' : ''}" onclick="selectReviewSort('${opt.key}')">
-      <svg class="icon"><use href="#icon-filter"/></svg><span>${opt.label}</span>
+      <span class="sort-icon"><svg class="icon"><use href="#icon-${opt.icon}"/></svg></span>
+      <span>${opt.label}</span>
       <span class="check">${opt.key === reviewSort ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</span>
     </button>`).join('');
   openSheet('review-sort');
@@ -2545,6 +2738,210 @@ function selectReviewSort(key) {
   loadReviews(false);
 }
 
+/* ============== MY REVIEWS SHEET (in profile) ============== */
+function openMyReviewsSheet() {
+  openSheet('my-reviews');
+  renderMyReviewsList();
+}
+
+function renderMyReviewsList() {
+  const container = document.getElementById('my-reviews-list');
+  if (!container) return;
+  if (!myReviewsCache.length) {
+    container.innerHTML = `<div class="empty-state"><h3>Пока нет отзывов</h3><p>Отзыв можно оставить после получения заказа.</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="my-reviews-list">
+    ${myReviewsCache.map(r => `
+      <div class="my-review-item">
+        <div class="my-review-head">
+          <div class="my-review-title">${escapeHtml(r.order_title || ('Заказ №' + r.order_id))}</div>
+          <div class="my-review-date">${formatReviewDate(r.created_at)}</div>
+        </div>
+        <div class="my-review-stars">${[1,2,3,4,5].map(i => `<svg class="icon ${i > Number(r.rating || 0) ? 'off' : ''}"><use href="#icon-star"/></svg>`).join('')}</div>
+        ${r.text ? `<div class="my-review-text">${escapeHtml(r.text)}</div>` : ''}
+        ${(r.photos && r.photos.length) ? `<div class="my-review-photos">
+          ${r.photos.slice(0, 8).map((url, i) => `<img src="${escapeHtml(url)}" alt="" onclick="openPhotoLightbox('myReviews', ${r.id}, ${i})">`).join('')}
+        </div>` : ''}
+        <div style="font-size:10.5px;color:var(--text-secondary);margin-top:8px;">${r.is_anonymous ? 'Опубликован как анонимный' : 'Опубликован под вашим именем'}</div>
+      </div>`).join('')}
+  </div>`;
+  stripAutoDetectLinks(container);
+}
+
+/* ============== PHOTO LIGHTBOX: swipe-only ============== */
+let lightboxState = { photos: [], index: 0, source: 'reviews', reviewId: null };
+
+function getReviewById(id, source) {
+  if (source === 'myReviews') return myReviewsCache.find(r => Number(r.id) === Number(id));
+  return reviewListCache.find(r => Number(r.id) === Number(id));
+}
+
+function buildLightboxPhotos(source, reviewId) {
+  if (source === 'allPhotos') {
+    // Все фото из всех публичных отзывов
+    const all = [];
+    reviewListCache.forEach(review => {
+      (review.photos || []).forEach(url => all.push({ url, review }));
+    });
+    return all;
+  }
+  if (source === 'myReviews') {
+    const review = getReviewById(reviewId, 'myReviews');
+    if (!review) return [];
+    return (review.photos || []).map(url => ({ url, review }));
+  }
+  // source === 'reviews'
+  const review = getReviewById(reviewId, 'reviews');
+  if (!review) return [];
+  return (review.photos || []).map(url => ({ url, review }));
+}
+
+function openPhotoLightbox(source, reviewId, index) {
+  const photos = buildLightboxPhotos(source, reviewId);
+  if (!photos.length) return;
+  lightboxState = { photos, index: Math.max(0, Math.min(index || 0, photos.length - 1)), source, reviewId };
+  renderLightbox();
+  document.getElementById('photo-lightbox')?.classList.add('open');
+  hapticImpact('light');
+  if (tg) tg.BackButton.show();
+}
+
+function renderLightbox() {
+  const track = document.getElementById('photo-lightbox-track');
+  const counter = document.getElementById('photo-lightbox-counter');
+  if (!track) return;
+  const { photos, index } = lightboxState;
+  track.innerHTML = photos.map(p => `
+    <div class="photo-lightbox-slide"><img src="${escapeHtml(p.url)}" alt="" loading="eager" decoding="async"></div>
+  `).join('');
+  // Сдвигаем трек на нужную позицию без анимации
+  track.style.transition = 'none';
+  track.style.transform = `translate3d(-${index * 100}%, 0, 0)`;
+  requestAnimationFrame(() => { track.style.transition = ''; });
+  if (counter) counter.textContent = `${index + 1}/${photos.length}`;
+  updateLightboxBottom();
+}
+
+function updateLightboxBottom() {
+  const { photos, index } = lightboxState;
+  const current = photos[index];
+  if (!current) return;
+  const review = current.review || {};
+  const publicName = publicReviewName(review);
+  const publicUsername = publicReviewUsername(review);
+  document.getElementById('photo-lightbox-author').textContent = publicName;
+  document.getElementById('photo-lightbox-username').textContent = publicUsername || '';
+  document.getElementById('photo-lightbox-username').style.display = publicUsername ? '' : 'none';
+  const starsEl = document.getElementById('photo-lightbox-stars');
+  const rating = Math.round(Number(review.rating) || 0);
+  starsEl.innerHTML = [1,2,3,4,5].map(i => `<svg class="icon ${i > rating ? 'off' : ''}"><use href="#icon-star"/></svg>`).join('');
+  const textEl = document.getElementById('photo-lightbox-text');
+  const toggleEl = document.getElementById('photo-lightbox-text-toggle');
+  const text = review.text || '';
+  textEl.textContent = text;
+  textEl.classList.remove('expanded');
+  const isLong = text.length > 180;
+  toggleEl.hidden = !isLong;
+  toggleEl.textContent = 'Читать полностью';
+  document.getElementById('photo-lightbox-order').textContent =
+    (review.order_title ? review.order_title + ' · ' : '') + (review.order_id ? 'Заказ №' + review.order_id : '');
+}
+
+function toggleLightboxText() {
+  const textEl = document.getElementById('photo-lightbox-text');
+  const toggleEl = document.getElementById('photo-lightbox-text-toggle');
+  if (!textEl) return;
+  const expanded = textEl.classList.toggle('expanded');
+  toggleEl.textContent = expanded ? 'Свернуть' : 'Читать полностью';
+}
+
+function closePhotoLightbox() {
+  document.getElementById('photo-lightbox')?.classList.remove('open');
+  lightboxState = { photos: [], index: 0, source: 'reviews', reviewId: null };
+  if (!document.querySelector('.bottom-sheet.open') && !document.getElementById('review-prompt-overlay')?.classList.contains('open')) {
+    if (tg) tg.BackButton.hide();
+  }
+}
+
+// Свайп по треку лайтбокса
+(function setupLightboxSwipe() {
+  const viewport = document.getElementById('photo-lightbox-viewport');
+  const track = document.getElementById('photo-lightbox-track');
+  if (!viewport || !track) return;
+  let startX = 0, startY = 0, deltaX = 0, dragging = false, isHorizontal = null;
+
+  function onStart(clientX, clientY) {
+    if (!lightboxState.photos.length) return;
+    dragging = true; startX = clientX; startY = clientY; deltaX = 0; isHorizontal = null;
+    track.classList.add('dragging');
+  }
+  function onMove(clientX, clientY) {
+    if (!dragging) return;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+    if (isHorizontal === null) {
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        isHorizontal = Math.abs(dx) > Math.abs(dy);
+      }
+    }
+    if (!isHorizontal) return;
+    deltaX = dx;
+    const base = -lightboxState.index * viewport.clientWidth;
+    track.style.transform = `translate3d(${base + deltaX}px, 0, 0)`;
+  }
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove('dragging');
+    if (isHorizontal) {
+      const threshold = viewport.clientWidth * 0.18;
+      if (deltaX < -threshold && lightboxState.index < lightboxState.photos.length - 1) {
+        lightboxState.index++;
+      } else if (deltaX > threshold && lightboxState.index > 0) {
+        lightboxState.index--;
+      }
+      const counter = document.getElementById('photo-lightbox-counter');
+      if (counter) counter.textContent = `${lightboxState.index + 1}/${lightboxState.photos.length}`;
+      updateLightboxBottom();
+      track.style.transition = '';
+      track.style.transform = `translate3d(-${lightboxState.index * 100}%, 0, 0)`;
+      hapticSelection();
+    }
+    deltaX = 0;
+  }
+
+  viewport.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    onStart(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  viewport.addEventListener('touchmove', e => {
+    if (e.touches.length !== 1) return;
+    onMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  viewport.addEventListener('touchend', onEnd);
+  viewport.addEventListener('touchcancel', onEnd);
+
+  // Mouse drag (для десктопа)
+  let mouseDown = false;
+  viewport.addEventListener('mousedown', e => { mouseDown = true; onStart(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', e => { if (mouseDown) onMove(e.clientX, e.clientY); });
+  window.addEventListener('mouseup', () => { if (mouseDown) { mouseDown = false; onEnd(); } });
+})();
+
+/* ============== REVIEW DETAIL MODAL ============== */
+function openReviewDetail(id) {
+  const review = reviewListCache.find(r => Number(r.id) === Number(id));
+  if (!review) return;
+  const publicName = publicReviewName(review);
+  const publicUsername = publicReviewUsername(review);
+  // Открываем лайтбокс сразу на первом фото, если есть, иначе — просто ре-рендер
+  if (review.photos && review.photos.length) {
+    openPhotoLightbox('reviews', review.id, 0);
+  }
+}
+
+/* ============== REVIEW FORM ============== */
 async function openReviewSheet(orderId = null) {
   openSheet('review');
   selectedReviewOrderId = orderId;
@@ -2571,8 +2968,7 @@ async function openReviewSheet(orderId = null) {
       renderReviewForm();
     } else renderReviewOrderPicker();
   } catch (e) {
-    console.error('DollieLand: reviewable orders —', e);
-    body.innerHTML = `<div class="empty-state" style="padding-top:8px;"><h3>Не удалось загрузить заказы</h3><p>Попробуйте ещё раз.</p><button class="btn btn-secondary" onclick="openReviewSheet()">Повторить</button></div>`;
+    body.innerHTML = `<div class="empty-state" style="padding-top:8px;"><h3>Не удалось загрузить заказы</h3><button class="btn btn-secondary" onclick="openReviewSheet()">Повторить</button></div>`;
   }
 }
 
@@ -2602,18 +2998,18 @@ function saveReviewDraft() {
   if (!selectedReviewOrderId) return;
   const text = document.getElementById('review-text-input')?.value || '';
   const anon = document.querySelector('input[name="review-anon"]:checked')?.value === 'anonymous';
-  try {
-    localStorage.setItem(reviewDraftKey(selectedReviewOrderId), JSON.stringify({text, rating: selectedReviewRating, is_anonymous: anon}));
-  } catch (_) {}
+  try { localStorage.setItem(reviewDraftKey(selectedReviewOrderId), JSON.stringify({text, rating: selectedReviewRating, is_anonymous: anon})); } catch (_) {}
 }
-function clearReviewDraft(orderId) {
-  try { localStorage.removeItem(reviewDraftKey(orderId)); } catch (_) {}
-}
+function clearReviewDraft(orderId) { try { localStorage.removeItem(reviewDraftKey(orderId)); } catch (_) {} }
 
 function autoGrowReviewTextarea(el) {
   if (!el) return;
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 280) + 'px';
+}
+
+function reviewRatingText(n) {
+  return ['', 'Совсем не понравилось', 'Есть что улучшить', 'Нормально', 'Очень понравилось', 'Всё прекрасно'][n] || 'Выберите оценку';
 }
 
 function renderReviewForm() {
@@ -2666,10 +3062,6 @@ function renderReviewForm() {
   document.getElementById('review-photo-input')?.addEventListener('change', onReviewPhotoChange);
   autoGrowReviewTextarea(textarea);
   renderReviewPhotoPreviews();
-}
-
-function reviewRatingText(n) {
-  return ['', 'Совсем не понравилось', 'Есть что улучшить', 'Нормально', 'Очень понравилось', 'Всё прекрасно'][n] || 'Выберите оценку';
 }
 
 function setReviewRating(n) {
@@ -2817,7 +3209,6 @@ async function submitReview() {
     selectedReviewOrderId = null;
     await loadReviews(false);
   } catch (e) {
-    console.error('DollieLand: submit review error —', e);
     showToast('Не удалось отправить отзыв. Текст сохранён — попробуйте ещё раз.');
     hapticNotification('error');
     if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Повторить публикацию'; }
@@ -2825,88 +3216,7 @@ async function submitReview() {
   }
 }
 
-function openReviewDetail(id, mine = false) {
-  const review = (mine ? myReviewsCache : reviewListCache).find(r => Number(r.id) === Number(id));
-  if (!review) return;
-  const modal = document.getElementById('review-detail-modal');
-  const content = document.getElementById('review-detail-content');
-  const isAnon = !!review.is_anonymous;
-  const publicName = isAnon ? 'Анонимный покупатель' : (review.display_name || review.username || 'Покупатель');
-  const publicUsername = (!isAnon && review.username) ? review.username : '';
-  content.innerHTML = `
-    <div style="padding:6px 0 16px">
-      <div class="review-card" style="margin-top:8px">
-        <div class="review-card-head">
-          <div class="review-avatar"><svg class="icon"><use href="#icon-user"/></svg></div>
-          <div class="review-author">
-            <div class="review-author-name">${escapeHtml(publicName)}</div>
-            ${publicUsername ? `<div class="review-author-user">${escapeHtml(publicUsername)}</div>` : ''}
-          </div>
-          <div class="review-date">${formatReviewDate(review.created_at)}</div>
-        </div>
-        ${starsHTML(review.rating)}
-        ${review.text ? `<div class="review-text">${escapeHtml(review.text)}</div>` : ''}
-        ${reviewPhotoGridHTML(review)}
-        <div class="review-order-meta">${review.order_title ? escapeHtml(review.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(review.order_id || ''))}</div>
-      </div>
-    </div>`;
-  modal.classList.add('open');
-  hapticImpact('light');
-}
-
-function closeReviewDetail() {
-  document.getElementById('review-detail-modal')?.classList.remove('open');
-  if (!document.querySelector('.bottom-sheet.open') && !document.getElementById('review-photo-lightbox')?.classList.contains('open')
-      && !document.getElementById('review-prompt-overlay')?.classList.contains('open')
-      && !backHandlerStack.length) {
-    if (tg) tg.BackButton.hide();
-  }
-}
-
-function openReviewLightbox(photos, index) {
-  if (!Array.isArray(photos) || !photos.length) return;
-  reviewLightboxPhotos = photos;
-  reviewLightboxIndex = Math.max(0, Math.min(index || 0, photos.length - 1));
-  renderReviewLightbox();
-  document.getElementById('review-photo-lightbox')?.classList.add('open');
-  hapticImpact('light');
-  if (tg) tg.BackButton.show();
-}
-function renderReviewLightbox() {
-  const img = document.getElementById('review-lightbox-image');
-  const counter = document.getElementById('review-lightbox-counter');
-  if (!img) return;
-  img.src = reviewLightboxPhotos[reviewLightboxIndex] || '';
-  if (counter) counter.textContent = `${reviewLightboxIndex + 1}/${reviewLightboxPhotos.length}`;
-}
-function stepReviewLightbox(delta) {
-  if (!reviewLightboxPhotos.length) return;
-  reviewLightboxIndex = (reviewLightboxIndex + delta + reviewLightboxPhotos.length) % reviewLightboxPhotos.length;
-  renderReviewLightbox();
-  hapticSelection();
-}
-function closeReviewLightbox() {
-  document.getElementById('review-photo-lightbox')?.classList.remove('open');
-  reviewLightboxPhotos = [];
-  if (!document.querySelector('.bottom-sheet.open') && !document.getElementById('review-detail-modal')?.classList.contains('open')
-      && !document.getElementById('review-prompt-overlay')?.classList.contains('open')
-      && !backHandlerStack.length) {
-    if (tg) tg.BackButton.hide();
-  }
-}
-
-(function setupReviewLightboxSwipe() {
-  let startX = 0;
-  const box = document.getElementById('review-photo-lightbox');
-  box?.addEventListener('touchstart', e => { startX = e.touches[0]?.clientX || 0; }, {passive:true});
-  box?.addEventListener('touchend', e => {
-    const endX = e.changedTouches[0]?.clientX || 0;
-    const dx = endX - startX;
-    if (Math.abs(dx) > 45) stepReviewLightbox(dx < 0 ? 1 : -1);
-  }, {passive:true});
-  box?.addEventListener('click', e => { if (e.target === box) closeReviewLightbox(); });
-})();
-
+/* ============== REVIEW PROMPT ============== */
 function openReviewPrompt(order) {
   reviewPromptOrder = order;
   const overlay = document.getElementById('review-prompt-overlay');
@@ -2921,9 +3231,7 @@ function dismissReviewPrompt() {
   document.getElementById('review-prompt-overlay')?.classList.remove('open');
   reviewPromptOrder = null;
   if (order?.id) apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'later'}).catch(()=>{});
-  if (!document.querySelector('.bottom-sheet.open') && !document.getElementById('review-photo-lightbox')?.classList.contains('open')
-      && !document.getElementById('review-detail-modal')?.classList.contains('open')
-      && !backHandlerStack.length) {
+  if (!document.querySelector('.bottom-sheet.open') && !document.getElementById('photo-lightbox')?.classList.contains('open')) {
     if (tg) tg.BackButton.hide();
   }
 }
@@ -2935,17 +3243,12 @@ function startReviewFromPrompt() {
   apiPost(`/api/me/review_prompt/${encodeURIComponent(order.id)}`, {action:'started'}).catch(()=>{});
   openReviewSheet(order.id);
 }
-
 async function checkReviewPrompt() {
   if (!userId) return;
   try {
     const data = await apiFetch('/api/me/review_prompt', {}, {timeoutMs: 8000, retries: 0});
-    if (data?.ok && data.show && data.order) {
-      openReviewPrompt({...data.order, reward: Number(data.reward || 10)});
-    }
-  } catch (e) {
-    console.debug('DollieLand: review prompt unavailable', e);
-  }
+    if (data?.ok && data.show && data.order) openReviewPrompt({...data.order, reward: Number(data.reward || 10)});
+  } catch (e) {}
 }
 
 /* =========================================================
@@ -2967,7 +3270,7 @@ async function trackOrder() {
       result.innerHTML = `<div class="empty-state"><h3>Заказ не найден</h3><p>Проверьте номер или напишите <b>@Darielune</b>.</p></div>`;
     }
   } catch (e) {
-    result.innerHTML = `<div class="empty-state"><h3>Ошибка соединения</h3><p>Попробуйте немного позже.</p></div>`;
+    result.innerHTML = `<div class="empty-state"><h3>Ошибка соединения</h3></div>`;
   }
 }
 
@@ -2976,22 +3279,15 @@ function callAdmin() {
     tg.sendData(JSON.stringify({ action: 'call_admin' }));
     showToast('Администратор уведомлён');
     hapticNotification('success');
-  } else {
-    window.open('https://t.me/Darielune', '_blank');
-  }
+  } else window.open('https://t.me/Darielune', '_blank');
 }
 
 const HELP_DATA = [
-  { id: 'shipping', label: 'Как работает доставка', icon: 'truck',
-    body: 'Куклы заказываются у продавцов в США или Китае, затем едут на наш склад, а после — к вам в Россию. Доставка из США обычно 4–5 недель, из Китая — 3–4 недели. Итоговая стоимость зависит от веса.' },
-  { id: 'statuses', label: 'Что означает статус заказа', icon: 'help-circle',
-    body: STATUS_STEPS.map((s, i) => `${i + 1}. ${s.label}`).join('<br>') },
-  { id: 'pay-weight', label: 'Как оплатить вес', icon: 'alert-circle',
-    body: 'Когда кукла прибывает на склад, мы взвешиваем посылку и присылаем итоговую сумму. Оплата — через администратора в чате с ботом, когда заказ перейдёт в статус «Ожидает оплаты веса».' },
-  { id: 'shipping-time', label: 'Когда заказ будет отправлен', icon: 'clock',
-    body: 'Отправка в Россию происходит сразу после оплаты веса. Дальнейшее движение зависит от логистической схемы и отображается в статусе заказа.' },
-  { id: 'stuck-status', label: 'Что делать, если статус не меняется', icon: 'refresh',
-    body: 'Международная логистика иногда идёт с задержками. Если статус не менялся слишком долго — напишите нам, мы уточним актуальную информацию.' }
+  { id: 'shipping', label: 'Как работает доставка', icon: 'truck', body: 'Куклы заказываются у продавцов в США или Китае, затем едут на наш склад, а после — к вам в Россию. Доставка из США обычно 4–5 недель, из Китая — 3–4 недели.' },
+  { id: 'statuses', label: 'Что означает статус заказа', icon: 'help-circle', body: STATUS_STEPS.map((s, i) => `${i + 1}. ${s.label}`).join('<br>') },
+  { id: 'pay-weight', label: 'Как оплатить вес', icon: 'alert-circle', body: 'Когда кукла прибывает на склад, мы взвешиваем посылку и присылаем итоговую сумму. Оплата — через администратора в чате с ботом.' },
+  { id: 'shipping-time', label: 'Когда заказ будет отправлен', icon: 'clock', body: 'Отправка в Россию происходит сразу после оплаты веса.' },
+  { id: 'stuck-status', label: 'Что делать, если статус не меняется', icon: 'refresh', body: 'Международная логистика иногда идёт с задержками. Напишите нам, и мы уточним актуальную информацию.' }
 ];
 
 function renderHelpList() {
@@ -3031,60 +3327,41 @@ function showToast(msg) {
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
 /* =========================================================
-   Auto-detect link stripper
-   ========================================================= */
-function stripAutoDetectLinks(root) {
-  if (!root) return;
-  const anchors = root.querySelectorAll(
-    'a[x-apple-data-detectors], a[x-apple-data-detectors-type], a[href^="tel:"], a[href^="mailto:"], a[href^="date:"], a[href^="address:"]'
-  );
-  anchors.forEach(a => {
-    const parent = a.parentNode;
-    if (!parent) return;
-    parent.replaceChild(document.createTextNode(a.textContent), a);
-  });
-}
-function watchAutoDetectLinks() {
-  const observer = new MutationObserver(mutations => {
-    mutations.forEach(m => {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType === 1) {
-          if (node.tagName === 'A' && (
-            node.hasAttribute('x-apple-data-detectors') ||
-            node.hasAttribute('x-apple-data-detectors-type') ||
-            /^(tel|mailto|date|address):/.test(node.getAttribute('href') || '')
-          )) {
-            const parent = node.parentNode;
-            if (parent) parent.replaceChild(document.createTextNode(node.textContent), node);
-          } else {
-            stripAutoDetectLinks(node);
-          }
-        }
-      });
-    });
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-
-/* =========================================================
    Init
    ========================================================= */
-renderHelpList();
-watchAutoDetectLinks();
-applySeasonalIcons();
-loadOrders(false);
-loadLoyalty();
-loadBanners();
-loadThemeConfig();
-loadNotifications(false);
+function hidePreloader() {
+  const p = document.getElementById('preloader');
+  if (!p) return;
+  p.classList.add('hidden');
+  setTimeout(() => p.remove(), 500);
+}
 
-setInterval(() => {
-  if (document.visibilityState === 'visible') loadOrders(false);
-}, 60000);
+async function bootstrap() {
+  renderHelpList();
+  watchAutoDetectLinks();
+  applySeasonalIcons();
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') loadOrders(false);
-});
+  // Минимальное время показа прелоадера, чтобы не мигало
+  const minDelay = new Promise(r => setTimeout(r, 900));
+
+  try {
+    await Promise.all([
+      loadThemeConfig(),
+      loadOrders(false),
+      loadLoyalty(),
+      loadBanners(),
+      loadNotifications(false),
+    ]);
+  } catch (e) {}
+
+  await minDelay;
+  hidePreloader();
+}
+
+bootstrap();
+
+setInterval(() => { if (document.visibilityState === 'visible') loadOrders(false); }, 60000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') loadOrders(false); });
 </script>
 
 </body>
