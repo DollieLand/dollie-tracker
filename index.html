@@ -62,7 +62,7 @@
   }
 
   button, input { font-family: inherit; }
-  button { border: none; background: none; cursor: pointer; -webkit-appearance: none; }
+  button { border: none; background: none; cursor: pointer; -webkit-appearance: none; color: inherit; }
   a { color: inherit; text-decoration: none; }
 
   button:focus-visible, a:focus-visible, input:focus-visible {
@@ -72,15 +72,29 @@
 
   .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; flex-shrink: 0; }
 
-  .app { max-width: 480px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px); }
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: calc(var(--nav-h) + var(--safe-b) + 20px);
+    /* Поднимаем весь UI над слоем декораций (#theme-decorations, z-index: 0) */
+    position: relative;
+    z-index: 1;
+  }
 
   .tab-screen {
     display: none;
     padding: calc(var(--safe-t) + 14px) 18px 12px;
-    animation: fadeSlideIn 0.25s ease both;
+    /* Без animation здесь: анимация на .tab-screen создавала свой stacking context
+       и мешала фону/декорациям просвечивать сквозь UI. Анимация перенесена
+       на прямых потомков через .tab-screen.active > * */
+    background: transparent;
   }
 
   .tab-screen.active { display: block; }
+
+  .tab-screen.active > * {
+    animation: fadeSlideIn 0.25s ease both;
+  }
 
   @keyframes fadeSlideIn {
     from { opacity: 0; transform: translateY(8px); }
@@ -133,12 +147,13 @@
     padding: 22px 20px;
     box-shadow: var(--shadow-card);
     transition: transform 0.15s ease;
+    color: var(--text);
   }
 
   .hero-card:active { transform: scale(0.98); }
 
   .hero-eyebrow { font-size: 11.5px; font-weight: 700; color: var(--pink-accent); letter-spacing: 0.3px; margin-bottom: 6px; }
-  .hero-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+  .hero-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; color: var(--text); }
 
   .hero-status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
   .hero-status-row .icon { color: var(--pink-accent); width: 19px; height: 19px; }
@@ -186,7 +201,7 @@
 
   .update-panel .icon { color: var(--pink-accent); width: 19px; height: 19px; margin-top: 1px; }
   .update-panel .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
-  .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; }
+  .update-panel .value { font-size: 13.5px; font-weight: 600; line-height: 1.4; color: var(--text); }
 
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -226,6 +241,7 @@
     transition: transform 0.15s ease;
     position: relative;
     overflow: hidden;
+    color: var(--text);
   }
   .dollie-card:active { transform: scale(0.98); }
 
@@ -383,6 +399,7 @@
     text-align: left;
     background: none; border-left: none; border-right: none; border-top: none;
     transition: opacity 0.15s ease;
+    color: var(--text);
   }
   .reward-row:active { opacity: 0.6; }
   .reward-row:last-child { border-bottom: none; }
@@ -410,6 +427,7 @@
     text-align: left;
     background: none; border-left: none; border-right: none; border-top: none;
     transition: opacity 0.15s ease;
+    color: var(--text);
   }
   .tx-row:active { opacity: 0.6; }
   .tx-row:last-child { border-bottom: none; }
@@ -487,6 +505,7 @@
     display: flex;
     text-align: left;
     transition: transform 0.15s ease;
+    color: var(--text);
   }
   .banner-card:active { transform: scale(0.98); }
 
@@ -555,7 +574,7 @@
   .orders-summary-text { flex: 1; font-size: 13.5px; font-weight: 600; color: var(--text); }
 
   .screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; }
+  .screen-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.2px; color: var(--text); }
 
   .order-card {
     background: var(--surface);
@@ -566,6 +585,7 @@
     width: 100%;
     text-align: left;
     transition: transform 0.15s ease;
+    color: var(--text);
   }
   .order-card:active { transform: scale(0.98); }
 
@@ -579,7 +599,7 @@
   }
 
   .order-info { flex: 1; min-width: 0; }
-  .order-title { font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .order-title { font-size: 14.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
   .order-id { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; }
   .order-chevron { color: var(--text-secondary); flex-shrink: 0; }
 
@@ -642,13 +662,13 @@
 
   .empty-state { text-align: center; padding: 30px 16px 8px; }
   .empty-illustration { width: 96px; height: 96px; margin-bottom: 4px; }
-  .empty-state h3 { font-size: 15.5px; font-weight: 700; margin-top: 8px; }
+  .empty-state h3 { font-size: 15.5px; font-weight: 700; margin-top: 8px; color: var(--text); }
   .empty-state p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin: 6px auto 16px; max-width: 270px; }
 
   .profile-card { display: flex; align-items: center; gap: 14px; background: var(--surface); border-radius: var(--r-lg); padding: 16px; box-shadow: var(--shadow-soft); margin-bottom: 14px; }
   .avatar { width: 52px; height: 52px; border-radius: var(--r-pill); background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
   .avatar.big { width: 58px; height: 58px; margin: 0 auto 10px; }
-  .profile-name { font-size: 15.5px; font-weight: 700; }
+  .profile-name { font-size: 15.5px; font-weight: 700; color: var(--text); }
   .profile-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
   .stat-row { display: flex; gap: 10px; margin-bottom: 18px; }
@@ -666,9 +686,9 @@
   .menu-item .badge { font-size: 10.5px; font-weight: 700; color: var(--text-secondary); background: var(--bg); padding: 3px 8px; border-radius: var(--r-pill); }
 
   .help-item { background: var(--surface); border-radius: var(--r-md); margin-bottom: 8px; overflow: hidden; box-shadow: var(--shadow-soft); }
-  .help-item-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 13.5px; font-weight: 700; min-height: 48px; }
+  .help-item-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 13.5px; font-weight: 700; min-height: 48px; color: var(--text); }
   .help-item-head .icon { color: var(--pink-accent); }
-  .help-item-head span.label { flex: 1; text-align: left; }
+  .help-item-head span.label { flex: 1; text-align: left; color: var(--text); }
   .help-item-head .icon.chev { color: var(--text-secondary); transition: transform 0.2s ease; }
   .help-item.open .help-item-head .icon.chev { transform: rotate(180deg); }
   .help-item-body { display: none; padding: 0 16px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
@@ -736,7 +756,7 @@
   .theme-option-row:active { transform: scale(0.98); }
   .theme-option-row .icon { color: var(--pink-accent); width: 20px; height: 20px; }
   .theme-option-row .label-wrap { flex: 1; text-align: left; }
-  .theme-option-row .label-wrap .title { font-size: 14px; font-weight: 700; }
+  .theme-option-row .label-wrap .title { font-size: 14px; font-weight: 700; color: var(--text); }
   .theme-option-row .label-wrap .desc { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; font-weight: 500; }
   .theme-option-row .check-dot {
     width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
@@ -764,16 +784,26 @@
   .seasonal-banner > * { position: relative; z-index: 1; }
 
   #theme-decorations {
-    position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden;
+    /* z-index: 0 — слой над фоном body, но под .app (z-index: 1).
+       НЕ -1: при z-index:-1 слой уходит ПОД непрозрачный фон body и не виден. */
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    /* Изолируем layout/paint, чтобы крупные декоративные SVG не растягивали viewport */
+    contain: strict;
   }
-  #theme-decorations .deco-item { position: absolute; opacity: 0.5; }
+  #theme-decorations .deco-item {
+    position: absolute;
+    /* Базовая прозрачность; конкретные рендереры переопределяют opacity инлайново при необходимости */
+    opacity: 0.85;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
   @keyframes deco-fall { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
   @keyframes deco-twinkle { 0%, 100% { opacity: 0.25; } 50% { opacity: 0.7; } }
   @keyframes deco-sway { 0%, 100% { transform: translateX(-8px); } 50% { transform: translateX(8px); } }
   @keyframes deco-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
   .contact-card { text-align: center; padding: 6px 0 4px; }
-  .contact-name { font-size: 16.5px; font-weight: 700; }
+  .contact-name { font-size: 16.5px; font-weight: 700; color: var(--text); }
   .contact-desc { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
 
   .bottom-nav {
@@ -812,6 +842,7 @@
     -webkit-overflow-scrolling: touch;
     display: none;
     overscroll-behavior: contain;
+    color: var(--text);
   }
   .bottom-sheet.open { display: block; transform: translateY(0); }
   .bottom-sheet.expanded {
@@ -824,7 +855,7 @@
   .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 6px auto 4px; transition: background 0.15s ease; }
   .sheet-handle-area:active .sheet-handle { background: var(--pink); }
   .sheet-content { padding: 8px 20px 4px; }
-  .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; }
+  .sheet-content h2 { font-size: 17.5px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
 
   .toast {
     position: fixed; bottom: calc(var(--nav-h) + var(--safe-b) + 14px); left: 50%;
@@ -880,7 +911,8 @@
   .hero-title, .hero-next, .hero-next b,
   .banner-title, .banner-subtitle,
   .dollie-balance-num, .dollie-hero-num, .dollie-value-rub,
-  .profile-name, .profile-sub {
+  .profile-name, .profile-sub,
+  .help-item-head, .help-item-head span.label {
     -webkit-text-fill-color: currentColor;
   }
 
@@ -1734,7 +1766,9 @@ function applyTheme() {
   if (dollieRecentCache.length) loadDollieRecent();
   if (loyaltyTxCache.length) renderHistoryList();
   if (ordersCache.length) {
-    document.getElementById('orders-list').innerHTML = ordersCache.map(orderCardHTML).join('');
+    const ordersListEl = document.getElementById('orders-list');
+    ordersListEl.innerHTML = ordersCache.map(orderCardHTML).join('');
+    stripAutoDetectLinks(ordersListEl);
   }
 }
 
@@ -1815,7 +1849,8 @@ function renderSeasonalBanner() {
 
 /* =========================================================
    DECORATION RENDERERS — фоновый слой с сезонными анимациями.
-   Все элементы pointer-events: none, z-index: -1 (позади UI).
+   Слой находится над фоном body и под .app (см. #theme-decorations,
+   z-index: 0, и .app, z-index: 1). Все элементы pointer-events: none.
    ========================================================= */
 
 const DECORATION_RENDERERS = {
@@ -1837,7 +1872,7 @@ const DECORATION_RENDERERS = {
     }).join('');
     // ветка в правом верхнем углу — крупный элемент композиции
     const branch = `
-      <svg class="deco-item" style="top:-20px;right:-30px;width:220px;height:220px;opacity:0.14;" viewBox="0 0 200 200" fill="none" stroke="var(--pink-accent)" stroke-width="2" stroke-linecap="round">
+      <svg class="deco-item" style="top:-20px;right:-30px;width:220px;height:220px;opacity:0.26;" viewBox="0 0 200 200" fill="none" stroke="var(--pink-accent)" stroke-width="2" stroke-linecap="round">
         <path d="M20 180 C60 140, 100 110, 160 60"/>
         <path d="M60 140 C70 120, 90 115, 105 125"/>
         <path d="M100 110 C115 90, 135 90, 148 100"/>
@@ -1869,7 +1904,7 @@ const DECORATION_RENDERERS = {
     }).join('');
     // большая полупрозрачная снежинка за карточками
     const bigFlake = `
-      <svg class="deco-item" style="top:5%;right:-60px;width:280px;height:280px;opacity:0.06;animation:deco-spin 60s linear infinite;" viewBox="0 0 100 100" fill="none" stroke="var(--pink-accent)" stroke-width="1">
+      <svg class="deco-item" style="top:5%;right:-60px;width:280px;height:280px;opacity:0.18;animation:deco-spin 60s linear infinite;" viewBox="0 0 100 100" fill="none" stroke="var(--pink-accent)" stroke-width="1">
         <path d="M50 5v90M10 30l80 40M90 30L10 70"/>
         <path d="M50 20l-8 8M50 20l8 8M50 80l-8-8M50 80l8-8"/>
       </svg>`;
@@ -1894,7 +1929,7 @@ const DECORATION_RENDERERS = {
   // SUMMER — солнечные лучи + мягкие искры
   sun_rays: () => {
     const rays = `
-      <svg class="deco-item" style="top:-80px;right:-80px;width:300px;height:300px;opacity:0.12;animation:deco-spin 120s linear infinite;" viewBox="0 0 100 100">
+      <svg class="deco-item" style="top:-80px;right:-80px;width:300px;height:300px;opacity:0.22;animation:deco-spin 120s linear infinite;" viewBox="0 0 100 100">
         <circle cx="50" cy="50" r="30" fill="var(--pink-accent)"/>
         <path d="M50 5v90M5 50h90M18 18l64 64M82 18L18 82" stroke="var(--pink-accent)" stroke-width="1.5" opacity="0.4"/>
       </svg>`;
@@ -1919,7 +1954,7 @@ const DECORATION_RENDERERS = {
         <circle cx="56" cy="60" r="5" fill="#B89A82" opacity="0.4"/>
       </svg>`;
     const web = `
-      <svg class="deco-item" style="bottom:-40px;left:-50px;width:200px;height:200px;opacity:0.18;" viewBox="0 0 100 100" fill="none" stroke="var(--pink-accent)" stroke-width="1">
+      <svg class="deco-item" style="bottom:-40px;left:-50px;width:200px;height:200px;opacity:0.32;" viewBox="0 0 100 100" fill="none" stroke="var(--pink-accent)" stroke-width="1">
         <path d="M0 0 L100 100 M0 0 L100 60 M0 0 L60 100 M0 0 L100 30 M0 0 L30 100"/>
         <path d="M10 10 Q20 25 40 30 M20 20 Q40 40 60 40 M30 30 Q50 55 70 55"/>
       </svg>`;
@@ -3279,6 +3314,7 @@ function renderHelpList() {
       <span class="label">Связаться с DollieLand</span>
       <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
     </button>`;
+  stripAutoDetectLinks(container);
 }
 
 function toggleHelpItem(id) {
