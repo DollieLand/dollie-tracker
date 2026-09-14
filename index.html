@@ -1103,6 +1103,18 @@
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
+/* Отзыв: имя слева, @username справа в одной строке. */
+.review-author-name-row {
+  display:flex; align-items:center; gap:8px; min-width:0; width:100%;
+}
+.review-author-name-row .review-author-name {
+  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.review-author-user-inline {
+  margin-left:auto; flex:0 0 auto; font-size:11px; line-height:1.2;
+  color:var(--text-secondary); white-space:nowrap;
+}
+
 </style>
 </head>
 <body>
@@ -1701,6 +1713,18 @@ if (tg) {
   });
   tg.BackButton.hide();
 }
+
+/* SPA hardening: действия внутри Mini App не должны запускать нативную навигацию/перезагрузку страницы. */
+document.addEventListener('click', function(event) {
+  const button = event.target.closest('button');
+  if (button) {
+    // Все кнопки интерфейса — действия приложения, а не submit/navigation.
+    if (!button.hasAttribute('type')) button.type = 'button';
+    if (button.closest('#reviews-content') || button.closest('#sheet-review') || button.closest('#sheet-review-sort') || button.closest('#review-sort-list')) {
+      event.preventDefault();
+    }
+  }
+}, true);
 
 /* API */
 renderMyTelegramAvatar();
@@ -2856,18 +2880,18 @@ function reviewAuthorBlockHTML(review) {
   const chevron = canOpen
     ? `<svg class="icon review-author-chevron"><use href="#icon-chevron-right"/></svg>`
     : '';
-  const usernameLine = review.is_anonymous
-    ? ''
-    : `${uname ? `<div class="review-author-user">${escapeHtml(uname)}</div>` : ''}${canOpen ? `<span class="review-profile-link"><span>Перейти в профиль</span>${chevron}</span>` : ''}`;
   const inner = `
     ${reviewAuthorAvatarHTML(review)}
     <div class="review-author">
-      <div class="review-author-name">${escapeHtml(name)}</div>
-      ${usernameLine}
+      <div class="review-author-name-row">
+        <div class="review-author-name">${escapeHtml(name)}</div>
+        ${(!review.is_anonymous && uname) ? `<div class="review-author-user-inline">${escapeHtml(uname)}</div>` : ''}
+      </div>
+      ${canOpen ? `<span class="review-profile-link"><span>Перейти в профиль</span>${chevron}</span>` : ''}
     </div>
   `;
   if (canOpen) {
-    return `<button type="button" class="review-author-hit" onclick="openUserProfile('${escapeAttr(String(review.author_user_id))}')" aria-label="Открыть профиль">${inner}</button>`;
+    return `<button type="button" class="review-author-hit" onclick="openUserProfile('${escapeAttr(String(review.author_user_id))}'); return false;" aria-label="Открыть профиль">${inner}</button>`;
   }
   return `<div class="review-author-hit is-static">${inner}</div>`;
 }
@@ -2879,7 +2903,7 @@ function reviewPhotoGridHTML(review, source) {
   const src = source || 'reviews';
   return `<div class="review-photos">
     ${shown.map((url, i) => `
-      <button class="review-photo-thumb" onclick="openPhotoLightbox('${escapeAttr(src)}', ${Number(review.id) || 0}, ${i})">
+      <button type="button" class="review-photo-thumb" onclick="openPhotoLightbox('${escapeAttr(src)}', ${Number(review.id) || 0}, ${i})">
         <img src="${escapeAttr(url)}" alt="" loading="lazy" decoding="async">
         ${i === 2 && photos.length > 3 ? `<span class="review-photo-more">+${photos.length - 3}</span>` : ''}
       </button>`).join('')}
@@ -3167,7 +3191,7 @@ function openReviewSortSheet() {
   const list = document.getElementById('review-sort-list');
   if (!list) return;
   list.innerHTML = REVIEW_SORT_OPTIONS.map(opt => `
-    <button class="review-sort-option ${opt.key === reviewSort ? 'selected' : ''}" onclick="selectReviewSort('${escapeAttr(opt.key)}')">
+    <button type="button" class="review-sort-option ${opt.key === reviewSort ? 'selected' : ''}" onclick="selectReviewSort('${escapeAttr(opt.key)}', event); return false;">
       <span class="sort-icon"><svg class="icon"><use href="#icon-${escapeAttr(opt.icon)}"/></svg></span>
       <span>${escapeHtml(opt.label)}</span>
       <span class="check">${opt.key === reviewSort ? '<svg class="icon"><use href="#icon-check"/></svg>' : ''}</span>
@@ -3175,7 +3199,9 @@ function openReviewSortSheet() {
   openSheet('review-sort');
 }
 
-function selectReviewSort(key) {
+function selectReviewSort(key, event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
   if (key === reviewSort) { closeSheet(); return; }
   reviewSort = key;
   closeSheet();
@@ -3736,7 +3762,7 @@ function renderReviewForm() {
       <div class="review-form-note">При анонимном отзыве другие пользователи увидят только «Аноним». Профиль автора и @username недоступны. Администратор всё равно видит автора.</div>
     </div>
 
-    <button class="btn btn-primary btn-block review-publish-btn" id="review-submit-btn" onclick="submitReview()">
+    <button type="button" class="btn btn-primary btn-block review-publish-btn" id="review-submit-btn" onclick="submitReview(event)">
       <svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Опубликовать отзыв
     </button>
   `;
@@ -3821,7 +3847,7 @@ function renderReviewPhotoPreviews() {
     wrap.className = 'review-upload-preview';
     wrap.innerHTML = `
       <img src="${escapeAttr(item.url)}" alt="">
-      <button class="review-photo-remove" onclick="removeReviewPhoto(${i})" aria-label="Удалить"><svg class="icon"><use href="#icon-x"/></svg></button>
+      <button type="button" class="review-photo-remove" onclick="removeReviewPhoto(${i})" aria-label="Удалить"><svg class="icon"><use href="#icon-x"/></svg></button>
       <div class="review-photo-move">
         <button onclick="moveReviewPhoto(${i}, -1)" ${i === 0 ? 'disabled' : ''}><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
         <button onclick="moveReviewPhoto(${i}, 1)" ${i === selectedReviewPhotoFiles.length - 1 ? 'disabled' : ''}><svg class="icon"><use href="#icon-chevron-right"/></svg></button>
@@ -3845,7 +3871,9 @@ function moveReviewPhoto(index, delta) {
   hapticSelection();
 }
 
-async function submitReview() {
+async function submitReview(event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
   if (reviewSubmitInFlight) return;
   if (!selectedReviewOrderId) { showToast('Выберите заказ'); return; }
   if (!selectedReviewRating) { showToast('Поставьте оценку'); hapticNotification('warning'); return; }
