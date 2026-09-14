@@ -516,9 +516,17 @@
   }
   .review-cta .review-cta-icon { width: 40px; height: 40px; border-radius: 14px; background: var(--pink-soft); display: flex; align-items: center; justify-content: center; color: var(--pink-accent); flex-shrink: 0; }
   .review-cta .review-cta-icon .icon { width: 20px; height: 20px; }
-  .review-cta-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .review-cta-title { font-size: 13.5px; font-weight: 800; line-height: 1.2; }
-  .review-cta-sub { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; margin-top: 0; display: block; }
+  .review-cta-main {
+    flex: 1; min-width: 0; display: flex; flex-direction: column;
+    align-items: flex-start; gap: 8px;
+  }
+  .review-cta-title {
+    display: block; font-size: 13.5px; font-weight: 800; line-height: 1.25;
+  }
+  .review-cta-sub {
+    display: block; width: 100%; font-size: 11.5px; color: var(--text-secondary);
+    line-height: 1.4; margin: 0; white-space: normal; overflow-wrap: anywhere;
+  }
 
   .review-card {
     background: var(--surface); border: 1px solid var(--border);
@@ -560,13 +568,32 @@
   .review-rating .icon.off { opacity: 0.25; fill: none; }
 
   /* FIX #1: разворачивание текста внутри карточки */
-  .review-text { font-size: 13px; line-height: 1.55; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
-  .review-text.clamped { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
-  .review-read-more {
-    color: var(--pink-accent); font-size: 12px; font-weight: 700;
-    margin-top: 6px; background: none; border: none; padding: 0;
-    cursor: pointer;
+  .review-text {
+    font-size: 13px; line-height: 1.55; color: var(--text);
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
+    display: block; max-width: 100%;
   }
+  .review-text.clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+  }
+  .review-text.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    max-height: none;
+    overflow: visible;
+  }
+  .review-read-more {
+    display: inline-flex; align-items: center;
+    color: var(--pink-accent); font-size: 12px; font-weight: 700;
+    margin-top: 7px; background: none; border: none; padding: 0;
+    cursor: pointer; line-height: 1.4;
+  }
+  .review-read-more:active { opacity: .72; }
 
   .review-order-meta { font-size: 10.5px; color: var(--text-secondary); margin-top: 10px; }
 
@@ -1661,6 +1688,10 @@ function stripAutoDetectLinks(root) {
 function stripAfterInsert(root) {
   requestAnimationFrame(() => stripAutoDetectLinks(root));
 }
+
+// Инициализируем один раз: обработчик делегирован на document,
+// поэтому новые карточки отзывов после loadMoreReviews тоже работают.
+initReviewTextToggle();
 function watchAutoDetectLinks() {
   const observer = new MutationObserver(mutations => {
     mutations.forEach(m => m.addedNodes.forEach(node => {
@@ -2759,11 +2790,13 @@ function reviewPhotoGridHTML(review, source) {
   </div>`;
 }
 
-/* FIX #1: «Читать полностью» разворачивает текст в карточке */
+/* REVIEWS: стабильное разворачивание длинного текста без API-запроса */
 function reviewCardHTML(review) {
-  const long = (review.text || '').length > 260;
-  const text = escapeHtml(review.text || '');
-  const rid = Number(review.id) || 0;
+  const rawText = String(review?.text || '');
+  const long = rawText.length > 260;
+  const text = escapeHtml(rawText);
+  const rid = Number(review?.id) || 0;
+
   return `
     <article class="review-card" data-review-id="${rid}">
       <div class="review-card-head">
@@ -2772,22 +2805,59 @@ function reviewCardHTML(review) {
       </div>
       ${starsHTML(review.rating)}
       ${text ? `
-        <div class="review-text ${long ? 'clamped' : ''}" id="review-text-${rid}">${text}</div>
-        ${long ? `<button class="review-read-more" id="review-read-more-${rid}" onclick="toggleReviewText(${rid})">Читать полностью</button>` : ''}
+        <div class="review-text ${long ? 'clamped' : ''}" id="review-text-${rid}" data-review-text="${rid}">${text}</div>
+        ${long ? `
+          <button type="button" class="review-read-more" id="review-read-more-${rid}" data-review-toggle="${rid}" aria-expanded="false">
+            Читать полностью
+          </button>` : ''}
       ` : ''}
       ${reviewPhotoGridHTML(review, 'reviews')}
       <div class="review-order-meta">${review.order_title ? escapeHtml(review.order_title) + ' · ' : ''}Заказ №${escapeHtml(String(review.order_id || ''))}</div>
     </article>`;
 }
 
-/* Разворот текста внутри карточки отзыва — без открытия lightbox */
+/* Делегированный обработчик — работает и после повторного рендера списка отзывов. */
+function initReviewTextToggle() {
+  if (window.__reviewTextToggleInitialized) return;
+  window.__reviewTextToggleInitialized = true;
+
+  document.addEventListener('click', function(event) {
+    const btn = event.target.closest('[data-review-toggle]');
+    if (!btn) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const reviewId = btn.getAttribute('data-review-toggle');
+    if (!reviewId) return;
+
+    toggleReviewText(reviewId);
+  });
+}
+
+/* Разворот текста внутри карточки отзыва — только локальное изменение DOM. */
 function toggleReviewText(reviewId) {
-  const textEl = document.getElementById('review-text-' + reviewId);
-  const btn = document.getElementById('review-read-more-' + reviewId);
+  const id = String(reviewId);
+  const textEl = document.getElementById('review-text-' + id);
+  const btn = document.getElementById('review-read-more-' + id);
+
   if (!textEl || !btn) return;
-  const expanded = textEl.classList.toggle('clamped') === false;
-  btn.textContent = expanded ? 'Свернуть' : 'Читать полностью';
-  hapticSelection();
+
+  const isExpanded = textEl.classList.contains('expanded');
+
+  if (isExpanded) {
+    textEl.classList.remove('expanded');
+    textEl.classList.add('clamped');
+    btn.textContent = 'Читать полностью';
+    btn.setAttribute('aria-expanded', 'false');
+  } else {
+    textEl.classList.remove('clamped');
+    textEl.classList.add('expanded');
+    btn.textContent = 'Свернуть';
+    btn.setAttribute('aria-expanded', 'true');
+  }
+
+  try { hapticSelection(); } catch (_) {}
 }
 
 function renderReviewsStats(stats) {
