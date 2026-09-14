@@ -3872,8 +3872,12 @@ async function submitReview() {
 
   try {
     const res = await fetch(API_BASE + '/api/me/reviews', {method:'POST', headers, body: fd});
-    const data = await res.json();
-    if (!data.ok) {
+    let data = {};
+    const rawResponse = await res.text();
+    try { data = rawResponse ? JSON.parse(rawResponse) : {}; } catch (_) {
+      data = {ok: false, error: `server_${res.status}`, detail: rawResponse.slice(0, 180)};
+    }
+    if (!res.ok || !data.ok) {
       const messages = {
         already_reviewed: 'На этот заказ уже есть отзыв',
         order_not_completed: 'Отзыв можно оставить только на полученный заказ',
@@ -3886,7 +3890,8 @@ async function submitReview() {
         photo_processing_failed: 'Не удалось обработать одно из фото',
         text_too_long: `Текст не должен быть длиннее ${REVIEW_MAX_TEXT} символов`,
       };
-      showToast(messages[data.error] || 'Не удалось отправить отзыв');
+      const serverMessage = data.detail ? String(data.detail).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() : '';
+      showToast(messages[data.error] || serverMessage || `Не удалось отправить отзыв (${res.status || 'ошибка'})`);
       hapticNotification('error');
       if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Повторить публикацию'; }
       reviewSubmitInFlight = false;
