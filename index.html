@@ -1105,16 +1105,20 @@
   }
 /* Отзыв: имя слева, @username справа в одной строке. */
 .review-author-name-row {
-  display:flex; align-items:center; gap:8px; min-width:0; width:100%;
-}
+  display:flex; align-items:center; gap:4px; min-width:0; width:100%;}
 .review-author-name-row .review-author-name {
   min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .review-author-user-inline {
-  margin-left:auto; flex:0 0 auto; font-size:11px; line-height:1.2;
+  margin-left:0; flex:0 0 auto; font-size:11px; line-height:1.2;
   color:var(--text-secondary); white-space:nowrap;
 }
 
+
+/* Отзыв: имя и @username находятся на одной строке. */
+.review-author-name-row { display:flex; align-items:baseline; gap:4px; min-width:0; }
+.review-author-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.review-author-user-inline { flex:0 0 auto; color:var(--text-secondary); font-size:11px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style>
 </head>
 <body>
@@ -1159,6 +1163,7 @@
   <symbol id="icon-star" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z"/></symbol>
   <symbol id="icon-sun" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="2.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21.5"/><line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/><line x1="2.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="21.5" y2="12"/><line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/></symbol>
   <symbol id="icon-moon" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></symbol>
+  <symbol id="icon-copy" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
   <symbol id="icon-share" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><line x1="8.3" y1="10.7" x2="15.7" y2="6.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="17.7"/></symbol>
   <symbol id="icon-camera" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 8z"/><circle cx="12" cy="14" r="3.5"/></symbol>
   <symbol id="icon-send" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L10.5 13.5"/><path d="M21 3l-6.5 18-4-8-8-4z"/></symbol>
@@ -1477,8 +1482,11 @@
 
     <div class="dollie-section">
       <div class="dollie-section-title">Приглашайте друзей</div>
-      <button class="btn btn-primary btn-block" onclick="shareReferralLink()">
+      <button type="button" class="btn btn-primary btn-block" onclick="shareReferralLink(event); return false;">
         <svg class="icon"><use href="#icon-share"/></svg> Поделиться DollieLand
+      </button>
+      <button type="button" class="btn btn-secondary btn-block" onclick="copyReferralLink(event); return false;" style="margin-top:8px;">
+        <svg class="icon"><use href="#icon-copy"/></svg> Скопировать ссылку
       </button>
     </div>
 
@@ -2774,14 +2782,34 @@ async function openReferralSheet() {
     }
   } catch (e) {}
 }
-function shareReferralLink() {
-  if (!referralData) { showToast('Загрузка…'); return; }
+function shareReferralLink(event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  if (!referralData) { showToast('Загрузка…'); return false; }
   hapticImpact('light');
   const link = referralLink(referralData.referral_code);
   const text = 'Загляни в DollieLand и получи ' + referralData.friend_bonus + ' Dollies за первый заказ ♡';
   const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
   if (tg?.openTelegramLink) tg.openTelegramLink(shareUrl);
   else window.open(shareUrl, '_blank');
+  return false;
+}
+
+async function copyReferralLink(event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  if (!referralData) { showToast('Загрузка…'); return false; }
+  const link = referralLink(referralData.referral_code);
+  try {
+    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(link);
+    else {
+      const ta=document.createElement('textarea'); ta.value=link; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); ta.remove();
+    }
+    hapticSelection();
+    showToast('Ссылка скопирована');
+  } catch (_) { showToast('Не удалось скопировать ссылку'); }
+  return false;
 }
 
 /* ============ Reviews ============ */
@@ -3202,14 +3230,26 @@ function openReviewSortSheet() {
 function selectReviewSort(key, event) {
   event?.preventDefault?.();
   event?.stopPropagation?.();
-  if (key === reviewSort) { closeSheet(); return; }
+  if (key === reviewSort) { closeSheet(); return false; }
   reviewSort = key;
   closeSheet();
   hapticSelection();
-  reviewListCache = [];
-  reviewsRenderFingerprint = '';
-  reviewsLoadedOnce = false;
-  loadReviews(true);
+
+  // Мгновенная локальная сортировка уже загруженных карточек — без reload.
+  if (reviewListCache.length) {
+    reviewListCache = [...reviewListCache].sort((a,b) => {
+      const da=new Date(a.created_at||0).getTime(), db=new Date(b.created_at||0).getTime();
+      const ra=Number(a.rating||0), rb=Number(b.rating||0);
+      if (key==='oldest') return da-db;
+      if (key==='positive') return rb-ra || db-da;
+      if (key==='negative') return ra-rb || db-da;
+      return db-da;
+    });
+    renderReviewsPage({reviews:reviewListCache, stats:lastReviewsStats||{}, has_more:lastReviewsHasMore});
+  }
+  // Сервер синхронизируется в фоне, не заменяя мгновенное действие переходом/перезагрузкой.
+  loadReviews(false, {silentIfSame:true});
+  return false;
 }
 
 /* MY REVIEWS SHEET */
@@ -3762,7 +3802,7 @@ function renderReviewForm() {
       <div class="review-form-note">При анонимном отзыве другие пользователи увидят только «Аноним». Профиль автора и @username недоступны. Администратор всё равно видит автора.</div>
     </div>
 
-    <button type="button" class="btn btn-primary btn-block review-publish-btn" id="review-submit-btn" onclick="submitReview(event)">
+    <button type="button" class="btn btn-primary btn-block review-publish-btn" id="review-submit-btn" onclick="submitReview(event); return false;">
       <svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Опубликовать отзыв
     </button>
   `;
