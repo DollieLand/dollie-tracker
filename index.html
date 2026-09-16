@@ -51,7 +51,6 @@
   .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; flex-shrink: 0; }
   .icon.filled { fill: currentColor; stroke: currentColor; }
 
-  /* PRELOADER */
   #preloader {
     position: fixed; inset: 0; z-index: 9999;
     background: var(--bg);
@@ -452,7 +451,6 @@
   .referral-stat-box .num { font-size: 20px; font-weight: 800; color: var(--pink-accent); }
   .referral-stat-box .label { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; }
 
-  /* REVIEWS */
   .reviews-stat-card {
     background: linear-gradient(145deg, var(--surface) 0%, var(--surface-soft) 100%);
     border: 1px solid var(--border); border-radius: var(--r-xl);
@@ -477,7 +475,6 @@
   .reviews-photos-title { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
   .reviews-photos-title .icon { width: 15px; height: 15px; color: var(--pink-accent); }
 
-  /* Горизонтальная лента фото покупателей */
   .reviews-photos-grid {
     display: flex;
     gap: 6px;
@@ -510,7 +507,6 @@
   .review-sort-btn { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .review-sort-btn .icon { width: 14px; height: 14px; }
 
-  /* FIX #2: воздух между заголовком и подписью CTA */
   .review-cta {
     width: 100%; display: flex; align-items: center; gap: 14px;
     padding: 14px 16px; background: var(--surface); border: 1px solid var(--border);
@@ -537,7 +533,6 @@
   }
   .review-card-head { display: flex; align-items: center; gap: 10px; }
 
-  /* FIX #3: кликабельный блок автора как одна зона */
   .review-author-hit {
     flex: 1; min-width: 0;
     display: flex; align-items: center; gap: 10px;
@@ -565,14 +560,12 @@
   .review-author-chevron { color: currentColor; width: 12px; height: 12px; flex: 0 0 12px; margin: 0; display: block; position: relative; top: 1px; }
   .review-author-chevron-wrap { display: inline-flex; align-items: center; justify-content: center; gap: 3px; max-width: 100%; }
 
-
   .review-date { font-size: 10.5px; color: var(--text-secondary); align-self: flex-start; white-space: nowrap; }
 
   .review-rating { display: flex; gap: 2px; margin: 10px 0 7px; color: var(--star); }
   .review-rating .icon { width: 14px; height: 14px; fill: currentColor; stroke: currentColor; }
   .review-rating .icon.off { opacity: 0.25; fill: none; }
 
-  /* FIX #1: разворачивание текста внутри карточки */
   .review-text {
     font-size: 13px; line-height: 1.55; color: var(--text);
     white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word;
@@ -584,13 +577,14 @@
     -webkit-line-clamp: 4;
     line-clamp: 4;
     overflow: hidden;
+    max-height: 6.2em;
   }
   .review-text.expanded {
-    display: block;
-    -webkit-line-clamp: unset;
-    line-clamp: unset;
-    max-height: none;
-    overflow: visible;
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
   .review-read-more {
     display: inline-flex; align-items: center;
@@ -602,7 +596,6 @@
 
   .review-order-meta { font-size: 10.5px; color: var(--text-secondary); margin-top: 10px; }
 
-  /* Горизонтальная лента фотографий внутри одного отзыва */
   .review-photos {
     display: flex;
     gap: 6px;
@@ -671,7 +664,6 @@
   .review-star-btn:active { transform: scale(.92); }
   .review-rating-hint { text-align: center; font-size: 11.5px; color: var(--text-secondary); margin: -10px 0 13px; }
 
-  /* Review editor: stable on mobile keyboards, roomy and easy to select/edit. */
   #sheet-review .sheet-content {
     padding-bottom: max(18px, calc(18px + var(--safe-b)));
   }
@@ -763,7 +755,6 @@
   .review-prompt-reward .icon { width: 18px; height: 18px; color: var(--pink-accent); }
   .review-prompt-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-  /* LIGHTBOX swipe-only */
   .photo-lightbox {
     position: fixed; inset: 0; background: rgba(10,8,10,.97);
     display: flex; flex-direction: column;
@@ -832,7 +823,6 @@
   .photo-lightbox-text-toggle { color: var(--pink-accent); font-size: 11.5px; font-weight: 700; margin-top: 4px; background: none; border: none; padding: 0; }
   .photo-lightbox-order-meta { font-size: 10.5px; color: rgba(255,255,255,.55); margin-top: 8px; }
 
-  /* MY REVIEWS SHEET */
   .my-reviews-list { display: grid; gap: 10px; }
   .my-review-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 13px 14px; }
   .my-review-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
@@ -861,7 +851,6 @@
   .theme-option-row.selected .check-dot { background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF; }
   .theme-option-row.selected .check-dot .icon { width: 12px; height: 12px; color: #FFFFFF; }
 
-  /* PRIVACY */
   .privacy-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r-lg); padding: 16px; margin-bottom: 14px;
@@ -897,7 +886,6 @@
   .privacy-preview-rating { display: inline-flex; align-items: center; gap: 3px; color: var(--star); font-size: 11.5px; font-weight: 700; margin-top: 4px; }
   .privacy-preview-rating .icon { width: 12px; height: 12px; fill: currentColor; stroke: currentColor; }
 
-  /* PUBLIC PROFILE SHEET — modern compact profile */
   .profile-hero {
     position: relative;
     text-align: center;
@@ -932,9 +920,9 @@
   }
   .profile-hero-username-label { font-size: 11px; color: var(--text-secondary); margin-top: 5px; opacity: .78; }
   .profile-orders { margin: 0 0 23px; }
-    .profile-member-since { display:flex; align-items:center; justify-content:center; gap:7px; margin:12px 0 4px; padding:9px 12px; border:1px solid var(--border); border-radius:12px; background:var(--surface-soft); color:var(--text-secondary); font-size:11px; font-weight:700; }
+  .profile-member-since { display:flex; align-items:center; justify-content:center; gap:7px; margin:12px 0 4px; padding:9px 12px; border:1px solid var(--border); border-radius:12px; background:var(--surface-soft); color:var(--text-secondary); font-size:11px; font-weight:700; }
   .profile-member-since .icon { width:14px; height:14px; color:var(--pink-accent); flex:0 0 14px; }
-.profile-orders-title { display:flex; align-items:center; justify-content:space-between; margin:0 0 10px; font-size:15px; font-weight:800; }
+  .profile-orders-title { display:flex; align-items:center; justify-content:space-between; margin:0 0 10px; font-size:15px; font-weight:800; }
   .profile-orders-title::after { content:'История'; font-size:10px; font-weight:700; color:var(--text-secondary); background:var(--surface-soft); border:1px solid var(--border); padding:5px 9px; border-radius:999px; }
   .profile-order-list { display:grid; gap:9px; }
   .profile-order-card { display:flex; align-items:center; gap:11px; padding:12px 13px; background:linear-gradient(180deg,var(--surface),var(--surface-soft)); border:1px solid var(--border); border-radius:15px; box-shadow:0 8px 22px rgba(30,20,28,.075),0 2px 6px rgba(30,20,28,.035); }
@@ -1105,59 +1093,55 @@
   @media (prefers-reduced-motion: reduce) {
     * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
-/* Отзыв: имя слева, @username справа в одной строке. */
-.review-author-name-row {
-  display:flex; align-items:center; gap:4px; min-width:0; width:100%;}
-.review-author-name-row .review-author-name {
-  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-}
-.review-author-user-inline {
-  margin-left:0; flex:0 0 auto; font-size:11px; line-height:1.2;
-  color:var(--text-secondary); white-space:nowrap;
-}
 
+  .review-author-name-row {
+    display:flex; align-items:center; gap:4px; min-width:0; width:100%;}
+  .review-author-name-row .review-author-name {
+    min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .review-author-user-inline {
+    margin-left:0; flex:0 0 auto; font-size:11px; line-height:1.2;
+    color:var(--text-secondary); white-space:nowrap;
+  }
+  .review-author-name-row { display:flex; align-items:baseline; gap:4px; min-width:0; }
+  .review-author-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .review-author-user-inline { flex:0 0 auto; color:var(--text-secondary); font-size:11px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-/* Отзыв: имя и @username находятся на одной строке. */
-.review-author-name-row { display:flex; align-items:baseline; gap:4px; min-width:0; }
-.review-author-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.review-author-user-inline { flex:0 0 auto; color:var(--text-secondary); font-size:11px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-/* ===== CONSENT GATE ===== */
-.consent-gate {
-  position: fixed; inset: 0; z-index: 9998;
-  background: var(--bg);
-  display: none; align-items: center; justify-content: center;
-  padding: 24px 20px calc(24px + var(--safe-b));
-  overflow-y: auto;
-}
-.consent-gate.open { display: flex; }
-.consent-card {
-  width: 100%; max-width: 400px; margin: auto;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
-  padding: 28px 22px; box-shadow: var(--shadow-card); text-align: center;
-}
-.consent-icon {
-  width: 60px; height: 60px; border-radius: 20px; background: var(--pink-soft); color: var(--pink-accent);
-  display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
-}
-.consent-icon .icon { width: 28px; height: 28px; }
-.consent-card h2 {
-  font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
-  font-size: 21px; margin-bottom: 10px; color: var(--text);
-}
-.consent-text { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; }
-.consent-links { display: grid; gap: 8px; margin-bottom: 20px; text-align: left; }
-.consent-link {
-  display: flex; align-items: center; gap: 10px;
-  padding: 13px 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 14px;
-  font-size: 13px; font-weight: 700; color: var(--text);
-  transition: transform 0.15s ease;
-}
-.consent-link:active { transform: scale(0.98); }
-.consent-link .icon { color: var(--pink-accent); width: 18px; height: 18px; flex-shrink: 0; }
-.consent-link .link-label { flex: 1; min-width: 0; }
-.consent-link .chev { color: var(--text-secondary); width: 16px; height: 16px; flex-shrink: 0; }
-.consent-footnote { font-size: 10.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 14px; }
+  .consent-gate {
+    position: fixed; inset: 0; z-index: 9998;
+    background: var(--bg);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px 20px calc(24px + var(--safe-b));
+    overflow-y: auto;
+  }
+  .consent-gate.open { display: flex; }
+  .consent-card {
+    width: 100%; max-width: 400px; margin: auto;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+    padding: 28px 22px; box-shadow: var(--shadow-card); text-align: center;
+  }
+  .consent-icon {
+    width: 60px; height: 60px; border-radius: 20px; background: var(--pink-soft); color: var(--pink-accent);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+  }
+  .consent-icon .icon { width: 28px; height: 28px; }
+  .consent-card h2 {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+    font-size: 21px; margin-bottom: 10px; color: var(--text);
+  }
+  .consent-text { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; }
+  .consent-links { display: grid; gap: 8px; margin-bottom: 20px; text-align: left; }
+  .consent-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 13px 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 14px;
+    font-size: 13px; font-weight: 700; color: var(--text);
+    transition: transform 0.15s ease;
+  }
+  .consent-link:active { transform: scale(0.98); }
+  .consent-link .icon { color: var(--pink-accent); width: 18px; height: 18px; flex-shrink: 0; }
+  .consent-link .link-label { flex: 1; min-width: 0; }
+  .consent-link .chev { color: var(--text-secondary); width: 16px; height: 16px; flex-shrink: 0; }
+  .consent-footnote { font-size: 10.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -1173,9 +1157,6 @@
   <div class="preloader-text">Открываем DollieLand…</div>
 </div>
 
-<!-- Экран согласия с офертой/условиями/политикой конфиденциальности.
-     Показывается ДО доступа к остальному интерфейсу, пока пользователь не
-     примет условия (см. checkConsent()/acceptConsent() в скрипте ниже). -->
 <div class="consent-gate" id="consent-gate" role="dialog" aria-modal="true" aria-label="Согласие с условиями использования">
   <div class="consent-card">
     <div class="consent-icon"><svg class="icon"><use href="#icon-shield"/></svg></div>
@@ -1443,7 +1424,6 @@
   </div>
 </div>
 
-<!-- НОВОЕ: публичный профиль -->
 <div class="bottom-sheet" id="sheet-user-profile">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
@@ -1455,7 +1435,6 @@
   </div>
 </div>
 
-<!-- НОВОЕ: конфиденциальность -->
 <div class="bottom-sheet" id="sheet-privacy">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
@@ -1468,7 +1447,6 @@
   </div>
 </div>
 
-<!-- НОВОЕ: документы и соглашения -->
 <div class="bottom-sheet" id="sheet-consent-docs">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content">
@@ -1811,15 +1789,11 @@ if (tg) {
   tg.BackButton.hide();
 }
 
-/* SPA hardening: действия внутри Mini App не должны запускать нативную навигацию/перезагрузку страницы. */
+/* SPA hardening */
 document.addEventListener('click', function(event) {
   const button = event.target.closest('button');
   if (button) {
-    // Все кнопки интерфейса — действия приложения, а не submit/navigation.
     if (!button.hasAttribute('type')) button.type = 'button';
-    if (button.closest('#reviews-content') || button.closest('#sheet-review') || button.closest('#sheet-review-sort') || button.closest('#review-sort-list')) {
-      event.preventDefault();
-    }
   }
 }, true);
 
@@ -1881,17 +1855,13 @@ async function apiPost(path, body) {
   return data;
 }
 
-// Record one real Mini App open after Telegram authentication is available.
 function recordMiniAppOpen() {
   if (!userId) return;
   apiPost('/api/me/app-open', {}).catch(() => {});
 }
 recordMiniAppOpen();
 
-/* ============ CONSENT GATE (оферта / условия / политика) ============
-   Показывается при первом входе, пока пользователь не примет условия.
-   Согласие хранится на сервере (по Telegram ID), поэтому не сбрасывается
-   при переустановке приложения или смене устройства. */
+/* ============ CONSENT GATE ============ */
 const FALLBACK_OFFER_URL = 'https://docs.google.com/document/d/1AuHJ898JzEKRsuzQhkD5sBqr5gRmdYLvZN_tHh851Q8/edit?usp=sharing';
 const FALLBACK_TERMS_URL = 'https://docs.google.com/document/d/1xDdL8iRPNybAFcqC9Yz_XWwCxSXUEMEATAXhqKMAf-0/edit?usp=sharing';
 const FALLBACK_PRIVACY_URL = 'https://docs.google.com/document/d/1uk9z4xzC4BPT6ZTQG5AbdiAa-fFXPV9k_h3VFbx0cf0/edit?usp=sharing';
@@ -1914,8 +1884,6 @@ function setConsentLinks(offerUrl, termsUrl, privacyUrl) {
 }
 
 async function checkConsent() {
-  // Если открыто не из Telegram (например, для разработки в браузере) —
-  // не блокируем интерфейс: сохранить согласие всё равно было бы не для кого.
   if (!userId) return true;
   try {
     const data = await apiFetch('/api/me/consent', {}, { timeoutMs: 10000, retries: 1 });
@@ -1924,9 +1892,6 @@ async function checkConsent() {
   } catch (e) {
     console.error('DollieLand: не удалось проверить согласие с условиями —', e);
     setConsentLinks();
-    // Сервер недоступен — не блокируем приложение намертво (лучше дать
-    // посмотреть заказы, чем показать белый экран навсегда). Согласие
-    // будет запрошено заново при следующем открытии, когда сервер ответит.
     consentAccepted = true;
   }
   return consentAccepted;
@@ -2009,9 +1974,6 @@ function stripAfterInsert(root) {
   requestAnimationFrame(() => stripAutoDetectLinks(root));
 }
 
-// Инициализируем один раз: обработчик делегирован на document,
-// поэтому новые карточки отзывов после loadMoreReviews тоже работают.
-initReviewTextToggle();
 function watchAutoDetectLinks() {
   const observer = new MutationObserver(mutations => {
     mutations.forEach(m => m.addedNodes.forEach(node => {
@@ -2360,9 +2322,6 @@ async function loadOrders(isManualRefresh) {
     const data = await apiFetch('/api/user_orders', {}, { timeoutMs: 12000, retries: 1 });
     ordersCache = data.orders || [];
     renderOrdersList();
-    // Проверяем серверный триггер после каждого обновления заказов:
-    // так окно появляется не только при запуске Mini App, но и после
-    // фонового обновления, когда заказ только что стал «Доставлено клиенту».
     setTimeout(() => checkReviewPrompt(), isManualRefresh ? 0 : 250);
   } catch (e) {
     console.error('DollieLand: не удалось загрузить заказы —', e);
@@ -3083,7 +3042,6 @@ function formatReviewDate(iso) {
   return d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
 }
 
-/* Единая логика отображения имени */
 function publicReviewName(review) {
   if (review.is_anonymous) return 'Аноним';
   const name = (review.display_name || '').trim();
@@ -3103,7 +3061,6 @@ function publicReviewUsername(review) {
   return uname;
 }
 
-/* Инициал для fallback-аватара */
 function initialFromName(name) {
   const s = String(name || '').trim();
   if (!s) return 'D';
@@ -3120,7 +3077,6 @@ function reviewAuthorAvatarHTML(review) {
   return `<div class="review-avatar ${avatar ? '' : 'letter'}">${avatar || escapeHtml(letter)}</div>`;
 }
 
-/* Кнопка-блок автора: кликабельна только если профиль доступен */
 function reviewAuthorBlockHTML(review) {
   const name = publicReviewName(review);
   const uname = publicReviewUsername(review);
@@ -3158,7 +3114,6 @@ function reviewPhotoGridHTML(review, source) {
   </div>`;
 }
 
-/* REVIEWS: стабильное разворачивание длинного текста без API-запроса */
 function reviewCardHTML(review) {
   const rawText = String(review?.text || '');
   const long = rawText.length > 260;
@@ -3173,9 +3128,9 @@ function reviewCardHTML(review) {
       </div>
       ${starsHTML(review.rating)}
       ${text ? `
-        <div class="review-text ${long ? 'clamped' : ''}" id="review-text-${rid}" data-review-text="${rid}">${text}</div>
+        <div class="review-text ${long ? 'clamped' : ''}" id="review-text-${rid}">${text}</div>
         ${long ? `
-          <button type="button" class="review-read-more" id="review-read-more-${rid}" data-review-toggle="${rid}" onclick="toggleReviewText('${rid}')" aria-expanded="false">
+          <button type="button" class="review-read-more" id="review-read-more-${rid}" data-review-toggle="${rid}" aria-expanded="false">
             Читать полностью
           </button>` : ''}
       ` : ''}
@@ -3184,36 +3139,18 @@ function reviewCardHTML(review) {
     </article>`;
 }
 
-/* Делегированный обработчик — работает и после повторного рендера списка отзывов. */
-function initReviewTextToggle() {
-  if (window.__reviewTextToggleInitialized) return;
-  window.__reviewTextToggleInitialized = true;
-
-  document.addEventListener('click', function(event) {
-    const btn = event.target.closest('[data-review-toggle]');
-    if (!btn) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    const reviewId = btn.getAttribute('data-review-toggle');
-    if (!reviewId) return;
-
-    toggleReviewText(reviewId);
-  });
-}
-
-/* Разворот текста внутри карточки отзыва — только локальное изменение DOM. */
-function toggleReviewText(reviewId) {
+window.toggleReviewText = function(reviewId) {
   const id = String(reviewId);
   const textEl = document.getElementById('review-text-' + id);
   const btn = document.getElementById('review-read-more-' + id);
 
-  if (!textEl || !btn) return;
+  if (!textEl || !btn) {
+    console.warn('DollieLand: не найден элемент отзыва', id);
+    return;
+  }
 
   const isExpanded = textEl.classList.contains('expanded');
 
-  // Keep the operation idempotent for both direct and delegated click handling.
   if (isExpanded) {
     textEl.classList.remove('expanded');
     textEl.classList.add('clamped');
@@ -3227,6 +3164,22 @@ function toggleReviewText(reviewId) {
   }
 
   try { hapticSelection(); } catch (_) {}
+};
+
+function initReviewTextToggle() {
+  if (window.__reviewTextToggleInitialized) return;
+  window.__reviewTextToggleInitialized = true;
+
+  document.addEventListener('click', function(event) {
+    const btn = event.target.closest('[data-review-toggle]');
+    if (!btn) return;
+    if (btn.hasAttribute('onclick')) return;
+
+    event.preventDefault();
+    const reviewId = btn.getAttribute('data-review-toggle');
+    if (!reviewId) return;
+    window.toggleReviewText(reviewId);
+  });
 }
 
 function renderReviewsStats(stats) {
@@ -3320,7 +3273,6 @@ function renderReviewsPage(data) {
   let html = renderReviewsStats(stats);
   html += renderAllPhotosGallery();
   if (canWrite) {
-    /* FIX #2: gap увеличен, чтобы подпись не липла к заголовку */
     html += `
       <button class="review-cta" onclick="openReviewSheet()">
         <span class="review-cta-icon"><svg class="icon"><use href="#icon-star"/></svg></span>
@@ -3455,7 +3407,6 @@ function selectReviewSort(key, event) {
   closeSheet();
   hapticSelection();
 
-  // Мгновенная локальная сортировка уже загруженных карточек — без reload.
   if (reviewListCache.length) {
     reviewListCache = [...reviewListCache].sort((a,b) => {
       const da=new Date(a.created_at||0).getTime(), db=new Date(b.created_at||0).getTime();
@@ -3467,12 +3418,10 @@ function selectReviewSort(key, event) {
     });
     renderReviewsPage({reviews:reviewListCache, stats:lastReviewsStats||{}, has_more:lastReviewsHasMore});
   }
-  // Сервер синхронизируется в фоне, не заменяя мгновенное действие переходом/перезагрузкой.
   loadReviews(false, {silentIfSame:true});
   return false;
 }
 
-/* MY REVIEWS SHEET */
 function openMyReviewsSheet() {
   openSheet('my-reviews');
   renderMyReviewsList();
@@ -3605,7 +3554,6 @@ async function openUserProfile(uid) {
   headerTitle.textContent = 'Профиль';
   content.innerHTML = publicProfileSkeletonHTML();
 
-  // Кэш
   if (publicProfileCache[uid]) {
     const cached = publicProfileCache[uid];
     if (cached.__hidden) {
@@ -3744,7 +3692,6 @@ async function togglePublicProfile() {
   privacyInflight = true;
   toggleEl?.classList.add('busy');
 
-  // Оптимистично
   privacyState = { public_profile: next };
   renderPrivacyContent();
   document.getElementById('privacy-toggle')?.classList.add('busy');
@@ -3755,13 +3702,10 @@ async function togglePublicProfile() {
     privacyState = { public_profile: !!res.public_profile };
     hapticNotification('success');
     showToast(next ? 'Публичный профиль включён' : 'Публичный профиль скрыт');
-    // Сбросить кэш отзывов, чтобы chevron-ы обновились
     reviewsRenderFingerprint = '';
     publicProfileCache = {};
-    // Перезагрузить отзывы, чтобы увидеть актуальное состояние
     if (reviewsLoadedOnce) loadReviews(true);
   } catch (e) {
-    // Откат
     privacyState = { public_profile: current };
     hapticNotification('error');
     showToast('Не удалось сохранить настройку');
@@ -3984,7 +3928,6 @@ function saveReviewDraft() {
 }
 function clearReviewDraft(orderId) { try { localStorage.removeItem(reviewDraftKey(orderId)); } catch (_) {} }
 
-
 function reviewRatingText(n) {
   return ['', 'Совсем не понравилось', 'Есть что улучшить', 'Нормально', 'Очень понравилось', 'Всё прекрасно'][n] || 'Выберите оценку';
 }
@@ -4035,14 +3978,11 @@ function renderReviewForm() {
     saveReviewDraft();
   });
   textarea?.addEventListener('focus', () => {
-    // Let Telegram/iOS open the keyboard first, then only scroll the sheet itself.
-    // We deliberately do not resize the textarea on input, so the layout never jumps.
     setTimeout(() => {
       const sheet = document.getElementById('sheet-review');
       if (!sheet || !textarea) return;
       const r = textarea.getBoundingClientRect();
       const viewportH = window.visualViewport?.height || window.innerHeight;
-      const keyboardSafeBottom = Math.max(12, viewportH - r.bottom);
       if (r.bottom > viewportH - 18) {
         sheet.scrollTo({ top: sheet.scrollTop + (r.bottom - viewportH) + 28, behavior: 'smooth' });
       }
@@ -4176,7 +4116,6 @@ async function submitReview(event) {
         invalid_rating: 'Поставьте оценку от 1 до 5',
         bad_photo_format: 'Один из файлов имеет неподдерживаемый формат',
         photo_too_large: 'Одно из фото слишком большое',
-        photo_too_small: 'Одно из фото слишком маленькое',
         too_many_photos: `Можно прикрепить максимум ${REVIEW_MAX_PHOTOS} фото`,
         photo_processing_failed: 'Не удалось обработать одно из фото',
         text_too_long: `Текст не должен быть длиннее ${REVIEW_MAX_TEXT} символов`,
@@ -4363,6 +4302,7 @@ function continueBootstrapAfterConsent() {
 }
 
 async function bootstrap() {
+  initReviewTextToggle();
   renderHelpList();
   watchAutoDetectLinks();
   applySeasonalIcons();
@@ -4370,9 +4310,6 @@ async function bootstrap() {
 
   const minDelay = new Promise(r => setTimeout(r, 900));
 
-  // Проверка согласия с офертой/условиями/политикой — до загрузки данных
-  // приложения, чтобы пользователь не мог начать пользоваться сервисом,
-  // не приняв документы.
   const accepted = await checkConsent();
 
   await minDelay;
@@ -4380,8 +4317,7 @@ async function bootstrap() {
 
   if (!accepted) {
     showConsentGate();
-    return; // дальнейшая загрузка продолжится в continueBootstrapAfterConsent()
-             // после нажатия «Принимаю условия»
+    return;
   }
 
   await loadAppData();
