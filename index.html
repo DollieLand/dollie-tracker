@@ -2677,7 +2677,7 @@ let firstOrderCompleted = false;
 const PAGE_SIZE = 20;
 const FILTER_GROUPS = {
   earn: ['first_order', 'repeat_order', 'referral_inviter', 'referral_friend', 'review_reward', 'manual_add', 'refund', 'promotion'],
-  spend: ['spend', 'manual_remove'],
+  spend: ['spend', 'manual_remove', 'expired'],
 };
 const RU_MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 
@@ -2831,6 +2831,7 @@ function txMeta(tx) {
     case 'promotion': title = 'Начисление за акцию'; subtitle = escapeHtml(tx.description || ''); icon = 'gift'; break;
     case 'spend': title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies'; subtitle = 'Скидка на заказ'; icon = 'minus'; break;
     case 'manual_remove': title = 'Списание'; subtitle = escapeHtml(tx.description || ''); icon = 'minus'; break;
+    case 'expired': title = 'Dollies сгорели'; subtitle = 'Начислены слишком давно и не были использованы'; icon = 'alert-circle'; break;
     default: title = isPositive ? 'Начисление' : 'Списание'; subtitle = escapeHtml(tx.description || ''); icon = isPositive ? 'heart' : 'minus';
   }
   return { title, subtitle, icon, isPositive };
