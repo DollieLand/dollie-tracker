@@ -1121,6 +1121,43 @@
 .review-author-name-row { display:flex; align-items:baseline; gap:4px; min-width:0; }
 .review-author-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .review-author-user-inline { flex:0 0 auto; color:var(--text-secondary); font-size:11px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ===== CONSENT GATE ===== */
+.consent-gate {
+  position: fixed; inset: 0; z-index: 9998;
+  background: var(--bg);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px 20px calc(24px + var(--safe-b));
+  overflow-y: auto;
+}
+.consent-gate.open { display: flex; }
+.consent-card {
+  width: 100%; max-width: 400px; margin: auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+  padding: 28px 22px; box-shadow: var(--shadow-card); text-align: center;
+}
+.consent-icon {
+  width: 60px; height: 60px; border-radius: 20px; background: var(--pink-soft); color: var(--pink-accent);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+}
+.consent-icon .icon { width: 28px; height: 28px; }
+.consent-card h2 {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+  font-size: 21px; margin-bottom: 10px; color: var(--text);
+}
+.consent-text { font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; }
+.consent-links { display: grid; gap: 8px; margin-bottom: 20px; text-align: left; }
+.consent-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 14px;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  transition: transform 0.15s ease;
+}
+.consent-link:active { transform: scale(0.98); }
+.consent-link .icon { color: var(--pink-accent); width: 18px; height: 18px; flex-shrink: 0; }
+.consent-link .link-label { flex: 1; min-width: 0; }
+.consent-link .chev { color: var(--text-secondary); width: 16px; height: 16px; flex-shrink: 0; }
+.consent-footnote { font-size: 10.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -1134,6 +1171,36 @@
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z"/></svg>
   </div>
   <div class="preloader-text">Открываем DollieLand…</div>
+</div>
+
+<!-- Экран согласия с офертой/условиями/политикой конфиденциальности.
+     Показывается ДО доступа к остальному интерфейсу, пока пользователь не
+     примет условия (см. checkConsent()/acceptConsent() в скрипте ниже). -->
+<div class="consent-gate" id="consent-gate" role="dialog" aria-modal="true" aria-label="Согласие с условиями использования">
+  <div class="consent-card">
+    <div class="consent-icon"><svg class="icon"><use href="#icon-shield"/></svg></div>
+    <h2>Добро пожаловать в DollieLand!</h2>
+    <p class="consent-text">Перед тем как продолжить, пожалуйста, ознакомьтесь с документами, регулирующими использование сервиса.</p>
+    <div class="consent-links">
+      <a class="consent-link" id="consent-link-offer" href="#" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#icon-help-circle"/></svg>
+        <span class="link-label">Публичная оферта</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </a>
+      <a class="consent-link" id="consent-link-terms" href="#" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#icon-layers"/></svg>
+        <span class="link-label">Условия пользования</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </a>
+      <a class="consent-link" id="consent-link-privacy" href="#" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#icon-lock"/></svg>
+        <span class="link-label">Политика конфиденциальности</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </a>
+    </div>
+    <button type="button" class="btn btn-primary btn-block" id="consent-accept-btn" onclick="acceptConsent()">Принимаю условия</button>
+    <p class="consent-footnote">Нажимая «Принимаю условия», вы подтверждаете, что ознакомились с документами выше и согласны с изложенными в них условиями.</p>
+  </div>
 </div>
 
 <svg style="display:none" aria-hidden="true">
@@ -1312,6 +1379,11 @@
     </div>
 
     <div class="menu-list">
+      <button class="menu-item" onclick="openConsentDocsSheet()">
+        <svg class="icon"><use href="#icon-lock"/></svg>
+        <span class="label">Документы и соглашения</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
       <button class="menu-item" onclick="openSheet('help')">
         <svg class="icon"><use href="#icon-help-circle"/></svg>
         <span class="label">Помощь</span>
@@ -1393,6 +1465,20 @@
     </div>
     <p class="dollie-subtitle" style="margin-top:-8px">Управляйте тем, что видят другие пользователи.</p>
     <div id="privacy-content"></div>
+  </div>
+</div>
+
+<!-- НОВОЕ: документы и соглашения -->
+<div class="bottom-sheet" id="sheet-consent-docs">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <h2>Документы и соглашения</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <p class="dollie-subtitle" style="margin-top:-8px">Документы, регулирующие использование DollieLand.</p>
+    <div class="consent-links" id="consent-docs-list"></div>
+    <div id="consent-docs-status" style="font-size:11.5px;color:var(--text-secondary);margin-top:6px;"></div>
   </div>
 </div>
 
@@ -1801,6 +1887,107 @@ function recordMiniAppOpen() {
   apiPost('/api/me/app-open', {}).catch(() => {});
 }
 recordMiniAppOpen();
+
+/* ============ CONSENT GATE (оферта / условия / политика) ============
+   Показывается при первом входе, пока пользователь не примет условия.
+   Согласие хранится на сервере (по Telegram ID), поэтому не сбрасывается
+   при переустановке приложения или смене устройства. */
+const FALLBACK_OFFER_URL = 'https://docs.google.com/document/d/1AuHJ898JzEKRsuzQhkD5sBqr5gRmdYLvZN_tHh851Q8/edit?usp=sharing';
+const FALLBACK_TERMS_URL = 'https://docs.google.com/document/d/1xDdL8iRPNybAFcqC9Yz_XWwCxSXUEMEATAXhqKMAf-0/edit?usp=sharing';
+const FALLBACK_PRIVACY_URL = 'https://docs.google.com/document/d/1uk9z4xzC4BPT6ZTQG5AbdiAa-fFXPV9k_h3VFbx0cf0/edit?usp=sharing';
+
+let consentDocUrls = { offer: FALLBACK_OFFER_URL, terms: FALLBACK_TERMS_URL, privacy: FALLBACK_PRIVACY_URL };
+let consentAccepted = false;
+
+function setConsentLinks(offerUrl, termsUrl, privacyUrl) {
+  consentDocUrls = {
+    offer: offerUrl || FALLBACK_OFFER_URL,
+    terms: termsUrl || FALLBACK_TERMS_URL,
+    privacy: privacyUrl || FALLBACK_PRIVACY_URL,
+  };
+  const offerEl = document.getElementById('consent-link-offer');
+  const termsEl = document.getElementById('consent-link-terms');
+  const privacyEl = document.getElementById('consent-link-privacy');
+  if (offerEl) offerEl.href = consentDocUrls.offer;
+  if (termsEl) termsEl.href = consentDocUrls.terms;
+  if (privacyEl) privacyEl.href = consentDocUrls.privacy;
+}
+
+async function checkConsent() {
+  // Если открыто не из Telegram (например, для разработки в браузере) —
+  // не блокируем интерфейс: сохранить согласие всё равно было бы не для кого.
+  if (!userId) return true;
+  try {
+    const data = await apiFetch('/api/me/consent', {}, { timeoutMs: 10000, retries: 1 });
+    setConsentLinks(data?.offer_url, data?.terms_url, data?.privacy_url);
+    consentAccepted = !!(data?.ok && data.accepted);
+  } catch (e) {
+    console.error('DollieLand: не удалось проверить согласие с условиями —', e);
+    setConsentLinks();
+    // Сервер недоступен — не блокируем приложение намертво (лучше дать
+    // посмотреть заказы, чем показать белый экран навсегда). Согласие
+    // будет запрошено заново при следующем открытии, когда сервер ответит.
+    consentAccepted = true;
+  }
+  return consentAccepted;
+}
+
+function showConsentGate() {
+  document.getElementById('consent-gate')?.classList.add('open');
+}
+function hideConsentGate() {
+  document.getElementById('consent-gate')?.classList.remove('open');
+}
+
+function openConsentDocsSheet() {
+  const list = document.getElementById('consent-docs-list');
+  const status = document.getElementById('consent-docs-status');
+  if (list) {
+    list.innerHTML = `
+      <a class="consent-link" href="${escapeAttr(consentDocUrls.offer)}" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#icon-help-circle"/></svg>
+        <span class="link-label">Публичная оферта</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </a>
+      <a class="consent-link" href="${escapeAttr(consentDocUrls.terms)}" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#icon-layers"/></svg>
+        <span class="link-label">Условия пользования</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </a>
+      <a class="consent-link" href="${escapeAttr(consentDocUrls.privacy)}" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#icon-lock"/></svg>
+        <span class="link-label">Политика конфиденциальности</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </a>`;
+  }
+  if (status) status.textContent = consentAccepted ? 'Вы приняли условия использования DollieLand.' : '';
+  openSheet('consent-docs');
+}
+
+let consentSubmitInFlight = false;
+async function acceptConsent() {
+  if (consentSubmitInFlight) return;
+  consentSubmitInFlight = true;
+  const btn = document.getElementById('consent-accept-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Секунду…'; }
+  try {
+    const res = await apiPost('/api/me/consent', {});
+    if (res?.ok) {
+      hapticNotification('success');
+      consentAccepted = true;
+      hideConsentGate();
+      continueBootstrapAfterConsent();
+    } else {
+      showToast('Не удалось сохранить согласие. Попробуйте ещё раз.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Принимаю условия'; }
+    }
+  } catch (e) {
+    showToast('Нет соединения. Попробуйте ещё раз.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Принимаю условия'; }
+  } finally {
+    consentSubmitInFlight = false;
+  }
+}
 
 /* Utilities */
 function pluralize(n, one, few, many) {
@@ -4159,6 +4346,21 @@ function hidePreloader() {
   setTimeout(() => { if (p.parentNode) p.remove(); }, 500);
 }
 
+async function loadAppData() {
+  await Promise.allSettled([
+    loadThemeConfig(),
+    loadOrders(false),
+    loadLoyalty(),
+    loadBanners(),
+    loadNotifications(false),
+  ]);
+  setTimeout(() => checkReviewPrompt(), 800);
+}
+
+function continueBootstrapAfterConsent() {
+  loadAppData();
+}
+
 async function bootstrap() {
   renderHelpList();
   watchAutoDetectLinks();
@@ -4167,31 +4369,35 @@ async function bootstrap() {
 
   const minDelay = new Promise(r => setTimeout(r, 900));
 
-  await Promise.allSettled([
-    loadThemeConfig(),
-    loadOrders(false),
-    loadLoyalty(),
-    loadBanners(),
-    loadNotifications(false),
-  ]);
+  // Проверка согласия с офертой/условиями/политикой — до загрузки данных
+  // приложения, чтобы пользователь не мог начать пользоваться сервисом,
+  // не приняв документы.
+  const accepted = await checkConsent();
 
   await minDelay;
   hidePreloader();
 
-  setTimeout(() => checkReviewPrompt(), 800);
+  if (!accepted) {
+    showConsentGate();
+    return; // дальнейшая загрузка продолжится в continueBootstrapAfterConsent()
+             // после нажатия «Принимаю условия»
+  }
+
+  await loadAppData();
 }
 
 bootstrap();
 
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
+  if (!consentAccepted) return;
   if (document.querySelector('.bottom-sheet.open')) return;
   if (lightboxOpen || reviewPromptOpen) return;
   loadOrders(false);
 }, 60000);
 
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
+  if (document.visibilityState === 'visible' && consentAccepted) {
     loadOrders(false);
     setTimeout(() => checkReviewPrompt(), 600);
   }
