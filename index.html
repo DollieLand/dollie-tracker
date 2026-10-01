@@ -1397,10 +1397,54 @@
   .halloween-bat, .halloween-pumpkin { position:fixed; z-index:1; pointer-events:none; }
   .halloween-bat svg { fill:#17120F; filter:drop-shadow(0 2px 4px rgba(123,63,242,.18)); }
   .halloween-pumpkin { width:32px; height:29px; animation:halloween-float 3.6s ease-in-out infinite; filter:drop-shadow(0 5px 10px rgba(255,122,0,.18)); }
+
+  /* Загруженный администратором Halloween-декор */
+  .custom-theme-deco-wrap {
+    position:absolute; width:var(--deco-size,120px); height:var(--deco-size,120px);
+    left:var(--deco-x,50%); top:var(--deco-y,50%);
+    transform:translate(-50%,-50%); pointer-events:none; z-index:3;
+    will-change:transform, filter; transform-origin:center;
+  }
+  .custom-theme-deco-wrap .custom-theme-deco {
+    width:100%; height:100%; object-fit:contain; display:block;
+    transform:rotate(var(--deco-rotation,0deg)); transform-origin:center;
+    will-change:transform;
+  }
+  html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="pumpkin"] {
+    animation:halloween-custom-pumpkin-glow 3.2s ease-in-out infinite;
+  }
+  html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="pumpkin"] .custom-theme-deco {
+    filter:drop-shadow(0 0 7px rgba(255,122,0,.45)) drop-shadow(0 0 18px rgba(255,149,0,.24));
+  }
+  html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="bat"] {
+    animation:halloween-custom-bat-fly 4.8s ease-in-out infinite;
+  }
+  html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="bat"] .custom-theme-deco {
+    animation:halloween-custom-bat-wings .72s ease-in-out infinite;
+    filter:drop-shadow(0 0 5px rgba(123,63,242,.28));
+    transform-origin:50% 54%;
+  }
   @keyframes halloween-twinkle { 0%,100%{transform:scale(.8);opacity:.45} 50%{transform:scale(1.15);opacity:1} }
   @keyframes halloween-float { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-5px) rotate(2deg)} }
+  @keyframes halloween-custom-pumpkin-glow {
+    0%,100% { transform:translate(-50%,-50%) translateY(0) scale(1); filter:drop-shadow(0 0 6px rgba(255,122,0,.38)) drop-shadow(0 0 15px rgba(255,149,0,.18)); }
+    50% { transform:translate(-50%,-50%) translateY(-4px) scale(1.025); filter:drop-shadow(0 0 11px rgba(255,122,0,.62)) drop-shadow(0 0 26px rgba(255,149,0,.30)); }
+  }
+  @keyframes halloween-custom-bat-fly {
+    0%,100% { transform:translate(-50%,-50%) translate3d(0,0,0) rotate(-2deg); }
+    25% { transform:translate(-50%,-50%) translate3d(5px,-4px,0) rotate(1deg); }
+    50% { transform:translate(-50%,-50%) translate3d(0,-8px,0) rotate(3deg); }
+    75% { transform:translate(-50%,-50%) translate3d(-5px,-4px,0) rotate(0deg); }
+  }
+  @keyframes halloween-custom-bat-wings {
+    0%,100% { transform:rotate(var(--deco-rotation,0deg)) scaleY(1); }
+    50% { transform:rotate(var(--deco-rotation,0deg)) scaleY(.88) scaleX(1.025); }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .halloween-star,.halloween-pumpkin,.halloween-bat { animation:none !important; }
+    .halloween-star,.halloween-pumpkin,.halloween-bat,
+    .custom-theme-deco-wrap[data-custom-element="pumpkin"],
+    .custom-theme-deco-wrap[data-custom-element="bat"],
+    .custom-theme-deco-wrap[data-custom-element="bat"] .custom-theme-deco { animation:none !important; }
   }
 </style>
 </head>
@@ -3073,7 +3117,9 @@ function renderThemeDecorations() {
     const y = Number(item.y ?? 50);
     const opacity = Math.max(0, Math.min(100, Number(item.opacity ?? 100))) / 100;
     const rotation = Number(item.rotation || 0);
-    return `<img class="custom-theme-deco" data-custom-element="${escapeAttr(key)}" src="${escapeAttr(item.image_url)}" alt="" aria-hidden="true" style="width:${size}px;height:${size}px;left:${x}%;top:${y}%;opacity:${opacity};transform:translate(-50%,-50%) rotate(${rotation}deg);">`;
+    return `<div class="custom-theme-deco-wrap" data-custom-element="${escapeAttr(key)}" style="--deco-size:${size}px;--deco-x:${x}%;--deco-y:${y}%;--deco-rotation:${rotation}deg;opacity:${opacity};">` +
+      `<img class="custom-theme-deco" src="${escapeAttr(item.image_url)}" alt="" aria-hidden="true">` +
+      `</div>`;
   }).join('');
   container.innerHTML = base + customHtml;
 }
