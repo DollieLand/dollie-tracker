@@ -3118,7 +3118,7 @@ function renderThemeDecorations() {
     const opacity = Math.max(0, Math.min(100, Number(item.opacity ?? 100))) / 100;
     const rotation = Number(item.rotation || 0);
     return `<div class="custom-theme-deco-wrap" data-custom-element="${escapeAttr(key)}" style="--deco-size:${size}px;--deco-x:${x}%;--deco-y:${y}%;--deco-rotation:${rotation}deg;opacity:${opacity};">` +
-      `<img class="custom-theme-deco" src="${escapeAttr(item.image_url)}" alt="" aria-hidden="true">` +
+      `<img class="custom-theme-deco" src="${escapeAttr(item.image_url)}" alt="" aria-hidden="true" loading="eager" decoding="async" onerror="this.style.display='none'">` +
       `</div>`;
   }).join('');
   container.innerHTML = base + customHtml;
