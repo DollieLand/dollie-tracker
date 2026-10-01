@@ -1204,6 +1204,65 @@
   .qty-stepper button:disabled { opacity: .4; }
   .qty-stepper .qty-val { min-width: 40px; text-align: center; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
   .catalog-req-textarea { height: 120px; min-height: 120px; max-height: 120px; }
+
+  /* ============ ФОРТУНА ============ */
+  .fortune-entry .orders-summary-text { display: flex; flex-direction: column; gap: 2px; }
+  .fortune-entry-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .fortune-entry-sub { font-size: 11.5px; font-weight: 600; color: var(--text-secondary); }
+  .fortune-entry-sub.ready { color: var(--pink-accent); }
+  .fortune-entry .orders-summary-icon { position: relative; }
+  .fortune-entry .orders-summary-icon .dot { position: absolute; top: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--pink-accent); border: 2px solid var(--surface); }
+  .fortune-back { margin-bottom: 4px; }
+  .fortune-subtitle { font-size: 13.5px; color: var(--text-secondary); margin: -8px 0 16px; line-height: 1.5; }
+  .fortune-stage {
+    background: linear-gradient(160deg, var(--surface-soft) 0%, var(--surface) 60%);
+    border: 1px solid var(--border); border-radius: var(--r-xl);
+    padding: 22px 18px 20px; text-align: center; box-shadow: var(--shadow-card);
+    position: relative; overflow: hidden;
+  }
+  .fortune-wheel-wrap { position: relative; width: min(290px, 78vw); aspect-ratio: 1; margin: 6px auto 18px; }
+  .fortune-wheel { width: 100%; height: 100%; display: block; transform: rotate(0deg); will-change: transform;
+    filter: drop-shadow(0 10px 22px rgba(231,142,173,.25)); }
+  .fortune-wheel text { font-family: 'Manrope', sans-serif; font-weight: 800; }
+  .fortune-pointer { position: absolute; left: 50%; top: -6px; transform: translateX(-50%); width: 30px; height: 36px; z-index: 2;
+    filter: drop-shadow(0 3px 6px rgba(57,44,49,.25)); }
+  .fortune-hub { position: absolute; left: 50%; top: 50%; width: 22%; aspect-ratio: 1; transform: translate(-50%, -50%);
+    border-radius: 50%; background: var(--surface); border: 3px solid var(--pink-accent);
+    display: flex; align-items: center; justify-content: center; color: var(--pink-accent); z-index: 2;
+    box-shadow: 0 4px 12px rgba(57,44,49,.15); }
+  .fortune-hub .icon { width: 42%; height: 42%; fill: currentColor; }
+  .fortune-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); letter-spacing: .3px; text-transform: uppercase; }
+  .fortune-spin-btn { margin-top: 8px; font-size: 15px; letter-spacing: .4px; min-height: 52px; }
+  .fortune-spin-btn .icon { width: 18px; height: 18px; }
+  .fortune-hint { font-size: 11.5px; color: var(--text-secondary); margin-top: 10px; line-height: 1.45; }
+  .fortune-used-title { font-size: 15.5px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .fortune-today-prize { display: inline-flex; align-items: center; gap: 6px; background: var(--pink-soft); color: var(--text);
+    font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: var(--r-pill); margin: 4px 0 12px; }
+  .fortune-next { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 11px 14px; margin-top: 4px; }
+  .fortune-next-label { font-size: 11.5px; color: var(--text-secondary); font-weight: 600; }
+  .fortune-next-value { font-size: 15px; font-weight: 800; color: var(--text); margin-top: 2px; }
+  .fortune-next-countdown { font-size: 12px; color: var(--pink-accent); font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .fortune-prizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+  .fortune-prize { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); padding: 10px 6px; text-align: center; }
+  .fortune-prize .em { font-size: 20px; line-height: 1; }
+  .fortune-prize .t { font-size: 11.5px; font-weight: 700; color: var(--text); margin-top: 5px; }
+  .fortune-rules-link { display: flex; justify-content: center; margin-top: 16px; }
+
+  .fortune-result { text-align: center; padding: 4px 0 6px; }
+  .fortune-result-emoji { font-size: 54px; line-height: 1; margin: 4px 0 10px; animation: fortune-pop .55s cubic-bezier(.22,1.6,.36,1) both; }
+  @keyframes fortune-pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .fortune-result h3 { font-size: 21px; font-weight: 800; color: var(--text); }
+  .fortune-result .lead { font-size: 13.5px; color: var(--text-secondary); margin-top: 6px; }
+  .fortune-result-prize { margin: 14px 0 6px; font-size: 32px; font-weight: 800; color: var(--pink-accent); font-variant-numeric: tabular-nums; }
+  .fortune-result-balance { font-size: 13px; color: var(--text-secondary); }
+  .fortune-result-balance b { color: var(--text); }
+  .fortune-result.secret .fortune-result-prize { font-size: 22px; }
+  .fortune-result-note { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; background: var(--surface-soft); border-radius: var(--r-md); padding: 11px 13px; margin-top: 12px; }
+  .fortune-rules p { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 9px; }
+  .fortune-rules h4 { font-size: 13.5px; font-weight: 800; color: var(--text); margin: 14px 0 6px; }
+  .fortune-odds { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .fortune-odds td { padding: 8px 2px; border-bottom: 1px solid var(--border); }
+  .fortune-odds td:last-child { text-align: right; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -1286,6 +1345,7 @@
   <symbol id="icon-shield" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8.5-8 9.5-4.5-1-8-4.5-8-9.5V6l8-3z"/></symbol>
   <symbol id="icon-lock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
   <symbol id="icon-shop" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+  <symbol id="icon-wheel" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="12" r="2"/><path d="M12 2.5v7.5M12 14v7.5M2.5 12H10M14 12h7.5M5.3 5.3l5.3 5.3M13.4 13.4l5.3 5.3M18.7 5.3l-5.3 5.3M10.6 13.4l-5.3 5.3"/></symbol>
 </svg>
 
 <div class="app">
@@ -1324,6 +1384,18 @@
       <div class="dollie-history-link">История <svg class="icon"><use href="#icon-chevron-right"/></svg></div>
     </button>
 
+    <button class="orders-summary-card fortune-entry" onclick="openFortune()">
+      <div class="orders-summary-icon">
+        <svg class="icon"><use href="#icon-wheel"/></svg>
+        <span class="dot" id="fortune-entry-dot" hidden></span>
+      </div>
+      <div class="orders-summary-text">
+        <span class="fortune-entry-title">🎡 Фортуна</span>
+        <span class="fortune-entry-sub" id="fortune-entry-sub">Ежедневный бесплатный подарок</span>
+      </div>
+      <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
+    </button>
+
     <button class="orders-summary-card" id="orders-summary-card" onclick="switchTab('orders')">
       <div class="orders-summary-icon">
         <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg>
@@ -1342,6 +1414,15 @@
     </header>
     <p class="catalog-intro">Куклы в наличии. Понравилась — оставьте заявку, и мы свяжемся с вами.</p>
     <div id="catalog-list"></div>
+  </main>
+
+  <main class="tab-screen" id="tab-fortune">
+    <button type="button" class="dollie-back-btn fortune-back" onclick="closeFortune()">
+      <svg class="icon"><use href="#icon-chevron-right"/></svg> Назад
+    </button>
+    <header class="screen-header"><h1>🎡 Фортуна</h1></header>
+    <p class="fortune-subtitle">Испытай удачу и получи подарок!</p>
+    <div id="fortune-content"></div>
   </main>
 
   <main class="tab-screen" id="tab-orders">
@@ -1409,6 +1490,11 @@
         <svg class="icon"><use href="#icon-star"/></svg>
         <span class="label">Мои отзывы</span>
         <span class="badge" id="my-reviews-count">0</span>
+        <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+      </button>
+      <button class="menu-item" onclick="openFortune()">
+        <svg class="icon"><use href="#icon-wheel"/></svg>
+        <span class="label">Фортуна</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
       <button class="menu-item" onclick="openNotificationsSheet()">
@@ -1791,6 +1877,22 @@
   </div>
 </div>
 
+<div class="bottom-sheet" id="sheet-fortune-result">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content" id="sheet-fortune-result-content"></div>
+</div>
+
+<div class="bottom-sheet" id="sheet-fortune-rules">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <h2>Правила «Фортуны»</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div id="fortune-rules-content"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div id="theme-decorations" aria-hidden="true"></div>
 
@@ -1866,7 +1968,7 @@ let reviewPromptOpen = false;
 
 function syncBackButton() {
   if (!tg) return;
-  const anyOpen = !!document.querySelector('.bottom-sheet.open') || lightboxOpen || reviewPromptOpen;
+  const anyOpen = !!document.querySelector('.bottom-sheet.open') || lightboxOpen || reviewPromptOpen || isFortuneScreenOpen();
   if (anyOpen) tg.BackButton.show();
   else tg.BackButton.hide();
 }
@@ -1878,6 +1980,7 @@ if (tg) {
     if (reviewPromptOpen) { dismissReviewPrompt(); return; }
     const openSheetEl = document.querySelector('.bottom-sheet.open');
     if (openSheetEl) { closeSheet(); return; }
+    if (isFortuneScreenOpen()) { closeFortune(); return; }
   });
   tg.BackButton.hide();
 }
@@ -2097,6 +2200,8 @@ function switchTab(name) {
   if (name === 'reviews') loadReviews(false, { silentIfSame: true });
   if (name === 'orders' && !ordersCache.length) loadOrders(false);
   if (name === 'catalog') loadCatalog(false);
+  if (name === 'fortune') { renderFortune(); loadFortuneStatus(); }
+  syncBackButton();
 }
 
 function comingSoon(label) { showToast(`${label} — совсем скоро`); }
@@ -2978,7 +3083,7 @@ function openTxDetail(idx, source) {
 }
 
 /* Notifications */
-const NOTIF_ICON = { order_status: 'truck', dollies: 'heart', referral_joined: 'user-plus', catalog_request: 'shop' };
+const NOTIF_ICON = { order_status: 'truck', dollies: 'heart', referral_joined: 'user-plus', catalog_request: 'shop', fortune: 'gift' };
 function notifIcon(type) { return NOTIF_ICON[type] || 'bell'; }
 function formatNotifTime(iso) {
   if (!iso) return '';
@@ -4623,6 +4728,321 @@ async function submitCatalogRequest(event) {
   }
 }
 
+/* ============ 🎡 ФОРТУНА ============
+   Результат определяет только сервер (POST /api/fortune/spin). Анимация лишь
+   доезжает до сектора, который вернул сервер. Ограничение «1 раз в сутки»
+   тоже только серверное — здесь нет localStorage-проверок. */
+const FORTUNE_WHEEL_ORDER = ['dollies_1', 'dollies_100', 'dollies_2', 'secret_doll', 'dollies_5', 'dollies_500'];
+const FORTUNE_SEG = 360 / FORTUNE_WHEEL_ORDER.length;
+const FORTUNE_FALLBACK_REWARDS = {
+  dollies_1: { icon: '🪙', label: '1 Dollie', amount: 1 }, dollies_2: { icon: '🪙', label: '2 Dollies', amount: 2 },
+  dollies_5: { icon: '🪙', label: '5 Dollies', amount: 5 }, dollies_100: { icon: '💎', label: '100 Dollies', amount: 100 },
+  dollies_500: { icon: '💎', label: '500 Dollies', amount: 500 }, secret_doll: { icon: '🎁', label: 'Секретная кукла', amount: 0 },
+};
+let fortuneStatus = null;
+let fortuneReturnTab = 'home';
+let fortuneWheelRotation = 0;
+let fortuneSpinInFlight = false;
+let fortuneCountdownTimer = null;
+let fortuneLastResult = null;
+
+function isFortuneScreenOpen() {
+  return !!document.getElementById('tab-fortune')?.classList.contains('active');
+}
+function openFortune() {
+  const active = document.querySelector('.tab-screen.active');
+  const name = active ? active.id.replace('tab-', '') : 'home';
+  if (name !== 'fortune') fortuneReturnTab = name;
+  switchTab('fortune');
+}
+function closeFortune() { switchTab(fortuneReturnTab || 'home'); }
+
+function fortuneRewardInfo(key) {
+  const fromServer = (fortuneStatus?.rewards || []).find(r => r.key === key);
+  return fromServer || FORTUNE_FALLBACK_REWARDS[key] || { icon: '🎁', label: key, amount: 0 };
+}
+function fortunePrizeText(reward) {
+  if (!reward) return '';
+  if (reward.type === 'secret_doll') return '🎁 Секретная кукла';
+  const info = fortuneRewardInfo(reward.key);
+  return `${info.icon || '🪙'} +${reward.amount} ${reward.amount === 1 ? 'Dollie' : 'Dollies'}`;
+}
+
+function fortuneWheelSVG() {
+  const R = 96;
+  const pt = (deg, r) => { const a = (deg - 90) * Math.PI / 180; return [(r * Math.cos(a)).toFixed(2), (r * Math.sin(a)).toFixed(2)]; };
+  const segs = FORTUNE_WHEEL_ORDER.map((key, i) => {
+    const a0 = i * FORTUNE_SEG, a1 = a0 + FORTUNE_SEG, mid = a0 + FORTUNE_SEG / 2;
+    const [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R);
+    const special = key === 'dollies_500' || key === 'secret_doll';
+    const fill = special ? 'var(--pink-accent)' : (i % 2 ? 'var(--surface)' : 'var(--pink-soft)');
+    const color = special ? '#FFFFFF' : 'var(--text)';
+    const info = fortuneRewardInfo(key);
+    const [ex, ey] = pt(mid, 70), [tx, ty] = pt(mid, 47);
+    const num = key === 'secret_doll' ? 'кукла' : String(info.amount);
+    return `
+      <path d="M0 0 L${x0} ${y0} A${R} ${R} 0 0 1 ${x1} ${y1} Z" fill="${fill}" stroke="var(--border)" stroke-width="1.2"/>
+      <g transform="rotate(${mid} ${ex} ${ey})"><text x="${ex}" y="${ey}" font-size="17" text-anchor="middle" dominant-baseline="central">${info.icon}</text></g>
+      <g transform="rotate(${mid} ${tx} ${ty})"><text x="${tx}" y="${ty}" font-size="${num.length > 3 ? 11 : 15}" fill="${color}" text-anchor="middle" dominant-baseline="central">${escapeHtml(num)}</text></g>`;
+  }).join('');
+  return `
+    <div class="fortune-wheel-wrap">
+      <svg class="fortune-pointer" viewBox="0 0 30 36" aria-hidden="true"><path d="M15 34 L3 6 Q15 -2 27 6 Z" fill="var(--pink-accent)" stroke="#FFFFFF" stroke-width="2"/></svg>
+      <svg class="fortune-wheel" id="fortune-wheel" viewBox="-100 -100 200 200" style="transform:rotate(${fortuneWheelRotation}deg)" aria-label="Колесо Фортуны">
+        <circle r="99" fill="var(--surface)" stroke="var(--pink)" stroke-width="2"/>
+        ${segs}
+      </svg>
+      <div class="fortune-hub"><svg class="icon"><use href="#icon-heart"/></svg></div>
+    </div>`;
+}
+
+function fortuneNextLabel(iso) {
+  if (!iso) return 'завтра';
+  const d = new Date(iso);
+  if (isNaN(d)) return 'завтра';
+  return 'завтра в ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+}
+function fortuneCountdownText(iso) {
+  const ms = new Date(iso).getTime() - Date.now();
+  if (!isFinite(ms) || ms <= 0) return 'уже можно!';
+  const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
+  return h > 0 ? `через ${h} ч ${m} мин` : `через ${Math.max(1, m)} мин`;
+}
+
+function renderFortuneEntry() {
+  const sub = document.getElementById('fortune-entry-sub');
+  const dot = document.getElementById('fortune-entry-dot');
+  if (!sub) return;
+  const st = fortuneStatus;
+  const ready = !!(st && st.enabled && st.available);
+  sub.classList.toggle('ready', ready);
+  sub.textContent = !st ? 'Ежедневный бесплатный подарок'
+    : (!st.enabled ? 'Скоро вернётся' : (ready ? 'Попытка дня доступна — крути!' : 'Следующая попытка — ' + fortuneNextLabel(st.next_spin_at)));
+  if (dot) dot.hidden = !ready;
+}
+
+function renderFortune() {
+  const box = document.getElementById('fortune-content');
+  if (!box) return;
+  clearInterval(fortuneCountdownTimer);
+  const st = fortuneStatus;
+  if (!st) return;
+  if (!st.enabled) {
+    box.innerHTML = `<div class="empty-state"><h3>Фортуна временно недоступна</h3><p>Загляни чуть позже — колесо скоро снова закрутится.</p></div>`;
+    return;
+  }
+  const prizes = FORTUNE_WHEEL_ORDER.slice().sort((a, b) => Object.keys(FORTUNE_FALLBACK_REWARDS).indexOf(a) - Object.keys(FORTUNE_FALLBACK_REWARDS).indexOf(b))
+    .map(key => { const r = fortuneRewardInfo(key); return `<div class="fortune-prize"><div class="em">${r.icon}</div><div class="t">${escapeHtml(r.label)}</div></div>`; }).join('');
+  const action = st.available ? `
+      <div class="fortune-label">Сегодняшняя попытка</div>
+      <button type="button" class="btn btn-primary btn-block fortune-spin-btn" id="fortune-spin-btn" onclick="spinFortune()">
+        <svg class="icon"><use href="#icon-refresh"/></svg> Крутить Фортуну
+      </button>
+      <div class="fortune-hint">1 бесплатная попытка в сутки · новая — в 00:00 по Москве</div>`
+    : `
+      <div class="fortune-used-title">Ты уже использовал сегодняшнюю попытку 💫</div>
+      ${st.last_reward ? `<div class="fortune-today-prize">Сегодня выпало: ${escapeHtml(fortunePrizeText(st.last_reward))}</div>` : ''}
+      <div class="fortune-next">
+        <div class="fortune-next-label">Следующее вращение</div>
+        <div class="fortune-next-value">${escapeHtml(fortuneNextLabel(st.next_spin_at))}</div>
+        <div class="fortune-next-countdown" id="fortune-countdown">${escapeHtml(fortuneCountdownText(st.next_spin_at))}</div>
+      </div>`;
+  box.innerHTML = `
+    <div class="fortune-stage">
+      ${fortuneWheelSVG()}
+      ${action}
+    </div>
+    <div class="dollie-section" style="margin-top:20px">
+      <div class="dollie-section-title">Что можно выиграть</div>
+      <div class="fortune-prizes">${prizes}</div>
+    </div>
+    <div class="fortune-rules-link">
+      <button type="button" class="text-link" onclick="openFortuneRules()">Правила акции и вероятности <svg class="icon"><use href="#icon-chevron-right"/></svg></button>
+    </div>`;
+  if (!st.available && st.next_spin_at) {
+    fortuneCountdownTimer = setInterval(() => {
+      const el = document.getElementById('fortune-countdown');
+      if (!el || !isFortuneScreenOpen()) { clearInterval(fortuneCountdownTimer); return; }
+      if (new Date(st.next_spin_at).getTime() <= Date.now()) { clearInterval(fortuneCountdownTimer); loadFortuneStatus(); return; }
+      el.textContent = fortuneCountdownText(st.next_spin_at);
+    }, 30000);
+  }
+}
+
+let fortuneStatusInflight = false;
+async function loadFortuneStatus(opts) {
+  const { silent = false } = opts || {};
+  if (fortuneSpinInFlight || fortuneStatusInflight) return;
+  const box = document.getElementById('fortune-content');
+  if (!userId) {
+    if (box && !silent) box.innerHTML = `<div class="empty-state"><h3>Откройте приложение из Telegram</h3></div>`;
+    return;
+  }
+  fortuneStatusInflight = true;
+  if (!fortuneStatus && box && !silent) box.innerHTML = skeletonOrdersHTML(2);
+  try {
+    const data = await apiFetch('/api/fortune/status', {}, { timeoutMs: 10000, retries: 1 });
+    if (!data?.ok) throw new Error('fortune');
+    fortuneStatus = data;
+    renderFortuneEntry();
+    if (isFortuneScreenOpen()) renderFortune();
+  } catch (e) {
+    if (box && !silent && !fortuneStatus) {
+      box.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить Фортуну</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadFortuneStatus()">Повторить</button></div>`;
+    }
+  } finally {
+    fortuneStatusInflight = false;
+  }
+}
+
+function setFortuneWheel(deg, transition) {
+  const el = document.getElementById('fortune-wheel');
+  if (!el) return;
+  el.style.transition = transition;
+  el.style.transform = `rotate(${deg}deg)`;
+}
+const fortuneSleep = ms => new Promise(r => setTimeout(r, ms));
+
+const FORTUNE_ERRORS = {
+  already_spun_today: 'Сегодняшняя попытка уже использована 💫',
+  fortune_unavailable: 'Фортуна сейчас недоступна',
+  consent_required: 'Сначала примите условия использования',
+  user_not_found: 'Не удалось найти ваш профиль. Перезапустите приложение',
+  unauthorized: 'Откройте приложение из Telegram',
+  invalid_configuration: 'Фортуна временно на настройке. Попробуйте позже',
+  internal_error: 'Что-то пошло не так. Попробуйте ещё раз',
+};
+
+async function spinFortune() {
+  if (fortuneSpinInFlight || !fortuneStatus?.available) return;
+  fortuneSpinInFlight = true;
+  const btn = document.getElementById('fortune-spin-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Крутим…'; }
+  hapticImpact('medium');
+
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 1) Пока ждём ответ сервера — колесо просто разгоняется. Результат ещё неизвестен.
+  let waiting = true, stepEnd = Date.now() + 900, spinTimer = null;
+  fortuneWheelRotation += 360;
+  setFortuneWheel(fortuneWheelRotation, 'transform 0.9s cubic-bezier(.5,0,1,1)');
+  const keepSpinning = () => {
+    if (!waiting) return;
+    fortuneWheelRotation += 360;
+    setFortuneWheel(fortuneWheelRotation, 'transform 0.45s linear');
+    stepEnd = Date.now() + 450;
+    spinTimer = setTimeout(keepSpinning, 450);
+  };
+  spinTimer = setTimeout(keepSpinning, 900);
+
+  let res;
+  try {
+    res = await apiPost('/api/fortune/spin', {});   // тело пустое: всё решает сервер
+  } catch (e) {
+    res = { ok: false, error: 'network' };
+  }
+  waiting = false;
+  clearTimeout(spinTimer);
+  await fortuneSleep(Math.max(0, stepEnd - Date.now()));
+
+  if (!res?.ok || !res.reward) {
+    fortuneWheelRotation += 40;
+    setFortuneWheel(fortuneWheelRotation, 'transform 0.9s cubic-bezier(.1,.7,.2,1)');
+    hapticNotification('error');
+    showToast(res?.error === 'network' ? 'Нет соединения. Попробуйте ещё раз' : (FORTUNE_ERRORS[res?.error] || FORTUNE_ERRORS.internal_error));
+    fortuneSpinInFlight = false;
+    await loadFortuneStatus();
+    if (fortuneStatus?.available) renderFortune();
+    return;
+  }
+
+  // 2) Сервер вернул награду — докручиваем колесо ровно до её сектора.
+  const idx = Math.max(0, FORTUNE_WHEEL_ORDER.indexOf(res.reward.key || (res.reward.type === 'secret_doll' ? 'secret_doll' : '')));
+  const center = idx * FORTUNE_SEG + FORTUNE_SEG / 2;
+  const target = (360 - center) % 360;
+  const jitter = (Math.random() - 0.5) * (FORTUNE_SEG * 0.6);   // только косметика внутри сектора
+  const current = ((fortuneWheelRotation % 360) + 360) % 360;
+  const delta = ((target + jitter - current) % 360 + 360) % 360;
+  fortuneWheelRotation += 360 * 4 + delta;
+  const duration = reduced ? 300 : 4200;
+  setFortuneWheel(fortuneWheelRotation, `transform ${duration}ms cubic-bezier(.12,.67,.15,1)`);
+  await fortuneSleep(duration + 250);
+
+  // 3) Показываем фактическую награду; баланс берём из ответа сервера.
+  fortuneLastResult = res;
+  fortuneStatus = { ...fortuneStatus, available: false, next_spin_at: res.next_spin_at, last_reward: res.reward, last_spin_at: new Date().toISOString() };
+  if (res.reward.type === 'dollies' && typeof res.balance === 'number') {
+    loyaltyBalance = res.balance;
+    updateLoyaltyBalanceUI();
+  }
+  fortuneSpinInFlight = false;
+  renderFortune();
+  renderFortuneEntry();
+  openFortuneResult(res);
+  hapticNotification('success');
+  loadLoyalty();
+  loadNotifications(false);
+  if (dollieHistoryLoadedOnce) loadLoyaltyHistory(true);
+}
+
+function openFortuneResult(res) {
+  const body = document.getElementById('sheet-fortune-result-content');
+  if (!body) return;
+  const r = res.reward;
+  let html;
+  if (r.type === 'secret_doll') {
+    html = `
+      <div class="fortune-result secret">
+        <div class="fortune-result-emoji">🎁</div>
+        <h3>СЕКРЕТНЫЙ ПОДАРОК!</h3>
+        <div class="lead">Ты выиграл особенную куклу!</div>
+        <div class="fortune-result-prize">Секретная кукла ✨</div>
+        <div class="fortune-result-note">Подарок уже зафиксирован за твоим аккаунтом. Администратор DollieLand свяжется с тобой в Telegram, чтобы договориться о получении.</div>
+        <button type="button" class="btn btn-primary btn-block" onclick="closeSheet()">Ура!</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="closeSheet(); openSheet('contact');">Написать DollieLand</button>
+      </div>`;
+  } else {
+    const amount = Number(r.amount) || 0;
+    const big = amount >= 500, rare = amount >= 100;
+    const head = big ? '✨ Большой выигрыш!' : (rare ? '🎉 Невероятно!' : '🎉 Поздравляем!');
+    const icon = rare ? '💎' : '🪙';
+    html = `
+      <div class="fortune-result">
+        <div class="fortune-result-emoji">${big ? '✨' : (rare ? '💎' : '🎉')}</div>
+        <h3>${head}</h3>
+        <div class="lead">Ты выиграл:</div>
+        <div class="fortune-result-prize">${icon} +${amount} ${amount === 1 ? 'Dollie' : 'Dollies'}</div>
+        ${typeof res.balance === 'number' ? `<div class="fortune-result-balance">Твой баланс: <b>${Number(res.balance)} Dollies</b></div>` : ''}
+        <button type="button" class="btn btn-primary btn-block" style="margin-top:16px" onclick="closeSheet()">Отлично!</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="closeSheet(); openDolliesSheet();">Мои Dollies</button>
+      </div>`;
+  }
+  body.innerHTML = `
+    <div class="sheet-header"><h2>Фортуна</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>${html}`;
+  openSheet('fortune-result');
+}
+
+function openFortuneRules() {
+  const body = document.getElementById('fortune-rules-content');
+  if (!body) return;
+  const odds = (fortuneStatus?.rewards || []).map(r =>
+    `<tr><td>${r.icon} ${escapeHtml(r.label)}</td><td>${escapeHtml(String(r.probability ?? '—').replace('.', ','))} %</td></tr>`).join('');
+  body.innerHTML = `
+    <div class="fortune-rules">
+      <p>«Фортуна» — бесплатная промо-механика DollieLand. Для участия не нужно ничего покупать или платить, Dollies за вращение не списываются, дополнительные попытки не продаются.</p>
+      <p>Каждый пользователь Telegram может сделать <b>одно вращение в сутки</b>. Сутки считаются по московскому времени: новая попытка появляется в 00:00 МСК.</p>
+      <p>Результат определяется на сервере случайным образом с вероятностями, указанными ниже. Анимация колеса только показывает уже определённый результат.</p>
+      <p>Выигранные Dollies сразу зачисляются на баланс Dollie Club и действуют по его правилам, включая срок действия.</p>
+      <p>Секретная кукла закрепляется за аккаунтом победителя. Администратор свяжется с победителем, чтобы согласовать получение приза.</p>
+      <p>DollieLand вправе изменять вероятности и набор призов или приостановить акцию. Актуальные условия всегда опубликованы в этом разделе.</p>
+      <h4>Вероятности</h4>
+      <table class="fortune-odds">${odds || '<tr><td>Загрузка…</td><td></td></tr>'}</table>
+      <button type="button" class="btn btn-secondary btn-block" style="margin-top:16px" onclick="openConsentDocsSheet()">Документы и соглашения</button>
+    </div>`;
+  openSheet('fortune-rules');
+}
+
 /* Track / Contact / Help / Toast */
 async function trackOrder() {
   const input = document.getElementById('track-input').value.trim();
@@ -4714,6 +5134,7 @@ async function loadAppData() {
     loadLoyalty(),
     loadBanners(),
     loadNotifications(false),
+    loadFortuneStatus({ silent: true }),
   ]);
   setTimeout(() => checkReviewPrompt(), 800);
 }
