@@ -1200,6 +1200,25 @@
   .catalog-req-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .catalog-req-name { font-size: 13.5px; font-weight: 700; overflow-wrap: anywhere; }
   .catalog-req-price { font-size: 12.5px; color: var(--pink-accent); font-weight: 800; margin-top: 2px; }
+  .catalog-dollies-box { margin: 2px 0 16px; padding: 13px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
+  .catalog-dollies-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .catalog-dollies-check { display: flex; align-items: center; gap: 10px; min-width: 0; cursor: pointer; }
+  .catalog-dollies-check input { position: absolute; opacity: 0; pointer-events: none; }
+  .catalog-dollies-checkbox { width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; transition: .18s ease; }
+  .catalog-dollies-check input:checked + .catalog-dollies-checkbox { background: var(--pink-accent); border-color: var(--pink-accent); }
+  .catalog-dollies-checkbox .icon { width: 13px; height: 13px; opacity: 0; transition: opacity .15s ease; }
+  .catalog-dollies-check input:checked + .catalog-dollies-checkbox .icon { opacity: 1; }
+  .catalog-dollies-title { display: block; font-size: 13px; font-weight: 800; color: var(--text); }
+  .catalog-dollies-balance { display: block; font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
+  .catalog-dollies-info { width: 28px; height: 28px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .catalog-dollies-info .icon { width: 15px; height: 15px; }
+  .catalog-dollies-result { display: none; margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--border); }
+  .catalog-dollies-result.show { display: block; }
+  .catalog-dollies-prices { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .catalog-dollies-old { color: var(--text-secondary); font-size: 12.5px; text-decoration: line-through; text-decoration-thickness: 1.5px; }
+  .catalog-dollies-new { color: var(--pink-accent); font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .catalog-dollies-discount { font-size: 11.5px; color: var(--pink-accent); font-weight: 700; margin-top: 3px; }
+  .catalog-dollies-empty { font-size: 11.5px; color: var(--text-secondary); margin-top: 8px; }
   .qty-stepper { display: inline-flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 4px; margin-bottom: 16px; }
   .qty-stepper button { width: 38px; height: 38px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; }
   .qty-stepper button:disabled { opacity: .4; }
@@ -2013,6 +2032,7 @@
         <div class="dollie-hero-num" id="dollie-hero-balance">—</div>
         <div class="dollie-hero-unit">Dollies</div>
         <div class="dollie-hero-rub" id="dollie-hero-rub">≈ — ₽ скидки</div>
+        <div style="margin-top:10px;font-size:11.5px;color:var(--text-secondary);">В одной заявке можно использовать максимум <b style="color:var(--text)">300 Dollies</b>.</div>
         <div class="dollie-hero-footer">
           <button class="text-link" onclick="switchDolliePage('history')">
             История <svg class="icon"><use href="#icon-chevron-right"/></svg>
@@ -5066,6 +5086,27 @@ function renderCatalogRequestForm() {
       <span class="qty-val" id="catalog-qty-val">${catalogRequestQty}</span>
       <button type="button" id="catalog-qty-plus" onclick="changeCatalogQty(1)" aria-label="Больше">+</button>
     </div>
+    <div class="catalog-dollies-box">
+      <div class="catalog-dollies-top">
+        <label class="catalog-dollies-check" for="catalog-use-dollies">
+          <input type="checkbox" id="catalog-use-dollies" onchange="updateCatalogDolliesUI()">
+          <span class="catalog-dollies-checkbox"><svg class="icon"><use href="#icon-check"/></svg></span>
+          <span style="min-width:0">
+            <span class="catalog-dollies-title">Учитывать Dollies при покупке</span>
+            <span class="catalog-dollies-balance" id="catalog-dollies-balance">Баланс: ${Number(loyaltyBalance || 0)} Dollies</span>
+          </span>
+        </label>
+        <button type="button" class="catalog-dollies-info" onclick="openDolliesSheet();" aria-label="Что такое Dollies"><svg class="icon"><use href="#icon-info"/></svg></button>
+      </div>
+      <div class="catalog-dollies-result" id="catalog-dollies-result">
+        <div class="catalog-dollies-prices">
+          <span class="catalog-dollies-old" id="catalog-dollies-old-price">${formatRub(p.price)}</span>
+          <span class="catalog-dollies-new" id="catalog-dollies-new-price">${formatRub(p.price)}</span>
+        </div>
+        <div class="catalog-dollies-discount" id="catalog-dollies-discount"></div>
+      </div>
+      <div class="catalog-dollies-empty" id="catalog-dollies-empty" hidden>На балансе пока нет Dollies.</div>
+    </div>
     <div class="dollie-section-title" style="margin-bottom:8px">Комментарий или пожелание</div>
     <textarea class="review-textarea catalog-req-textarea" id="catalog-comment" maxlength="${CATALOG_MAX_COMMENT}" placeholder="Например: хочу в подарок, удобное время для связи…"></textarea>
     <div class="review-char-count"><span id="catalog-comment-count">0</span>/${CATALOG_MAX_COMMENT}</div>
@@ -5087,7 +5128,39 @@ function updateCatalogQtyButtons() {
   const plus = document.getElementById('catalog-qty-plus');
   if (minus) minus.disabled = catalogRequestQty <= 1;
   if (plus) plus.disabled = catalogRequestQty >= CATALOG_MAX_QTY;
+  updateCatalogDolliesUI();
 }
+
+function updateCatalogDolliesUI() {
+  const p = catalogCurrentProduct;
+  if (!p) return;
+  const checkbox = document.getElementById('catalog-use-dollies');
+  const result = document.getElementById('catalog-dollies-result');
+  const oldPrice = document.getElementById('catalog-dollies-old-price');
+  const newPrice = document.getElementById('catalog-dollies-new-price');
+  const discount = document.getElementById('catalog-dollies-discount');
+  const balanceEl = document.getElementById('catalog-dollies-balance');
+  const emptyEl = document.getElementById('catalog-dollies-empty');
+  if (!checkbox || !result) return;
+
+  const balance = Math.max(0, Number(loyaltyBalance) || 0);
+  const total = Math.max(0, Number(p.price) || 0) * catalogRequestQty;
+  const usable = Math.min(balance, 300, total);
+  const discountRub = usable;
+  const finalTotal = Math.max(0, total - discountRub);
+
+  if (balanceEl) balanceEl.textContent = `Баланс: ${balance} Dollies`;
+  if (emptyEl) emptyEl.hidden = balance > 0;
+
+  const active = checkbox.checked && usable > 0;
+  result.classList.toggle('show', active);
+  if (active) {
+    if (oldPrice) oldPrice.textContent = formatRub(total);
+    if (newPrice) newPrice.textContent = formatRub(finalTotal);
+    if (discount) discount.textContent = `−${usable} Dollies · скидка ${formatRub(discountRub)}`;
+  }
+}
+
 function changeCatalogQty(delta) {
   const next = Math.max(1, Math.min(CATALOG_MAX_QTY, catalogRequestQty + delta));
   if (next === catalogRequestQty) return;
@@ -5111,6 +5184,7 @@ async function submitCatalogRequest(event) {
       product_id: catalogCurrentProduct.id,
       quantity: catalogRequestQty,
       comment,
+      use_dollies: !!document.getElementById('catalog-use-dollies')?.checked,
     });
     if (!res?.ok) {
       const messages = {
@@ -5118,6 +5192,7 @@ async function submitCatalogRequest(event) {
         invalid_quantity: `Количество — от 1 до ${CATALOG_MAX_QTY}`,
         comment_too_long: `Комментарий не длиннее ${CATALOG_MAX_COMMENT} символов`,
         too_many_requests: 'Слишком много заявок подряд. Попробуйте чуть позже',
+        insufficient_balance: 'Недостаточно Dollies. Обновите баланс и попробуйте ещё раз',
         consent_required: 'Сначала примите условия использования',
         unauthorized: 'Откройте приложение из Telegram',
       };
@@ -5128,6 +5203,7 @@ async function submitCatalogRequest(event) {
       return;
     }
     hapticNotification('success');
+    if (typeof res.balance === 'number') { loyaltyBalance = res.balance; updateLoyaltyBalanceUI(); }
     document.getElementById('catalog-request-body').innerHTML = `
       <div class="empty-state" style="padding-top:10px;">
         <div class="review-prompt-icon" style="margin:0 auto 12px;"><svg class="icon"><use href="#icon-check"/></svg></div>
