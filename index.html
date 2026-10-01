@@ -1142,6 +1142,49 @@
   .consent-link .link-label { flex: 1; min-width: 0; }
   .consent-link .chev { color: var(--text-secondary); width: 16px; height: 16px; flex-shrink: 0; }
   .consent-footnote { font-size: 10.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 14px; }
+
+  /* ============ КАТАЛОГ ============ */
+  .catalog-intro { font-size: 13px; color: var(--text-secondary); margin: -6px 0 16px; line-height: 1.5; }
+  .catalog-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r-xl); box-shadow: var(--shadow-soft);
+    overflow: hidden; margin-bottom: 14px; color: var(--text);
+  }
+  .catalog-card-img {
+    width: 100%; aspect-ratio: 4 / 3; background: var(--pink-soft);
+    display: flex; align-items: center; justify-content: center; color: var(--pink-accent);
+    padding: 0; overflow: hidden;
+  }
+  .catalog-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .25s ease; }
+  .catalog-card-img img.loaded { opacity: 1; }
+  .catalog-card-img .icon { width: 34px; height: 34px; }
+  .catalog-card-body { padding: 14px 16px 16px; }
+  .catalog-card-title { font-size: 15.5px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+  .catalog-price { font-size: 19px; font-weight: 800; color: var(--pink-accent); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .catalog-weight { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+  .catalog-weight .icon { width: 14px; height: 14px; color: var(--pink-accent); }
+  .catalog-short { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .catalog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .catalog-actions .btn { padding: 12px 10px; font-size: 13px; }
+
+  .catalog-detail-img { width: 100%; aspect-ratio: 1 / 1; border-radius: var(--r-lg); background: var(--pink-soft); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--pink-accent); margin-bottom: 14px; }
+  .catalog-detail-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .catalog-detail-img .icon { width: 44px; height: 44px; }
+  .catalog-detail-price { font-size: 24px; font-weight: 800; color: var(--pink-accent); margin: 2px 0 12px; font-variant-numeric: tabular-nums; }
+  .catalog-desc { font-size: 13.5px; line-height: 1.6; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 14px; }
+  .catalog-weight-note { font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; background: var(--surface-soft); border-radius: var(--r-md); padding: 10px 12px; margin: 10px 0 4px; display: flex; gap: 8px; align-items: flex-start; }
+  .catalog-weight-note .icon { width: 16px; height: 16px; color: var(--pink-accent); margin-top: 1px; }
+
+  .catalog-req-product { display: flex; gap: 12px; align-items: center; background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 10px; margin-bottom: 16px; }
+  .catalog-req-thumb { width: 56px; height: 56px; border-radius: var(--r-md); background: var(--pink-soft); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--pink-accent); }
+  .catalog-req-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .catalog-req-name { font-size: 13.5px; font-weight: 700; overflow-wrap: anywhere; }
+  .catalog-req-price { font-size: 12.5px; color: var(--pink-accent); font-weight: 800; margin-top: 2px; }
+  .qty-stepper { display: inline-flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 4px; margin-bottom: 16px; }
+  .qty-stepper button { width: 38px; height: 38px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; }
+  .qty-stepper button:disabled { opacity: .4; }
+  .qty-stepper .qty-val { min-width: 40px; text-align: center; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .catalog-req-textarea { height: 120px; min-height: 120px; max-height: 120px; }
 </style>
 </head>
 <body>
@@ -1223,6 +1266,7 @@
   <symbol id="icon-image" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="9" cy="9" r="1.8"/><path d="M4 19l5-5 4 4 3-3 4 4"/></symbol>
   <symbol id="icon-shield" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8.5-8 9.5-4.5-1-8-4.5-8-9.5V6l8-3z"/></symbol>
   <symbol id="icon-lock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="icon-shop" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
 </svg>
 
 <div class="app">
@@ -1268,6 +1312,17 @@
       <div class="orders-summary-text" id="orders-summary-text">Загружаем заказы…</div>
       <svg class="icon order-chevron"><use href="#icon-chevron-right"/></svg>
     </button>
+  </main>
+
+  <main class="tab-screen" id="tab-catalog">
+    <header class="screen-header">
+      <h1>Каталог</h1>
+      <button class="pill-btn" id="catalog-refresh-btn" onclick="loadCatalog(true)" aria-label="Обновить каталог">
+        <svg class="icon"><use href="#icon-refresh"/></svg>
+      </button>
+    </header>
+    <p class="catalog-intro">Куклы в наличии. Понравилась — оставьте заявку, и мы свяжемся с вами.</p>
+    <div id="catalog-list"></div>
   </main>
 
   <main class="tab-screen" id="tab-orders">
@@ -1383,6 +1438,9 @@
 <nav class="bottom-nav">
   <button class="nav-item active" data-tab="home" onclick="switchTab('home')" aria-label="Главная">
     <svg class="icon"><use href="#icon-house"/></svg><span>Главная</span>
+  </button>
+  <button class="nav-item" data-tab="catalog" onclick="switchTab('catalog')" aria-label="Каталог">
+    <svg class="icon"><use href="#icon-shop"/></svg><span>Каталог</span>
   </button>
   <button class="nav-item" data-tab="orders" onclick="switchTab('orders')" aria-label="Мои заказы">
     <svg class="icon" data-seasonal-icon="package"><use href="#icon-package"/></svg><span>Мои заказы</span>
@@ -1698,6 +1756,22 @@
   </div>
 </div>
 
+<div class="bottom-sheet" id="sheet-catalog-product">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content" id="sheet-catalog-product-content"></div>
+</div>
+
+<div class="bottom-sheet" id="sheet-catalog-request">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <h2>Заявка на куклу</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div id="catalog-request-body"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div id="theme-decorations" aria-hidden="true"></div>
 
@@ -2003,6 +2077,7 @@ function switchTab(name) {
   hapticSelection();
   if (name === 'reviews') loadReviews(false, { silentIfSame: true });
   if (name === 'orders' && !ordersCache.length) loadOrders(false);
+  if (name === 'catalog') loadCatalog(false);
 }
 
 function comingSoon(label) { showToast(`${label} — совсем скоро`); }
@@ -2884,7 +2959,7 @@ function openTxDetail(idx, source) {
 }
 
 /* Notifications */
-const NOTIF_ICON = { order_status: 'truck', dollies: 'heart', referral_joined: 'user-plus' };
+const NOTIF_ICON = { order_status: 'truck', dollies: 'heart', referral_joined: 'user-plus', catalog_request: 'shop' };
 function notifIcon(type) { return NOTIF_ICON[type] || 'bell'; }
 function formatNotifTime(iso) {
   if (!iso) return '';
@@ -4199,6 +4274,251 @@ async function checkReviewPrompt() {
   } catch (e) {
   } finally {
     reviewPromptInflight = false;
+  }
+}
+
+/* ============ КАТАЛОГ (витрина + заявки) ============ */
+let catalogCache = [];
+let catalogLoadedOnce = false;
+let catalogLoadInflight = false;
+let catalogCurrentProduct = null;
+let catalogRequestQty = 1;
+let catalogRequestInFlight = false;
+const CATALOG_MAX_QTY = 10;
+const CATALOG_MAX_COMMENT = 1000;
+
+function formatRub(n) {
+  return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽';
+}
+function formatWeightValue(v, unit) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return '';
+  return unit === 'кг'
+    ? n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 3 })
+    : n.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+}
+function formatCatalogWeight(p) {
+  const unit = p.weight_unit || 'кг';
+  const a = p.weight_min, b = p.weight_max;
+  if (a == null && b == null) return '';
+  if (a != null && b != null && Number(a) !== Number(b)) return `${formatWeightValue(a, unit)}–${formatWeightValue(b, unit)} ${unit}`;
+  return `≈ ${formatWeightValue(a != null ? a : b, unit)} ${unit}`;
+}
+function catalogImageHTML(p, cls) {
+  return p.image_url
+    ? `<img src="${escapeAttr(p.image_url)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.remove()">`
+    : `<svg class="icon"><use href="#icon-shop"/></svg>`;
+}
+
+function catalogCardHTML(p) {
+  const w = formatCatalogWeight(p);
+  const pid = escapeAttr(String(p.id));
+  return `
+    <article class="catalog-card">
+      <button type="button" class="catalog-card-img" onclick="openCatalogProduct('${pid}')" aria-label="Подробнее">${catalogImageHTML(p)}</button>
+      <div class="catalog-card-body">
+        <div class="catalog-card-title">${escapeHtml(p.name)}</div>
+        <div class="catalog-price">${escapeHtml(formatRub(p.price))}</div>
+        ${w ? `<div class="catalog-weight"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: ${escapeHtml(w)}</div>` : ''}
+        ${p.short_description ? `<div class="catalog-short">${escapeHtml(p.short_description)}</div>` : ''}
+        <div class="catalog-actions">
+          <button type="button" class="btn btn-secondary" onclick="openCatalogProduct('${pid}')">Подробнее</button>
+          <button type="button" class="btn btn-primary" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>
+        </div>
+      </div>
+    </article>`;
+}
+
+function renderCatalog() {
+  const list = document.getElementById('catalog-list');
+  if (!list) return;
+  if (!catalogCache.length) {
+    list.innerHTML = `<div class="empty-state"><h3>Скоро здесь появятся куклы</h3><p>Загляните чуть позже — мы готовим новые поступления.</p></div>`;
+    return;
+  }
+  list.innerHTML = catalogCache.map(catalogCardHTML).join('');
+  stripAfterInsert(list);
+}
+
+async function loadCatalog(isManual) {
+  if (catalogLoadInflight) return;
+  const list = document.getElementById('catalog-list');
+  const btn = document.getElementById('catalog-refresh-btn');
+  if (!list) return;
+  if (!userId) { list.innerHTML = `<div class="empty-state"><h3>Откройте приложение из Telegram</h3></div>`; return; }
+  catalogLoadInflight = true;
+  if (isManual) { btn?.classList.add('spinning'); btn?.setAttribute('disabled', ''); }
+  if (!catalogLoadedOnce) list.innerHTML = skeletonOrdersHTML(2);
+  try {
+    const data = await apiFetch('/api/catalog', {}, { timeoutMs: 10000, retries: 1 });
+    if (!data?.ok) throw new Error('catalog');
+    catalogCache = data.products || [];
+    catalogLoadedOnce = true;
+    renderCatalog();
+  } catch (e) {
+    if (!catalogLoadedOnce) {
+      list.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить каталог</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadCatalog(true)">Повторить</button></div>`;
+    } else showToast('Не удалось обновить каталог');
+  } finally {
+    btn?.classList.remove('spinning'); btn?.removeAttribute('disabled');
+    catalogLoadInflight = false;
+  }
+}
+
+function catalogDetailHTML(p) {
+  const w = formatCatalogWeight(p);
+  const extra = Array.isArray(p.extra_params) ? p.extra_params.filter(x => x && x.label) : [];
+  const pid = escapeAttr(String(p.id));
+  return `
+    <div class="sheet-header">
+      <h2>${escapeHtml(p.name)}</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div class="catalog-detail-img">${p.image_url ? `<img src="${escapeAttr(p.image_url)}" alt="" decoding="async" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
+    <div class="catalog-detail-price">${escapeHtml(formatRub(p.price))}</div>
+    ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
+      : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
+    ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
+    ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
+    ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
+    ${w ? `<div class="catalog-weight-note"><svg class="icon"><use href="#icon-alert-circle"/></svg><span>Вес указан примерно. Фактический вес куклы может отличаться.</span></div>` : ''}
+    <button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>
+  `;
+}
+
+async function openCatalogProduct(productId) {
+  const content = document.getElementById('sheet-catalog-product-content');
+  if (!content) return;
+  const cached = catalogCache.find(p => String(p.id) === String(productId));
+  content.innerHTML = cached ? catalogDetailHTML(cached) : skeletonOrdersHTML(1);
+  stripAfterInsert(content);
+  openSheet('catalog-product');
+  // Подтягиваем актуальные данные с сервера (цена/описание могли измениться).
+  try {
+    const data = await apiFetch('/api/catalog/' + encodeURIComponent(productId), {}, { timeoutMs: 10000, retries: 1 });
+    if (data?.ok && data.product) {
+      const idx = catalogCache.findIndex(p => String(p.id) === String(productId));
+      if (idx !== -1) catalogCache[idx] = data.product;
+      if (currentOpenSheetId === 'catalog-product') {
+        content.innerHTML = catalogDetailHTML(data.product);
+        stripAfterInsert(content);
+      }
+    }
+  } catch (e) {
+    if (e?.status === 404) {
+      content.innerHTML = `<div class="empty-state"><h3>Эта кукла больше недоступна</h3><p>Возможно, её уже забронировали.</p><button class="btn btn-secondary" onclick="closeSheet()">Закрыть</button></div>`;
+      loadCatalog(false);
+    } else if (!cached) {
+      content.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить</h3><button class="btn btn-primary" onclick="openCatalogProduct('${escapeAttr(String(productId))}')">Повторить</button></div>`;
+    }
+  }
+}
+
+function openCatalogRequest(productId) {
+  const p = catalogCache.find(x => String(x.id) === String(productId));
+  if (!p) { showToast('Кукла недоступна'); loadCatalog(false); return; }
+  catalogCurrentProduct = p;
+  catalogRequestQty = 1;
+  catalogRequestInFlight = false;
+  renderCatalogRequestForm();
+  openSheet('catalog-request');
+}
+
+function renderCatalogRequestForm() {
+  const body = document.getElementById('catalog-request-body');
+  const p = catalogCurrentProduct;
+  if (!body || !p) return;
+  body.innerHTML = `
+    <div class="catalog-req-product">
+      <div class="catalog-req-thumb">${p.image_url ? `<img src="${escapeAttr(p.image_url)}" alt="" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
+      <div style="min-width:0">
+        <div class="catalog-req-name">${escapeHtml(p.name)}</div>
+        <div class="catalog-req-price">${escapeHtml(formatRub(p.price))}</div>
+      </div>
+    </div>
+    <div class="dollie-section-title" style="margin-bottom:8px">Количество</div>
+    <div class="qty-stepper">
+      <button type="button" id="catalog-qty-minus" onclick="changeCatalogQty(-1)" aria-label="Меньше">−</button>
+      <span class="qty-val" id="catalog-qty-val">${catalogRequestQty}</span>
+      <button type="button" id="catalog-qty-plus" onclick="changeCatalogQty(1)" aria-label="Больше">+</button>
+    </div>
+    <div class="dollie-section-title" style="margin-bottom:8px">Комментарий или пожелание</div>
+    <textarea class="review-textarea catalog-req-textarea" id="catalog-comment" maxlength="${CATALOG_MAX_COMMENT}" placeholder="Например: хочу в подарок, удобное время для связи…"></textarea>
+    <div class="review-char-count"><span id="catalog-comment-count">0</span>/${CATALOG_MAX_COMMENT}</div>
+    <p class="review-form-note">Это заявка, а не оплата. Администратор свяжется с вами в Telegram, чтобы уточнить детали и наличие.</p>
+    <button type="button" class="btn btn-primary btn-block" id="catalog-submit-btn" style="margin-top:14px" onclick="submitCatalogRequest(event); return false;">
+      <svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Отправить заявку
+    </button>`;
+  const ta = document.getElementById('catalog-comment');
+  ta?.addEventListener('input', () => {
+    const c = document.getElementById('catalog-comment-count'); if (c) c.textContent = ta.value.length;
+  });
+  updateCatalogQtyButtons();
+}
+
+function updateCatalogQtyButtons() {
+  const v = document.getElementById('catalog-qty-val');
+  if (v) v.textContent = catalogRequestQty;
+  const minus = document.getElementById('catalog-qty-minus');
+  const plus = document.getElementById('catalog-qty-plus');
+  if (minus) minus.disabled = catalogRequestQty <= 1;
+  if (plus) plus.disabled = catalogRequestQty >= CATALOG_MAX_QTY;
+}
+function changeCatalogQty(delta) {
+  const next = Math.max(1, Math.min(CATALOG_MAX_QTY, catalogRequestQty + delta));
+  if (next === catalogRequestQty) return;
+  catalogRequestQty = next;
+  hapticSelection();
+  updateCatalogQtyButtons();
+}
+
+async function submitCatalogRequest(event) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  if (catalogRequestInFlight || !catalogCurrentProduct) return;
+  if (!userId) { showToast('Откройте приложение из Telegram'); return; }
+  catalogRequestInFlight = true;
+  const btn = document.getElementById('catalog-submit-btn');
+  const comment = (document.getElementById('catalog-comment')?.value || '').trim();
+  if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
+  try {
+    // Telegram ID НЕ передаём — сервер берёт его из подписанного initData.
+    const res = await apiPost('/api/catalog/requests', {
+      product_id: catalogCurrentProduct.id,
+      quantity: catalogRequestQty,
+      comment,
+    });
+    if (!res?.ok) {
+      const messages = {
+        product_unavailable: 'Эта кукла больше недоступна',
+        invalid_quantity: `Количество — от 1 до ${CATALOG_MAX_QTY}`,
+        comment_too_long: `Комментарий не длиннее ${CATALOG_MAX_COMMENT} символов`,
+        too_many_requests: 'Слишком много заявок подряд. Попробуйте чуть позже',
+        consent_required: 'Сначала примите условия использования',
+        unauthorized: 'Откройте приложение из Telegram',
+      };
+      showToast(messages[res?.error] || 'Не удалось отправить заявку. Попробуйте ещё раз');
+      hapticNotification('error');
+      if (res?.error === 'product_unavailable') { closeSheet(); loadCatalog(false); }
+      if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Отправить заявку'; }
+      return;
+    }
+    hapticNotification('success');
+    document.getElementById('catalog-request-body').innerHTML = `
+      <div class="empty-state" style="padding-top:10px;">
+        <div class="review-prompt-icon" style="margin:0 auto 12px;"><svg class="icon"><use href="#icon-check"/></svg></div>
+        <h3>Заявка отправлена</h3>
+        <p>Заявка отправлена. Мы свяжемся с вами для уточнения деталей.</p>
+        <p style="margin-top:-8px;font-size:11.5px;">Номер заявки: <b>${escapeHtml(res.request?.id || '')}</b></p>
+        <button class="btn btn-primary btn-block" onclick="closeSheet()">Хорошо</button>
+      </div>`;
+    loadNotifications(false);
+  } catch (e) {
+    showToast('Нет соединения. Попробуйте ещё раз');
+    hapticNotification('error');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Отправить заявку'; }
+  } finally {
+    catalogRequestInFlight = false;
   }
 }
 
