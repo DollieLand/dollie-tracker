@@ -1263,6 +1263,22 @@
   .fortune-odds { width: 100%; border-collapse: collapse; font-size: 13px; }
   .fortune-odds td { padding: 8px 2px; border-bottom: 1px solid var(--border); }
   .fortune-odds td:last-child { text-align: right; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+  .app-header-actions { display: flex; align-items: center; gap: 8px; }
+  .icon-btn.fortune-btn .icon { width: 22px; height: 22px; }
+  .icon-btn.fortune-btn.ready { color: var(--pink-accent); }
+  .icon-btn.fortune-btn.ready .icon { animation: fortune-wiggle 2.6s ease-in-out infinite; transform-origin: 50% 50%; }
+  @keyframes fortune-wiggle {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    70% { transform: rotate(-35deg); } 80% { transform: rotate(25deg); } 90% { transform: rotate(-10deg); }
+  }
+  .fortune-offer { text-align: center; padding: 2px 0 6px; }
+  .fortune-offer-wheel { width: 84px; height: 84px; margin: 2px auto 12px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent);
+    display: flex; align-items: center; justify-content: center; animation: fortune-pop .5s cubic-bezier(.22,1.6,.36,1) both; }
+  .fortune-offer-wheel .icon { width: 46px; height: 46px; animation: spin 6s linear infinite; }
+  .fortune-offer h3 { font-size: 20px; font-weight: 800; color: var(--text); }
+  .fortune-offer p { font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin: 6px auto 4px; max-width: 300px; }
+  .fortune-offer-prizes { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 12px 0 4px; }
+  .fortune-offer-prizes span { background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--text); }
 </style>
 </head>
 <body>
@@ -1353,10 +1369,16 @@
   <main class="tab-screen active" id="tab-home">
     <header class="app-header">
       <div class="brand">DollieLand</div>
-      <button class="icon-btn" onclick="openNotificationsSheet()" aria-label="Уведомления">
-        <svg class="icon" data-seasonal-icon="bell"><use href="#icon-bell"/></svg>
-        <span class="dot" id="notif-dot" hidden></span>
-      </button>
+      <div class="app-header-actions">
+        <button class="icon-btn fortune-btn" id="fortune-header-btn" onclick="openFortune()" aria-label="Фортуна">
+          <svg class="icon"><use href="#icon-wheel"/></svg>
+          <span class="dot" id="fortune-header-dot" hidden></span>
+        </button>
+        <button class="icon-btn" onclick="openNotificationsSheet()" aria-label="Уведомления">
+          <svg class="icon" data-seasonal-icon="bell"><use href="#icon-bell"/></svg>
+          <span class="dot" id="notif-dot" hidden></span>
+        </button>
+      </div>
     </header>
 
     <div class="greeting">
@@ -1880,6 +1902,24 @@
 <div class="bottom-sheet" id="sheet-fortune-result">
   <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
   <div class="sheet-content" id="sheet-fortune-result-content"></div>
+</div>
+
+<div class="bottom-sheet" id="sheet-fortune-offer">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content">
+    <div class="sheet-header">
+      <h2>🎡 Фортуна</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div class="fortune-offer">
+      <div class="fortune-offer-wheel"><svg class="icon"><use href="#icon-wheel"/></svg></div>
+      <h3>Твоя попытка ждёт!</h3>
+      <p>Сегодняшнее бесплатное вращение ещё не использовано. Испытай удачу и получи подарок ♡</p>
+      <div class="fortune-offer-prizes" id="fortune-offer-prizes"></div>
+      <button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="acceptFortuneOffer()">Крутить Фортуну</button>
+      <button type="button" class="btn btn-tertiary btn-block" onclick="closeSheet()">Позже</button>
+    </div>
+  </div>
 </div>
 
 <div class="bottom-sheet" id="sheet-fortune-rules">
@@ -4819,6 +4859,13 @@ function renderFortuneEntry() {
   sub.textContent = !st ? 'Ежедневный бесплатный подарок'
     : (!st.enabled ? 'Скоро вернётся' : (ready ? 'Попытка дня доступна — крути!' : 'Следующая попытка — ' + fortuneNextLabel(st.next_spin_at)));
   if (dot) dot.hidden = !ready;
+  const headerBtn = document.getElementById('fortune-header-btn');
+  const headerDot = document.getElementById('fortune-header-dot');
+  if (headerBtn) {
+    headerBtn.classList.toggle('ready', ready);
+    headerBtn.setAttribute('aria-label', ready ? 'Фортуна — попытка доступна' : 'Фортуна');
+  }
+  if (headerDot) headerDot.hidden = !ready;
 }
 
 function renderFortune() {
@@ -4871,7 +4918,7 @@ function renderFortune() {
 
 let fortuneStatusInflight = false;
 async function loadFortuneStatus(opts) {
-  const { silent = false } = opts || {};
+  const { silent = false, offer = false } = opts || {};
   if (fortuneSpinInFlight || fortuneStatusInflight) return;
   const box = document.getElementById('fortune-content');
   if (!userId) {
@@ -4886,6 +4933,7 @@ async function loadFortuneStatus(opts) {
     fortuneStatus = data;
     renderFortuneEntry();
     if (isFortuneScreenOpen()) renderFortune();
+    if (offer) setTimeout(() => maybeOfferFortune(), 1400);
   } catch (e) {
     if (box && !silent && !fortuneStatus) {
       box.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить Фортуну</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadFortuneStatus()">Повторить</button></div>`;
@@ -5043,6 +5091,32 @@ function openFortuneRules() {
   openSheet('fortune-rules');
 }
 
+
+/* Предложение покрутить при входе: один раз за запуск приложения, только если
+   попытка действительно доступна по данным сервера и пользователь ничем не занят. */
+let fortuneOfferShown = false;
+function maybeOfferFortune(attempt) {
+  attempt = attempt || 0;
+  if (fortuneOfferShown || !fortuneStatus?.enabled || !fortuneStatus.available) return;
+  const busy = !consentAccepted || isFortuneScreenOpen() || lightboxOpen || reviewPromptOpen
+    || !!document.querySelector('.bottom-sheet.open')
+    || document.getElementById('consent-gate')?.classList.contains('open');
+  if (busy) {
+    if (attempt < 6) setTimeout(() => maybeOfferFortune(attempt + 1), 4000);
+    return;
+  }
+  fortuneOfferShown = true;
+  const prizes = document.getElementById('fortune-offer-prizes');
+  if (prizes) {
+    prizes.innerHTML = ['dollies_1', 'dollies_5', 'dollies_100', 'dollies_500', 'secret_doll']
+      .map(k => { const r = fortuneRewardInfo(k); return `<span>${r.icon} ${escapeHtml(k === 'secret_doll' ? 'кукла' : String(r.amount))}</span>`; }).join('');
+  }
+  openSheet('fortune-offer');
+}
+function acceptFortuneOffer() {
+  closeSheet();
+  openFortune();
+}
 /* Track / Contact / Help / Toast */
 async function trackOrder() {
   const input = document.getElementById('track-input').value.trim();
@@ -5134,7 +5208,7 @@ async function loadAppData() {
     loadLoyalty(),
     loadBanners(),
     loadNotifications(false),
-    loadFortuneStatus({ silent: true }),
+    loadFortuneStatus({ silent: true, offer: true }),
   ]);
   setTimeout(() => checkReviewPrompt(), 800);
 }
