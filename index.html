@@ -1395,8 +1395,13 @@
   .halloween-star { position:fixed; z-index:1; pointer-events:none; animation:halloween-twinkle 2.8s ease-in-out infinite; opacity:.85; }
   .halloween-star svg { fill:var(--halloween-orange-bright); }
   .halloween-bat, .halloween-pumpkin { position:fixed; z-index:1; pointer-events:none; }
-  .halloween-bat svg { fill:#17120F; filter:drop-shadow(0 2px 4px rgba(123,63,242,.18)); }
-  .halloween-pumpkin { width:32px; height:29px; animation:halloween-float 3.6s ease-in-out infinite; filter:drop-shadow(0 5px 10px rgba(255,122,0,.18)); }
+  .halloween-bat { width:clamp(86px, 12vw, 150px); height:auto; opacity:.92; transform-origin:center; }
+  .halloween-bat img { width:100%; height:auto; display:block; object-fit:contain; filter:drop-shadow(0 4px 9px rgba(123,63,242,.28)); transform-origin:50% 54%; animation:halloween-bat-wings .78s ease-in-out infinite; }
+  .halloween-pumpkin { width:clamp(34px, 5vw, 68px); height:auto; opacity:.72; }
+  .halloween-pumpkin img { width:100%; height:auto; display:block; object-fit:contain; filter:drop-shadow(0 0 7px rgba(255,122,0,.42)) drop-shadow(0 0 14px rgba(255,149,0,.18)); }
+  @keyframes halloween-pumpkin-fall { 0% { transform:translate3d(0,-14vh,0) rotate(-8deg); } 100% { transform:translate3d(0,115vh,0) rotate(18deg); } }
+  @keyframes halloween-pumpkin-sway { 0%,100% { margin-left:-10px; } 50% { margin-left:10px; } }
+  @keyframes halloween-bat-wings { 0%,100% { transform:scaleY(1) scaleX(1); } 50% { transform:scaleY(.86) scaleX(1.035); } }
 
   /* Загруженный администратором Halloween-декор */
   .custom-theme-deco-wrap {
@@ -1442,6 +1447,7 @@
   }
   @media (prefers-reduced-motion: reduce) {
     .halloween-star,.halloween-pumpkin,.halloween-bat,
+    .halloween-pumpkin img,.halloween-bat img,
     .custom-theme-deco-wrap[data-custom-element="pumpkin"],
     .custom-theme-deco-wrap[data-custom-element="bat"],
     .custom-theme-deco-wrap[data-custom-element="bat"] .custom-theme-deco { animation:none !important; }
@@ -3081,24 +3087,31 @@ const DECORATION_RENDERERS = {
 
   spiderweb_bats: () => {
     const custom = (themeConfig.theme && themeConfig.theme.custom_decorations) || {};
-    const has = (key) => !!(custom[key] && custom[key].enabled && custom[key].image_url);
-    const web = has('web') ? '' : `<div class="halloween-web halloween-web-a" aria-hidden="true"><svg viewBox="0 0 220 220"><g fill="none" stroke="currentColor" stroke-width="1.2" opacity=".55"><path d="M0 0Q70 22 110 110T220 220M110 0Q110 70 110 110T110 220M220 0Q150 22 110 110T0 220"/><path d="M22 0Q76 38 110 110T198 220M0 44Q58 58 110 110T220 176M0 104Q56 92 110 110T220 116"/></g></svg></div>`;
-    const moon = has('moon') ? '' : `<div class="halloween-moon" aria-hidden="true"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#FFF7E8"/><circle cx="51" cy="31" r="28" fill="var(--bg)"/></svg></div>`;
+    const asset = (key, fallback) => (custom[key] && custom[key].enabled && custom[key].image_url) ? custom[key].image_url : fallback;
+    const batSrc = asset('bat', '/static/theme_decor/halloween_bat.png');
+    const pumpkinSrc = asset('pumpkin', '/static/theme_decor/halloween_pumpkin.png');
+
+    // Паутина убрана. Мышь занимает её место — в верхнем правом углу.
+    const bat = `<div class="halloween-bat" style="top:7%;right:3%;" aria-hidden="true"><img src="${escapeAttr(batSrc)}" alt="" decoding="async"></div>`;
+
+    // Вместо статичных тыкв — лёгкий «тыквенный дождь», как лепестки.
+    const pumpkins = Array.from({length: 9}, (_, i) => {
+      const left = 4 + Math.round(Math.random() * 92);
+      const delay = (Math.random() * 9).toFixed(2);
+      const duration = (11 + Math.random() * 7).toFixed(2);
+      const size = 38 + Math.round(Math.random() * 28);
+      const opacity = (0.52 + Math.random() * 0.24).toFixed(2);
+      const rotate = Math.round(-12 + Math.random() * 24);
+      return `<div class="halloween-pumpkin" style="left:${left}%;top:-12%;width:${size}px;opacity:${opacity};animation:halloween-pumpkin-fall ${duration}s linear ${delay}s infinite, halloween-pumpkin-sway 3.8s ease-in-out ${delay}s infinite;" aria-hidden="true"><img src="${escapeAttr(pumpkinSrc)}" alt="" decoding="async" style="transform:rotate(${rotate}deg);"></div>`;
+    }).join('');
+
+    const moon = `<div class="halloween-moon" aria-hidden="true"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#FFF7E8"/><circle cx="51" cy="31" r="28" fill="var(--bg)"/></svg></div>`;
     const stars = Array.from({length: 10}, (_, i) => {
       const left = 5 + Math.round(Math.random() * 90), top = 4 + Math.round(Math.random() * 38), delay = (Math.random() * 3).toFixed(1);
       const size = 5 + Math.round(Math.random() * 5);
       return `<div class="halloween-star" style="left:${left}%;top:${top}%;animation-delay:${delay}s"><svg width="${size}" height="${size}" viewBox="0 0 24 24"><path d="M12 2l2.1 7.9L22 12l-7.9 2.1L12 22l-2.1-7.9L2 12l7.9-2.1z"/></svg></div>`;
     }).join('');
-    const bats = has('bat') ? '' : Array.from({length: 7}, (_, i) => {
-      const top = 8 + Math.round(Math.random() * 55), delay = (Math.random() * 8).toFixed(1), duration = (12 + Math.random() * 8).toFixed(1);
-      const size = 22 + Math.round(Math.random() * 12);
-      return `<div class="deco-item halloween-bat" style="top:${top}%;left:-12%;animation:deco-fly ${duration}s linear ${delay}s infinite;"><svg width="${size}" height="${Math.round(size*.66)}" viewBox="0 0 48 32"><path d="M24 9C20 3 13 1 7 4c2 2 4 4 5 6C7 8 3 9 0 13c5-1 9 0 12 2-4 2-7 5-9 9 5-3 10-4 15-3l3 7 3-7c5-1 10 0 15 3-2-4-5-7-9-9 3-2 7-3 12-2-3-4-7-5-12-3 1-2 3-4 5-6-6-3-13-1-17 5z"/></svg></div>`;
-    }).join('');
-    const pumpkins = has('pumpkin') ? '' : Array.from({length: 4}, (_, i) => {
-      const left = 8 + i * 28, top = 72 + (i % 2) * 7;
-      return `<div class="halloween-pumpkin" style="left:${left}%;top:${top}%;animation-delay:${i*.35}s"><svg viewBox="0 0 56 50"><path d="M28 8c-3-5-1-7 4-7 0 4-1 6-4 7z" fill="#8CC63F"/><path d="M28 10c-12-7-24 1-24 14 0 16 11 22 24 22s24-6 24-22c0-13-12-21-24-14z" fill="#FF7A00"/><path d="M17 20l6 3-6 3M39 20l-6 3 6 3M22 33c4 3 8 3 12 0" fill="none" stroke="#17120F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
-    }).join('');
-    return web + moon + stars + bats + pumpkins;
+    return bat + moon + stars + pumpkins;
   },
 
   ornaments_lights: () => Array.from({length: 10}, () => `<div class="deco-item"><svg width="7" height="7" viewBox="0 0 24 24" fill="#D9B86A"><circle cx="12" cy="12" r="9"/></svg></div>`).join(''),
@@ -3111,7 +3124,8 @@ function renderThemeDecorations() {
   const renderer = DECORATION_RENDERERS[preset];
   const base = renderer ? renderer() : '';
   const custom = (themeConfig.theme && themeConfig.theme.custom_decorations) || {};
-  const customHtml = Object.entries(custom).filter(([key, item]) => item && item.enabled && item.image_url).map(([key, item]) => {
+  const ownsHalloweenElement = (key) => preset === 'spiderweb_bats' && (key === 'pumpkin' || key === 'bat');
+  const customHtml = Object.entries(custom).filter(([key, item]) => item && item.enabled && item.image_url && !ownsHalloweenElement(key)).map(([key, item]) => {
     const size = Math.max(20, Number(item.size || 120));
     const x = Number(item.x ?? 50);
     const y = Number(item.y ?? 50);
