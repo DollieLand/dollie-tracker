@@ -1145,35 +1145,54 @@
 
   /* ============ КАТАЛОГ ============ */
   .catalog-intro { font-size: 13px; color: var(--text-secondary); margin: -6px 0 16px; line-height: 1.5; }
+  .catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
   .catalog-card {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--r-xl); box-shadow: var(--shadow-soft);
-    overflow: hidden; margin-bottom: 14px; color: var(--text);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-soft);
+    overflow: hidden; color: var(--text);
+    display: flex; flex-direction: column; min-width: 0;
   }
-  .catalog-card-img {
-    width: 100%; aspect-ratio: 4 / 3; background: var(--pink-soft);
-    display: flex; align-items: center; justify-content: center; color: var(--pink-accent);
-    padding: 0; overflow: hidden;
-  }
-  .catalog-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .25s ease; }
-  .catalog-card-img img.loaded { opacity: 1; }
-  .catalog-card-img .icon { width: 34px; height: 34px; }
-  .catalog-card-body { padding: 14px 16px 16px; }
-  .catalog-card-title { font-size: 15.5px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
-  .catalog-price { font-size: 19px; font-weight: 800; color: var(--pink-accent); margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .catalog-weight { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
-  .catalog-weight .icon { width: 14px; height: 14px; color: var(--pink-accent); }
-  .catalog-short { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .catalog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
-  .catalog-actions .btn { padding: 12px 10px; font-size: 13px; }
+  .catalog-card-body { padding: 10px 11px 12px; display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .catalog-card-title { font-size: 13.5px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .catalog-price { font-size: 16px; font-weight: 800; color: var(--pink-accent); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .catalog-weight { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.35; }
+  .catalog-weight b { color: var(--text); font-weight: 700; white-space: nowrap; }
+  .catalog-short { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; margin-top: 6px; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .catalog-actions { display: grid; gap: 6px; margin-top: auto; padding-top: 10px; }
+  .catalog-actions .btn { padding: 8px 6px; font-size: 12px; min-height: 36px; width: 100%; }
+  @media (max-width: 350px) { .catalog-grid { gap: 8px; } .catalog-card-body { padding: 9px 9px 10px; } }
 
-  .catalog-detail-img { width: 100%; aspect-ratio: 1 / 1; border-radius: var(--r-lg); background: var(--pink-soft); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--pink-accent); margin-bottom: 14px; }
-  .catalog-detail-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .catalog-detail-img .icon { width: 44px; height: 44px; }
+  /* Галерея фото (листается свайпом) */
+  .cat-gallery { position: relative; background: var(--pink-soft); overflow: hidden; }
+  .cat-gallery.card { aspect-ratio: 1 / 1; }
+  .cat-gallery.detail { aspect-ratio: 1 / 1; border-radius: var(--r-lg); margin-bottom: 14px; }
+  .cat-gallery-track {
+    display: flex; height: 100%; overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .cat-gallery-track::-webkit-scrollbar { display: none; }
+  .cat-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; padding: 0; display: block; }
+  .cat-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cat-gallery-empty { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--pink-accent); }
+  .cat-gallery-empty .icon { width: 34px; height: 34px; }
+  .cat-dots { position: absolute; left: 0; right: 0; bottom: 8px; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+  .cat-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.65); box-shadow: 0 0 0 1px rgba(57,44,49,.12); transition: all .2s ease; }
+  .cat-dot.active { background: #fff; width: 14px; border-radius: 3px; }
+  .cat-counter { position: absolute; top: 10px; right: 10px; background: rgba(30,20,24,.55); color: #fff; font-size: 11.5px; font-weight: 700; padding: 4px 9px; border-radius: 999px; pointer-events: none; }
+  .cat-gallery.card .cat-counter { top: 7px; right: 7px; font-size: 10px; padding: 3px 7px; }
+
   .catalog-detail-price { font-size: 24px; font-weight: 800; color: var(--pink-accent); margin: 2px 0 12px; font-variant-numeric: tabular-nums; }
   .catalog-desc { font-size: 13.5px; line-height: 1.6; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 14px; }
-  .catalog-weight-note { font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; background: var(--surface-soft); border-radius: var(--r-md); padding: 10px 12px; margin: 10px 0 4px; display: flex; gap: 8px; align-items: flex-start; }
+  .catalog-weight-note { font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; background: var(--surface-soft); border-radius: var(--r-md); padding: 10px 12px; margin: 10px 0; display: flex; gap: 8px; align-items: flex-start; }
   .catalog-weight-note .icon { width: 16px; height: 16px; color: var(--pink-accent); margin-top: 1px; }
+  .weight-faq { margin-top: 4px; border: 1px solid var(--border); box-shadow: none; }
+  .weight-faq .help-item-body p { margin: 0 0 9px; }
+  .weight-faq .help-item-body p:last-child { margin-bottom: 0; }
+  .weight-faq-important { background: var(--pink-soft); color: var(--text); border-radius: 12px; padding: 9px 11px; }
+  .weight-faq-important b { color: var(--pink-accent); }
+  .weight-faq h4 { font-size: 13px; font-weight: 800; color: var(--text); margin: 12px 0 6px; }
 
   .catalog-req-product { display: flex; gap: 12px; align-items: center; background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 10px; margin-bottom: 16px; }
   .catalog-req-thumb { width: 56px; height: 56px; border-radius: var(--r-md); background: var(--pink-soft); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--pink-accent); }
@@ -3800,6 +3819,7 @@ function getReviewById(id, source) {
 }
 
 function buildLightboxPhotos(source, reviewId) {
+  if (source === 'catalog') return catalogLightboxPhotos();
   if (source === 'allPhotos') {
     const all = [];
     reviewListCache.forEach(review => {
@@ -3847,6 +3867,9 @@ function updateLightboxBottom() {
   const { photos, index } = lightboxState;
   const current = photos[index];
   if (!current) return;
+  const bottomEl = document.querySelector('.photo-lightbox-bottom');
+  if (bottomEl) bottomEl.style.display = current.review ? '' : 'none';
+  if (!current.review) return;
   const review = current.review || {};
   const publicName = publicReviewName(review);
   const publicUsername = publicReviewUsername(review);
@@ -4290,24 +4313,85 @@ const CATALOG_MAX_COMMENT = 1000;
 function formatRub(n) {
   return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽';
 }
-function formatWeightValue(v, unit) {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return '';
-  return unit === 'кг'
-    ? n.toLocaleString('ru-RU', { minimumFractionDigits: 1, maximumFractionDigits: 3 })
-    : n.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
-}
+/* «Вес» — примерная стоимость международной доставки из США, в рублях */
 function formatCatalogWeight(p) {
-  const unit = p.weight_unit || 'кг';
   const a = p.weight_min, b = p.weight_max;
+  const rub = v => (Number(v) || 0).toLocaleString('ru-RU');
   if (a == null && b == null) return '';
-  if (a != null && b != null && Number(a) !== Number(b)) return `${formatWeightValue(a, unit)}–${formatWeightValue(b, unit)} ${unit}`;
-  return `≈ ${formatWeightValue(a != null ? a : b, unit)} ${unit}`;
+  if (a != null && b != null && Number(a) !== Number(b)) return `${rub(a)}–${rub(b)} ₽`;
+  return `≈ ${rub(a != null ? a : b)} ₽`;
 }
-function catalogImageHTML(p, cls) {
-  return p.image_url
-    ? `<img src="${escapeAttr(p.image_url)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('loaded')" onerror="this.remove()">`
-    : `<svg class="icon"><use href="#icon-shop"/></svg>`;
+function catalogImages(p) {
+  const list = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
+  if (!list.length && p.image_url) list.push(p.image_url);
+  return list;
+}
+
+/* Галерея: листается свайпом (scroll-snap), точки и счётчик обновляются при прокрутке */
+function catalogGalleryHTML(p, mode) {
+  const imgs = catalogImages(p);
+  const pid = escapeAttr(String(p.id));
+  if (!imgs.length) {
+    return `<div class="cat-gallery ${mode}"><div class="cat-gallery-empty"><svg class="icon"><use href="#icon-shop"/></svg></div></div>`;
+  }
+  const click = i => mode === 'card'
+    ? `openCatalogProduct('${pid}')`
+    : `openCatalogLightbox('${pid}', ${i})`;
+  return `
+    <div class="cat-gallery ${mode}" data-count="${imgs.length}">
+      <div class="cat-gallery-track">
+        ${imgs.map((url, i) => `
+          <button type="button" class="cat-slide" onclick="${click(i)}" aria-label="Фото ${i + 1}">
+            <img src="${escapeAttr(url)}" alt="" ${mode === 'card' && i > 0 ? 'loading="lazy"' : ''} decoding="async">
+          </button>`).join('')}
+      </div>
+      ${imgs.length > 1 ? `
+        <div class="cat-counter">1/${imgs.length}</div>
+        <div class="cat-dots">${imgs.map((_, i) => `<span class="cat-dot ${i === 0 ? 'active' : ''}"></span>`).join('')}</div>` : ''}
+    </div>`;
+}
+function bindCatalogGalleries(root) {
+  (root || document).querySelectorAll('.cat-gallery-track').forEach(track => {
+    if (track.__bound) return;
+    track.__bound = true;
+    let t = null;
+    track.addEventListener('scroll', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const gallery = track.parentElement;
+        const count = Number(gallery.dataset.count || 1);
+        const idx = Math.max(0, Math.min(count - 1, Math.round(track.scrollLeft / Math.max(1, track.clientWidth))));
+        gallery.querySelectorAll('.cat-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+        const counter = gallery.querySelector('.cat-counter');
+        if (counter) counter.textContent = `${idx + 1}/${count}`;
+        if (track.__lastIdx !== idx) { track.__lastIdx = idx; hapticSelection(); }
+      }, 60);
+    }, { passive: true });
+  });
+}
+
+/* Полноэкранный просмотр фото — используем существующий лайтбокс */
+let catalogLightboxProductId = null;
+function catalogLightboxPhotos() {
+  const p = catalogCache.find(x => String(x.id) === String(catalogLightboxProductId));
+  return p ? catalogImages(p).map(url => ({ url, review: null })) : [];
+}
+function openCatalogLightbox(productId, index) {
+  catalogLightboxProductId = productId;
+  openPhotoLightbox('catalog', 0, index);
+}
+
+const WEIGHT_FAQ_HTML = `
+  <p>Это стоимость международной доставки куклы из США в Россию. Она рассчитывается с учётом физического и объёмного веса посылки.</p>
+  <p>Оплата веса производится после поступления куклы на склад в США, перед её отправкой в Россию.</p>
+  <p class="weight-faq-important"><b>Важно:</b> вес — это стоимость международной доставки из США в Россию. Не путайте её со стоимостью доставки по России.</p>
+  <h4>Доставка по России</h4>
+  <p>Доставка по России осуществляется из Москвы с помощью служб Яндекс, Авито, 5Post и СДЭК.</p>
+  <p>Стоимость доставки рассчитывается отдельно и зависит от расстояния до получателя и размера посылки.</p>`;
+
+function toggleWeightFaq() {
+  document.getElementById('weight-faq')?.classList.toggle('open');
+  hapticSelection();
 }
 
 function catalogCardHTML(p) {
@@ -4315,11 +4399,11 @@ function catalogCardHTML(p) {
   const pid = escapeAttr(String(p.id));
   return `
     <article class="catalog-card">
-      <button type="button" class="catalog-card-img" onclick="openCatalogProduct('${pid}')" aria-label="Подробнее">${catalogImageHTML(p)}</button>
+      ${catalogGalleryHTML(p, 'card')}
       <div class="catalog-card-body">
         <div class="catalog-card-title">${escapeHtml(p.name)}</div>
         <div class="catalog-price">${escapeHtml(formatRub(p.price))}</div>
-        ${w ? `<div class="catalog-weight"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: ${escapeHtml(w)}</div>` : ''}
+        ${w ? `<div class="catalog-weight">Примерный вес: <b>${escapeHtml(w)}</b></div>` : ''}
         ${p.short_description ? `<div class="catalog-short">${escapeHtml(p.short_description)}</div>` : ''}
         <div class="catalog-actions">
           <button type="button" class="btn btn-secondary" onclick="openCatalogProduct('${pid}')">Подробнее</button>
@@ -4336,7 +4420,8 @@ function renderCatalog() {
     list.innerHTML = `<div class="empty-state"><h3>Скоро здесь появятся куклы</h3><p>Загляните чуть позже — мы готовим новые поступления.</p></div>`;
     return;
   }
-  list.innerHTML = catalogCache.map(catalogCardHTML).join('');
+  list.innerHTML = `<div class="catalog-grid">${catalogCache.map(catalogCardHTML).join('')}</div>`;
+  bindCatalogGalleries(list);
   stripAfterInsert(list);
 }
 
@@ -4374,14 +4459,22 @@ function catalogDetailHTML(p) {
       <h2>${escapeHtml(p.name)}</h2>
       <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
     </div>
-    <div class="catalog-detail-img">${p.image_url ? `<img src="${escapeAttr(p.image_url)}" alt="" decoding="async" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
+    ${catalogGalleryHTML(p, 'detail')}
     <div class="catalog-detail-price">${escapeHtml(formatRub(p.price))}</div>
     ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
       : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
     ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
     ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
     ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
-    ${w ? `<div class="catalog-weight-note"><svg class="icon"><use href="#icon-alert-circle"/></svg><span>Вес указан примерно. Фактический вес куклы может отличаться.</span></div>` : ''}
+    ${w ? `<div class="catalog-weight-note"><svg class="icon"><use href="#icon-alert-circle"/></svg><span>Вес указан примерно. Итоговая стоимость определяется после взвешивания куклы на складе в США и может отличаться.</span></div>` : ''}
+    <div class="help-item weight-faq" id="weight-faq">
+      <button type="button" class="help-item-head" onclick="toggleWeightFaq()">
+        <svg class="icon"><use href="#icon-help-circle"/></svg>
+        <span class="label">Что такое вес?</span>
+        <svg class="icon chev"><use href="#icon-chevron-down"/></svg>
+      </button>
+      <div class="help-item-body">${WEIGHT_FAQ_HTML}</div>
+    </div>
     <button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>
   `;
 }
@@ -4391,6 +4484,7 @@ async function openCatalogProduct(productId) {
   if (!content) return;
   const cached = catalogCache.find(p => String(p.id) === String(productId));
   content.innerHTML = cached ? catalogDetailHTML(cached) : skeletonOrdersHTML(1);
+  bindCatalogGalleries(content);
   stripAfterInsert(content);
   openSheet('catalog-product');
   // Подтягиваем актуальные данные с сервера (цена/описание могли измениться).
@@ -4400,8 +4494,14 @@ async function openCatalogProduct(productId) {
       const idx = catalogCache.findIndex(p => String(p.id) === String(productId));
       if (idx !== -1) catalogCache[idx] = data.product;
       if (currentOpenSheetId === 'catalog-product') {
-        content.innerHTML = catalogDetailHTML(data.product);
-        stripAfterInsert(content);
+        const faqOpen = document.getElementById('weight-faq')?.classList.contains('open');
+        const changed = JSON.stringify(cached || null) !== JSON.stringify(data.product);
+        if (changed) {
+          content.innerHTML = catalogDetailHTML(data.product);
+          if (faqOpen) document.getElementById('weight-faq')?.classList.add('open');
+          bindCatalogGalleries(content);
+          stripAfterInsert(content);
+        }
       }
     }
   } catch (e) {
@@ -4430,10 +4530,11 @@ function renderCatalogRequestForm() {
   if (!body || !p) return;
   body.innerHTML = `
     <div class="catalog-req-product">
-      <div class="catalog-req-thumb">${p.image_url ? `<img src="${escapeAttr(p.image_url)}" alt="" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
+      <div class="catalog-req-thumb">${catalogImages(p)[0] ? `<img src="${escapeAttr(catalogImages(p)[0])}" alt="" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
       <div style="min-width:0">
         <div class="catalog-req-name">${escapeHtml(p.name)}</div>
         <div class="catalog-req-price">${escapeHtml(formatRub(p.price))}</div>
+        ${formatCatalogWeight(p) ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">Примерный вес: ${escapeHtml(formatCatalogWeight(p))}</div>` : ''}
       </div>
     </div>
     <div class="dollie-section-title" style="margin-bottom:8px">Количество</div>
