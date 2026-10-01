@@ -1145,7 +1145,7 @@
 
   /* ============ КАТАЛОГ ============ */
   .catalog-intro { font-size: 13px; color: var(--text-secondary); margin: -6px 0 16px; line-height: 1.5; }
-  .catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+  .catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; align-items: stretch; margin: 0 -10px; }
   .catalog-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r-lg); box-shadow: var(--shadow-soft);
@@ -1162,7 +1162,7 @@
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .catalog-actions { display: grid; gap: 6px; margin-top: auto; padding-top: 10px; }
   .catalog-actions .btn { padding: 8px 6px; font-size: 12px; min-height: 36px; width: 100%; }
-  @media (max-width: 350px) { .catalog-grid { gap: 8px; } .catalog-card-body { padding: 9px 9px 10px; } }
+  @media (max-width: 380px) { .catalog-grid { margin: 0 -12px; gap: 6px; } .catalog-card-body { padding: 9px 9px 10px; } }
 
   /* Галерея фото (листается свайпом) */
   .cat-gallery { position: relative; background: var(--pink-soft); overflow: hidden; }
