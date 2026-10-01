@@ -1154,13 +1154,17 @@
     display: flex; flex-direction: column; min-width: 0;
   }
   .catalog-card-body { padding: 10px 11px 12px; display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  /* Единая сетка высот: одинаковые строки в соседних карточках каталога. */
   .catalog-card-title { font-size: 13.5px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .catalog-price { font-size: 16px; font-weight: 800; color: var(--pink-accent); margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .catalog-weight { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.35; }
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    min-height: 35.1px; }
+  .catalog-price { font-size: 16px; font-weight: 800; color: var(--pink-accent); margin-top: 4px; font-variant-numeric: tabular-nums;
+    min-height: 20.8px; }
+  .catalog-weight { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.35; min-height: 29.7px; }
   .catalog-weight b { color: var(--text); font-weight: 700; white-space: nowrap; }
   .catalog-short { font-size: 11.5px; color: var(--text-secondary); line-height: 1.4; margin-top: 6px; overflow-wrap: anywhere;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    min-height: 32.2px; }
   .catalog-actions { display: grid; gap: 6px; margin-top: auto; padding-top: 10px; }
   .catalog-actions .btn { padding: 8px 6px; font-size: 12px; min-height: 36px; width: 100%; }
   @media (max-width: 380px) { .catalog-grid { margin: 0 -12px; gap: 6px; } .catalog-card-body { padding: 9px 9px 10px; } }
@@ -1200,30 +1204,26 @@
   .catalog-req-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .catalog-req-name { font-size: 13.5px; font-weight: 700; overflow-wrap: anywhere; }
   .catalog-req-price { font-size: 12.5px; color: var(--pink-accent); font-weight: 800; margin-top: 2px; }
-  .catalog-dollies-box { margin: 2px 0 16px; padding: 13px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); }
-  .catalog-dollies-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .catalog-dollies-check { display: flex; align-items: center; gap: 10px; min-width: 0; cursor: pointer; }
-  .catalog-dollies-check input { position: absolute; opacity: 0; pointer-events: none; }
-  .catalog-dollies-checkbox { width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; transition: .18s ease; }
-  .catalog-dollies-check input:checked + .catalog-dollies-checkbox { background: var(--pink-accent); border-color: var(--pink-accent); }
-  .catalog-dollies-checkbox .icon { width: 13px; height: 13px; opacity: 0; transition: opacity .15s ease; }
-  .catalog-dollies-check input:checked + .catalog-dollies-checkbox .icon { opacity: 1; }
-  .catalog-dollies-title { display: block; font-size: 13px; font-weight: 800; color: var(--text); }
-  .catalog-dollies-balance { display: block; font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
-  .catalog-dollies-info { width: 28px; height: 28px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .catalog-dollies-info .icon { width: 15px; height: 15px; }
-  .catalog-dollies-result { display: none; margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--border); }
-  .catalog-dollies-result.show { display: block; }
-  .catalog-dollies-prices { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-  .catalog-dollies-old { color: var(--text-secondary); font-size: 12.5px; text-decoration: line-through; text-decoration-thickness: 1.5px; }
-  .catalog-dollies-new { color: var(--pink-accent); font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .catalog-dollies-discount { font-size: 11.5px; color: var(--pink-accent); font-weight: 700; margin-top: 3px; }
-  .catalog-dollies-empty { font-size: 11.5px; color: var(--text-secondary); margin-top: 8px; }
   .qty-stepper { display: inline-flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 4px; margin-bottom: 16px; }
   .qty-stepper button { width: 38px; height: 38px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; }
   .qty-stepper button:disabled { opacity: .4; }
   .qty-stepper .qty-val { min-width: 40px; text-align: center; font-size: 16px; font-weight: 800; font-variant-numeric: tabular-nums; }
   .catalog-req-textarea { height: 120px; min-height: 120px; max-height: 120px; }
+  .catalog-dollies-box { margin: 14px 0; padding: 13px 14px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 16px; }
+  .catalog-dollies-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .catalog-dollies-title { font-size:13px; font-weight:800; color:var(--text); }
+  .catalog-dollies-balance { font-size:11.5px; color:var(--text-secondary); margin-top:3px; }
+  .catalog-dollies-toggle { display:flex; align-items:center; gap:10px; margin-top:11px; cursor:pointer; user-select:none; }
+  .catalog-dollies-toggle input { width:18px; height:18px; accent-color:var(--pink-accent); flex:0 0 auto; }
+  .catalog-dollies-toggle span { font-size:12.5px; font-weight:700; color:var(--text); }
+  .catalog-dollies-hint { font-size:10.8px; line-height:1.45; color:var(--text-secondary); margin-top:7px; }
+  .catalog-price-breakdown { margin-top:8px; padding-top:9px; border-top:1px solid var(--border); }
+  .catalog-price-line { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; color:var(--text-secondary); margin-top:4px; }
+  .catalog-price-line.total { font-size:14px; font-weight:800; color:var(--text); margin-top:7px; }
+  .catalog-price-old { text-decoration:line-through; color:var(--text-secondary); }
+  .catalog-price-new { color:var(--pink-accent); font-weight:900; font-size:16px; }
+  .dollie-usage-note { margin-top:12px; padding:11px 12px; background:var(--surface-soft); border:1px solid var(--border); border-radius:14px; font-size:11.5px; line-height:1.5; color:var(--text-secondary); }
+  .dollie-usage-note b { color:var(--text); }
 
   /* ============ ФОРТУНА ============ */
   .dl-ico { display: block; flex-shrink: 0; }
@@ -1369,8 +1369,8 @@
   html[data-seasonal-theme="halloween"] .seasonal-banner::after {
     content: '';
     position: absolute; width: 110px; height: 110px; right: -24px; top: -30px;
-    border: 2px solid rgba(255,247,232,.32); border-radius: 50%;
-    box-shadow: -24px 28px 0 -8px rgba(255,247,232,.14);
+    border: 2px solid rgba(17,16,15,.88); border-radius: 50%;
+    box-shadow: -24px 28px 0 -8px rgba(17,16,15,.42);
   }
   html[data-seasonal-theme="halloween"] .seasonal-banner { position:relative; overflow:visible; }
   html[data-seasonal-theme="halloween"] .seasonal-banner-title { color: #FFF7E8; padding-right:clamp(92px, 15vw, 170px); }
@@ -1421,12 +1421,12 @@
   .halloween-star { position:fixed; z-index:1; pointer-events:none; animation:halloween-twinkle 2.8s ease-in-out infinite; opacity:.85; }
   .halloween-star svg { fill:var(--halloween-orange-bright); }
   /* Halloween: мышь живёт рядом с заголовком баннера, тыква — внутри Dollie Club */
-  .halloween-bat { position:absolute; z-index:4; pointer-events:none; width:clamp(120px, 19vw, 205px); height:auto; right:-42px; top:50%; transform:translateY(-54%); opacity:.96; }
+  .halloween-bat { position:absolute; z-index:4; pointer-events:none; width:clamp(150px, 23vw, 245px); height:auto; right:-35px; top:50%; transform:translateY(-54%); opacity:.96; }
   .halloween-bat img { width:100%; height:auto; display:block; object-fit:contain; filter:drop-shadow(0 5px 10px rgba(123,63,242,.32)); transform-origin:50% 54%; animation:halloween-bat-wings .82s ease-in-out infinite; }
-  .halloween-pumpkin { position:absolute; z-index:4; pointer-events:none; width:58px; height:58px; right:7px; bottom:3px; overflow:hidden; border-radius:14px; opacity:.82; }
-  .halloween-pumpkin img { width:100%; height:100%; display:block; object-fit:cover; object-position:center; filter:drop-shadow(0 0 6px rgba(255,122,0,.38)) drop-shadow(0 0 13px rgba(255,149,0,.22)); animation:halloween-pumpkin-shine 3.1s ease-in-out infinite; transform-origin:center bottom; }
+  .halloween-pumpkin { position:absolute; z-index:4; pointer-events:none; width:54px; height:54px; right:7px; bottom:3px; overflow:visible; border-radius:0; opacity:.72; }
+  .halloween-pumpkin img { width:100%; height:100%; display:block; object-fit:cover; object-position:center; filter:none; animation:halloween-pumpkin-shine 3.1s ease-in-out infinite; transform-origin:center bottom; }
   .halloween-pumpkin::after { content:""; position:absolute; width:9px; height:16px; right:15px; top:12px; border-radius:50%; background:rgba(255,255,255,.62); filter:blur(3px); opacity:.22; transform:rotate(25deg); animation:halloween-pumpkin-sparkle 2.7s ease-in-out infinite; pointer-events:none; }
-  @keyframes halloween-pumpkin-shine { 0%,100% { transform:scale(1,1); filter:drop-shadow(0 0 5px rgba(255,122,0,.32)) drop-shadow(0 0 12px rgba(255,149,0,.16)); } 48% { transform:scale(1.015,1); filter:drop-shadow(0 0 9px rgba(255,122,0,.58)) drop-shadow(0 0 20px rgba(255,149,0,.30)); } 58% { transform:scale(1.035,.985); } 68% { transform:scale(1.012,1); } }
+  @keyframes halloween-pumpkin-shine { 0%,100% { transform:scale(1,1); filter:none; } 48% { transform:scale(1.015,1); filter:drop-shadow(0 0 3px rgba(255,122,0,.16)); } 58% { transform:scale(1.035,.985); } 68% { transform:scale(1.012,1); } }
   @keyframes halloween-pumpkin-sparkle { 0%,100% { opacity:.12; transform:translate(2px,2px) rotate(25deg) scale(.8); } 45% { opacity:.72; transform:translate(-2px,-1px) rotate(25deg) scale(1.08); } 60% { opacity:.22; } }
   @keyframes halloween-bat-wings { 0%,100% { transform:scaleY(1) scaleX(1); } 50% { transform:scaleY(.84) scaleX(1.04); } }
 
@@ -1446,7 +1446,7 @@
     animation:halloween-custom-pumpkin-glow 3.2s ease-in-out infinite;
   }
   html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="pumpkin"] .custom-theme-deco {
-    filter:drop-shadow(0 0 7px rgba(255,122,0,.45)) drop-shadow(0 0 18px rgba(255,149,0,.24));
+    filter:none;
   }
   html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="bat"] {
     animation:halloween-custom-bat-fly 4.8s ease-in-out infinite;
@@ -2032,12 +2032,17 @@
         <div class="dollie-hero-num" id="dollie-hero-balance">—</div>
         <div class="dollie-hero-unit">Dollies</div>
         <div class="dollie-hero-rub" id="dollie-hero-rub">≈ — ₽ скидки</div>
-        <div style="margin-top:10px;font-size:11.5px;color:var(--text-secondary);">В одной заявке можно использовать максимум <b style="color:var(--text)">300 Dollies</b>.</div>
         <div class="dollie-hero-footer">
           <button class="text-link" onclick="switchDolliePage('history')">
             История <svg class="icon"><use href="#icon-chevron-right"/></svg>
           </button>
         </div>
+      </div>
+
+      <div class="dollie-usage-note">
+        <svg class="icon" style="width:15px;height:15px;vertical-align:-3px;margin-right:4px"><use href="#icon-info"/></svg>
+        При оформлении одной заявки можно использовать <b>максимум 300 Dollies</b>.
+        1 Dollie = 1 ₽ скидки.
       </div>
 
       <div class="dollie-section">
@@ -3128,7 +3133,7 @@ const DECORATION_RENDERERS = {
     // Никакого «тыквенного дождя» больше нет.
     const pumpkin = `<div class="halloween-pumpkin" aria-hidden="true"><img src="${escapeAttr(pumpkinSrc)}" alt="" decoding="async"></div>`;
 
-    const moon = `<div class="halloween-moon" aria-hidden="true"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#FFF7E8"/><circle cx="51" cy="31" r="28" fill="var(--bg)"/></svg></div>`;
+    const moon = `<div class="halloween-moon" aria-hidden="true"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="28" fill="#FFF7E8"/><circle cx="51" cy="31" r="28" fill="#11100F"/></svg></div>`;
     const stars = Array.from({length: 10}, (_, i) => {
       const left = 5 + Math.round(Math.random() * 90), top = 4 + Math.round(Math.random() * 38), delay = (Math.random() * 3).toFixed(1);
       const size = 5 + Math.round(Math.random() * 5);
@@ -4850,7 +4855,9 @@ let catalogLoadInflight = false;
 let catalogCurrentProduct = null;
 let catalogRequestQty = 1;
 let catalogRequestInFlight = false;
+let catalogUseDollies = false;
 const CATALOG_MAX_QTY = 10;
+const CATALOG_MAX_DOLLIES = 300;
 const CATALOG_MAX_COMMENT = 1000;
 
 function formatRub(n) {
@@ -4946,8 +4953,8 @@ function catalogCardHTML(p) {
       <div class="catalog-card-body">
         <div class="catalog-card-title">${escapeHtml(p.name)}</div>
         <div class="catalog-price">${escapeHtml(formatRub(p.price))}</div>
-        ${w ? `<div class="catalog-weight">Примерный вес: <b>${escapeHtml(w)}</b></div>` : ''}
-        ${p.short_description ? `<div class="catalog-short">${escapeHtml(p.short_description)}</div>` : ''}
+        <div class="catalog-weight">${w ? `Примерный вес: <b>${escapeHtml(w)}</b>` : '&nbsp;'}</div>
+        <div class="catalog-short">${p.short_description ? escapeHtml(p.short_description) : '&nbsp;'}</div>
         <div class="catalog-actions">
           <button type="button" class="btn btn-secondary" onclick="openCatalogProduct('${pid}')">Подробнее</button>
           <button type="button" class="btn btn-primary" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>
@@ -5063,20 +5070,43 @@ function openCatalogRequest(productId) {
   catalogCurrentProduct = p;
   catalogRequestQty = 1;
   catalogRequestInFlight = false;
+  catalogUseDollies = false;
   renderCatalogRequestForm();
   openSheet('catalog-request');
+  // Баланс подтягиваем перед отправкой и обновляем форму, если он изменился.
+  loadLoyalty().finally(() => {
+    if (currentOpenSheetId === 'catalog-request' && catalogCurrentProduct && String(catalogCurrentProduct.id) === String(productId)) {
+      renderCatalogRequestForm();
+    }
+  });
+}
+
+function catalogDolliesPreview() {
+  const p = catalogCurrentProduct;
+  const total = Math.max(0, (Number(p?.price) || 0) * catalogRequestQty);
+  const balance = Math.max(0, Number(loyaltyBalance) || 0);
+  const used = catalogUseDollies ? Math.min(balance, CATALOG_MAX_DOLLIES, total) : 0;
+  return { total, balance, used, finalTotal: Math.max(0, total - used) };
 }
 
 function renderCatalogRequestForm() {
   const body = document.getElementById('catalog-request-body');
   const p = catalogCurrentProduct;
   if (!body || !p) return;
+  const preview = catalogDolliesPreview();
+  const hasDollies = preview.balance > 0;
+  const priceHTML = catalogUseDollies && preview.used > 0
+    ? `<div class="catalog-price-line"><span>Цена без скидки</span><span class="catalog-price-old">${escapeHtml(formatRub(preview.total))}</span></div>
+       <div class="catalog-price-line"><span>Скидка Dollies</span><span>−${escapeHtml(formatRub(preview.used))}</span></div>
+       <div class="catalog-price-line total"><span>Итого</span><span class="catalog-price-new">${escapeHtml(formatRub(preview.finalTotal))}</span></div>`
+    : `<div class="catalog-price-line total"><span>Итого</span><span>${escapeHtml(formatRub(preview.total))}</span></div>`;
+
   body.innerHTML = `
     <div class="catalog-req-product">
       <div class="catalog-req-thumb">${catalogImages(p)[0] ? `<img src="${escapeAttr(catalogImages(p)[0])}" alt="" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
       <div style="min-width:0">
         <div class="catalog-req-name">${escapeHtml(p.name)}</div>
-        <div class="catalog-req-price">${escapeHtml(formatRub(p.price))}</div>
+        <div class="catalog-req-price">${escapeHtml(formatRub(p.price))} за 1 шт.</div>
         ${formatCatalogWeight(p) ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">Примерный вес: ${escapeHtml(formatCatalogWeight(p))}</div>` : ''}
       </div>
     </div>
@@ -5086,31 +5116,27 @@ function renderCatalogRequestForm() {
       <span class="qty-val" id="catalog-qty-val">${catalogRequestQty}</span>
       <button type="button" id="catalog-qty-plus" onclick="changeCatalogQty(1)" aria-label="Больше">+</button>
     </div>
+
     <div class="catalog-dollies-box">
-      <div class="catalog-dollies-top">
-        <label class="catalog-dollies-check" for="catalog-use-dollies">
-          <input type="checkbox" id="catalog-use-dollies" onchange="updateCatalogDolliesUI()">
-          <span class="catalog-dollies-checkbox"><svg class="icon"><use href="#icon-check"/></svg></span>
-          <span style="min-width:0">
-            <span class="catalog-dollies-title">Учитывать Dollies при покупке</span>
-            <span class="catalog-dollies-balance" id="catalog-dollies-balance">Баланс: ${Number(loyaltyBalance || 0)} Dollies</span>
-          </span>
-        </label>
-        <button type="button" class="catalog-dollies-info" onclick="openDolliesSheet();" aria-label="Что такое Dollies"><svg class="icon"><use href="#icon-info"/></svg></button>
-      </div>
-      <div class="catalog-dollies-result" id="catalog-dollies-result">
-        <div class="catalog-dollies-prices">
-          <span class="catalog-dollies-old" id="catalog-dollies-old-price">${formatRub(p.price)}</span>
-          <span class="catalog-dollies-new" id="catalog-dollies-new-price">${formatRub(p.price)}</span>
+      <div class="catalog-dollies-head">
+        <div>
+          <div class="catalog-dollies-title">Dollies</div>
+          <div class="catalog-dollies-balance">Баланс: <b>${preview.balance}</b> Dollies</div>
         </div>
-        <div class="catalog-dollies-discount" id="catalog-dollies-discount"></div>
+        <svg class="icon" data-seasonal-icon="heart"><use href="#icon-heart"/></svg>
       </div>
-      <div class="catalog-dollies-empty" id="catalog-dollies-empty" hidden>На балансе пока нет Dollies.</div>
+      <label class="catalog-dollies-toggle">
+        <input type="checkbox" id="catalog-use-dollies" ${catalogUseDollies && hasDollies ? 'checked' : ''} ${hasDollies ? '' : 'disabled'} onchange="toggleCatalogDollies(this.checked)">
+        <span>${hasDollies ? 'Учитывать Dollies при покупке' : 'Нет Dollies для использования'}</span>
+      </label>
+      <div class="catalog-dollies-hint">Можно использовать максимум <b>300 Dollies</b> на одну заявку. 1 Dollie = 1 ₽ скидки.</div>
+      ${catalogUseDollies && preview.used > 0 ? `<div class="catalog-price-breakdown">${priceHTML}</div>` : ''}
     </div>
+
     <div class="dollie-section-title" style="margin-bottom:8px">Комментарий или пожелание</div>
     <textarea class="review-textarea catalog-req-textarea" id="catalog-comment" maxlength="${CATALOG_MAX_COMMENT}" placeholder="Например: хочу в подарок, удобное время для связи…"></textarea>
     <div class="review-char-count"><span id="catalog-comment-count">0</span>/${CATALOG_MAX_COMMENT}</div>
-    <p class="review-form-note">Это заявка, а не оплата. Администратор свяжется с вами в Telegram, чтобы уточнить детали и наличие.</p>
+    <p class="review-form-note">Это заявка, а не оплата. Если вы выбрали Dollies, их количество и скидка будут повторно проверены сервером при отправке заявки.</p>
     <button type="button" class="btn btn-primary btn-block" id="catalog-submit-btn" style="margin-top:14px" onclick="submitCatalogRequest(event); return false;">
       <svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Отправить заявку
     </button>`;
@@ -5119,6 +5145,13 @@ function renderCatalogRequestForm() {
     const c = document.getElementById('catalog-comment-count'); if (c) c.textContent = ta.value.length;
   });
   updateCatalogQtyButtons();
+  applySeasonalIcons();
+}
+
+function toggleCatalogDollies(checked) {
+  catalogUseDollies = !!checked;
+  hapticSelection();
+  renderCatalogRequestForm();
 }
 
 function updateCatalogQtyButtons() {
@@ -5128,45 +5161,13 @@ function updateCatalogQtyButtons() {
   const plus = document.getElementById('catalog-qty-plus');
   if (minus) minus.disabled = catalogRequestQty <= 1;
   if (plus) plus.disabled = catalogRequestQty >= CATALOG_MAX_QTY;
-  updateCatalogDolliesUI();
 }
-
-function updateCatalogDolliesUI() {
-  const p = catalogCurrentProduct;
-  if (!p) return;
-  const checkbox = document.getElementById('catalog-use-dollies');
-  const result = document.getElementById('catalog-dollies-result');
-  const oldPrice = document.getElementById('catalog-dollies-old-price');
-  const newPrice = document.getElementById('catalog-dollies-new-price');
-  const discount = document.getElementById('catalog-dollies-discount');
-  const balanceEl = document.getElementById('catalog-dollies-balance');
-  const emptyEl = document.getElementById('catalog-dollies-empty');
-  if (!checkbox || !result) return;
-
-  const balance = Math.max(0, Number(loyaltyBalance) || 0);
-  const total = Math.max(0, Number(p.price) || 0) * catalogRequestQty;
-  const usable = Math.min(balance, 300, total);
-  const discountRub = usable;
-  const finalTotal = Math.max(0, total - discountRub);
-
-  if (balanceEl) balanceEl.textContent = `Баланс: ${balance} Dollies`;
-  if (emptyEl) emptyEl.hidden = balance > 0;
-
-  const active = checkbox.checked && usable > 0;
-  result.classList.toggle('show', active);
-  if (active) {
-    if (oldPrice) oldPrice.textContent = formatRub(total);
-    if (newPrice) newPrice.textContent = formatRub(finalTotal);
-    if (discount) discount.textContent = `−${usable} Dollies · скидка ${formatRub(discountRub)}`;
-  }
-}
-
 function changeCatalogQty(delta) {
   const next = Math.max(1, Math.min(CATALOG_MAX_QTY, catalogRequestQty + delta));
   if (next === catalogRequestQty) return;
   catalogRequestQty = next;
   hapticSelection();
-  updateCatalogQtyButtons();
+  renderCatalogRequestForm();
 }
 
 async function submitCatalogRequest(event) {
@@ -5184,7 +5185,7 @@ async function submitCatalogRequest(event) {
       product_id: catalogCurrentProduct.id,
       quantity: catalogRequestQty,
       comment,
-      use_dollies: !!document.getElementById('catalog-use-dollies')?.checked,
+      use_dollies: catalogUseDollies,
     });
     if (!res?.ok) {
       const messages = {
@@ -5192,8 +5193,8 @@ async function submitCatalogRequest(event) {
         invalid_quantity: `Количество — от 1 до ${CATALOG_MAX_QTY}`,
         comment_too_long: `Комментарий не длиннее ${CATALOG_MAX_COMMENT} символов`,
         too_many_requests: 'Слишком много заявок подряд. Попробуйте чуть позже',
-        insufficient_balance: 'Недостаточно Dollies. Обновите баланс и попробуйте ещё раз',
         consent_required: 'Сначала примите условия использования',
+        insufficient_balance: 'Недостаточно Dollies. Баланс мог измениться — обновите заявку',
         unauthorized: 'Откройте приложение из Telegram',
       };
       showToast(messages[res?.error] || 'Не удалось отправить заявку. Попробуйте ещё раз');
@@ -5203,13 +5204,20 @@ async function submitCatalogRequest(event) {
       return;
     }
     hapticNotification('success');
-    if (typeof res.balance === 'number') { loyaltyBalance = res.balance; updateLoyaltyBalanceUI(); }
+    if (typeof res.balance === 'number') {
+      loyaltyBalance = res.balance;
+      updateLoyaltyBalanceUI();
+    }
+    const usedDollies = Number(res.request?.dollies_used || 0);
+    const discountRub = Number(res.request?.dollies_discount_rub || 0);
+    const finalTotal = Number(res.request?.price_after_dollies || res.request?.total_price || 0);
     document.getElementById('catalog-request-body').innerHTML = `
       <div class="empty-state" style="padding-top:10px;">
         <div class="review-prompt-icon" style="margin:0 auto 12px;"><svg class="icon"><use href="#icon-check"/></svg></div>
         <h3>Заявка отправлена</h3>
         <p>Заявка отправлена. Мы свяжемся с вами для уточнения деталей.</p>
-        <p style="margin-top:-8px;font-size:11.5px;">Номер заявки: <b>${escapeHtml(res.request?.id || '')}</b></p>
+        ${usedDollies > 0 ? `<div class="dollie-usage-note" style="text-align:left">Использовано <b>${usedDollies} Dollies</b> · скидка <b>${escapeHtml(formatRub(discountRub))}</b> · итоговая сумма <b>${escapeHtml(formatRub(finalTotal))}</b>.</div>` : ''}
+        <p style="margin-top:10px;font-size:11.5px;">Номер заявки: <b>${escapeHtml(res.request?.id || '')}</b></p>
         <button class="btn btn-primary btn-block" onclick="closeSheet()">Хорошо</button>
       </div>`;
     loadNotifications(false);
