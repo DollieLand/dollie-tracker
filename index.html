@@ -1272,6 +1272,9 @@
   .fortune-spin-btn .icon { width: 19px; height: 19px; }
   .fortune-spin-btn:disabled { background: var(--surface-soft); color: var(--text-secondary); box-shadow: none; border: 1px solid var(--border); opacity: 1; }
   .fortune-hint { font-size: 11.5px; color: var(--text-secondary); margin-top: 10px; line-height: 1.45; }
+  .fortune-attempt-info { display: flex; align-items: flex-start; gap: 7px; margin-top: 9px; padding: 8px 10px; border: 1px solid var(--border); background: var(--surface-soft); border-radius: 10px; color: var(--text-secondary); font-size: 11px; line-height: 1.4; text-align: left; }
+  .fortune-attempt-info .info-dot { flex: 0 0 16px; width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--text-secondary); margin-top: 1px; }
+  .fortune-attempt-info b { color: var(--text); }
   .fortune-used { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
   .fortune-today-prize { display: inline-flex; align-items: center; gap: 8px; background: var(--pink-soft); color: var(--text);
     font-size: 13px; font-weight: 700; padding: 6px 14px 6px 6px; border-radius: var(--r-pill); margin: 0 0 12px; }
@@ -2295,7 +2298,7 @@
     <div class="fortune-offer">
       <div class="fortune-offer-art"><svg class="dl-ico" viewBox="0 0 48 48" aria-hidden="true"><use href="#dl-fortune"/></svg></div>
       <h3>Твоя попытка ждёт!</h3>
-      <p>Сегодняшнее бесплатное вращение ещё не использовано. Испытай удачу и получи подарок.</p>
+      <p>Сегодняшнее бесплатное вращение ещё не использовано. Испытай удачу и получи подарок — попытка сгорит в 00:00 МСК.</p>
       <div class="fortune-offer-prizes" id="fortune-offer-prizes"></div>
       <button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="acceptFortuneOffer()"><svg class="icon"><use href="#icon-fortune"/></svg> Крутить</button>
       <button type="button" class="btn btn-tertiary btn-block" onclick="closeSheet()">Позже</button>
@@ -5374,12 +5377,14 @@ function renderFortune() {
       <button type="button" class="btn btn-primary btn-block fortune-spin-btn" id="fortune-spin-btn" onclick="spinFortune()">
         <svg class="icon"><use href="#icon-fortune"/></svg> Крутить
       </button>
-      <div class="fortune-hint">Доступно попыток: <b>${Number(st.available_attempts || 0)}</b>${st.bonus_spins ? ` · бонусных: ${Number(st.bonus_spins)}` : ''}</div>`
+      <div class="fortune-hint">Доступно попыток: <b>${Number(st.available_attempts || 0)}</b>${st.bonus_spins ? ` · бонусных: ${Number(st.bonus_spins)}` : ''}</div>
+      <div class="fortune-attempt-info"><span class="info-dot">i</span><span><b>Ежедневная попытка не переносится.</b> Если сегодня не зайти в Mini App, она сгорит в 00:00 МСК.</span></div>`
     : `
       <div class="fortune-used">Сегодняшняя попытка использована</div>
       ${st.last_reward ? `<div class="fortune-today-prize">${RewardIcon(fortuneRewardKey(st.last_reward))}${escapeHtml(fortunePrizeText(st.last_reward))}</div>` : ''}
       <button type="button" class="btn btn-block fortune-spin-btn" disabled>Следующее вращение завтра</button>
-      <div class="fortune-countdown" id="fortune-countdown">${escapeHtml(fortuneCountdownText(st.next_spin_at))}</div>`;
+      <div class="fortune-countdown" id="fortune-countdown">${escapeHtml(fortuneCountdownText(st.next_spin_at))}</div>
+      <div class="fortune-attempt-info"><span class="info-dot">i</span><span><b>Ежедневная попытка не переносится.</b> Если сегодня не зайти в Mini App, она сгорит в 00:00 МСК.</span></div>`;
   const prizes = Object.keys(FORTUNE_LABELS).map(key => `
       <div class="fortune-prize ${key === 'dollies_500' || key === 'secret_doll' ? 'rare' : ''}">
         ${RewardIcon(key)}<div class="t">${escapeHtml(fortuneRewardInfo(key).label)}</div>
@@ -5577,6 +5582,7 @@ function openFortuneRules() {
     <div class="fortune-rules">
       <p>«Фортуна» — бесплатная промо-механика DollieLand. Для участия не нужно ничего покупать или платить, Dollies за вращение не списываются, дополнительные попытки не продаются.</p>
       <p>Каждый пользователь Telegram может сделать <b>одно вращение в сутки</b>. Сутки считаются по московскому времени: новая попытка появляется в 00:00 МСК.</p>
+      <p>Ежедневная попытка не накапливается: если не зайти в Mini App в этот день, она сгорает и не переносится на следующий.</p>
       <p>Результат определяется на сервере случайным образом с вероятностями, указанными ниже. Анимация колеса только показывает уже определённый результат.</p>
       <p>Выигранные Dollies сразу зачисляются на баланс Dollie Club и действуют по его правилам, включая срок действия.</p>
       <p>Secret Doll закрепляется за аккаунтом победителя. Администратор свяжется с победителем, чтобы согласовать получение приза.</p>
@@ -5588,12 +5594,26 @@ function openFortuneRules() {
   openSheet('fortune-rules');
 }
 
-/* Предложение покрутить при входе: один раз за запуск, только если попытка
-   действительно доступна по данным сервера и пользователь ничем не занят. */
+/* Предложение покрутить при входе: не чаще одного раза в календарный день
+   по московскому времени. Закрытие окна не позволяет повторно показать его
+   при следующем запуске приложения в тот же день. */
 let fortuneOfferShown = false;
+function fortuneOfferDayKey() {
+  try {
+    const iso = fortuneStatus?.server_time;
+    const d = iso ? new Date(iso) : new Date();
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+  } catch (_) {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
 function maybeOfferFortune(attempt) {
   attempt = attempt || 0;
-  if (fortuneOfferShown || !fortuneStatus?.enabled || !fortuneStatus.available) return;
+  if (fortuneOfferShown || !fortuneStatus?.enabled || !fortuneStatus.available || !fortuneStatus.daily_available) return;
+  const offerKey = `dollieland_fortune_offer_${fortuneOfferDayKey()}`;
+  try {
+    if (localStorage.getItem(offerKey) === '1') return;
+  } catch (_) {}
   const busy = !consentAccepted || isFortuneScreenOpen() || lightboxOpen || reviewPromptOpen
     || !!document.querySelector('.bottom-sheet.open')
     || document.getElementById('consent-gate')?.classList.contains('open');
@@ -5602,6 +5622,7 @@ function maybeOfferFortune(attempt) {
     return;
   }
   fortuneOfferShown = true;
+  try { localStorage.setItem(offerKey, '1'); } catch (_) {}
   const prizes = document.getElementById('fortune-offer-prizes');
   if (prizes) prizes.innerHTML = Object.keys(FORTUNE_LABELS).map(k => RewardIcon(k)).join('');
   openSheet('fortune-offer');
