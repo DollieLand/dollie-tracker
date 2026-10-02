@@ -1699,6 +1699,7 @@
   <symbol id="icon-shield" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8.5-8 9.5-4.5-1-8-4.5-8-9.5V6l8-3z"/></symbol>
   <symbol id="icon-lock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
   <symbol id="icon-shop" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+  <symbol id="icon-calendar" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
 
   <!-- Halloween SVG icon variants: no Unicode emoji. -->
   <symbol id="icon-heart-halloween" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z" fill="#FF7A00"/><path d="M8 10l1.2 1.2L10.5 10M13.5 10l1.3 1.2L16 10" stroke="#17120F" stroke-width="1.4" stroke-linecap="round"/></symbol>
@@ -2297,6 +2298,25 @@
 const tg = window.Telegram?.WebApp;
 const API_BASE = 'https://dollieland.pythonanywhere.com';
 const BOT_USERNAME = 'DollieHelper_bot';
+
+/* Превращает относительный путь (/static/...) в абсолютный URL на API_BASE.
+   Абсолютные URL, data: и blob: остаются как есть. Это нужно, потому что
+   Telegram WebView показывает мини-апп на чужом домене, и относительные
+   пути он ищет на этом чужом домене, а не на нашем сервере. */
+function assetUrl(u) {
+  if (!u) return '';
+  const s = String(u).trim();
+  if (/^(https?:|data:|blob:)/i.test(s)) return s;
+  return API_BASE + (s.startsWith('/') ? '' : '/') + s;
+}
+
+/* Нормализует отзыв: приводит пути ко всем фото и аватарке автора к
+   абсолютным URL, чтобы картинки корректно грузились в Telegram WebView. */
+function normalizeReview(r) {
+  return { ...r,
+    photos: (Array.isArray(r.photos) ? r.photos : []).map(assetUrl),
+    author_avatar_url: r.author_avatar_url ? assetUrl(r.author_avatar_url) : r.author_avatar_url };
+}
 
 if (tg) {
   tg.ready();
@@ -3097,8 +3117,8 @@ const DECORATION_RENDERERS = {
   spiderweb_bats: () => {
     const custom = (themeConfig.theme && themeConfig.theme.custom_decorations) || {};
     const asset = (key, fallback) => (custom[key] && custom[key].enabled && custom[key].image_url) ? custom[key].image_url : fallback;
-    const batSrc = asset('bat', '/static/theme_decor/halloween_bat.png');
-    const pumpkinSrc = asset('pumpkin', '/static/theme_decor/halloween_pumpkin.png');
+    const batSrc = asset('bat', assetUrl('/static/theme_decor/halloween_bat.png'));
+    const pumpkinSrc = asset('pumpkin', assetUrl('/static/theme_decor/halloween_pumpkin.png'));
 
     // Мышь находится справа от надписи Halloween at DollieLand.
     // Она может немного выходить за рамку баннера, чтобы композиция выглядела живее.
@@ -3163,7 +3183,7 @@ async function loadBanners() {
   try {
     const data = await apiFetch('/api/banners', {}, { timeoutMs: 8000, retries: 1 });
     if (!data.ok) throw new Error('bad response');
-    bannersCache = data.banners || [];
+    bannersCache = (data.banners || []).map(b => ({ ...b, image_url: assetUrl(b.image_url) }));
     renderBanners();
   } catch (e) { section.hidden = true; }
 }
@@ -3968,8 +3988,8 @@ async function loadReviews(isManual = false, opts = {}) {
       return;
     }
 
-    reviewListCache = publicData.reviews || [];
-    myReviewsCache = mineData?.ok ? (mineData.reviews || []) : [];
+    reviewListCache = (publicData.reviews || []).map(normalizeReview);
+    myReviewsCache = mineData?.ok ? (mineData.reviews || []).map(normalizeReview) : [];
     reviewableOrdersCache = eligibleData?.ok ? (eligibleData.orders || []) : [];
     lastReviewsStats = publicData.stats || { total_reviews: 0 };
     lastReviewsHasMore = !!publicData.has_more;
@@ -3993,7 +4013,7 @@ async function loadMoreReviews() {
     const offset = reviewListCache.length;
     const data = await apiFetch('/api/reviews', {sort: reviewSort, limit: 30, offset}, {timeoutMs: 10000, retries: 1});
     if (!data?.ok) throw new Error('reviews');
-    reviewListCache = reviewListCache.concat(data.reviews || []);
+    reviewListCache = reviewListCache.concat((data.reviews || []).map(normalizeReview));
     reviewsRenderFingerprint = '';
     renderReviewsPage(data);
   } catch (_) { showToast('Не удалось загрузить ещё отзывы'); }
@@ -4847,7 +4867,7 @@ function formatCatalogWeight(p) {
 function catalogImages(p) {
   const list = Array.isArray(p.images) ? p.images.filter(Boolean) : [];
   if (!list.length && p.image_url) list.push(p.image_url);
-  return list;
+  return list.map(assetUrl);
 }
 
 /* Галерея: листается свайпом (scroll-snap), точки и счётчик обновляются при прокрутке */
