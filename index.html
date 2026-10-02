@@ -3302,7 +3302,7 @@ let dollieFilter = 'all';
 let firstOrderCompleted = false;
 const PAGE_SIZE = 20;
 const FILTER_GROUPS = {
-  earn: ['first_order', 'repeat_order', 'referral_inviter', 'referral_friend', 'review_reward', 'manual_add', 'refund', 'promotion'],
+  earn: ['first_order', 'repeat_order', 'referral_inviter', 'referral_friend', 'review_reward', 'manual_add', 'refund', 'promotion', 'order_reward'],
   spend: ['spend', 'manual_remove', 'expired'],
 };
 const RU_MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -3455,6 +3455,7 @@ function txMeta(tx) {
     case 'manual_add': title = 'Начисление'; subtitle = escapeHtml(tx.description || ''); icon = 'heart'; break;
     case 'refund': title = 'Возврат Dollies'; subtitle = orderPart || 'Возврат'; icon = 'heart'; break;
     case 'promotion': title = 'Начисление за акцию'; subtitle = escapeHtml(tx.description || ''); icon = 'gift'; break;
+    case 'order_reward': title = 'Бонус за заказ'; subtitle = orderPart || escapeHtml(tx.description || ''); icon = 'package'; break;
     case 'spend': title = orderPart ? `Использование · ${orderPart}` : 'Использование Dollies'; subtitle = 'Скидка на заказ'; icon = 'minus'; break;
     case 'manual_remove': title = 'Списание'; subtitle = escapeHtml(tx.description || ''); icon = 'minus'; break;
     case 'expired': title = 'Dollies сгорели'; subtitle = 'Начислены слишком давно и не были использованы'; icon = 'alert-circle'; break;
@@ -5426,7 +5427,7 @@ async function loadFortuneStatus(opts) {
     const data = await apiFetch('/api/fortune/status', {}, { timeoutMs: 10000, retries: 1 });
     if (!data?.ok) throw new Error('fortune');
     if (data.server_time) syncFortuneClock(data.server_time);
-    fortuneStatus = data;
+    fortuneStatus = { ...data, available_attempts: Number(data.available_attempts ?? ((data.free_spin_available ? 1 : 0) + Number(data.bonus_attempts || data.bonus_spins || 0))), bonus_spins: Number(data.bonus_spins ?? data.bonus_attempts ?? 0) };
     renderFortuneEntry();
     if (isFortuneScreenOpen()) renderFortune();
     if (offer) setTimeout(() => maybeOfferFortune(), 1400);
@@ -5517,7 +5518,7 @@ async function spinFortune() {
   wrap?.classList.remove('spinning');
 
   // 3) Фактическая награда; баланс — из ответа сервера.
-  fortuneStatus = { ...fortuneStatus, available: Number(res.available_attempts || 0) > 0, available_attempts: Number(res.available_attempts || 0), bonus_spins: Number(res.bonus_spins || 0), next_spin_at: res.next_spin_at, last_reward: res.reward, last_spin_at: new Date(fortuneNow()).toISOString() };
+  fortuneStatus = { ...fortuneStatus, available: Number(res.available_attempts ?? res.bonus_attempts ?? 0) > 0, available_attempts: Number(res.available_attempts ?? res.bonus_attempts ?? 0), bonus_spins: Number(res.bonus_spins ?? res.bonus_attempts ?? 0), next_spin_at: res.next_spin_at, last_reward: res.reward, last_spin_at: new Date(fortuneNow()).toISOString() };
   if (res.reward.type === 'dollies' && typeof res.balance === 'number') {
     loyaltyBalance = res.balance;
     updateLoyaltyBalanceUI();
