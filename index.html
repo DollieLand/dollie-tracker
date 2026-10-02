@@ -1478,6 +1478,19 @@
     .custom-theme-deco-wrap[data-custom-element="bat"],
     .custom-theme-deco-wrap[data-custom-element="bat"] .custom-theme-deco { animation:none !important; }
   }
+
+  /* Fix: Halloween bat is completely static. */
+  html[data-seasonal-theme="halloween"] .halloween-bat,
+  html[data-seasonal-theme="halloween"] .halloween-bat img,
+  html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="bat"],
+  html[data-seasonal-theme="halloween"] .custom-theme-deco-wrap[data-custom-element="bat"] .custom-theme-deco {
+    animation:none !important;
+  }
+  /* Fix banner clipping on the right edge. */
+  #banner-section { width:100%; max-width:100%; min-width:0; overflow:visible; }
+  #banner-row { width:100%; max-width:100%; min-width:0; box-sizing:border-box; padding-right:12px; overflow-x:auto; overflow-y:hidden; }
+  #banner-row .banner-card { flex:0 0 calc(100% - 12px); max-width:calc(100% - 12px); box-sizing:border-box; }
+
 </style>
 </head>
 <body>
