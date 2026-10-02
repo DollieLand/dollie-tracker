@@ -5378,7 +5378,7 @@ function renderFortune() {
         <svg class="icon"><use href="#icon-fortune"/></svg> Крутить
       </button>
       <div class="fortune-hint">Доступно попыток: <b>${Number(st.available_attempts || 0)}</b>${st.bonus_spins ? ` · бонусных: ${Number(st.bonus_spins)}` : ''}</div>
-      <div class="fortune-attempt-info"><span class="info-dot">i</span><span><b>Ежедневная попытка не переносится.</b> Если сегодня не зайти в Mini App, она сгорит в 00:00 МСК.</span></div>`
+      <div class="fortune-attempt-info"><span class="info-dot">i</span><span><b>Ежедневная попытка не переносится.</b> Если сегодня не зайти в приложение, она сгорит в 00:00 МСК.</span></div>`
     : `
       <div class="fortune-used">Сегодняшняя попытка использована</div>
       ${st.last_reward ? `<div class="fortune-today-prize">${RewardIcon(fortuneRewardKey(st.last_reward))}${escapeHtml(fortunePrizeText(st.last_reward))}</div>` : ''}
