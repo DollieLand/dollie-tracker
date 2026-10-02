@@ -1403,13 +1403,20 @@
   .halloween-star svg { fill:var(--halloween-orange-bright); }
   /* Halloween: мышь живёт рядом с заголовком баннера, тыква — внутри Dollie Club */
   .halloween-bat { position:absolute; z-index:4; pointer-events:none; width:clamp(150px, 23vw, 245px); height:auto; right:-72px; top:50%; transform:translateY(-54%); opacity:.96; }
-  .halloween-bat img { width:100%; height:auto; display:block; object-fit:contain; filter:drop-shadow(0 5px 10px rgba(123,63,242,.32)); transform-origin:50% 54%; animation:halloween-bat-wings .82s ease-in-out infinite; }
+  .halloween-bat img { width:100%; height:auto; display:block; object-fit:contain; filter:drop-shadow(0 5px 10px rgba(123,63,242,.32)); transform-origin:50% 54%; animation:halloween-bat-wings .62s ease-in-out infinite; }
   .halloween-pumpkin { position:absolute; z-index:4; pointer-events:none; width:54px; height:54px; right:7px; bottom:3px; overflow:visible; border-radius:0; opacity:.72; }
   .halloween-pumpkin img { width:100%; height:100%; display:block; object-fit:cover; object-position:center; filter:drop-shadow(0 0 3px rgba(255,122,0,.22)) drop-shadow(0 0 7px rgba(255,149,0,.12)); animation:halloween-pumpkin-shine 3.1s ease-in-out infinite; transform-origin:center bottom; }
   .halloween-pumpkin::after { content:""; position:absolute; width:9px; height:16px; right:15px; top:12px; border-radius:50%; background:rgba(255,255,255,.62); filter:blur(3px); opacity:.22; transform:rotate(25deg); animation:halloween-pumpkin-sparkle 2.7s ease-in-out infinite; pointer-events:none; }
   @keyframes halloween-pumpkin-shine { 0%,100% { transform:scale(1,1); filter:drop-shadow(0 0 3px rgba(255,122,0,.20)) drop-shadow(0 0 7px rgba(255,149,0,.10)); } 48% { transform:scale(1.015,1); filter:drop-shadow(0 0 5px rgba(255,122,0,.34)) drop-shadow(0 0 10px rgba(255,149,0,.16)); } 58% { transform:scale(1.035,.985); } 68% { transform:scale(1.012,1); } }
   @keyframes halloween-pumpkin-sparkle { 0%,100% { opacity:.12; transform:translate(2px,2px) rotate(25deg) scale(.8); } 45% { opacity:.72; transform:translate(-2px,-1px) rotate(25deg) scale(1.08); } 60% { opacity:.22; } }
-  @keyframes halloween-bat-wings { 0%,100% { transform:scaleY(1) scaleX(1); } 50% { transform:scaleY(.84) scaleX(1.04); } }
+  @keyframes halloween-bat-wings {
+    0% { transform:scaleY(1) scaleX(1) rotate(0deg); }
+    18% { transform:scaleY(.93) scaleX(1.025) rotate(-1deg); }
+    32% { transform:scaleY(.78) scaleX(1.055) rotate(1deg); }
+    45% { transform:scaleY(.88) scaleX(1.035) rotate(-.5deg); }
+    58% { transform:scaleY(1.03) scaleX(.985) rotate(0deg); }
+    100% { transform:scaleY(1) scaleX(1) rotate(0deg); }
+  }
 
   /* Загруженный администратором Halloween-декор */
   .custom-theme-deco-wrap {
@@ -1450,8 +1457,12 @@
     75% { transform:translate(-50%,-50%) translate3d(-5px,-4px,0) rotate(0deg); }
   }
   @keyframes halloween-custom-bat-wings {
-    0%,100% { transform:rotate(var(--deco-rotation,0deg)) scaleY(1); }
-    50% { transform:rotate(var(--deco-rotation,0deg)) scaleY(.88) scaleX(1.025); }
+    0% { transform:rotate(var(--deco-rotation,0deg)) scaleY(1) scaleX(1); }
+    18% { transform:rotate(calc(var(--deco-rotation,0deg) - 1deg)) scaleY(.93) scaleX(1.025); }
+    32% { transform:rotate(calc(var(--deco-rotation,0deg) + 1deg)) scaleY(.78) scaleX(1.055); }
+    45% { transform:rotate(calc(var(--deco-rotation,0deg) - .5deg)) scaleY(.88) scaleX(1.035); }
+    58% { transform:rotate(var(--deco-rotation,0deg)) scaleY(1.03) scaleX(.985); }
+    100% { transform:rotate(var(--deco-rotation,0deg)) scaleY(1) scaleX(1); }
   }
   @media (prefers-reduced-motion: reduce) {
     .halloween-star,.halloween-pumpkin,.halloween-bat,
