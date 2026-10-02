@@ -1754,10 +1754,6 @@
     <header class="app-header">
       <div class="brand">DollieLand</div>
       <div class="app-header-actions">
-        <button class="icon-btn fortune-btn" id="fortune-header-btn" onclick="openFortune()" aria-label="Фортуна">
-          <svg class="icon"><use href="#icon-fortune"/></svg>
-          <span class="dot" id="fortune-header-dot" hidden></span>
-        </button>
         <button class="icon-btn" onclick="openNotificationsSheet()" aria-label="Уведомления">
           <svg class="icon" data-seasonal-icon="bell"><use href="#icon-bell"/></svg>
           <span class="dot" id="notif-dot" hidden></span>
@@ -5351,7 +5347,7 @@ function renderFortuneEntry() {
   if (sub) {
     sub.classList.toggle('ready', ready);
     sub.textContent = !st ? 'Ежедневный бесплатный подарок'
-      : (!st.enabled ? 'Скоро вернётся' : (ready ? 'Попытка дня доступна' : 'Следующая попытка — ' + fortuneNextLabel(st.next_spin_at)));
+      : (!st.enabled ? 'Скоро вернётся' : (st.available_attempts > 0 ? `Доступно попыток: ${st.available_attempts}` : 'Следующая попытка — ' + fortuneNextLabel(st.next_spin_at)));
   }
   const dot = document.getElementById('fortune-entry-dot');
   if (dot) dot.hidden = !ready;
@@ -5378,7 +5374,7 @@ function renderFortune() {
       <button type="button" class="btn btn-primary btn-block fortune-spin-btn" id="fortune-spin-btn" onclick="spinFortune()">
         <svg class="icon"><use href="#icon-fortune"/></svg> Крутить
       </button>
-      <div class="fortune-hint">1 бесплатное вращение в сутки · обновление в 00:00 по Москве</div>`
+      <div class="fortune-hint">Доступно попыток: <b>${Number(st.available_attempts || 0)}</b>${st.bonus_spins ? ` · бонусных: ${Number(st.bonus_spins)}` : ''}</div>`
     : `
       <div class="fortune-used">Сегодняшняя попытка использована</div>
       ${st.last_reward ? `<div class="fortune-today-prize">${RewardIcon(fortuneRewardKey(st.last_reward))}${escapeHtml(fortunePrizeText(st.last_reward))}</div>` : ''}
@@ -5516,7 +5512,7 @@ async function spinFortune() {
   wrap?.classList.remove('spinning');
 
   // 3) Фактическая награда; баланс — из ответа сервера.
-  fortuneStatus = { ...fortuneStatus, available: false, next_spin_at: res.next_spin_at, last_reward: res.reward, last_spin_at: new Date(fortuneNow()).toISOString() };
+  fortuneStatus = { ...fortuneStatus, available: Number(res.available_attempts || 0) > 0, available_attempts: Number(res.available_attempts || 0), bonus_spins: Number(res.bonus_spins || 0), next_spin_at: res.next_spin_at, last_reward: res.reward, last_spin_at: new Date(fortuneNow()).toISOString() };
   if (res.reward.type === 'dollies' && typeof res.balance === 'number') {
     loyaltyBalance = res.balance;
     updateLoyaltyBalanceUI();
