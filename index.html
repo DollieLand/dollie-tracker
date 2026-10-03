@@ -6467,5 +6467,289 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока «Нет в наличии» ===== -->
 
+<!-- ===== DollieLand: иконка на главном экране + полноэкранный режим (вставить прямо перед </body>, после остальных блоков) ===== -->
+<style>
+  /* Карточка-подсказка на главной */
+  .homescreen-card { position: relative; }
+  .homescreen-card[hidden], #hs-menu-badge[hidden] { display: none !important; }
+  .homescreen-card .orders-summary-icon { background: var(--pink-soft); }
+  .homescreen-card .hs-text { display: flex; flex-direction: column; gap: 2px; }
+  .homescreen-card .hs-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .homescreen-card .hs-sub { font-size: 11.5px; font-weight: 600; color: var(--text-secondary); }
+  .homescreen-card .hs-close {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-secondary); background: var(--bg);
+  }
+  .homescreen-card .hs-close .icon { width: 14px; height: 14px; }
+
+  /* Переключатель полноэкранного режима в «Оформлении» */
+  .fs-setting { margin-top: 14px; }
+  .fs-setting .privacy-row-desc b { color: var(--text); }
+
+  /* Окно-инструкция */
+  .hs-sheet-art {
+    width: 76px; height: 76px; border-radius: 24px; margin: 4px auto 14px;
+    background: linear-gradient(150deg, var(--pink-soft), var(--surface-soft));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 36px; color: var(--pink-accent);
+    box-shadow: var(--shadow-card);
+  }
+  .hs-sheet h3 { text-align: center; font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 22px; }
+  .hs-sheet p { text-align: center; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin: 6px auto 16px; max-width: 320px; }
+  .hs-steps { display: grid; gap: 8px; margin-bottom: 14px; }
+  .hs-step { display: flex; gap: 10px; align-items: flex-start; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 14px; padding: 11px 12px; font-size: 12.5px; line-height: 1.45; color: var(--text-secondary); }
+  .hs-step b { color: var(--text); }
+  .hs-step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--pink-soft); color: var(--pink-accent); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+</style>
+
+<div class="bottom-sheet" id="sheet-homescreen">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content hs-sheet">
+    <div class="sheet-header">
+      <h2>DollieLand на экране</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div id="homescreen-sheet-body"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const tg = window.Telegram?.WebApp;
+  const FS_KEY = 'dollieland_fullscreen';            // '1' | '0'
+  const HS_DISMISS_KEY = 'dollieland_hs_card_dismissed';
+  const isMobile = !!tg && ['ios', 'android', 'android_x'].includes(tg.platform);
+  const supports = v => !!tg && typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v);
+
+  const canHomeScreen = supports('8.0') && typeof tg.addToHomeScreen === 'function';
+  const canFullscreen = supports('8.0') && typeof tg.requestFullscreen === 'function' && isMobile;
+  let homeScreenStatus = canHomeScreen ? 'unknown' : 'unsupported';
+
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
+
+  /* ---------- Безопасные отступы ----------
+     В полноэкранном режиме контент уходит под статус-бар и кнопки Telegram
+     («Закрыть», «⋯»), поэтому сверху добавляем оба отступа из Telegram. */
+  function applySafeArea() {
+    const root = document.documentElement;
+    if (!tg) return;
+    const sa = tg.safeAreaInset || {};
+    const csa = tg.contentSafeAreaInset || {};
+    if (tg.isFullscreen) {
+      root.style.setProperty('--safe-t', ((sa.top || 0) + (csa.top || 0)) + 'px');
+      root.classList.add('tg-fullscreen');
+    } else {
+      root.style.removeProperty('--safe-t');
+      root.classList.remove('tg-fullscreen');
+    }
+    const bottom = (sa.bottom || 0) + (csa.bottom || 0);
+    if (bottom > 0) root.style.setProperty('--safe-b', bottom + 'px');
+    else root.style.removeProperty('--safe-b');
+  }
+
+  /* ---------- Полноэкранный режим ---------- */
+  function fullscreenWanted() {
+    const v = lsGet(FS_KEY);
+    return v == null ? true : v === '1';                // по умолчанию — включён на телефонах
+  }
+  function enterFullscreen() {
+    if (!canFullscreen || tg.isFullscreen) return;
+    try { tg.requestFullscreen(); } catch (_) {}
+  }
+  function exitFullscreen() {
+    if (!canFullscreen || !tg.isFullscreen) return;
+    try { tg.exitFullscreen(); } catch (_) {}
+  }
+
+  if (tg) {
+    // Приложение не закрывается случайным свайпом вниз (листание шторок, фото).
+    try { if (supports('7.7')) tg.disableVerticalSwipes(); } catch (_) {}
+    ['safeAreaChanged', 'contentSafeAreaChanged', 'fullscreenChanged', 'viewportChanged']
+      .forEach(ev => { try { tg.onEvent(ev, applySafeArea); } catch (_) {} });
+    try {
+      tg.onEvent('fullscreenFailed', (e) => {
+        if (e?.error !== 'ALREADY_FULLSCREEN') console.warn('DollieLand: fullscreen не включился —', e?.error);
+      });
+    } catch (_) {}
+    applySafeArea();
+    if (canFullscreen && fullscreenWanted()) enterFullscreen();
+  }
+
+  /* Переключатель в «Оформлении» */
+  function renderFullscreenSetting() {
+    if (!canFullscreen) return;
+    const list = document.getElementById('theme-options-list');
+    if (!list) return;
+    let box = document.getElementById('fs-setting');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'fs-setting';
+      box.className = 'privacy-card fs-setting';
+      list.insertAdjacentElement('afterend', box);
+    }
+    const on = fullscreenWanted();
+    box.innerHTML = `
+      <div class="privacy-row">
+        <div class="privacy-row-text">
+          <div class="privacy-row-title">Полноэкранный режим</div>
+          <div class="privacy-row-desc">DollieLand открывается на весь экран, <b>как обычное приложение</b>, без шапки Telegram.</div>
+        </div>
+        <button type="button" class="toggle-switch ${on ? 'on' : ''}" onclick="toggleDollieFullscreen()" aria-pressed="${on}" aria-label="Полноэкранный режим"></button>
+      </div>`;
+  }
+  window.toggleDollieFullscreen = function () {
+    const next = !fullscreenWanted();
+    lsSet(FS_KEY, next ? '1' : '0');
+    hapticSelection();
+    if (next) enterFullscreen(); else exitFullscreen();
+    renderFullscreenSetting();
+  };
+  const origRenderThemeOptionsList = window.renderThemeOptionsList;
+  if (typeof origRenderThemeOptionsList === 'function') {
+    window.renderThemeOptionsList = function () {
+      origRenderThemeOptionsList.apply(this, arguments);
+      renderFullscreenSetting();
+    };
+  }
+  renderFullscreenSetting();
+
+  /* ---------- Иконка на главном экране ---------- */
+  function refreshHomeScreenUI() {
+    const menuBadge = document.getElementById('hs-menu-badge');
+    if (menuBadge) {
+      menuBadge.textContent = homeScreenStatus === 'added' ? 'добавлено' : '';
+      menuBadge.hidden = homeScreenStatus !== 'added';
+    }
+    const card = document.getElementById('homescreen-card');
+    const show = canHomeScreen && homeScreenStatus === 'missed' && lsGet(HS_DISMISS_KEY) !== '1';
+    if (card) card.hidden = !show;
+  }
+
+  function checkHomeScreen() {
+    if (!canHomeScreen || typeof tg.checkHomeScreenStatus !== 'function') { refreshHomeScreenUI(); return; }
+    try {
+      tg.checkHomeScreenStatus(status => {
+        homeScreenStatus = status || 'unknown';
+        refreshHomeScreenUI();
+      });
+    } catch (_) { refreshHomeScreenUI(); }
+  }
+
+  if (canHomeScreen) {
+    try {
+      tg.onEvent('homeScreenAdded', () => {
+        homeScreenStatus = 'added';
+        lsSet(HS_DISMISS_KEY, '1');
+        refreshHomeScreenUI();
+        if (currentOpenSheetId === 'homescreen') renderHomeScreenSheet();
+        hapticNotification('success');
+        showToast('Готово! DollieLand теперь на главном экране');
+      });
+      tg.onEvent('homeScreenChecked', e => {
+        if (e?.status) { homeScreenStatus = e.status; refreshHomeScreenUI(); }
+      });
+    } catch (_) {}
+  }
+
+  function renderHomeScreenSheet() {
+    const body = document.getElementById('homescreen-sheet-body');
+    if (!body) return;
+    let html = `<div class="hs-sheet-art">D</div>`;
+    if (!canHomeScreen || homeScreenStatus === 'unsupported') {
+      html += `
+        <h3>Нужна новая версия Telegram</h3>
+        <p>Добавлять Mini App на главный экран умеют только свежие версии Telegram.</p>
+        <div class="hs-steps">
+          <div class="hs-step"><span class="hs-step-num">1</span><span>Обновите <b>Telegram</b> в App Store или Google Play.</span></div>
+          <div class="hs-step"><span class="hs-step-num">2</span><span>Откройте DollieLand снова и нажмите <b>«Добавить на главный экран»</b> в профиле.</span></div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-block" onclick="closeSheet()">Понятно</button>`;
+    } else if (homeScreenStatus === 'added') {
+      html += `
+        <h3>Уже на экране</h3>
+        <p>Иконка DollieLand есть на главном экране вашего телефона — открывайте магазин в одно касание.</p>
+        <button type="button" class="btn btn-primary btn-block" onclick="closeSheet()">Отлично</button>`;
+    } else {
+      html += `
+        <h3>DollieLand в одно касание</h3>
+        <p>Добавьте иконку на главный экран телефона — заказы, каталог и Фортуна будут открываться сразу, как обычное приложение.</p>
+        <button type="button" class="btn btn-primary btn-block" onclick="addDollieToHomeScreen()">
+          <svg class="icon"><use href="#icon-house"/></svg> Добавить на главный экран
+        </button>
+        <button type="button" class="btn btn-tertiary btn-block" onclick="closeSheet()">Позже</button>`;
+    }
+    body.innerHTML = html;
+  }
+
+  window.openHomeScreenSheet = function () {
+    renderHomeScreenSheet();
+    openSheet('homescreen');
+    checkHomeScreen();
+  };
+
+  window.addDollieToHomeScreen = function () {
+    if (!canHomeScreen) { openHomeScreenSheet(); return; }
+    hapticImpact('medium');
+    try { tg.addToHomeScreen(); }
+    catch (_) { showToast('Не получилось. Обновите Telegram и попробуйте ещё раз'); }
+  };
+
+  window.dismissHomeScreenCard = function (event) {
+    event?.stopPropagation?.();
+    lsSet(HS_DISMISS_KEY, '1');
+    refreshHomeScreenUI();
+    hapticSelection();
+  };
+
+  /* Пункт в профиле — сразу после «Оформления» */
+  (function injectMenuItem() {
+    if (!canHomeScreen) return;   // на старых версиях и на компьютере пункт не показываем
+    const themeBtn = Array.from(document.querySelectorAll('#tab-profile .menu-item'))
+      .find(b => (b.getAttribute('onclick') || '').includes("openSheet('theme')"));
+    if (!themeBtn || document.getElementById('hs-menu-item')) return;
+    const btn = document.createElement('button');
+    btn.className = 'menu-item';
+    btn.id = 'hs-menu-item';
+    btn.type = 'button';
+    btn.setAttribute('onclick', 'openHomeScreenSheet()');
+    btn.innerHTML = `
+      <svg class="icon"><use href="#icon-house"/></svg>
+      <span class="label">Добавить на главный экран</span>
+      <span class="badge" id="hs-menu-badge" hidden></span>
+      <svg class="icon chev"><use href="#icon-chevron-right"/></svg>`;
+    themeBtn.insertAdjacentElement('afterend', btn);
+  })();
+
+  /* Карточка-подсказка на главной (показывается, пока иконку не добавили и не закрыли) */
+  (function injectHomeCard() {
+    if (!canHomeScreen || !isMobile) return;
+    const anchor = document.getElementById('orders-summary-card');
+    if (!anchor || document.getElementById('homescreen-card')) return;
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'orders-summary-card homescreen-card';
+    card.id = 'homescreen-card';
+    card.hidden = true;
+    card.setAttribute('onclick', 'addDollieToHomeScreen()');
+    card.innerHTML = `
+      <div class="orders-summary-icon"><svg class="icon"><use href="#icon-house"/></svg></div>
+      <div class="orders-summary-text hs-text">
+        <span class="hs-title">DollieLand на главный экран</span>
+        <span class="hs-sub">Открывайте в одно касание, как приложение</span>
+      </div>
+      <span class="hs-close" role="button" aria-label="Скрыть" onclick="dismissHomeScreenCard(event)"><svg class="icon"><use href="#icon-x"/></svg></span>`;
+    anchor.insertAdjacentElement('afterend', card);
+  })();
+
+  const sheetEl = document.getElementById('sheet-homescreen');
+  if (sheetEl && typeof setupSheetDrag === 'function') setupSheetDrag(sheetEl);
+
+  checkHomeScreen();
+})();
+</script>
+<!-- ===== конец блока «главный экран» ===== -->
+
 </body>
 </html>
