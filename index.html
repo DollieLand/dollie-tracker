@@ -5973,23 +5973,7 @@ window.addEventListener('unhandledrejection', (e) => {
     }
     hapticNotification('success');
     if (input) input.value = '';
-    // Сервер уже начислил бонусы и вернул актуальные значения.
-    // НИКОГДА не начисляем Dollies/попытки на клиенте повторно.
-    if (typeof res.balance === 'number') {
-      loyaltyBalance = Number(res.balance) || 0;
-      updateLoyaltyBalanceUI();
-    }
-    if (typeof res.fortune_bonus_spins === 'number') {
-      const bonusSpins = Math.max(0, Number(res.fortune_bonus_spins) || 0);
-      fortuneStatus = {
-        ...(fortuneStatus || {}),
-        bonus_spins: bonusSpins,
-        available_attempts: Math.max(0, Number(fortuneStatus?.free_spin_available ? 1 : 0)) + bonusSpins,
-        available: (Number(fortuneStatus?.free_spin_available ? 1 : 0) + bonusSpins) > 0
-      };
-      if (typeof renderFortuneEntry === 'function') renderFortuneEntry();
-      if (typeof isFortuneScreenOpen === 'function' && isFortuneScreenOpen() && typeof renderFortune === 'function') renderFortune();
-    }
+    if (typeof res.balance === 'number') { loyaltyBalance = res.balance; updateLoyaltyBalanceUI(); }
     loadOrders(true);
     loadLoyalty();
     loadNotifications(false);
@@ -6301,6 +6285,187 @@ window.addEventListener('unhandledrejection', (e) => {
 })();
 </script>
 <!-- ===== конец блока Dollies в заявке ===== -->
+
+<!-- ===== DollieLand: «Нет в наличии» + «Сообщить о поступлении» (вставить прямо перед </body>, ПОСЛЕ остальных блоков) ===== -->
+<style>
+  .cat-media { position: relative; }
+  .cat-oos-badge {
+    position: absolute; left: 8px; top: 8px; z-index: 2; pointer-events: none;
+    background: rgba(57,44,49,.78); color: #fff; font-size: 10.5px; font-weight: 800;
+    padding: 4px 9px; border-radius: 999px; letter-spacing: .2px;
+  }
+  .cat-gallery.detail + .cat-oos-badge, .cat-media.detail .cat-oos-badge { top: 12px; left: 12px; font-size: 12px; padding: 5px 11px; }
+  .catalog-card.oos .cat-gallery img { filter: grayscale(.35); opacity: .85; }
+  .catalog-card.oos .catalog-price, .catalog-detail-price.oos { color: var(--text-secondary); }
+  .catalog-oos-line { font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-top: 3px; }
+  .btn-wait { background: var(--surface); color: var(--pink-accent); border: 1px solid var(--pink-accent); }
+  .btn-wait .icon { width: 15px; height: 15px; }
+  .btn-wait.on { background: var(--pink-soft); border-color: var(--pink-soft); color: var(--text); }
+  .btn-wait:disabled { opacity: .6; }
+  .catalog-oos-note {
+    display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.45;
+    color: var(--text-secondary); background: var(--surface-soft); border: 1px solid var(--border);
+    border-radius: var(--r-md); padding: 10px 12px; margin: 12px 0 0;
+  }
+  .catalog-oos-note .icon { width: 16px; height: 16px; color: var(--pink-accent); flex-shrink: 0; margin-top: 1px; }
+  .catalog-oos-note b { color: var(--text); }
+</style>
+<script>
+(function () {
+  if (typeof NOTIF_ICON === 'object') NOTIF_ICON.catalog_waitlist = 'bell';
+
+  const intro = document.querySelector('#tab-catalog .catalog-intro');
+  if (intro) intro.textContent = 'Понравилась кукла — оставьте заявку, и мы свяжемся с вами. Если её нет в наличии, нажмите «Сообщить о поступлении» — мы напишем в бот, как только она появится.';
+
+  const isOOS = p => p && p.in_stock === false;
+  const waitInFlight = new Set();
+
+  function waitBtnHTML(p, extraCls) {
+    const pid = escapeAttr(String(p.id));
+    const on = !!p.waitlisted;
+    return `<button type="button" class="btn btn-wait ${on ? 'on' : ''} ${extraCls || ''}" data-wait-btn="${pid}"
+      onclick="toggleCatalogWaitlist('${pid}', event); return false;" aria-pressed="${on ? 'true' : 'false'}">
+      ${waitBtnInner(on)}</button>`;
+  }
+  function waitBtnInner(on) {
+    return on
+      ? `<svg class="icon"><use href="#icon-check"/></svg> Сообщим о поступлении`
+      : `<svg class="icon"><use href="#icon-bell"/></svg> Сообщить о поступлении`;
+  }
+  function syncWaitButtons(pid) {
+    const p = catalogCache.find(x => String(x.id) === String(pid));
+    if (!p) return;
+    document.querySelectorAll(`[data-wait-btn="${CSS.escape(String(pid))}"]`).forEach(btn => {
+      btn.classList.toggle('on', !!p.waitlisted);
+      btn.setAttribute('aria-pressed', p.waitlisted ? 'true' : 'false');
+      btn.innerHTML = waitBtnInner(!!p.waitlisted);
+    });
+    const note = document.getElementById('catalog-oos-note-text');
+    if (note && String(note.dataset.pid) === String(pid)) note.innerHTML = oosNoteText(p);
+  }
+  function oosNoteText(p) {
+    return p.waitlisted
+      ? '<b>Вы в списке ожидания.</b> Как только кукла появится, мы пришлём сообщение в чат с ботом. Нажмите кнопку ещё раз, чтобы отписаться.'
+      : '<b>Сейчас этой куклы нет в наличии.</b> Нажмите «Сообщить о поступлении» — мы напишем в бот, как только она появится.';
+  }
+
+  /* Карточка в сетке */
+  window.catalogCardHTML = function (p) {
+    const w = formatCatalogWeight(p);
+    const pid = escapeAttr(String(p.id));
+    const oos = isOOS(p);
+    return `
+      <article class="catalog-card ${oos ? 'oos' : ''}">
+        <div class="cat-media">
+          ${catalogGalleryHTML(p, 'card')}
+          ${oos ? '<span class="cat-oos-badge">Нет в наличии</span>' : ''}
+        </div>
+        <div class="catalog-card-body">
+          <div class="catalog-card-title">${escapeHtml(p.name)}</div>
+          <div class="catalog-price">${escapeHtml(formatRub(p.price))}</div>
+          ${oos ? '<div class="catalog-oos-line">Нет в наличии</div>' : ''}
+          ${w ? `<div class="catalog-weight">Примерный вес: <b>${escapeHtml(w)}</b></div>` : ''}
+          ${p.short_description ? `<div class="catalog-short">${escapeHtml(p.short_description)}</div>` : ''}
+          <div class="catalog-actions">
+            <button type="button" class="btn btn-secondary" onclick="openCatalogProduct('${pid}')">Подробнее</button>
+            ${oos ? waitBtnHTML(p) : `<button type="button" class="btn btn-primary" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>`}
+          </div>
+        </div>
+      </article>`;
+  };
+
+  /* Подробная карточка */
+  window.catalogDetailHTML = function (p) {
+    const w = formatCatalogWeight(p);
+    const extra = Array.isArray(p.extra_params) ? p.extra_params.filter(x => x && x.label) : [];
+    const pid = escapeAttr(String(p.id));
+    const oos = isOOS(p);
+    return `
+      <div class="sheet-header">
+        <h2>${escapeHtml(p.name)}</h2>
+        <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+      </div>
+      <div class="cat-media detail">
+        ${catalogGalleryHTML(p, 'detail')}
+        ${oos ? '<span class="cat-oos-badge">Нет в наличии</span>' : ''}
+      </div>
+      <div class="catalog-detail-price ${oos ? 'oos' : ''}">${escapeHtml(formatRub(p.price))}</div>
+      ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
+        : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
+      ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
+      ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
+      ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
+      ${w ? `<div class="catalog-weight-note"><svg class="icon"><use href="#icon-alert-circle"/></svg><span>Вес указан примерно. Итоговая стоимость определяется после взвешивания куклы на складе в США и может отличаться.</span></div>` : ''}
+      <div class="help-item weight-faq" id="weight-faq">
+        <button type="button" class="help-item-head" onclick="toggleWeightFaq()">
+          <svg class="icon"><use href="#icon-help-circle"/></svg>
+          <span class="label">Что такое вес?</span>
+          <svg class="icon chev"><use href="#icon-chevron-down"/></svg>
+        </button>
+        <div class="help-item-body">${WEIGHT_FAQ_HTML}</div>
+      </div>
+      ${oos ? `
+        <div class="catalog-oos-note"><svg class="icon"><use href="#icon-bell"/></svg><span id="catalog-oos-note-text" data-pid="${pid}">${oosNoteText(p)}</span></div>
+        ${waitBtnHTML(p, 'btn-block')}`
+      : `<button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>`}
+    `;
+  };
+
+  /* Заявку на отсутствующую куклу не открываем */
+  const origOpenCatalogRequest = window.openCatalogRequest;
+  window.openCatalogRequest = function (productId) {
+    const p = catalogCache.find(x => String(x.id) === String(productId));
+    if (isOOS(p)) { showToast('Этой куклы сейчас нет в наличии'); return; }
+    return origOpenCatalogRequest(productId);
+  };
+
+  /* Подписка / отписка */
+  window.toggleCatalogWaitlist = async function (productId, event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    const pid = String(productId);
+    const p = catalogCache.find(x => String(x.id) === pid);
+    if (!p || waitInFlight.has(pid)) return;
+    if (!userId) { showToast('Откройте приложение из Telegram'); return; }
+    const subscribe = !p.waitlisted;
+    waitInFlight.add(pid);
+    document.querySelectorAll(`[data-wait-btn="${CSS.escape(pid)}"]`).forEach(b => b.disabled = true);
+    try {
+      const res = await apiPost('/api/catalog/' + encodeURIComponent(pid) + '/waitlist', { subscribe });
+      if (!res?.ok) {
+        const messages = {
+          already_in_stock: 'Кукла уже снова в наличии — можно оставить заявку!',
+          product_unavailable: 'Эта кукла больше недоступна',
+          consent_required: 'Сначала примите условия использования',
+          unauthorized: 'Откройте приложение из Telegram',
+        };
+        showToast(messages[res?.error] || 'Не удалось сохранить. Попробуйте ещё раз');
+        hapticNotification(res?.error === 'already_in_stock' ? 'success' : 'error');
+        if (res?.error === 'already_in_stock' || res?.error === 'product_unavailable') {
+          if (res?.error === 'product_unavailable') closeSheet();
+          await loadCatalog(false);
+          if (currentOpenSheetId === 'catalog-product' && res?.error === 'already_in_stock') openCatalogProduct(pid);
+        }
+        return;
+      }
+      p.waitlisted = !!res.waitlisted;
+      hapticNotification('success');
+      showToast(p.waitlisted ? 'Сообщим в боте, как только кукла появится' : 'Вы отписались от уведомления');
+      syncWaitButtons(pid);
+    } catch (e) {
+      showToast('Нет соединения. Попробуйте ещё раз');
+      hapticNotification('error');
+    } finally {
+      waitInFlight.delete(pid);
+      document.querySelectorAll(`[data-wait-btn="${CSS.escape(pid)}"]`).forEach(b => b.disabled = false);
+    }
+  };
+
+  // Если каталог уже успели отрисовать старой версией — перерисуем.
+  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) renderCatalog();
+})();
+</script>
+<!-- ===== конец блока «Нет в наличии» ===== -->
 
 </body>
 </html>
