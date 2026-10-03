@@ -5973,7 +5973,23 @@ window.addEventListener('unhandledrejection', (e) => {
     }
     hapticNotification('success');
     if (input) input.value = '';
-    if (typeof res.balance === 'number') { loyaltyBalance = res.balance; updateLoyaltyBalanceUI(); }
+    // Сервер уже начислил бонусы и вернул актуальные значения.
+    // НИКОГДА не начисляем Dollies/попытки на клиенте повторно.
+    if (typeof res.balance === 'number') {
+      loyaltyBalance = Number(res.balance) || 0;
+      updateLoyaltyBalanceUI();
+    }
+    if (typeof res.fortune_bonus_spins === 'number') {
+      const bonusSpins = Math.max(0, Number(res.fortune_bonus_spins) || 0);
+      fortuneStatus = {
+        ...(fortuneStatus || {}),
+        bonus_spins: bonusSpins,
+        available_attempts: Math.max(0, Number(fortuneStatus?.free_spin_available ? 1 : 0)) + bonusSpins,
+        available: (Number(fortuneStatus?.free_spin_available ? 1 : 0) + bonusSpins) > 0
+      };
+      if (typeof renderFortuneEntry === 'function') renderFortuneEntry();
+      if (typeof isFortuneScreenOpen === 'function' && isFortuneScreenOpen() && typeof renderFortune === 'function') renderFortune();
+    }
     loadOrders(true);
     loadLoyalty();
     loadNotifications(false);
