@@ -1576,7 +1576,6 @@
   .req-total-row.final b { font-size: 18px; color: var(--pink-accent); }
   .req-total-old { text-decoration: line-through; color: var(--text-secondary); font-weight: 600; font-size: 12.5px; margin-right: 6px; }
   .req-total-hint { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
-
 </style>
 </head>
 <body>
@@ -6742,6 +6741,45 @@ window.addEventListener('unhandledrejection', (e) => {
       <span class="hs-close" role="button" aria-label="Скрыть" onclick="dismissHomeScreenCard(event)"><svg class="icon"><use href="#icon-x"/></svg></span>`;
     anchor.insertAdjacentElement('afterend', card);
   })();
+
+  /* ---------- Плавный запуск без «прыжков» ----------
+     1) Тема (светлая/тёмная) запоминается, чтобы прелоадер сразу был нужного цвета.
+     2) Шапка и фон Telegram красятся в цвет приложения — без чёрных/белых вспышек.
+     3) Прелоадер не исчезает, пока Telegram не перешёл в полноэкранный режим,
+        поэтому пользователь не видит, как экран «перепрыгивает». */
+  const THEME_KEY = 'dollieland_theme_mode';
+  const BG = { light: '#FFF9FB', dark: '#1C1417' };
+  function paintTelegramChrome(mode) {
+    if (!tg) return;
+    const color = BG[mode === 'dark' ? 'dark' : 'light'];
+    try { tg.setHeaderColor(color); } catch (_) {}
+    try { tg.setBackgroundColor(color); } catch (_) {}
+    try { if (supports('7.10') && tg.setBottomBarColor) tg.setBottomBarColor(color); } catch (_) {}
+  }
+  paintTelegramChrome(lsGet(THEME_KEY) || document.documentElement.dataset.theme);
+
+  const origApplyTheme = window.applyTheme;
+  if (typeof origApplyTheme === 'function') {
+    window.applyTheme = function () {
+      origApplyTheme.apply(this, arguments);
+      const mode = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+      lsSet(THEME_KEY, mode);
+      const custom = typeof themeConfig === 'object' && themeConfig.theme && themeConfig.theme['colors_' + mode];
+      if (!custom || !custom.background) paintTelegramChrome(mode);
+    };
+  }
+
+  const origHidePreloader = window.hidePreloader;
+  if (typeof origHidePreloader === 'function') {
+    window.hidePreloader = function () {
+      const needWait = canFullscreen && fullscreenWanted() && !tg.isFullscreen;
+      if (!needWait) { origHidePreloader(); return; }
+      let done = false;
+      const finish = () => { if (done) return; done = true; applySafeArea(); setTimeout(origHidePreloader, 120); };
+      try { tg.onEvent('fullscreenChanged', finish); tg.onEvent('fullscreenFailed', finish); } catch (_) {}
+      setTimeout(finish, 900);   // страховка: если Telegram не ответил — всё равно показываем приложение
+    };
+  }
 
   const sheetEl = document.getElementById('sheet-homescreen');
   if (sheetEl && typeof setupSheetDrag === 'function') setupSheetDrag(sheetEl);
