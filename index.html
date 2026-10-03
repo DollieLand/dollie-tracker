@@ -1494,6 +1494,89 @@
   #banner-row { width:100%; max-width:100%; min-width:0; box-sizing:border-box; padding-right:12px; overflow-x:auto; overflow-y:hidden; }
   #banner-row .banner-card { flex:0 0 calc(100% - 12px); max-width:calc(100% - 12px); box-sizing:border-box; }
 
+  /* ===== DollieLand: привязка заказа по номеру ===== */
+  .attach-card {
+    background: linear-gradient(150deg, var(--surface-soft) 0%, var(--surface) 100%);
+    border: 1px solid var(--border); border-radius: var(--r-lg);
+    padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow-soft);
+  }
+  .attach-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .attach-card-icon { width: 34px; height: 34px; border-radius: 11px; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .attach-card-icon .icon { width: 17px; height: 17px; }
+  .attach-card-title { font-size: 14px; font-weight: 800; color: var(--text); }
+  .attach-card-sub { font-size: 11.5px; color: var(--text-secondary); margin-top: 1px; line-height: 1.35; }
+  .attach-row { display: flex; gap: 8px; }
+  .attach-input {
+    flex: 1; min-width: 0; border: 1px solid var(--border); border-radius: 14px;
+    padding: 11px 13px; font-size: 14px; outline: none; background: var(--surface); color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .attach-input:focus { border-color: var(--pink-accent); box-shadow: 0 0 0 3px var(--pink-soft); }
+  .attach-btn { min-height: 44px; padding: 10px 16px; font-size: 13.5px; flex-shrink: 0; }
+  .attach-error { font-size: 12px; color: #C4324A; margin-top: 8px; line-height: 1.4; display: none; }
+  .attach-error.show { display: block; }
+  .attach-card.highlight { animation: attach-pulse 1.2s ease 2; }
+  @keyframes attach-pulse { 0%,100% { box-shadow: var(--shadow-soft); } 50% { box-shadow: 0 0 0 4px var(--pink-soft); } }
+
+  .attached-result { text-align: center; padding: 2px 0 6px; }
+  .attached-icon { width: 64px; height: 64px; border-radius: 22px; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; animation: fortune-pop .55s cubic-bezier(.22,1.5,.36,1) both; }
+  .attached-icon .icon { width: 30px; height: 30px; }
+  .attached-result h3 { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 23px; color: var(--text); }
+  .attached-order { font-size: 12.5px; color: var(--text-secondary); margin: 4px 0 16px; line-height: 1.4; }
+  .attached-bonus-title { font-size: 13.5px; font-weight: 800; color: var(--text); margin: 4px 0 10px; }
+  .attached-bonus-list { display: grid; gap: 8px; margin-bottom: 14px; text-align: left; }
+  .attached-bonus {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border: 1px solid var(--border); border-radius: var(--r-md);
+    background: linear-gradient(160deg, var(--surface-soft), var(--surface));
+  }
+  .attached-bonus .dl-ico { width: 40px; height: 40px; }
+  .attached-bonus-main { flex: 1; min-width: 0; }
+  .attached-bonus-amount { font-size: 18px; font-weight: 800; color: var(--pink-accent); font-variant-numeric: tabular-nums; }
+  .attached-bonus-label { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .attached-note { font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin: 0 0 6px; }
+
+  /* ===== DollieLand: Dollies в заявке ===== */
+  .req-section-title { font-size: 13.5px; font-weight: 800; color: var(--text); margin: 0 0 8px; }
+  .req-qty-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+  .req-qty-row .qty-stepper { margin-bottom: 0; }
+  .req-qty-unit { font-size: 12px; color: var(--text-secondary); text-align: right; line-height: 1.35; }
+  .req-qty-unit b { color: var(--text); }
+
+  .req-dollies { background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px; margin-bottom: 16px; }
+  .req-dollies.on { border-color: var(--pink-accent); }
+  .req-dollies.disabled { opacity: .65; }
+  .req-dollies-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+  .req-dollies-check {
+    width: 24px; height: 24px; border-radius: 8px; flex-shrink: 0;
+    border: 2px solid var(--pink-accent); background: var(--surface);
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    transition: background .15s ease;
+  }
+  .req-dollies.on .req-dollies-check { background: var(--pink-accent); }
+  .req-dollies-check .icon { width: 14px; height: 14px; opacity: 0; }
+  .req-dollies.on .req-dollies-check .icon { opacity: 1; }
+  .req-dollies-text { flex: 1; min-width: 0; }
+  .req-dollies-title { font-size: 14px; font-weight: 800; color: var(--text); }
+  .req-dollies-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .req-dollies-amount { font-size: 14px; font-weight: 800; color: var(--pink-accent); white-space: nowrap; }
+  .req-dollies-note {
+    display: flex; gap: 8px; align-items: flex-start; margin-top: 12px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 12px; font-size: 12px; line-height: 1.45; color: var(--text-secondary);
+  }
+  .req-dollies-note .icon { width: 16px; height: 16px; color: var(--pink-accent); flex-shrink: 0; margin-top: 1px; }
+  .req-dollies-note b { color: var(--text); }
+
+  .req-total { border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px 14px; margin-bottom: 16px; background: var(--surface); }
+  .req-total-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--text-secondary); padding: 4px 0; }
+  .req-total-row b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .req-total-row.discount b { color: var(--pink-accent); }
+  .req-total-row.final { border-top: 1px dashed var(--border); margin-top: 6px; padding-top: 10px; font-size: 15px; color: var(--text); font-weight: 800; }
+  .req-total-row.final b { font-size: 18px; color: var(--pink-accent); }
+  .req-total-old { text-decoration: line-through; color: var(--text-secondary); font-weight: 600; font-size: 12.5px; margin-right: 6px; }
+  .req-total-hint { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
+
 </style>
 </head>
 <body>
@@ -5779,6 +5862,429 @@ window.addEventListener('unhandledrejection', (e) => {
   console.error('DollieLand: unhandled promise —', e.reason);
 });
 </script>
+
+<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед </body>) ===== -->
+<script>
+(function () {
+  /* ---------- Карточка «Добавить заказ» сверху вкладки «Мои заказы» ---------- */
+  function injectAttachCard() {
+    const tab = document.getElementById('tab-orders');
+    const list = document.getElementById('orders-list');
+    if (!tab || !list || document.getElementById('attach-card')) return;
+    const card = document.createElement('div');
+    card.className = 'attach-card';
+    card.id = 'attach-card';
+    card.innerHTML = `
+      <div class="attach-card-head">
+        <div class="attach-card-icon"><svg class="icon"><use href="#icon-package"/></svg></div>
+        <div>
+          <div class="attach-card-title">Добавить заказ</div>
+          <div class="attach-card-sub">Введите номер заказа, который вам прислала DollieLand</div>
+        </div>
+      </div>
+      <div class="attach-row">
+        <input class="attach-input" id="attach-input" placeholder="Номер заказа" inputmode="text" autocomplete="off" enterkeyhint="go">
+        <button type="button" class="btn btn-primary attach-btn" id="attach-btn" onclick="attachOrderFromMiniApp()">Привязать</button>
+      </div>
+      <div class="attach-error" id="attach-error"></div>`;
+    tab.insertBefore(card, list);
+    document.getElementById('attach-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); attachOrderFromMiniApp(); }
+    });
+    document.getElementById('attach-input').addEventListener('input', () => setAttachError(''));
+  }
+
+  function setAttachError(msg) {
+    const el = document.getElementById('attach-error');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('show', !!msg);
+  }
+
+  window.focusAttachInput = function () {
+    closeSheet();
+    if (!document.getElementById('tab-orders')?.classList.contains('active')) switchTab('orders');
+    const card = document.getElementById('attach-card');
+    const input = document.getElementById('attach-input');
+    if (!card || !input) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    card.classList.remove('highlight'); void card.offsetWidth; card.classList.add('highlight');
+    setTimeout(() => input.focus(), 250);
+  };
+
+  /* Пустое состояние «Мои заказы» — кнопка ведёт к полю номера заказа */
+  window.ordersEmptyHTML = function () {
+    return `
+      <div class="empty-state">
+        <svg class="empty-illustration" viewBox="0 0 120 120">
+          <circle cx="60" cy="48" r="28" fill="#FCE5ED"/>
+          <circle cx="60" cy="48" r="28" fill="none" stroke="#F2B3C7" stroke-width="2"/>
+          <path d="M48 44h24M48 54h16" stroke="#E78EAD" stroke-width="3" stroke-linecap="round"/>
+          <path d="M30 98c6-17 19-27 30-27s24 10 30 27" stroke="#F2B3C7" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h3>Пока нет заказов</h3>
+        <p>Если у вас есть номер заказа — введите его в поле выше, и заказ появится здесь.</p>
+        <button class="btn btn-tertiary" onclick="focusAttachInput()">Ввести номер заказа</button>
+      </div>`;
+  };
+
+  /* Старое окно «Найти заказ по номеру» теперь тоже привязывает заказ */
+  window.trackOrder = function () {
+    const v = (document.getElementById('track-input')?.value || '').trim();
+    if (!v) { showToast('Введите номер заказа'); return; }
+    closeSheet();
+    switchTab('orders');
+    const input = document.getElementById('attach-input');
+    if (input) input.value = v;
+    attachOrderFromMiniApp();
+  };
+
+  /* ---------- Привязка ---------- */
+  let attachInFlight = false;
+  const ATTACH_ERRORS = {
+    order_not_found: 'Заказ с таким номером не найден. Проверьте номер или напишите @Darielune.',
+    already_attached: 'Этот заказ уже привязан к другому аккаунту. Если это ваш заказ — напишите @Darielune.',
+    invalid_order_id: 'Введите номер заказа.',
+    too_many_attempts: 'Слишком много попыток. Попробуйте через 10 минут.',
+    unauthorized: 'Откройте приложение из Telegram.',
+    save_failed: 'Не удалось сохранить. Попробуйте ещё раз.',
+  };
+
+  window.attachOrderFromMiniApp = async function () {
+    if (attachInFlight) return;
+    const input = document.getElementById('attach-input');
+    const btn = document.getElementById('attach-btn');
+    const value = (input?.value || '').trim();
+    if (!value) { setAttachError('Введите номер заказа.'); input?.focus(); return; }
+    if (!userId) { setAttachError(ATTACH_ERRORS.unauthorized); return; }
+    attachInFlight = true;
+    setAttachError('');
+    if (btn) { btn.disabled = true; btn.textContent = 'Ищем…'; }
+    let res;
+    try { res = await apiPost('/api/me/orders/attach', { order_id: value }); }
+    catch (e) { res = { ok: false, error: 'network' }; }
+    attachInFlight = false;
+    if (btn) { btn.disabled = false; btn.textContent = 'Привязать'; }
+
+    if (!res?.ok) {
+      hapticNotification('error');
+      setAttachError(res?.error === 'network' ? 'Нет соединения. Попробуйте ещё раз.' : (ATTACH_ERRORS[res?.error] || 'Не удалось привязать заказ. Попробуйте ещё раз.'));
+      return;
+    }
+    hapticNotification('success');
+    if (input) input.value = '';
+    if (typeof res.balance === 'number') { loyaltyBalance = res.balance; updateLoyaltyBalanceUI(); }
+    loadOrders(true);
+    loadLoyalty();
+    loadNotifications(false);
+    loadFortuneStatus({ silent: true });
+    if (typeof dollieHistoryLoadedOnce !== 'undefined' && dollieHistoryLoadedOnce) loadLoyaltyHistory(true);
+    openAttachResult(res);
+  };
+
+  /* ---------- Окно результата ---------- */
+  function ensureResultSheet() {
+    let sheet = document.getElementById('sheet-order-attached');
+    if (sheet) return sheet;
+    sheet = document.createElement('div');
+    sheet.className = 'bottom-sheet';
+    sheet.id = 'sheet-order-attached';
+    sheet.innerHTML = `<div class="sheet-handle-area"><div class="sheet-handle"></div></div><div class="sheet-content" id="sheet-order-attached-content"></div>`;
+    document.body.appendChild(sheet);
+    if (typeof setupSheetDrag === 'function') setupSheetDrag(sheet);
+    return sheet;
+  }
+
+  function spinWord(n) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return 'попытка';
+    if ([2, 3, 4].includes(m10) && ![12, 13, 14].includes(m100)) return 'попытки';
+    return 'попыток';
+  }
+
+  function openAttachResult(res) {
+    ensureResultSheet();
+    const content = document.getElementById('sheet-order-attached-content');
+    const order = res.order || {};
+    const rw = res.reward || {};
+    const dollies = Number(rw.dollies) || 0;
+    const first = Number(rw.first_order_bonus) || 0;
+    const spins = Number(rw.fortune_spins) || 0;
+    const totalDollies = dollies + first;
+    const hasBonus = totalDollies > 0 || spins > 0;
+
+    const bonusItems = [];
+    if (dollies > 0) bonusItems.push(`
+      <div class="attached-bonus">${RewardIcon(dollies >= 100 ? 'dollies_100' : 'dollies_5')}
+        <div class="attached-bonus-main"><div class="attached-bonus-amount">+${dollies} Dollies</div><div class="attached-bonus-label">Бонус за заказ</div></div></div>`);
+    if (first > 0) bonusItems.push(`
+      <div class="attached-bonus">${RewardIcon('dollies_2')}
+        <div class="attached-bonus-main"><div class="attached-bonus-amount">+${first} Dollies</div><div class="attached-bonus-label">За первый заказ</div></div></div>`);
+    if (spins > 0) bonusItems.push(`
+      <div class="attached-bonus">${FortuneIcon()}
+        <div class="attached-bonus-main"><div class="attached-bonus-amount">+${spins} ${spinWord(spins)}</div><div class="attached-bonus-label">Дополнительные вращения в Фортуне</div></div></div>`);
+
+    const buttons = [];
+    if (spins > 0) buttons.push(`<button type="button" class="btn btn-primary btn-block" onclick="closeSheet(); openFortune();"><svg class="icon"><use href="#icon-fortune"/></svg> Крутить Фортуну</button>`);
+    if (totalDollies > 0) buttons.push(`<button type="button" class="btn ${spins > 0 ? 'btn-secondary' : 'btn-primary'} btn-block" onclick="closeSheet(); openDolliesSheet();"><svg class="icon"><use href="#icon-heart"/></svg> Открыть Dollie Club</button>`);
+    buttons.push(`<button type="button" class="btn ${hasBonus ? 'btn-tertiary' : 'btn-primary'} btn-block" onclick="closeSheet(); switchTab('orders');">${hasBonus ? 'Посмотреть заказ' : 'Отлично'}</button>`);
+
+    content.innerHTML = `
+      <div class="sheet-header">
+        <h2>${res.already_attached ? 'Заказ уже ваш' : 'Заказ привязан'}</h2>
+        <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+      </div>
+      <div class="attached-result">
+        <div class="attached-icon"><svg class="icon"><use href="#icon-check"/></svg></div>
+        <h3>${hasBonus ? 'Вам начислены бонусы!' : (res.already_attached ? 'Этот заказ уже у вас' : 'Готово!')}</h3>
+        <div class="attached-order">${escapeHtml(order.title || 'Заказ')} · №${escapeHtml(String(order.id || ''))}<br>Статус: ${escapeHtml(order.status || 'не определён')}</div>
+        ${hasBonus ? `<div class="attached-bonus-title">За этот заказ</div><div class="attached-bonus-list">${bonusItems.join('')}</div>` : ''}
+        ${!res.already_attached ? `<p class="attached-note">Уведомления о статусе заказа будут приходить в чат с ботом.</p>` : ''}
+        ${buttons.join('')}
+      </div>`;
+    openSheet('order-attached');
+  }
+
+  injectAttachCard();
+  if (Array.isArray(ordersCache) && !ordersCache.length && document.getElementById('orders-list')?.querySelector('.empty-state')) {
+    renderOrdersList();
+  }
+})();
+</script>
+<!-- ===== конец блока привязки заказа ===== -->
+
+<!-- ===== DollieLand: Dollies в заявке из каталога (вставить прямо перед </body>) ===== -->
+<script>
+/* Переопределяет форму заявки из каталога: количество, Dollies с галочкой,
+   лимит на один заказ и итоговая сумма со скидкой. Итоговую скидку всё равно
+   рассчитывает и списывает только сервер. */
+(function () {
+  const DEFAULT_MAX_PER_ORDER = 300;
+  let reqLoyalty = { balance: null, maxPerOrder: DEFAULT_MAX_PER_ORDER, rate: 100 };
+  let reqUseDollies = false;
+
+  function rub(n) { return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽'; }
+
+  function calcRequest() {
+    const p = catalogCurrentProduct || {};
+    const unit = Math.max(0, Number(p.price) || 0);
+    const total = unit * catalogRequestQty;
+    const balance = Math.max(0, Number(reqLoyalty.balance ?? loyaltyBalance ?? 0) || 0);
+    const cap = Math.max(0, Number(reqLoyalty.maxPerOrder) || DEFAULT_MAX_PER_ORDER);
+    const rate = Number(reqLoyalty.rate) || 100;
+    const usable = Math.min(balance, cap, total);
+    const used = reqUseDollies ? usable : 0;
+    const discount = Math.min(total, Math.round(used * rate / 100));
+    return { unit, total, balance, cap, usable, used, discount, final: Math.max(0, total - discount) };
+  }
+
+  async function refreshLoyaltyForRequest() {
+    try {
+      const d = await apiFetch('/api/me/loyalty', {}, { timeoutMs: 8000, retries: 1 });
+      if (d && d.ok) {
+        reqLoyalty.balance = Number(d.balance) || 0;
+        if (d.max_redeem_per_order) reqLoyalty.maxPerOrder = Number(d.max_redeem_per_order);
+        if (d.redemption_rate_rub_per_100) reqLoyalty.rate = Number(d.redemption_rate_rub_per_100);
+        loyaltyBalance = reqLoyalty.balance;
+        updateLoyaltyBalanceUI();
+      }
+    } catch (_) {}
+    updateRequestSummary();
+  }
+
+  window.renderCatalogRequestForm = function () {
+    const body = document.getElementById('catalog-request-body');
+    const p = catalogCurrentProduct;
+    if (!body || !p) return;
+    reqUseDollies = false;
+    reqLoyalty.balance = loyaltyBalance;
+    const img = catalogImages(p)[0];
+    const w = formatCatalogWeight(p);
+    body.innerHTML = `
+      <div class="catalog-req-product">
+        <div class="catalog-req-thumb">${img ? `<img src="${escapeAttr(img)}" alt="" onerror="this.remove()">` : `<svg class="icon"><use href="#icon-shop"/></svg>`}</div>
+        <div style="min-width:0">
+          <div class="catalog-req-name">${escapeHtml(p.name)}</div>
+          <div class="catalog-req-price">${escapeHtml(rub(p.price))} за шт.</div>
+          ${w ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">Примерный вес: ${escapeHtml(w)}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="req-section-title">Количество</div>
+      <div class="req-qty-row">
+        <div class="qty-stepper">
+          <button type="button" id="catalog-qty-minus" onclick="changeCatalogQty(-1)" aria-label="Меньше">−</button>
+          <span class="qty-val" id="catalog-qty-val">${catalogRequestQty}</span>
+          <button type="button" id="catalog-qty-plus" onclick="changeCatalogQty(1)" aria-label="Больше">+</button>
+        </div>
+        <div class="req-qty-unit">до ${CATALOG_MAX_QTY} шт.<br>в одной заявке</div>
+      </div>
+
+      <div class="req-dollies" id="req-dollies">
+        <div class="req-dollies-row" onclick="toggleRequestDollies()" role="checkbox" aria-checked="false" id="req-dollies-toggle" tabindex="0">
+          <span class="req-dollies-check"><svg class="icon"><use href="#icon-check"/></svg></span>
+          <span class="req-dollies-text">
+            <span class="req-dollies-title" style="display:block">Использовать Dollies</span>
+            <span class="req-dollies-sub" id="req-dollies-sub" style="display:block">Загружаем баланс…</span>
+          </span>
+          <span class="req-dollies-amount" id="req-dollies-amount"></span>
+        </div>
+        <div class="req-dollies-note">
+          <svg class="icon"><use href="#icon-alert-circle"/></svg>
+          <span>На один заказ можно использовать <b>не больше <span id="req-dollies-cap">${DEFAULT_MAX_PER_ORDER}</span> Dollies</b>. 1 Dollie = 1 ₽ скидки. Остальные Dollies останутся на балансе.</span>
+        </div>
+      </div>
+
+      <div class="req-total" id="req-total"></div>
+
+      <div class="req-section-title">Комментарий или пожелание</div>
+      <textarea class="review-textarea catalog-req-textarea" id="catalog-comment" maxlength="${CATALOG_MAX_COMMENT}" placeholder="Например: хочу в подарок, удобное время для связи…"></textarea>
+      <div class="review-char-count"><span id="catalog-comment-count">0</span>/${CATALOG_MAX_COMMENT}</div>
+      <p class="review-form-note">Это заявка, а не оплата. Администратор свяжется с вами в Telegram, чтобы уточнить детали и наличие. Если заявку отменят, использованные Dollies вернутся на баланс.</p>
+      <button type="button" class="btn btn-primary btn-block" id="catalog-submit-btn" style="margin-top:14px" onclick="submitCatalogRequest(event); return false;">
+        <svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Отправить заявку
+      </button>`;
+    const ta = document.getElementById('catalog-comment');
+    ta?.addEventListener('input', () => {
+      const c = document.getElementById('catalog-comment-count'); if (c) c.textContent = ta.value.length;
+    });
+    document.getElementById('req-dollies-toggle')?.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleRequestDollies(); }
+    });
+    updateCatalogQtyButtons();
+    refreshLoyaltyForRequest();
+  };
+
+  window.toggleRequestDollies = function () {
+    const c = calcRequest();
+    if (c.usable <= 0) { showToast(c.balance <= 0 ? 'У вас пока нет Dollies' : 'Dollies нельзя применить к этой заявке'); return; }
+    reqUseDollies = !reqUseDollies;
+    hapticSelection();
+    updateRequestSummary();
+  };
+
+  function updateRequestSummary() {
+    const c = calcRequest();
+    if (c.usable <= 0) reqUseDollies = false;
+    const r = calcRequest();
+    const box = document.getElementById('req-dollies');
+    const toggle = document.getElementById('req-dollies-toggle');
+    const sub = document.getElementById('req-dollies-sub');
+    const amount = document.getElementById('req-dollies-amount');
+    const capEl = document.getElementById('req-dollies-cap');
+    if (capEl) capEl.textContent = r.cap;
+    if (box) {
+      box.classList.toggle('on', reqUseDollies);
+      box.classList.toggle('disabled', r.usable <= 0 && reqLoyalty.balance != null);
+    }
+    toggle?.setAttribute('aria-checked', reqUseDollies ? 'true' : 'false');
+    if (sub) {
+      if (reqLoyalty.balance == null) sub.textContent = 'Загружаем баланс…';
+      else if (r.balance <= 0) sub.textContent = 'У вас пока нет Dollies';
+      else if (reqUseDollies) sub.textContent = `Спишется ${r.used} из ${r.balance} Dollies`;
+      else sub.textContent = `На балансе ${r.balance} Dollies · можно применить ${r.usable}`;
+    }
+    if (amount) amount.textContent = reqUseDollies && r.discount > 0 ? `−${r.discount.toLocaleString('ru-RU')} ₽` : '';
+
+    const totalBox = document.getElementById('req-total');
+    if (totalBox) {
+      totalBox.innerHTML = `
+        <div class="req-total-row"><span>${escapeHtml(rub(r.unit))} × ${catalogRequestQty} шт.</span><b>${escapeHtml(rub(r.total))}</b></div>
+        ${r.discount > 0 ? `<div class="req-total-row discount"><span>Скидка Dollies (−${r.used})</span><b>−${escapeHtml(rub(r.discount))}</b></div>` : ''}
+        <div class="req-total-row final"><span>Итого</span><span>${r.discount > 0 ? `<span class="req-total-old">${escapeHtml(rub(r.total))}</span>` : ''}<b>${escapeHtml(rub(r.final))}</b></span></div>
+        <div class="req-total-hint">Без учёта веса (доставки из США) и доставки по России — их стоимость рассчитывается отдельно.</div>`;
+    }
+  }
+
+  window.updateCatalogQtyButtons = function () {
+    const v = document.getElementById('catalog-qty-val');
+    if (v) v.textContent = catalogRequestQty;
+    const minus = document.getElementById('catalog-qty-minus');
+    const plus = document.getElementById('catalog-qty-plus');
+    if (minus) minus.disabled = catalogRequestQty <= 1;
+    if (plus) plus.disabled = catalogRequestQty >= CATALOG_MAX_QTY;
+    updateRequestSummary();
+  };
+
+  window.changeCatalogQty = function (delta) {
+    const next = Math.max(1, Math.min(CATALOG_MAX_QTY, catalogRequestQty + delta));
+    if (next === catalogRequestQty) return;
+    catalogRequestQty = next;
+    hapticSelection();
+    updateCatalogQtyButtons();
+  };
+
+  function resetSubmitBtn(btn) {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="icon" style="width:16px;height:16px"><use href="#icon-send"/></svg> Отправить заявку'; }
+  }
+
+  window.submitCatalogRequest = async function (event) {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    if (catalogRequestInFlight || !catalogCurrentProduct) return;
+    if (!userId) { showToast('Откройте приложение из Telegram'); return; }
+    catalogRequestInFlight = true;
+    const btn = document.getElementById('catalog-submit-btn');
+    const comment = (document.getElementById('catalog-comment')?.value || '').trim();
+    if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
+    try {
+      // Telegram ID не передаём — сервер берёт его из подписанного initData.
+      // Сумму скидки тоже не передаём: сервер сам считает и списывает Dollies.
+      const res = await apiPost('/api/catalog/requests', {
+        product_id: catalogCurrentProduct.id,
+        quantity: catalogRequestQty,
+        comment,
+        use_dollies: reqUseDollies,
+      });
+      if (!res?.ok) {
+        const messages = {
+          product_unavailable: 'Эта кукла больше недоступна',
+          invalid_quantity: `Количество — от 1 до ${CATALOG_MAX_QTY}`,
+          comment_too_long: `Комментарий не длиннее ${CATALOG_MAX_COMMENT} символов`,
+          too_many_requests: 'Слишком много заявок подряд. Попробуйте чуть позже',
+          consent_required: 'Сначала примите условия использования',
+          insufficient_balance: 'Недостаточно Dollies на балансе',
+          unauthorized: 'Откройте приложение из Telegram',
+        };
+        showToast(messages[res?.error] || 'Не удалось отправить заявку. Попробуйте ещё раз');
+        hapticNotification('error');
+        if (res?.error === 'product_unavailable') { closeSheet(); loadCatalog(false); }
+        if (res?.error === 'insufficient_balance') refreshLoyaltyForRequest();
+        resetSubmitBtn(btn);
+        return;
+      }
+      hapticNotification('success');
+      const rq = res.request || {};
+      const used = Number(rq.dollies_used) || 0;
+      if (typeof res.balance === 'number') { loyaltyBalance = res.balance; updateLoyaltyBalanceUI(); }
+      document.getElementById('catalog-request-body').innerHTML = `
+        <div class="empty-state" style="padding-top:10px;">
+          <div class="review-prompt-icon" style="margin:0 auto 12px;"><svg class="icon"><use href="#icon-check"/></svg></div>
+          <h3>Заявка отправлена</h3>
+          <p>Мы свяжемся с вами для уточнения деталей.</p>
+          <div class="req-total" style="text-align:left;margin:0 0 14px;">
+            <div class="req-total-row"><span>Номер заявки</span><b>${escapeHtml(rq.id || '')}</b></div>
+            <div class="req-total-row"><span>Сумма</span><b>${escapeHtml(rub(rq.total_price))}</b></div>
+            ${used > 0 ? `<div class="req-total-row discount"><span>Скидка Dollies (−${used})</span><b>−${escapeHtml(rub(rq.dollies_discount_rub))}</b></div>` : ''}
+            <div class="req-total-row final"><span>Итого</span><b>${escapeHtml(rub(rq.price_after_dollies ?? rq.total_price))}</b></div>
+          </div>
+          ${used > 0 ? `<p style="margin-top:-4px;font-size:12px;">Списано ${used} Dollies. Если заявку отменят, они вернутся на баланс.</p>` : ''}
+          <button class="btn btn-primary btn-block" onclick="closeSheet()">Хорошо</button>
+        </div>`;
+      loadLoyalty();
+      loadNotifications(false);
+      if (typeof dollieHistoryLoadedOnce !== 'undefined' && dollieHistoryLoadedOnce) loadLoyaltyHistory(true);
+    } catch (e) {
+      showToast('Нет соединения. Попробуйте ещё раз');
+      hapticNotification('error');
+      resetSubmitBtn(btn);
+    } finally {
+      catalogRequestInFlight = false;
+    }
+  };
+})();
+</script>
+<!-- ===== конец блока Dollies в заявке ===== -->
 
 </body>
 </html>
