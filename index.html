@@ -1959,7 +1959,7 @@
 </style>
 
 <style id="search-notification-ui-css">
-.sr-notify-toggle{position:relative;display:flex;align-items:center;gap:11px;padding:13px 14px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(135deg,var(--surface),var(--surface-soft));cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sr-notify-section{margin-top:2px}.sr-notify-toggle{position:relative;display:flex;align-items:center;gap:11px;padding:14px;border:1px solid var(--border);border-radius:17px;background:linear-gradient(135deg,var(--surface),var(--surface-soft));cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 12px rgba(0,0,0,.04)}
 .sr-notify-toggle input{position:absolute;opacity:0;pointer-events:none}.sr-notify-box{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:var(--surface-soft);color:var(--text-secondary)}.sr-notify-box .icon{width:19px;height:19px}.sr-notify-copy{min-width:0;flex:1}.sr-notify-copy b{display:block;font-size:13px;line-height:1.3;color:var(--text)}.sr-notify-copy small{display:block;margin-top:4px;font-size:11.5px;line-height:1.4;color:var(--text-secondary)}.sr-check-mark{width:23px;height:23px;flex:0 0 23px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);border-radius:7px;color:transparent}.sr-check-mark .icon{width:14px;height:14px}.sr-notify-toggle:has(input:checked){border-color:var(--pink-accent)}.sr-notify-toggle:has(input:checked) .sr-notify-box{color:var(--pink-accent);background:color-mix(in srgb,var(--pink-accent) 12%,var(--surface))}.sr-notify-toggle:has(input:checked) .sr-check-mark{border-color:var(--pink-accent);background:var(--pink-accent);color:#fff}
 .notification-premium-card{position:relative;display:flex;gap:11px;padding:13px;margin:0 0 9px;border:1px solid var(--border);border-radius:17px;background:var(--surface);box-shadow:0 5px 18px rgba(0,0,0,.055)}.notification-premium-card.unread{border-color:color-mix(in srgb,var(--pink-accent) 28%,var(--border));box-shadow:0 6px 20px rgba(0,0,0,.07)}.notification-premium-icon{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;border-radius:13px;background:var(--surface-soft);color:var(--pink-accent)}.notification-premium-icon .icon{width:18px;height:18px}.notification-premium-title{font-size:13.5px;line-height:1.3;font-weight:800;color:var(--text)}.notification-premium-body{margin-top:4px;font-size:12px;line-height:1.45;color:var(--text-secondary)}.notification-premium-time{margin-top:6px;font-size:10.5px;color:var(--text-secondary)}.notification-premium-unread{position:absolute;top:13px;right:13px;width:7px;height:7px;border-radius:50%;background:var(--pink-accent)}
 </style>
@@ -6534,15 +6534,18 @@ function searchFormHTML(type, r) {
         ${srOptsHTML('urgency', SEARCH_URGENCY, edit ? (r.urgency || '') : '')}
       </div>
 
-      <label class="sr-notify-toggle">
-        <input type="checkbox" id="sr-notify-enabled" name="notifications_enabled" ${(!edit || r.notifications_enabled !== false) ? 'checked' : ''}>
-        <span class="sr-notify-box">${srIcon('bell')}</span>
-        <span class="sr-notify-copy">
-          <b>Уведомлять меня о найденных куклах</b>
-          <small>Новый вариант, изменение статуса или сообщение от DollieLand — сразу сообщим вам.</small>
-        </span>
-        <span class="sr-check-mark">${srIcon('check')}</span>
-      </label>
+      <div class="sr-notify-section">
+        <span class="sr-field-label">Уведомления</span>
+        <label class="sr-notify-toggle">
+          <input type="checkbox" id="sr-notify-enabled" name="notifications_enabled" ${(!edit || r.notifications_enabled !== false) ? 'checked' : ''}>
+          <span class="sr-notify-box">${srIcon('bell')}</span>
+          <span class="sr-notify-copy">
+            <b>Уведомлять меня о найденных куклах</b>
+            <small>Новый вариант, изменение статуса или сообщение от DollieLand — сразу сообщим вам.</small>
+          </span>
+          <span class="sr-check-mark">${srIcon('check')}</span>
+        </label>
+      </div>
 
       <button type="submit" class="btn btn-primary btn-block" id="search-submit-btn" style="margin-top:2px">${edit ? 'Сохранить изменения' : 'Отправить запрос'}</button>
     </form>
