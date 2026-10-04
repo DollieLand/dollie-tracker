@@ -6854,7 +6854,7 @@ window.addEventListener('unhandledrejection', (e) => {
 <style>
   /* Карточка-подсказка на главной */
   .homescreen-card { position: relative; }
-  .homescreen-card[hidden], #hs-menu-badge[hidden] { display: none !important; }
+  .homescreen-card[hidden] { display: none !important; }
   .homescreen-card .orders-summary-icon { background: var(--pink-soft); }
   .homescreen-card .hs-text { display: flex; flex-direction: column; gap: 2px; }
   .homescreen-card .hs-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
@@ -7000,11 +7000,6 @@ window.addEventListener('unhandledrejection', (e) => {
 
   /* ---------- Иконка на главном экране ---------- */
   function refreshHomeScreenUI() {
-    const menuBadge = document.getElementById('hs-menu-badge');
-    if (menuBadge) {
-      menuBadge.textContent = homeScreenStatus === 'added' ? 'добавлено' : '';
-      menuBadge.hidden = homeScreenStatus !== 'added';
-    }
     const card = document.getElementById('homescreen-card');
     const show = canHomeScreen && homeScreenStatus === 'missed' && lsGet(HS_DISMISS_KEY) !== '1';
     if (card) card.hidden = !show;
@@ -7085,25 +7080,6 @@ window.addEventListener('unhandledrejection', (e) => {
     refreshHomeScreenUI();
     hapticSelection();
   };
-
-  /* Пункт в профиле — сразу после «Оформления» */
-  (function injectMenuItem() {
-    if (!canHomeScreen) return;   // на старых версиях и на компьютере пункт не показываем
-    const themeBtn = Array.from(document.querySelectorAll('#tab-profile .menu-item'))
-      .find(b => (b.getAttribute('onclick') || '').includes("openSheet('theme')"));
-    if (!themeBtn || document.getElementById('hs-menu-item')) return;
-    const btn = document.createElement('button');
-    btn.className = 'menu-item';
-    btn.id = 'hs-menu-item';
-    btn.type = 'button';
-    btn.setAttribute('onclick', 'openHomeScreenSheet()');
-    btn.innerHTML = `
-      <svg class="icon"><use href="#icon-house"/></svg>
-      <span class="label">Добавить на главный экран</span>
-      <span class="badge" id="hs-menu-badge" hidden></span>
-      <svg class="icon chev"><use href="#icon-chevron-right"/></svg>`;
-    themeBtn.insertAdjacentElement('afterend', btn);
-  })();
 
   /* Карточка-подсказка на главной (показывается, пока иконку не добавили и не закрыли) */
   (function injectHomeCard() {
