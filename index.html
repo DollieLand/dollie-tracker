@@ -7097,7 +7097,10 @@ async function confirmDeleteSearchRequest(rid) {
     const d = await apiPost('/api/me/search_requests/' + encodeURIComponent(rid) + '/delete', { reason: r.code === 'other' ? r.custom : r.label, reason_code: r.code });
     if (!d.ok) throw new Error(d.error || 'delete_failed');
     closeSearchModal();
-    srApplyRequest(d.request);
+    searchRequestsCache = searchRequestsCache.filter(x => String(x.id) !== String(rid));
+    searchCurrent = null;
+    searchFormType = null;
+    updateSearchBadge();
     hapticNotification('success');
     showToast('Запрос удалён');
     renderSearchHome();
