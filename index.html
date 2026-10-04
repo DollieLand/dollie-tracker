@@ -1648,8 +1648,10 @@
   }
   .search-upload .icon{color:var(--pink-accent);width:25px;height:25px;margin-bottom:5px}
   .search-upload-title{font-size:13px;font-weight:800}.search-upload-sub{font-size:11px;color:var(--text-secondary);margin-top:3px}
-  .search-previews{display:flex;gap:8px;overflow:auto;margin-top:10px;padding-bottom:2px}
-  .search-preview{width:72px;height:72px;border-radius:12px;object-fit:cover;flex:none;border:1px solid var(--border)}
+  .search-previews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
+  .search-preview-item{position:relative;aspect-ratio:1/1;border-radius:15px;overflow:hidden;background:var(--surface-soft);border:1px solid var(--border)}
+  .search-preview{width:100%;height:100%;display:block;object-fit:cover}
+  .search-preview-remove{position:absolute;top:6px;right:6px;width:25px;height:25px;border:0;border-radius:50%;background:rgba(20,18,20,.72);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;cursor:pointer;backdrop-filter:blur(4px)}
   .search-submit{margin-top:18px}
   .search-back{display:inline-flex;align-items:center;gap:5px;color:var(--text-secondary);font-size:12.5px;font-weight:700;margin-bottom:14px}
   .search-status-card{padding:18px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,var(--surface-soft),var(--surface));margin-bottom:14px}
@@ -1659,10 +1661,11 @@
   .search-requirements{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
   .search-requirement{padding:10px 11px;border:1px solid var(--border);border-radius:13px;background:var(--surface)}
   .search-requirement span{display:block;color:var(--text-secondary);font-size:10px}.search-requirement b{display:block;font-size:12px;margin-top:3px}
-  .search-request-photo-row,.search-result-photo-row{display:flex;gap:9px;overflow-x:auto;padding-bottom:3px}
-  .search-request-photo,.search-result-photo{width:92px;height:112px;border-radius:15px;object-fit:cover;flex:none;border:1px solid var(--border);background:var(--surface-soft)}
+  .search-request-photo-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:13px}
+  .search-request-photo{width:100%;aspect-ratio:1/1;border-radius:15px;object-fit:cover;display:block;border:1px solid var(--border);background:var(--surface-soft)}
+  .search-result-photo-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .search-result-photo{width:100%;aspect-ratio:1/1.08;border-radius:15px;object-fit:cover;display:block;border:1px solid var(--border);background:var(--surface-soft)}
   .search-result-card{background:var(--surface);border:1px solid var(--border);border-radius:21px;padding:13px;box-shadow:var(--shadow-soft);margin-top:11px}
-  .search-result-photo-row .search-result-photo{width:145px;height:170px}
   .search-result-title{font-size:15px;font-weight:800;margin-top:11px}.search-result-line{font-size:12px;color:var(--text-secondary);margin-top:3px}
   .search-result-price{font-size:19px;font-weight:800;margin-top:8px;color:var(--text)}
   .search-result-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
@@ -5975,7 +5978,6 @@ const SEARCH_BRANDS = ['Monster High','Bratz','Barbie','Ever After High','Rainbo
 const SEARCH_CONDITIONS = [['new','Новая'],['like_new','Как новая'],['good','Хорошее'],['minor_defects','Можно с небольшими дефектами'],['any','Неважно']];
 const SEARCH_COMPLETENESS = [['full','Полная'],['prefer_full','Желательно полная'],['any','Неважно']];
 const SEARCH_URGENCY = [['not_urgent','Не срочно'],['normal','Обычный поиск'],['notify_fast','Если появится — сообщите сразу']];
-const SEARCH_COUNTRIES = [['usa','США'],['china','Китай'],['europe','Европа'],['any','Неважно']];
 
 function searchDate(iso){
   if(!iso)return '';
@@ -6041,9 +6043,9 @@ function searchFormHTML(type){
       <label class="search-label">Комплектация</label>
       <div class="search-chips">${SEARCH_COMPLETENESS.map(x=>`<button type="button" class="search-chip" data-group="completeness" data-value="${x[0]}" onclick="selectSearchChip(this,'completeness')">${x[1]}</button>`).join('')}</div>
     </div>
-    <div class="search-two-col search-form-section">
-      <div><label class="search-label">Максимальный бюджет</label><input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽"></div>
-      <div><label class="search-label">Страны поиска</label><div class="search-chips">${SEARCH_COUNTRIES.map(x=>`<button type="button" class="search-chip" data-group="country" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}</div></div>
+    <div class="search-form-section">
+      <label class="search-label">Максимальный бюджет</label>
+      <input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽">
     </div>
     <div class="search-form-section">
       <label class="search-label">${similar?'Расскажи подробнее':'Что особенно важно?'}</label>
@@ -6059,7 +6061,6 @@ function searchFormHTML(type){
       <div><label class="search-label">Бюджет · необязательно</label><input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽"></div>
     </div>
     <div class="search-form-section"><label class="search-label">Состояние · необязательно</label><div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div></div>
-    <div class="search-form-section"><label class="search-label">Страны поиска · необязательно</label><div class="search-chips">${SEARCH_COUNTRIES.map(x=>`<button type="button" class="search-chip" data-group="country" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}</div></div>
     <div class="search-form-section"><label class="search-label">Срочность</label><div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div></div>` : ''}
    <button class="btn btn-primary btn-block search-submit" id="search-submit-btn" type="submit">Создать запрос</button>
   </form>
@@ -6080,13 +6081,27 @@ function selectSearchChip(el,group){
 function selectedSearchValue(group){
  return document.querySelector(`.search-chip.selected[data-group="${group}"]`)?.dataset.value || '';
 }
-function selectedSearchCountries(){
- return Array.from(document.querySelectorAll('.search-chip.selected[data-group="country"]')).map(x=>x.dataset.value);
-}
 function previewSearchFiles(input){
  searchSelectedFiles=Array.from(input.files||[]).slice(0,8);
+ renderSearchFilePreviews();
+}
+function renderSearchFilePreviews(){
  const box=document.getElementById('search-previews'); if(!box)return;
- box.innerHTML=searchSelectedFiles.map(f=>`<img class="search-preview" src="${URL.createObjectURL(f)}" alt="">`).join('');
+ box.innerHTML=searchSelectedFiles.map((f,i)=>`<div class="search-preview-item">
+   <img class="search-preview" src="${URL.createObjectURL(f)}" alt="">
+   <button type="button" class="search-preview-remove" aria-label="Удалить фото" onclick="removeSearchFile(${i})">×</button>
+ </div>`).join('');
+}
+function removeSearchFile(index){
+ if(index<0||index>=searchSelectedFiles.length)return;
+ searchSelectedFiles.splice(index,1);
+ const input=document.getElementById('search-files');
+ if(input){
+   const dt=new DataTransfer();
+   searchSelectedFiles.forEach(f=>dt.items.add(f));
+   input.files=dt.files;
+ }
+ renderSearchFilePreviews();
 }
 function renderSearchHome(){
  searchFormType=null; searchSelectedFiles=[];
@@ -6129,7 +6144,7 @@ async function submitSearchRequest(event,type){
   line:type==='specific'?(fd.get('line')||''):'',
   brand:fd.get('brand')||'', budget_max:fd.get('budget_max')||'',
   condition:selectedSearchValue('condition'), completeness:selectedSearchValue('completeness'),
-  countries:selectedSearchCountries(), urgency:selectedSearchValue('urgency'),
+  urgency:selectedSearchValue('urgency'),
   important:fd.get('important')||'', description:fd.get('important')||'',
   similar_features:Array.from(document.querySelectorAll('#search-features .selected')).map(x=>x.dataset.value)
  };
@@ -6169,7 +6184,6 @@ function renderSearchDetail(resultId){
   <div class="search-requirement"><span>Бюджет</span><b>${r.budget_max!=null?Number(r.budget_max).toLocaleString('ru-RU')+' ₽':'Не указан'}</b></div>
   <div class="search-requirement"><span>Состояние</span><b>${escapeHtml(r.condition_label||'Не указано')}</b></div>
   <div class="search-requirement"><span>Комплектация</span><b>${escapeHtml(r.completeness_label||'Не указано')}</b></div>
-  <div class="search-requirement"><span>Страны</span><b>${escapeHtml((r.country_labels||[]).join(' / ')||'Не указано')}</b></div>
  </div>`;
  const results=(r.results||[]).map(x=>searchResultHTML(x,r)).join('');
  c.innerHTML=`<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Все запросы</button>
