@@ -5940,7 +5940,313 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 </script>
 
-<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед </body>) ===== -->
+<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
+<!-- =========================================================
+     DollieLand — предложение установить приложение
+     Показывается ОДИН РАЗ при первом открытии Mini App
+     внутри Telegram.
+     ========================================================= -->
+<div id="dl-install-prompt"
+     class="dl-install-prompt"
+     aria-hidden="true">
+  <div class="dl-install-backdrop"></div>
+
+  <div class="dl-install-card" role="dialog"
+       aria-modal="true"
+       aria-labelledby="dl-install-title">
+
+    <button type="button"
+            class="dl-install-close"
+            id="dl-install-close"
+            aria-label="Закрыть">
+      <svg class="icon"><use href="#icon-x"/></svg>
+    </button>
+
+    <div class="dl-install-icon">
+      <img src="icons/icon-192.png" alt="">
+    </div>
+
+    <div class="dl-install-title" id="dl-install-title">
+      Скачайте DollieLand
+    </div>
+
+    <div class="dl-install-text">
+      Установите DollieLand на телефон, чтобы открывать приложение
+      быстрее и пользоваться им как обычным приложением.
+    </div>
+
+    <button type="button"
+            class="btn btn-primary btn-block"
+            id="dl-install-download">
+      Скачать приложение
+    </button>
+
+    <button type="button"
+            class="btn btn-tertiary btn-block"
+            id="dl-install-later">
+      Позже
+    </button>
+  </div>
+</div>
+
+<style>
+  .dl-install-prompt {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding:
+      18px
+      18px
+      calc(18px + env(safe-area-inset-bottom, 0px));
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .22s ease, visibility .22s ease;
+  }
+
+  .dl-install-prompt.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .dl-install-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(57, 44, 49, .42);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  .dl-install-card {
+    position: relative;
+    z-index: 1;
+    width: min(480px, 100%);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 25px 19px 19px;
+    box-shadow: 0 -12px 48px rgba(57, 44, 49, .20);
+    transform: translateY(22px);
+    transition: transform .30s cubic-bezier(.22,1,.36,1);
+    text-align: center;
+  }
+
+  .dl-install-prompt.open .dl-install-card {
+    transform: translateY(0);
+  }
+
+  .dl-install-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    background: var(--surface-soft);
+  }
+
+  .dl-install-close .icon {
+    width: 17px;
+    height: 17px;
+  }
+
+  .dl-install-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 15px;
+    border-radius: 21px;
+    overflow: hidden;
+    background: var(--pink-soft);
+    box-shadow: 0 10px 26px rgba(231, 142, 173, .20);
+  }
+
+  .dl-install-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .dl-install-title {
+    font-size: 21px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -.3px;
+  }
+
+  .dl-install-text {
+    max-width: 350px;
+    margin: 8px auto 16px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  .dl-install-card .btn-block {
+    margin-top: 8px;
+  }
+
+  .dl-install-card .btn-tertiary {
+    margin-top: 3px;
+  }
+</style>
+
+
+<script>
+(function () {
+  'use strict';
+
+  /*
+   * Окно установки показываем только:
+   * 1. внутри Telegram Mini App;
+   * 2. один раз на данном устройстве/браузере.
+   *
+   * "Позже", X и "Скачать приложение" помечают окно как уже показанное,
+   * поэтому при следующих открытиях Mini App автоматически оно не появится.
+   */
+  var DL_INSTALL_KEY = 'dollieland_miniapp_install_prompt_shown';
+
+  function isTelegramMiniApp() {
+    try {
+      var tg = window.Telegram && window.Telegram.WebApp;
+      return !!(tg && tg.initData);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function getEl(id) {
+    return document.getElementById(id);
+  }
+
+  function wasShown() {
+    try {
+      return localStorage.getItem(DL_INSTALL_KEY) === '1';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function markShown() {
+    try {
+      localStorage.setItem(DL_INSTALL_KEY, '1');
+    } catch (_) {}
+  }
+
+  function openPrompt() {
+    var prompt = getEl('dl-install-prompt');
+    if (!prompt) return;
+
+    prompt.setAttribute('aria-hidden', 'false');
+
+    requestAnimationFrame(function () {
+      prompt.classList.add('open');
+    });
+  }
+
+  function closePrompt() {
+    var prompt = getEl('dl-install-prompt');
+    if (!prompt) return;
+
+    markShown();
+
+    prompt.classList.remove('open');
+    prompt.setAttribute('aria-hidden', 'true');
+  }
+
+  function openInBrowser() {
+    /*
+     * Telegram не может установить PWA непосредственно внутри
+     * WebView Mini App. Поэтому открываем эту же страницу во внешнем
+     * браузере.
+     */
+    var url = window.location.href;
+
+    try {
+      var tg = window.Telegram && window.Telegram.WebApp;
+
+      if (tg && typeof tg.openLink === 'function') {
+        tg.openLink(url);
+        return;
+      }
+    } catch (_) {}
+
+    try {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (_) {
+      window.location.href = url;
+    }
+  }
+
+  function initInstallPrompt() {
+    /*
+     * В обычном браузере окно НЕ показываем.
+     * Оно предназначено именно для входа в Mini App через Telegram.
+     */
+    if (!isTelegramMiniApp()) return;
+
+    /*
+     * Уже показывали ранее — не показываем повторно.
+     */
+    if (wasShown()) return;
+
+    /*
+     * Дожидаемся первого нормального открытия интерфейса,
+     * чтобы окно появилось поверх уже загруженного Mini App,
+     * а не вместо него.
+     */
+    setTimeout(function () {
+      if (!wasShown() && isTelegramMiniApp()) {
+        openPrompt();
+      }
+    }, 650);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var closeBtn = getEl('dl-install-close');
+    var laterBtn = getEl('dl-install-later');
+    var downloadBtn = getEl('dl-install-download');
+    var backdrop = document.querySelector('.dl-install-backdrop');
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closePrompt);
+    }
+
+    if (laterBtn) {
+      laterBtn.addEventListener('click', closePrompt);
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closePrompt);
+    }
+
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', function () {
+        /*
+         * Сначала запоминаем показ, чтобы после возврата в Telegram
+         * окно не появилось снова.
+         */
+        markShown();
+        openInBrowser();
+        closePrompt();
+      });
+    }
+
+    initInstallPrompt();
+  });
+})();
+</script>
+
+</body>) ===== -->
 <script>
 (function () {
   /* ---------- Карточка «Добавить заказ» сверху вкладки «Мои заказы» ---------- */
