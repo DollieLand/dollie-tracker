@@ -1944,6 +1944,20 @@
   }
 
 </style>
+
+<style id="search-photo-zoom-css">
+#photo-lightbox-viewport .lightbox-track img,
+#photo-lightbox-viewport img {
+  touch-action: none;
+  transform-origin: center center;
+  will-change: transform;
+}
+#photo-lightbox-viewport .lightbox-slide,
+#photo-lightbox-viewport .photo-lightbox-slide {
+  overflow: hidden;
+}
+</style>
+
 </head>
 <body>
 
@@ -7200,7 +7214,189 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 </script>
 
-<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед </body> ===== -->
+<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
+<script id="search-photo-zoom-js">
+(function () {
+  let dlZoom = {
+    scale: 1,
+    x: 0,
+    y: 0,
+    startScale: 1,
+    startDistance: 0,
+    startX: 0,
+    startY: 0,
+    startPanX: 0,
+    startPanY: 0,
+    lastTap: 0,
+    pinching: false,
+    moved: false
+  };
+
+  function dlZoomImg() {
+    const vp = document.getElementById('photo-lightbox-viewport');
+    if (!vp) return null;
+    return vp.querySelector('.lightbox-track img, .photo-lightbox-slide img, img');
+  }
+
+  function dlApplyZoom() {
+    const img = dlZoomImg();
+    if (!img) return;
+    img.style.transform =
+      `translate3d(${dlZoom.x}px, ${dlZoom.y}px, 0) scale(${dlZoom.scale})`;
+  }
+
+  function dlResetZoom() {
+    dlZoom.scale = 1;
+    dlZoom.x = 0;
+    dlZoom.y = 0;
+    dlZoom.pinching = false;
+    dlZoom.moved = false;
+    const img = dlZoomImg();
+    if (img) {
+      img.style.transition = 'transform .18s ease';
+      img.style.transform = 'translate3d(0,0,0) scale(1)';
+      setTimeout(() => {
+        if (img) img.style.transition = '';
+      }, 190);
+    }
+  }
+
+  function dlDistance(a, b) {
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
+
+  function dlMidpoint(a, b) {
+    return {
+      x: (a.clientX + b.clientX) / 2,
+      y: (a.clientY + b.clientY) / 2
+    };
+  }
+
+  document.addEventListener('touchstart', function (e) {
+    const vp = e.target.closest && e.target.closest('#photo-lightbox-viewport');
+    if (!vp) return;
+
+    const img = dlZoomImg();
+    if (!img) return;
+
+    if (e.touches.length === 2) {
+      dlZoom.pinching = true;
+      dlZoom.moved = true;
+      dlZoom.startDistance = dlDistance(e.touches[0], e.touches[1]);
+      dlZoom.startScale = dlZoom.scale;
+      const mid = dlMidpoint(e.touches[0], e.touches[1]);
+      dlZoom.startX = mid.x;
+      dlZoom.startY = mid.y;
+      dlZoom.startPanX = dlZoom.x;
+      dlZoom.startPanY = dlZoom.y;
+      img.style.transition = 'none';
+      e.preventDefault();
+      return;
+    }
+
+    if (e.touches.length === 1 && dlZoom.scale > 1) {
+      dlZoom.startX = e.touches[0].clientX;
+      dlZoom.startY = e.touches[0].clientY;
+      dlZoom.startPanX = dlZoom.x;
+      dlZoom.startPanY = dlZoom.y;
+      dlZoom.moved = false;
+    }
+  }, {passive: false});
+
+  document.addEventListener('touchmove', function (e) {
+    const vp = e.target.closest && e.target.closest('#photo-lightbox-viewport');
+    if (!vp) return;
+
+    const img = dlZoomImg();
+    if (!img) return;
+
+    if (e.touches.length === 2 && dlZoom.pinching) {
+      const d = dlDistance(e.touches[0], e.touches[1]);
+      if (!dlZoom.startDistance) return;
+      dlZoom.scale = Math.max(1, Math.min(4, dlZoom.startScale * d / dlZoom.startDistance));
+
+      const mid = dlMidpoint(e.touches[0], e.touches[1]);
+      dlZoom.x = dlZoom.startPanX + (mid.x - dlZoom.startX);
+      dlZoom.y = dlZoom.startPanY + (mid.y - dlZoom.startY);
+      dlZoom.moved = true;
+      dlApplyZoom();
+      e.preventDefault();
+      return;
+    }
+
+    if (e.touches.length === 1 && dlZoom.scale > 1) {
+      const dx = e.touches[0].clientX - dlZoom.startX;
+      const dy = e.touches[0].clientY - dlZoom.startY;
+      if (Math.abs(dx) + Math.abs(dy) > 3) dlZoom.moved = true;
+      dlZoom.x = dlZoom.startPanX + dx;
+      dlZoom.y = dlZoom.startPanY + dy;
+      dlApplyZoom();
+      e.preventDefault();
+    }
+  }, {passive: false});
+
+  document.addEventListener('touchend', function (e) {
+    const vp = e.target.closest && e.target.closest('#photo-lightbox-viewport');
+    if (!vp) return;
+
+    const now = Date.now();
+
+    // Double tap toggles between normal and 2x zoom.
+    if (e.touches.length === 0 && !dlZoom.pinching && !dlZoom.moved) {
+      if (now - dlZoom.lastTap < 300) {
+        dlZoom.scale = dlZoom.scale > 1 ? 1 : 2;
+        dlZoom.x = 0;
+        dlZoom.y = 0;
+        const img = dlZoomImg();
+        if (img) {
+          img.style.transition = 'transform .18s ease';
+          dlApplyZoom();
+          setTimeout(() => {
+            if (img) img.style.transition = '';
+          }, 190);
+        }
+        dlZoom.lastTap = 0;
+        e.preventDefault();
+        return;
+      }
+      dlZoom.lastTap = now;
+    }
+
+    if (dlZoom.pinching) {
+      dlZoom.pinching = false;
+      if (dlZoom.scale < 1.05) dlResetZoom();
+    }
+
+    if (e.touches.length === 0 && dlZoom.scale > 1) {
+      const img = dlZoomImg();
+      if (img) img.style.transition = 'transform .12s ease';
+    }
+  }, {passive: false});
+
+  // Reset zoom whenever the lightbox is opened/switched to another photo.
+  const observer = new MutationObserver(function () {
+    const vp = document.getElementById('photo-lightbox-viewport');
+    if (!vp) return;
+    const img = dlZoomImg();
+    if (img && !img.dataset.dlZoomBound) {
+      img.dataset.dlZoomBound = '1';
+      dlResetZoom();
+    }
+  });
+
+  const root = document.body || document.documentElement;
+  if (root) observer.observe(root, {childList: true, subtree: true});
+
+  document.addEventListener('click', function (e) {
+    const close = e.target.closest && e.target.closest('#photo-lightbox-close, .photo-lightbox-close');
+    if (close) dlResetZoom();
+  }, true);
+
+  window.dlResetPhotoZoom = dlResetZoom;
+})();
+</script>
+
+</body> ===== -->
 <script>
 (function () {
   /* ---------- Карточка «Добавить заказ» сверху вкладки «Мои заказы» ---------- */
