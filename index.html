@@ -1847,6 +1847,63 @@
   .sr-modal-actions .btn { margin: 0; width: 100%; padding-left: 10px; padding-right: 10px; }
   .btn-danger { background: #C4324A; color: #fff; box-shadow: 0 8px 18px rgba(196,50,74,.22); }
   .btn-danger:disabled { opacity: .45; box-shadow: none; }
+
+/* ---------- Каталог: заметная карточка «Поиск для меня» ---------- */
+.catalog-search-entry {
+  display: block;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 5px 18px rgba(0,0,0,.06);
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+}
+.catalog-search-entry .search-entry-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 76px;
+  padding: 14px 14px 14px 16px;
+}
+.catalog-search-entry .search-entry-icon {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: var(--pink-soft);
+  color: var(--pink-accent);
+}
+.catalog-search-entry .search-entry-icon .icon {
+  width: 21px;
+  height: 21px;
+}
+.catalog-search-entry .search-entry-title {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.catalog-search-entry .search-entry-sub {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+.catalog-search-entry > .search-entry-top > .icon {
+  flex: 0 0 auto !important;
+  width: 20px !important;
+  height: 20px !important;
+  margin-left: auto;
+  color: var(--text-secondary);
+}
+.sr-h1 { font-style: normal; }
 </style>
 </head>
 <body>
