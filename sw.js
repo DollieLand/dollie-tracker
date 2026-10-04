@@ -3,7 +3,7 @@
    оно мгновенно открывалось с иконки. Запросы к API (другой домен) не
    трогаем — заказы и баланс всегда берутся свежими с сервера.
    При обновлении index.html или pwa.js поменяйте VERSION. */
-const VERSION = 'dl-v2';
+const VERSION = 'dl-v3';
 const SHELL = ['./', './index.html', './pwa.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
