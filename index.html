@@ -1604,6 +1604,75 @@
   .req-total-row.final b { font-size: 18px; color: var(--pink-accent); }
   .req-total-old { text-decoration: line-through; color: var(--text-secondary); font-weight: 600; font-size: 12.5px; margin-right: 6px; }
   .req-total-hint { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
+
+  /* ================= SEARCH REQUESTS ================= */
+  .search-entry-card{
+    width:100%; text-align:left; border:1px solid var(--border); border-radius:var(--r-xl);
+    padding:18px; margin-top:12px; background:linear-gradient(145deg,var(--surface),var(--surface-soft));
+    box-shadow:var(--shadow-soft); transition:transform .16s ease,border-color .16s ease;
+  }
+  .search-entry-card:active{transform:scale(.985)}
+  .search-entry-top{display:flex;align-items:center;gap:13px}
+  .search-entry-icon{width:46px;height:46px;border-radius:16px;background:var(--pink-soft);color:var(--pink-accent);display:flex;align-items:center;justify-content:center;flex:none}
+  .search-entry-icon .icon{width:23px;height:23px}
+  .search-entry-title{font-size:15px;font-weight:800}
+  .search-entry-sub{font-size:12px;color:var(--text-secondary);line-height:1.45;margin-top:3px}
+  .search-screen-intro{font-size:13px;color:var(--text-secondary);line-height:1.5;margin:6px 0 18px}
+  .search-choice-grid{display:grid;gap:12px}
+  .search-choice{
+    width:100%; text-align:left; padding:19px; border:1px solid var(--border);border-radius:22px;
+    background:linear-gradient(145deg,var(--surface),var(--surface-soft));box-shadow:var(--shadow-soft);
+    position:relative;overflow:hidden;transition:transform .16s ease;
+  }
+  .search-choice:active{transform:scale(.985)}
+  .search-choice-icon{width:45px;height:45px;border-radius:15px;background:var(--pink-soft);color:var(--pink-accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .search-choice-icon .icon{width:22px;height:22px}
+  .search-choice h3{font-size:15px;font-weight:800;margin:0}
+  .search-choice p{font-size:12.5px;color:var(--text-secondary);margin:5px 0 14px;line-height:1.45}
+  .search-choice-cta{display:flex;align-items:center;justify-content:space-between;color:var(--pink-accent);font-size:12.5px;font-weight:800}
+  .search-form-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:18px;box-shadow:var(--shadow-soft)}
+  .search-form-section{margin-top:18px}.search-form-section:first-child{margin-top:0}
+  .search-label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:var(--text)}
+  .search-input,.search-textarea,.search-select{
+    width:100%;min-height:46px;padding:12px 13px;border:1px solid var(--border);border-radius:14px;
+    background:var(--surface);color:var(--text);font-size:13px;outline:none;
+  }
+  .search-textarea{min-height:90px;resize:vertical;line-height:1.5}
+  .search-input:focus,.search-textarea:focus,.search-select:focus{border-color:var(--pink-accent);box-shadow:0 0 0 3px rgba(231,142,173,.12)}
+  .search-two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .search-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .search-chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:9px 12px;font-size:11.5px;font-weight:700;color:var(--text)}
+  .search-chip.selected{border-color:var(--pink-accent);background:var(--pink-soft);color:var(--pink-accent)}
+  .search-upload{
+    border:1px dashed var(--pink);border-radius:18px;background:var(--surface-soft);padding:16px;text-align:center;cursor:pointer
+  }
+  .search-upload .icon{color:var(--pink-accent);width:25px;height:25px;margin-bottom:5px}
+  .search-upload-title{font-size:13px;font-weight:800}.search-upload-sub{font-size:11px;color:var(--text-secondary);margin-top:3px}
+  .search-previews{display:flex;gap:8px;overflow:auto;margin-top:10px;padding-bottom:2px}
+  .search-preview{width:72px;height:72px;border-radius:12px;object-fit:cover;flex:none;border:1px solid var(--border)}
+  .search-submit{margin-top:18px}
+  .search-back{display:inline-flex;align-items:center;gap:5px;color:var(--text-secondary);font-size:12.5px;font-weight:700;margin-bottom:14px}
+  .search-status-card{padding:18px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,var(--surface-soft),var(--surface));margin-bottom:14px}
+  .search-status-pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--pink-soft);color:var(--pink-accent);font-size:10.5px;font-weight:800}
+  .search-detail-title{font-size:22px;font-weight:800;margin-top:10px;letter-spacing:-.3px}
+  .search-detail-sub{font-size:12.5px;color:var(--text-secondary);margin-top:3px}
+  .search-requirements{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+  .search-requirement{padding:10px 11px;border:1px solid var(--border);border-radius:13px;background:var(--surface)}
+  .search-requirement span{display:block;color:var(--text-secondary);font-size:10px}.search-requirement b{display:block;font-size:12px;margin-top:3px}
+  .search-request-photo-row,.search-result-photo-row{display:flex;gap:9px;overflow-x:auto;padding-bottom:3px}
+  .search-request-photo,.search-result-photo{width:92px;height:112px;border-radius:15px;object-fit:cover;flex:none;border:1px solid var(--border);background:var(--surface-soft)}
+  .search-result-card{background:var(--surface);border:1px solid var(--border);border-radius:21px;padding:13px;box-shadow:var(--shadow-soft);margin-top:11px}
+  .search-result-photo-row .search-result-photo{width:145px;height:170px}
+  .search-result-title{font-size:15px;font-weight:800;margin-top:11px}.search-result-line{font-size:12px;color:var(--text-secondary);margin-top:3px}
+  .search-result-price{font-size:19px;font-weight:800;margin-top:8px;color:var(--text)}
+  .search-result-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .search-result-meta span{font-size:10.5px;font-weight:700;padding:6px 8px;border-radius:999px;background:var(--surface-soft);color:var(--text-secondary)}
+  .search-result-description{font-size:12.5px;line-height:1.5;color:var(--text-secondary);margin-top:10px}
+  .search-empty{padding:30px 12px;text-align:center;color:var(--text-secondary)}
+  .search-empty h3{font-size:15px;color:var(--text);margin-bottom:5px}
+  .search-history{display:grid;gap:8px}.search-history-row{padding:10px 12px;border-left:3px solid var(--pink);background:var(--surface-soft);border-radius:0 11px 11px 0;font-size:11.5px}
+  @media(max-width:360px){.search-two-col,.search-requirements{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -1941,6 +2010,15 @@
     <div id="fortune-content"></div>
   </main>
 
+  <main class="tab-screen" id="tab-search">
+    <button type="button" class="search-back" onclick="switchTab('profile')">
+      <svg class="icon" style="width:17px;height:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Профиль
+    </button>
+    <header class="screen-header"><h1>Поиск для меня</h1></header>
+    <p class="search-screen-intro">Расскажи, какую куклу ты ищешь — мы попробуем её найти.</p>
+    <div id="search-screen-content"></div>
+  </main>
+
   <main class="tab-screen" id="tab-orders">
     <header class="screen-header">
       <h1>Мои заказы</h1>
@@ -2018,6 +2096,17 @@
         <span class="label">Уведомления</span>
         <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
       </button>
+      <button class="search-entry-card" onclick="openSearchRequests()">
+        <div class="search-entry-top">
+          <div class="search-entry-icon"><svg class="icon"><use href="#icon-camera"/></svg></div>
+          <div style="min-width:0;flex:1">
+            <div class="search-entry-title">Поиск для меня</div>
+            <div class="search-entry-sub">Расскажи, какую куклу ты ищешь — мы попробуем её найти.</div>
+          </div>
+          <svg class="icon" style="color:var(--text-secondary);width:18px"><use href="#icon-chevron-right"/></svg>
+        </div>
+      </button>
+
       <button class="menu-item" onclick="openPrivacySheet()">
         <svg class="icon"><use href="#icon-shield"/></svg>
         <span class="label">Конфиденциальность</span>
@@ -2803,6 +2892,7 @@ function switchTab(name) {
   if (name === 'orders' && !ordersCache.length) loadOrders(false);
   if (name === 'catalog') loadCatalog(false);
   if (name === 'fortune') { renderFortune(); loadFortuneStatus(); }
+  if (name === 'search') { if (!searchCurrent && !searchFormType) renderSearchHome(); else if (searchCurrent) renderSearchDetail(); }
   syncBackButton();
 }
 
@@ -5869,6 +5959,292 @@ function showToast(msg) {
 
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
+
+/* ============ SEARCH REQUESTS ============ */
+let searchRequestsCache = [];
+let searchCurrent = null;
+let searchFormType = null;
+let searchSelectedFiles = [];
+
+const SEARCH_STATUS_LABELS = {
+  NEW:'Новый запрос', SEARCHING:'Ищем варианты', FOUND:'Найден вариант',
+  WAITING_USER:'Ждём вашего решения', MORE_SEARCH:'Ищем другие варианты',
+  SELECTED:'Вариант выбран', ORDERED:'Заказ оформлен', CLOSED:'Запрос закрыт'
+};
+const SEARCH_BRANDS = ['Monster High','Bratz','Barbie','Ever After High','Rainbow High','Shadow High','Другое'];
+const SEARCH_CONDITIONS = [['new','Новая'],['like_new','Как новая'],['good','Хорошее'],['minor_defects','Можно с небольшими дефектами'],['any','Неважно']];
+const SEARCH_COMPLETENESS = [['full','Полная'],['prefer_full','Желательно полная'],['any','Неважно']];
+const SEARCH_URGENCY = [['not_urgent','Не срочно'],['normal','Обычный поиск'],['notify_fast','Если появится — сообщите сразу']];
+const SEARCH_COUNTRIES = [['usa','США'],['china','Китай'],['europe','Европа'],['any','Неважно']];
+
+function searchDate(iso){
+  if(!iso)return '';
+  const d=new Date(iso); if(isNaN(d))return '';
+  return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+}
+function searchStatus(status){return SEARCH_STATUS_LABELS[status]||status||''}
+function openSearchRequests(){
+  switchTab('search');
+  loadSearchRequests();
+}
+function searchChoiceHTML(){
+ return `<div class="search-choice-grid">
+   <button class="search-choice" onclick="openSearchForm('specific')">
+    <div class="search-choice-icon"><svg class="icon"><use href="#icon-camera"/></svg></div>
+    <h3>Найти конкретную куклу</h3><p>Я знаю, какую куклу хочу</p>
+    <div class="search-choice-cta">Создать запрос <svg class="icon" style="width:17px"><use href="#icon-chevron-right"/></svg></div>
+   </button>
+   <button class="search-choice" onclick="openSearchForm('similar')">
+    <div class="search-choice-icon"><svg class="icon"><use href="#icon-image"/></svg></div>
+    <h3>Найти похожую</h3><p>Покажи фото — попробуем подобрать что-то похожее</p>
+    <div class="search-choice-cta">Подобрать <svg class="icon" style="width:17px"><use href="#icon-chevron-right"/></svg></div>
+   </button>
+ </div>
+ <div style="margin:22px 0 9px;font-size:15px;font-weight:800">Мои запросы</div>
+ <div id="search-my-list"></div>`;
+}
+function searchFormHTML(type){
+ const similar=type==='similar';
+ return `<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад</button>
+ <div class="search-form-card">
+  <div style="font-size:18px;font-weight:800;margin-bottom:4px">${similar?'Найти похожую':'Найти конкретную куклу'}</div>
+  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:18px">${similar?'Покажи фото и расскажи, что именно тебе нравится.':'Если не знаешь название — просто покажи нам куклу.'}</div>
+  <form onsubmit="submitSearchRequest(event,'${type}')">
+   <div class="search-form-section">
+    <label class="search-label">Фотографии</label>
+    <label class="search-upload">
+      <svg class="icon"><use href="#icon-camera"/></svg>
+      <div class="search-upload-title">Добавить фотографии</div>
+      <div class="search-upload-sub">Можно выбрать несколько · до 8 фото</div>
+      <input id="search-files" type="file" accept=".jpg,.jpeg,.png,.webp" multiple hidden onchange="previewSearchFiles(this)">
+    </label>
+    <div id="search-previews" class="search-previews"></div>
+   </div>
+   ${similar ? `<div class="search-form-section">
+      <label class="search-label">Что тебе нравится в этой кукле?</label>
+      <div class="search-chips" id="search-features">
+       ${[['face','лицо'],['hair','волосы'],['clothing','одежда'],['style','стиль'],['colors','цветовая гамма'],['outfit','образ'],['all','всё вместе']].map(x=>`<button type="button" class="search-chip" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}
+      </div>
+    </div>` : `<div class="search-two-col search-form-section">
+      <div><label class="search-label">Имя / персонаж</label><input class="search-input" name="character" placeholder="Spectra Vondergeist"></div>
+      <div><label class="search-label">Линейка</label><input class="search-input" name="line" placeholder="Dawn of the Dance"></div>
+    </div>
+    <div class="search-form-section">
+      <label class="search-label">Бренд</label>
+      <select class="search-select" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x=>`<option>${x}</option>`).join('')}</select>
+    </div>
+    <div class="search-form-section">
+      <label class="search-label">Состояние</label>
+      <div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div>
+    </div>
+    <div class="search-form-section">
+      <label class="search-label">Комплектация</label>
+      <div class="search-chips">${SEARCH_COMPLETENESS.map(x=>`<button type="button" class="search-chip" data-group="completeness" data-value="${x[0]}" onclick="selectSearchChip(this,'completeness')">${x[1]}</button>`).join('')}</div>
+    </div>
+    <div class="search-two-col search-form-section">
+      <div><label class="search-label">Максимальный бюджет</label><input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽"></div>
+      <div><label class="search-label">Страны поиска</label><div class="search-chips">${SEARCH_COUNTRIES.map(x=>`<button type="button" class="search-chip" data-group="country" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}</div></div>
+    </div>
+    <div class="search-form-section">
+      <label class="search-label">${similar?'Расскажи подробнее':'Что особенно важно?'}</label>
+      <textarea class="search-textarea" name="important" placeholder="${similar?'Хочу похожую по атмосфере, но не обязательно именно эту куклу.':'Обязательно оригинальные туфли и дневник. Небольшие потёртости допустимы.'}"></textarea>
+    </div>
+    <div class="search-form-section">
+      <label class="search-label">Срочность</label>
+      <div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div>
+    </div>
+   `}
+   ${similar ? `<div class="search-two-col search-form-section">
+      <div><label class="search-label">Бренд · необязательно</label><select class="search-select" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x=>`<option>${x}</option>`).join('')}</select></div>
+      <div><label class="search-label">Бюджет · необязательно</label><input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽"></div>
+    </div>
+    <div class="search-form-section"><label class="search-label">Состояние · необязательно</label><div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div></div>
+    <div class="search-form-section"><label class="search-label">Страны поиска · необязательно</label><div class="search-chips">${SEARCH_COUNTRIES.map(x=>`<button type="button" class="search-chip" data-group="country" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}</div></div>
+    <div class="search-form-section"><label class="search-label">Срочность</label><div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div></div>` : ''}
+   <button class="btn btn-primary btn-block search-submit" id="search-submit-btn" type="submit">Создать запрос</button>
+  </form>
+ </div>`;
+}
+function toggleSearchChip(el){
+ el.classList.toggle('selected');
+ if(el.dataset.value==='all' && el.classList.contains('selected')) {
+   el.parentElement.querySelectorAll('.search-chip').forEach(x=>{if(x!==el)x.classList.remove('selected')});
+ }
+ if(el.dataset.value!=='all' && el.classList.contains('selected')) {
+   const all=el.parentElement.querySelector('.search-chip[data-value="all"]'); if(all)all.classList.remove('selected');
+ }
+}
+function selectSearchChip(el,group){
+ el.parentElement.querySelectorAll('.search-chip').forEach(x=>x.classList.remove('selected')); el.classList.add('selected');
+}
+function selectedSearchValue(group){
+ return document.querySelector(`.search-chip.selected[data-group="${group}"]`)?.dataset.value || '';
+}
+function selectedSearchCountries(){
+ return Array.from(document.querySelectorAll('.search-chip.selected[data-group="country"]')).map(x=>x.dataset.value);
+}
+function previewSearchFiles(input){
+ searchSelectedFiles=Array.from(input.files||[]).slice(0,8);
+ const box=document.getElementById('search-previews'); if(!box)return;
+ box.innerHTML=searchSelectedFiles.map(f=>`<img class="search-preview" src="${URL.createObjectURL(f)}" alt="">`).join('');
+}
+function renderSearchHome(){
+ searchFormType=null; searchSelectedFiles=[];
+ const c=document.getElementById('search-screen-content'); if(!c)return;
+ c.innerHTML=searchChoiceHTML(); loadSearchRequests();
+}
+async function loadSearchRequests(){
+ const c=document.getElementById('search-screen-content'); if(!c)return;
+ if(!searchFormType && !searchCurrent)c.innerHTML=searchChoiceHTML();
+ try{
+  const d=await apiFetch('/api/me/search_requests',{}, {timeoutMs:10000,retries:1});
+  if(!d.ok)throw new Error('load');
+  searchRequestsCache=d.requests||[];
+  renderSearchMyList();
+ }catch(e){const el=document.getElementById('search-my-list');if(el)el.innerHTML='<div class="search-empty"><h3>Не удалось загрузить запросы</h3><p>Попробуйте ещё раз.</p></div>'}
+}
+function renderSearchMyList(){
+ const el=document.getElementById('search-my-list'); if(!el)return;
+ if(!searchRequestsCache.length){el.innerHTML='<div class="search-empty"><h3>Пока здесь пусто</h3><p>Создай запрос, и мы начнём поиск.</p></div>';return}
+ el.innerHTML=searchRequestsCache.map(r=>`<button class="search-entry-card" style="margin-top:9px" onclick="openSearchRequest('${escapeAttr(r.id)}')">
+  <div class="search-entry-top"><div class="search-entry-icon"><svg class="icon"><use href="#icon-camera"/></svg></div><div style="min-width:0;flex:1">
+  <div class="search-entry-title">${escapeHtml(r.title||r.character||'Запрос без названия')}</div><div class="search-entry-sub">${escapeHtml(r.line||r.type_label)} · ${escapeHtml(r.status_label)}</div>
+  <div style="font-size:11px;color:var(--text-secondary);margin-top:5px">${r.results_count||0} ${pluralize(r.results_count||0,'вариант','варианта','вариантов')} · ${searchDate(r.created_at)}</div>
+  </div><svg class="icon" style="color:var(--text-secondary);width:18px"><use href="#icon-chevron-right"/></svg></div>
+ </button>`).join('');
+}
+function openSearchForm(type){
+ searchFormType=type; searchCurrent=null; searchSelectedFiles=[];
+ const c=document.getElementById('search-screen-content'); if(c)c.innerHTML=searchFormHTML(type);
+ window.scrollTo(0,0);
+}
+async function submitSearchRequest(event,type){
+ event.preventDefault(); if(!userId)return;
+ const form=event.target, btn=document.getElementById('search-submit-btn');
+ if(btn){btn.disabled=true;btn.textContent='Создаём запрос…'}
+ const fd=new FormData(form);
+ const payload={
+  type, title: type==='specific' ? (fd.get('character')||'') : '',
+  character: type==='specific' ? (fd.get('character')||'') : '',
+  line:type==='specific'?(fd.get('line')||''):'',
+  brand:fd.get('brand')||'', budget_max:fd.get('budget_max')||'',
+  condition:selectedSearchValue('condition'), completeness:selectedSearchValue('completeness'),
+  countries:selectedSearchCountries(), urgency:selectedSearchValue('urgency'),
+  important:fd.get('important')||'', description:fd.get('important')||'',
+  similar_features:Array.from(document.querySelectorAll('#search-features .selected')).map(x=>x.dataset.value)
+ };
+ try{
+  const d=await apiPost('/api/me/search_requests',payload);
+  if(!d.ok)throw new Error(d.error||'create_failed');
+  const rid=d.request.id;
+  if(searchSelectedFiles.length){
+   const imageFd=new FormData(); searchSelectedFiles.forEach(f=>imageFd.append('images',f,f.name));
+   const h={};Object.assign(h,DL_PWA.authHeaders());
+   const res=await fetch(API_BASE+'/api/me/search_requests/'+encodeURIComponent(rid)+'/images',{method:'POST',headers:h,body:imageFd});
+   const idata=await res.json(); if(!idata.ok)throw new Error(idata.error||'photo_failed');
+  }
+  hapticNotification('success'); showToast('Запрос создан');
+  await openSearchRequest(rid);
+ }catch(e){
+  showToast(e.message==='too_many_images'?'Можно прикрепить максимум 8 фото':e.message==='photo_too_large'?'Фото слишком большое':'Не удалось создать запрос');
+  if(btn){btn.disabled=false;btn.textContent='Создать запрос'}
+ }
+}
+async function openSearchRequest(id,resultId){
+ searchFormType=null; searchCurrent=null;
+ const c=document.getElementById('search-screen-content'); if(!c)return;
+ c.innerHTML='<div class="search-empty"><h3>Загружаем запрос…</h3></div>';
+ try{
+  const d=await apiFetch('/api/me/search_requests/'+encodeURIComponent(id),{}, {timeoutMs:10000,retries:1});
+  if(!d.ok)throw new Error(d.error||'load_failed');
+  searchCurrent=d.request;
+  renderSearchDetail(resultId||new URLSearchParams(location.search).get('search_result'));
+  switchTab('search');
+ }catch(e){c.innerHTML='<div class="search-empty"><h3>Не удалось открыть запрос</h3><button class="btn btn-primary" onclick="loadSearchRequests()">Повторить</button></div>'}
+}
+function renderSearchDetail(resultId){
+ const r=searchCurrent,c=document.getElementById('search-screen-content');if(!r||!c)return;
+ const photos=(r.images||[]).map(x=>`<img class="search-request-photo" src="${escapeAttr(assetUrl(x))}" alt="">`).join('');
+ const reqInfo=`<div class="search-requirements">
+  <div class="search-requirement"><span>Бюджет</span><b>${r.budget_max!=null?Number(r.budget_max).toLocaleString('ru-RU')+' ₽':'Не указан'}</b></div>
+  <div class="search-requirement"><span>Состояние</span><b>${escapeHtml(r.condition_label||'Не указано')}</b></div>
+  <div class="search-requirement"><span>Комплектация</span><b>${escapeHtml(r.completeness_label||'Не указано')}</b></div>
+  <div class="search-requirement"><span>Страны</span><b>${escapeHtml((r.country_labels||[]).join(' / ')||'Не указано')}</b></div>
+ </div>`;
+ const results=(r.results||[]).map(x=>searchResultHTML(x,r)).join('');
+ c.innerHTML=`<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Все запросы</button>
+ <div class="search-status-card"><span class="search-status-pill">${escapeHtml(r.status_label)}</span>
+  <div class="search-detail-title">${escapeHtml(r.title||r.character||'Поиск куклы')}</div>
+  <div class="search-detail-sub">${escapeHtml(r.line||r.type_label)} · создан ${searchDate(r.created_at)}</div>
+  ${photos?`<div class="search-request-photo-row" style="margin-top:13px">${photos}</div>`:''}
+  ${reqInfo}
+  ${r.important?`<div style="font-size:12.5px;line-height:1.5;color:var(--text-secondary);margin-top:12px"><b style="color:var(--text)">Важно:</b> ${escapeHtml(r.important)}</div>`:''}
+ </div>
+ <div style="font-size:15px;font-weight:800;margin:20px 0 8px">Найденные варианты</div>
+ ${results||'<div class="search-empty"><h3>Пока ничего подходящего</h3><p>Мы продолжаем поиск и сообщим, когда появится вариант.</p></div>'}
+ ${r.status!=='CLOSED'&&r.status!=='ORDERED'&&r.status!=='SELECTED'?`<button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(r.id)}')">Показать другие варианты</button>`:''}
+ ${r.status!=='CLOSED'&&r.status!=='ORDERED'?`<button class="btn btn-tertiary btn-block" onclick="editSearchRequest('${escapeAttr(r.id)}')">Изменить запрос</button>`:''}`;
+ if(resultId){setTimeout(()=>document.getElementById('search-result-'+CSS.escape(String(resultId)))?.scrollIntoView({behavior:'smooth',block:'center'}),80)}
+}
+function searchResultHTML(x,r){
+ const photos=(x.images||[]).map(p=>`<img class="search-result-photo" src="${escapeAttr(assetUrl(p))}" alt="">`).join('');
+ const price=x.price!=null?Number(x.price).toLocaleString('ru-RU')+' '+escapeHtml(x.currency||'₽'):'Цена не указана';
+ return `<article class="search-result-card" id="search-result-${escapeAttr(x.id)}">
+  ${photos?`<div class="search-result-photo-row">${photos}</div>`:''}
+  <div class="search-result-title">${escapeHtml(x.title||'Найденный вариант')}</div>
+  <div class="search-result-line">${escapeHtml(x.line||'')}</div>
+  <div class="search-result-price">${price}</div>
+  <div class="search-result-meta"><span>${escapeHtml(x.condition||'Состояние не указано')}</span><span>${escapeHtml(x.completeness||'Комплектация не указана')}</span><span>${escapeHtml(x.country||'Страна не указана')}</span></div>
+  ${x.description?`<div class="search-result-description">${escapeHtml(x.description)}</div>`:''}
+  ${x.defects?`<div class="search-result-description"><b style="color:var(--text)">Важно:</b> ${escapeHtml(x.defects)}</div>`:''}
+  ${x.source_url?`<button class="btn btn-tertiary" style="padding-left:0" onclick="openExternalSearchLink('${escapeAttr(x.source_url)}')">Оригинальное объявление</button>`:''}
+  <button class="btn btn-secondary btn-block" onclick="openSearchResult('${escapeAttr(r.id)}','${escapeAttr(x.id)}')">Посмотреть подробнее</button>
+ </article>`;
+}
+function openExternalSearchLink(url){try{tg?.openLink?tg.openLink(url):window.open(url,'_blank')}catch(_){window.open(url,'_blank')}}
+async function openSearchResult(rid,resultId){
+ const x=searchCurrent?.results?.find(x=>String(x.id)===String(resultId)); if(!x)return;
+ apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/open',{}).catch(()=>{});
+ const c=document.getElementById('search-screen-content');
+ c.innerHTML=`<button class="search-back" onclick="openSearchRequest('${escapeAttr(rid)}')"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад к запросу</button>
+ <div class="search-result-card">${searchResultHTML(x,searchCurrent)}
+  <button class="btn btn-primary btn-block" onclick="selectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Забрать эту</button>
+  <button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(rid)}')">Показать другие варианты</button>
+  <button class="btn btn-tertiary btn-block" onclick="rejectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Не подходит</button>
+ </div>`;
+ window.scrollTo(0,0);
+}
+async function selectSearchResult(rid,resultId){
+ if(!confirm('Передать этот выбор администратору?'))return;
+ const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/select',{});
+ if(!d.ok){showToast('Не удалось передать выбор');return}
+ hapticNotification('success');showToast('Выбор передан администратору');searchCurrent=d.request;renderSearchDetail(resultId);
+}
+async function requestMoreSearch(rid){
+ const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/more',{});
+ if(!d.ok){showToast('Не удалось отправить запрос');return}
+ hapticNotification('success');showToast('Хорошо, продолжим поиск');searchCurrent=d.request;renderSearchDetail();
+}
+async function rejectSearchResult(rid,resultId){
+ const reason=prompt('Почему вариант не подходит?\\n\\nНапример: слишком дорого, состояние, комплектация или хочу другую.');
+ if(reason===null)return;
+ const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/reject',{reason:reason||'другое'});
+ if(!d.ok){showToast('Не удалось отправить ответ');return}
+ showToast('Ответ передан администратору');searchCurrent=d.request;renderSearchDetail();
+}
+async function editSearchRequest(rid){
+ const r=searchCurrent;if(!r)return;
+ const title=prompt('Название / персонаж',r.character||r.title||''); if(title===null)return;
+ const important=prompt('Что особенно важно?',r.important||''); if(important===null)return;
+ const d=await apiPatch('/api/me/search_requests/'+encodeURIComponent(rid),{title,character:title,important});
+ if(!d.ok){showToast('Не удалось изменить запрос');return}
+ searchCurrent=d.request;showToast('Запрос обновлён');renderSearchDetail();
+}
+function handleSearchDeepLink(){
+ const p=new URLSearchParams(location.search),rid=p.get('search_request'),res=p.get('search_result');
+ if(rid&&userId){setTimeout(()=>openSearchRequest(rid,res),500)}
+}
+
 /* Init */
 function hidePreloader() {
   const p = document.getElementById('preloader');
@@ -5913,6 +6289,7 @@ async function bootstrap() {
   }
 
   await loadAppData();
+  handleSearchDeepLink();
 }
 
 bootstrap();
