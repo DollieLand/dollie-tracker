@@ -3039,6 +3039,27 @@ function recordMiniAppOpen() {
 }
 recordMiniAppOpen();
 
+// PWA install analytics: record a real installation when the browser fires
+// appinstalled, and also detect launches from an installed standalone PWA.
+let pwaInstallAnalyticsSent = false;
+function recordPwaInstall(source) {
+  if (!userId || pwaInstallAnalyticsSent) return;
+  pwaInstallAnalyticsSent = true;
+  apiPost('/api/me/app-install', { source: source || 'unknown' }).catch(() => {
+    pwaInstallAnalyticsSent = false;
+  });
+}
+
+try {
+  window.addEventListener('appinstalled', () => recordPwaInstall('appinstalled'));
+} catch (_) {}
+
+try {
+  const standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  const iosStandalone = !!window.navigator.standalone;
+  if (standalone || iosStandalone) recordPwaInstall('standalone_launch');
+} catch (_) {}
+
 /* ============ CONSENT GATE ============ */
 const FALLBACK_OFFER_URL = 'https://docs.google.com/document/d/1AuHJ898JzEKRsuzQhkD5sBqr5gRmdYLvZN_tHh851Q8/edit?usp=sharing';
 const FALLBACK_TERMS_URL = 'https://docs.google.com/document/d/1xDdL8iRPNybAFcqC9Yz_XWwCxSXUEMEATAXhqKMAf-0/edit?usp=sharing';
