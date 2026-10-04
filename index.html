@@ -1564,15 +1564,13 @@
   .attached-bonus-label { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
   .attached-note { font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin: 0 0 6px; }
 
-  /* ===== DollieLand: Dollies в заявке ===== */
+  /* ===== DollieLand: Dollies в заявке из каталога ===== */
   .req-section-title { font-size: 13.5px; font-weight: 800; color: var(--text); margin: 0 0 8px; }
   .req-qty-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
   .req-qty-row .qty-stepper { margin-bottom: 0; }
   .req-qty-unit { font-size: 12px; color: var(--text-secondary); text-align: right; line-height: 1.35; }
-  .req-qty-unit b { color: var(--text); }
-
-  .req-dollies { background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px; margin-bottom: 16px; }
-  .req-dollies.on { border-color: var(--pink-accent); }
+  .req-dollies { background: var(--surface-soft); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px; margin-bottom: 16px; transition: border-color .15s ease, background .15s ease; }
+  .req-dollies.on { border-color: var(--pink-accent); background: var(--pink-soft); }
   .req-dollies.disabled { opacity: .65; }
   .req-dollies-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
   .req-dollies-check {
@@ -1582,11 +1580,11 @@
     transition: background .15s ease;
   }
   .req-dollies.on .req-dollies-check { background: var(--pink-accent); }
-  .req-dollies-check .icon { width: 14px; height: 14px; opacity: 0; }
+  .req-dollies-check .icon { width: 14px; height: 14px; stroke-width: 3; opacity: 0; }
   .req-dollies.on .req-dollies-check .icon { opacity: 1; }
   .req-dollies-text { flex: 1; min-width: 0; }
   .req-dollies-title { font-size: 14px; font-weight: 800; color: var(--text); }
-  .req-dollies-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .req-dollies-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.35; }
   .req-dollies-amount { font-size: 14px; font-weight: 800; color: var(--pink-accent); white-space: nowrap; }
   .req-dollies-note {
     display: flex; gap: 8px; align-items: flex-start; margin-top: 12px;
@@ -1595,150 +1593,260 @@
   }
   .req-dollies-note .icon { width: 16px; height: 16px; color: var(--pink-accent); flex-shrink: 0; margin-top: 1px; }
   .req-dollies-note b { color: var(--text); }
-
   .req-total { border: 1px solid var(--border); border-radius: var(--r-lg); padding: 12px 14px; margin-bottom: 16px; background: var(--surface); }
-  .req-total-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--text-secondary); padding: 4px 0; }
-  .req-total-row b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .req-total-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px; color: var(--text-secondary); padding: 4px 0; }
+  .req-total-row > span:first-child { min-width: 0; }
+  .req-total-row b { color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .req-total-row.discount b { color: var(--pink-accent); }
   .req-total-row.final { border-top: 1px dashed var(--border); margin-top: 6px; padding-top: 10px; font-size: 15px; color: var(--text); font-weight: 800; }
   .req-total-row.final b { font-size: 18px; color: var(--pink-accent); }
-  .req-total-old { text-decoration: line-through; color: var(--text-secondary); font-weight: 600; font-size: 12.5px; margin-right: 6px; }
+  .req-total-old { text-decoration: line-through; color: var(--text-secondary); font-weight: 600; font-size: 12.5px; margin-right: 6px; white-space: nowrap; }
   .req-total-hint { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
 
-  /* ================= SEARCH REQUESTS ================= */
-  .search-entry-card{
-    width:100%; text-align:left; border:1px solid var(--border); border-radius:var(--r-xl);
-    padding:18px; margin-top:12px; background:linear-gradient(145deg,var(--surface),var(--surface-soft));
-    box-shadow:var(--shadow-soft); transition:transform .16s ease,border-color .16s ease;
-  }
-  .search-entry-card:active{transform:scale(.985)}
-  .catalog-search-entry{margin:2px 0 16px;border-radius:20px}
-  .catalog-search-entry .search-entry-sub{max-width:92%}
-  .search-entry-top{display:flex;align-items:center;gap:13px}
-  .search-entry-icon{width:46px;height:46px;border-radius:16px;background:var(--pink-soft);color:var(--pink-accent);display:flex;align-items:center;justify-content:center;flex:none}
-  .search-entry-icon .icon{width:23px;height:23px}
-  .search-entry-title{font-size:15px;font-weight:800}
-  .search-entry-sub{font-size:12px;color:var(--text-secondary);line-height:1.45;margin-top:3px}
-  .search-screen-intro{font-size:13px;color:var(--text-secondary);line-height:1.5;margin:6px 0 18px}
-  .search-choice-grid{display:grid;gap:12px}
-  /* Modern search UI — scoped only to the search section */
-  #search-screen-content .search-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
-  #search-screen-content .search-choice{position:relative;min-height:196px;padding:20px;text-align:left;border:1px solid var(--border);border-radius:24px;background:var(--surface);color:var(--text);box-shadow:0 8px 28px rgba(25,18,22,.055);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;overflow:hidden}
-  #search-screen-content .search-choice::after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-42px;top:-42px;background:var(--pink-soft);opacity:.65;pointer-events:none}
-  #search-screen-content .search-choice:active{transform:scale(.985)}
-  #search-screen-content .search-choice-icon{width:40px;height:40px;border-radius:13px;background:var(--surface-soft);display:flex;align-items:center;justify-content:center;color:var(--pink-accent);margin-bottom:18px}
-  #search-screen-content .search-choice-icon .icon{width:20px;height:20px}
-  #search-screen-content .search-choice h3{font-size:15px;line-height:1.2;margin:0 0 7px;font-weight:850;letter-spacing:-.2px}
-  #search-screen-content .search-choice p{font-size:10.5px;line-height:1.45;color:var(--text-secondary);margin:0;max-width:180px}
-  #search-screen-content .search-choice-cta{position:absolute;left:20px;bottom:18px;display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;color:var(--pink-accent)}
-  #search-screen-content .search-form-card{border:1px solid var(--border);border-radius:25px;background:var(--surface);padding:20px 18px;box-shadow:0 8px 30px rgba(25,18,22,.05)}
-  #search-screen-content .search-form-card>form{margin-top:0}
-  #search-screen-content .search-form-card .search-label{font-size:10.5px;letter-spacing:.01em}
-  #search-screen-content .search-form-card .search-input,#search-screen-content .search-form-card .search-select,#search-screen-content .search-form-card .search-textarea{background:var(--surface-soft);border-color:transparent;border-radius:14px}
-  #search-screen-content .search-form-card .search-input:focus,#search-screen-content .search-form-card .search-select:focus,#search-screen-content .search-form-card .search-textarea:focus{background:var(--surface);border-color:var(--pink-accent)}
-  #search-screen-content .search-form-card .search-chip{background:var(--surface-soft);border-color:transparent;padding:9px 12px}
-  #search-screen-content .search-form-card .search-chip.selected{background:var(--pink-soft);border-color:rgba(231,142,173,.35);color:var(--pink-accent)}
-  #search-screen-content .search-upload{background:var(--surface-soft);border:1px dashed rgba(231,142,173,.65);min-height:150px;border-radius:19px}
-  #search-screen-content .search-submit{border-radius:15px;min-height:48px;font-size:12px;font-weight:850}
-  @media(max-width:430px){#search-screen-content .search-choice{min-height:170px}}
-  .search-choice{
-    width:100%; text-align:left; padding:19px; border:1px solid var(--border);border-radius:22px;
-    background:linear-gradient(145deg,var(--surface),var(--surface-soft));box-shadow:var(--shadow-soft);
-    position:relative;overflow:hidden;transition:transform .16s ease;
-  }
-  .search-choice:active{transform:scale(.985)}
-  /* SEARCH REDESIGN — only search UI */
-  .search-choice-grid{display:grid;gap:12px;margin-top:4px}.search-hero{padding:4px 2px 18px}.search-hero-kicker{font-size:10px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-accent);margin-bottom:7px}.search-hero h1{font-family:Fraunces,serif;font-size:30px;line-height:1.04;letter-spacing:-.7px;margin:0 0 9px}.search-hero p{font-size:13px;line-height:1.55;color:var(--text-secondary);margin:0;max-width:340px}
-  .search-entry-card{width:100%;border:1px solid var(--border);border-radius:24px;background:var(--surface);padding:17px;text-align:left;box-shadow:var(--shadow-soft);cursor:pointer;color:var(--text);box-sizing:border-box}.search-entry-card:active{transform:scale(.985)}.search-entry-card.primary{background:linear-gradient(145deg,var(--surface),var(--surface-soft))}.search-entry-top{display:flex;align-items:center;justify-content:space-between}.search-entry-icon{width:44px;height:44px;border-radius:15px;background:var(--pink-soft);color:var(--pink-accent);display:flex;align-items:center;justify-content:center}.search-entry-icon .icon{width:21px;height:21px}.search-entry-arrow{width:18px;height:18px;color:var(--text-secondary)}.search-entry-title{font-size:15px;font-weight:850;line-height:1.25}.search-entry-sub{font-size:11.5px;line-height:1.45;color:var(--text-secondary);margin-top:5px;max-width:290px}.search-entry-note{margin-top:13px;font-size:10.5px;font-weight:800;color:var(--pink-accent)}
-  .search-section-title{display:flex;justify-content:space-between;align-items:baseline;margin:24px 2px 9px}.search-section-title b{font-size:16px;font-weight:850}.search-section-title span{font-size:10px;color:var(--text-secondary)}.search-empty{padding:25px 18px;border:1px dashed var(--border);border-radius:20px;background:var(--surface-soft);text-align:center;margin-top:10px}.search-empty h3{font-size:14px;margin:0 0 5px}.search-empty p{font-size:11.5px;color:var(--text-secondary);line-height:1.5;margin:0}
-  .search-form-shell{padding-top:1px}.search-back{display:inline-flex;align-items:center;gap:5px;color:var(--text-secondary);font-size:12px;font-weight:750;margin:0 0 13px}.search-form-head h2{font-family:Fraunces,serif;font-size:25px;line-height:1.08;letter-spacing:-.35px;margin:0}.search-form-head p{font-size:11.5px;color:var(--text-secondary);line-height:1.45;margin:5px 0 0}.search-step-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:850;color:var(--pink-accent);margin-bottom:6px}.search-progress{display:flex;gap:5px;margin:18px 0}.search-progress i{height:4px;flex:1;border-radius:99px;background:var(--border)}.search-progress i.active{background:var(--pink-accent)}.search-step{display:none}.search-step.active{display:block}.search-step-title{font-size:20px;font-weight:850;letter-spacing:-.25px}.search-step-desc{font-size:11.5px;color:var(--text-secondary);line-height:1.5;margin:5px 0 16px}.search-form-section{margin-top:17px}.search-form-section:first-child{margin-top:0}.search-label{display:block;font-size:11px;font-weight:850;margin-bottom:7px}.search-label-note{font-weight:500;color:var(--text-secondary);margin-left:4px}.search-input,.search-textarea,.search-select{width:100%;min-height:47px;padding:12px 13px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);font-size:13px;outline:none;box-sizing:border-box}.search-textarea{min-height:112px;resize:vertical;line-height:1.5}.search-input:focus,.search-textarea:focus,.search-select:focus{border-color:var(--pink-accent);box-shadow:0 0 0 3px rgba(231,142,173,.12)}.search-two-col{display:grid;grid-template-columns:1fr 1fr;gap:9px}.search-chips{display:flex;flex-wrap:wrap;gap:7px}.search-chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:9px 11px;font-size:11px;font-weight:750;color:var(--text);cursor:pointer}.search-chip.selected{border-color:var(--pink-accent);background:var(--pink-soft);color:var(--pink-accent)}
-  .search-upload{min-height:170px;border:1.5px dashed var(--pink);border-radius:22px;background:var(--surface-soft);padding:20px 15px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer}.search-upload .icon{color:var(--pink-accent);width:30px;height:30px;margin-bottom:9px}.search-upload-title{font-size:14px;font-weight:850}.search-upload-sub{font-size:11px;color:var(--text-secondary);margin-top:5px}.search-upload-note{font-size:10px;color:var(--text-secondary);margin-top:7px;text-align:center}.search-previews{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:9px}.search-preview-item{position:relative;aspect-ratio:1;border-radius:15px;overflow:hidden;border:1px solid var(--border)}.search-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.search-preview-remove{position:absolute;top:5px;right:5px;width:25px;height:25px;border:0;border-radius:50%;background:rgba(20,18,20,.72);color:#fff;display:flex;align-items:center;justify-content:center}.search-choice-photo-hint{display:flex;gap:7px;align-items:center;padding:10px 11px;border-radius:14px;background:var(--surface-soft);font-size:10.5px;color:var(--text-secondary);line-height:1.4;margin-top:10px}.search-choice-photo-hint .icon{width:16px;height:16px;color:var(--pink-accent);flex:none}.search-form-actions{display:flex;gap:8px;margin-top:18px}.search-form-actions .btn{flex:1}.search-submit{margin-top:0}
-  .search-request-list{display:grid;gap:9px}.my-search-row{width:100%;display:flex;align-items:center;gap:11px;text-align:left;border:1px solid var(--border);background:var(--surface);border-radius:20px;padding:10px 11px;cursor:pointer;color:var(--text);box-shadow:0 2px 10px rgba(30,20,25,.035)}.my-search-thumb{width:66px;height:66px;flex:none;border-radius:16px;object-fit:cover;background:var(--surface-soft);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden}.my-search-thumb img{width:100%;height:100%;object-fit:cover}.my-search-row-text{min-width:0;flex:1}.my-search-date{font-size:10px;color:var(--text-secondary);margin-top:6px}.my-search-status{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:var(--pink-soft);color:var(--pink-accent);font-size:9.5px;font-weight:850;margin-top:7px}.my-search-status-dot{width:5px;height:5px;border-radius:50%;background:currentColor}.my-search-chevron{width:17px;height:17px;flex:none;color:var(--text-secondary)}
-  .search-status-card{padding:18px;border:1px solid var(--border);border-radius:25px;background:linear-gradient(145deg,var(--surface-soft),var(--surface));margin-bottom:13px;box-shadow:var(--shadow-soft)}.search-status-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}.search-status-top>*{min-width:0}.search-status-pill{max-width:72%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.search-status-pill{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--pink-soft);color:var(--pink-accent);font-size:10px;font-weight:850}.search-status-id{font-size:10px;color:var(--text-secondary)}.search-detail-title{font-family:Fraunces,serif;font-size:26px;line-height:1.08;margin-top:11px}.search-detail-sub{font-size:11px;color:var(--text-secondary);margin-top:5px}
-.search-progress-line{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr);align-items:start;gap:0;margin:20px 0 7px;min-height:39px;overflow:visible}
-.search-progress-line .p-item{text-align:center;font-size:9px;line-height:1.2;color:var(--text-secondary);font-weight:650;min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;overflow:visible}
-.search-progress-line .p-dot{width:10px;height:10px;border-radius:50%;background:var(--border);margin:0 auto 7px;position:relative;z-index:2;transition:all .2s ease}
-.search-progress-line .p-arrow{height:12px;display:flex;align-items:flex-start;justify-content:center;padding-top:0;color:var(--border);font-size:14px;font-weight:500;line-height:1}
-.search-progress-line .p-item.done,.search-progress-line .p-item.current{color:var(--pink-accent);font-weight:800}
-.search-progress-line .p-item.done .p-dot,.search-progress-line .p-item.current .p-dot{background:var(--pink-accent)}
-.search-progress-line .p-item.current .p-dot{width:12px;height:12px;margin-top:-1px;box-shadow:0 0 0 4px var(--pink-soft)}
-.search-progress-line .p-arrow.done{color:var(--pink-accent)}
-.search-request-block{margin-top:14px}.search-request-block-title{font-size:14px;font-weight:850;margin-bottom:8px}.search-requirements{display:grid;grid-template-columns:1fr 1fr;gap:7px}.search-requirement{padding:11px;border:1px solid var(--border);border-radius:15px;background:var(--surface)}.search-requirement span{display:block;color:var(--text-secondary);font-size:9.5px}.search-requirement b{display:block;font-size:11.5px;margin-top:3px}.search-request-photo-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}.search-request-photo{width:100%;aspect-ratio:1;border-radius:17px;object-fit:cover;border:1px solid var(--border)}.search-important{padding:12px 13px;border-radius:16px;background:var(--pink-soft);font-size:11.5px;line-height:1.5;margin-top:10px}.search-important b{color:var(--pink-accent)}.search-results-head{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 8px}.search-results-head b{font-size:15px}.search-results-head span{font-size:10px;color:var(--text-secondary)}.search-result-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:11px;box-shadow:var(--shadow-soft);margin-top:10px}.search-result-photo-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.search-result-photo{width:100%;aspect-ratio:1/1.08;border-radius:16px;object-fit:cover}.search-result-title{font-size:15px;font-weight:850;margin-top:12px}.search-result-line{font-size:11px;color:var(--text-secondary);margin-top:3px}.search-result-price{font-size:20px;font-weight:900;margin-top:7px}.search-result-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.search-result-meta span{font-size:9.5px;padding:6px 8px;border-radius:999px;background:var(--surface-soft);color:var(--text-secondary)}.search-result-description{font-size:11.5px;line-height:1.5;color:var(--text-secondary);margin-top:9px}.search-match{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:999px;background:var(--pink-soft);color:var(--pink-accent);font-size:9.5px;font-weight:850;margin-top:8px}.search-weight-card{margin-top:10px;padding:10px 11px;border-radius:14px;background:var(--surface-soft);border:1px solid var(--border)}.search-weight-main{font-size:11px;font-weight:800}.search-weight-note{font-size:9.5px;color:var(--text-secondary);line-height:1.4;margin-top:4px}
-  @media(max-width:380px){.search-previews{grid-template-columns:repeat(3,minmax(0,1fr))}.search-two-col{grid-template-columns:1fr}.search-upload{min-height:155px}}
-  .search-submit{margin-top:18px}
-  .search-back{display:inline-flex;align-items:center;gap:5px;color:var(--text-secondary);font-size:12.5px;font-weight:700;margin-bottom:14px}
-  .search-status-card{padding:18px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(145deg,var(--surface-soft),var(--surface));margin-bottom:14px}
-  .search-status-pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:var(--pink-soft);color:var(--pink-accent);font-size:10.5px;font-weight:800;max-width:72%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  @media(max-width:600px){
-    #search-screen-content .search-status-top{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;align-items:start}
-    #search-screen-content .search-status-top .search-status-pill{max-width:100%;width:max-content;min-width:0;box-sizing:border-box;position:relative;z-index:1}
-    #search-screen-content .search-status-top .search-status-id{display:block;width:100%;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:normal;line-height:1.35;overflow-wrap:anywhere}
-  }
-  .search-detail-title{font-size:22px;font-weight:800;margin-top:10px;letter-spacing:-.3px}
-  .search-detail-sub{font-size:12.5px;color:var(--text-secondary);margin-top:3px}
-  .search-requirements{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
-  .search-requirement{padding:10px 11px;border:1px solid var(--border);border-radius:13px;background:var(--surface)}
-  .search-requirement span{display:block;color:var(--text-secondary);font-size:10px}.search-requirement b{display:block;font-size:12px;margin-top:3px}
-  .search-request-photo-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:13px}
-  .search-request-photo{width:100%;aspect-ratio:1/1;border-radius:15px;object-fit:cover;display:block;border:1px solid var(--border);background:var(--surface-soft)}
-  .search-result-photo-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  .search-result-photo{width:100%;aspect-ratio:1/1.08;border-radius:15px;object-fit:cover;display:block;border:1px solid var(--border);background:var(--surface-soft)}
-  .search-result-card{background:var(--surface);border:1px solid var(--border);border-radius:21px;padding:13px;box-shadow:var(--shadow-soft);margin-top:11px}
-  .search-result-title{font-size:15px;font-weight:800;margin-top:11px}.search-result-line{font-size:12px;color:var(--text-secondary);margin-top:3px}
-  .search-result-price{font-size:19px;font-weight:800;margin-top:8px;color:var(--text)}
-  .search-result-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-  .search-result-meta span{font-size:10.5px;font-weight:700;padding:6px 8px;border-radius:999px;background:var(--surface-soft);color:var(--text-secondary)}
-  .search-result-description{font-size:12.5px;line-height:1.5;color:var(--text-secondary);margin-top:10px}
-  .search-photo-clickable{cursor:zoom-in}
-  .search-dollies-box{margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:15px;background:var(--surface-soft)}
-  #search-screen-content .search-dollies-box{cursor:pointer;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;padding:13px 14px}
-  #search-screen-content .search-dollies-box.selected{border-color:var(--pink-accent);background:var(--pink-soft);box-shadow:0 5px 18px rgba(231,142,173,.10)}
-  #search-screen-content .search-dollies-row{display:flex;align-items:center;gap:11px;min-width:0}
-  #search-screen-content .search-dollies-check{width:22px;height:22px;border-radius:7px;flex:0 0 22px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--border);background:var(--surface);color:#fff;transition:all .18s ease}
-  #search-screen-content .search-dollies-box.selected .search-dollies-check{background:var(--pink-accent);border-color:var(--pink-accent);color:#fff}
-  #search-screen-content .search-dollies-box.selected .search-dollies-check .icon{opacity:1;visibility:visible;display:block}
-  #search-screen-content .search-dollies-title{display:block;font-size:12.5px;font-weight:850;line-height:1.25}
-  #search-screen-content .search-dollies-sub{display:block;font-size:10px;color:var(--text-secondary);line-height:1.35;margin-top:3px}
-  #search-screen-content .search-dollies-value{font-size:11px;font-weight:850;color:var(--pink-accent);white-space:nowrap;margin-left:auto}
-  #search-screen-content .search-price-summary{margin-top:12px;padding:13px 14px;border:1px solid var(--border);border-radius:15px;background:var(--surface)}
-  #search-screen-content .search-price-summary-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:11px;color:var(--text-secondary);line-height:1.4}
-  #search-screen-content .search-price-summary-row + .search-price-summary-row{margin-top:6px}
-  #search-screen-content .search-price-summary-row b{font-size:14px;color:var(--text);font-variant-numeric:tabular-nums}
-  #search-screen-content .search-price-summary-row.final{padding-top:9px;margin-top:9px;border-top:1px dashed var(--border);color:var(--text);font-weight:800}
-  #search-screen-content .search-price-summary-row.final b{font-size:18px;color:var(--pink-accent)}
-  #search-screen-content .search-price-old{text-decoration:line-through;color:var(--text-secondary)!important;font-size:11px!important;font-weight:600!important;margin-right:5px}
-  #search-screen-content .search-price-note{font-size:9.5px;color:var(--text-secondary);margin-top:6px;line-height:1.4}
-  #search-screen-content .search-delete-btn{margin-top:6px;color:var(--text-secondary)}
-  .search-reason-modal{position:fixed;inset:0;z-index:10080;display:flex;align-items:flex-end;justify-content:center;padding:14px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility .18s ease}
-  .search-reason-modal.open{opacity:1;visibility:visible;pointer-events:auto}
-  .search-reason-backdrop{position:absolute;inset:0;background:rgba(45,35,40,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-  .search-reason-card{position:relative;z-index:1;width:min(480px,100%);background:var(--surface);border:1px solid var(--border);border-radius:25px;padding:20px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 45px rgba(45,35,40,.18);transform:translateY(18px);transition:transform .24s cubic-bezier(.22,1,.36,1)}
-  .search-reason-modal.open .search-reason-card{transform:translateY(0)}
-  .search-reason-title{font-size:17px;font-weight:850;margin-bottom:5px}
-  .search-reason-sub{font-size:11.5px;line-height:1.45;color:var(--text-secondary);margin-bottom:13px}
-  .search-reason-options{display:grid;gap:7px;margin-bottom:12px}
-  .search-reason-option{width:100%;padding:12px 13px;border:1px solid var(--border);border-radius:13px;background:var(--surface);text-align:left;font-size:12px;color:var(--text);transition:all .15s ease}
-  .search-reason-option.selected{border-color:var(--pink-accent);background:var(--pink-soft);font-weight:750}
-  .search-reason-custom{display:none;margin-bottom:12px}
-  .search-reason-custom.open{display:block}
+  /* ================= ПОИСК ДЛЯ МЕНЯ (только этот раздел) ================= */
+  #tab-search { padding-bottom: 24px; }
+  .sr * { min-width: 0; }
+  .sr { overflow-wrap: anywhere; }
+  .sr-back { display: inline-flex; align-items: center; gap: 5px; color: var(--text-secondary); font-size: 12.5px; font-weight: 700; padding: 4px 0; margin-bottom: 12px; }
+  .sr-back .icon { width: 16px; height: 16px; transform: rotate(180deg); }
+  .sr-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--pink-accent); }
+  .sr-h1 { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 27px; line-height: 1.1; color: var(--text); margin: 6px 0 8px; }
+  .sr-lead { font-size: 13px; line-height: 1.55; color: var(--text-secondary); margin: 0 0 18px; }
 
-  .search-dollies-row{display:flex;align-items:center;gap:10px;cursor:pointer}
-  .search-dollies-check{width:22px;height:22px;border:1.5px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--surface)}
-  .search-dollies-box.selected .search-dollies-check{background:var(--pink-accent);border-color:var(--pink-accent);color:#fff}
-  .search-dollies-check .icon{width:13px;height:13px;opacity:0;display:block;stroke:currentColor;fill:none}.search-dollies-box.selected .search-dollies-check{background:var(--pink-accent);border-color:var(--pink-accent);color:#fff}.search-dollies-box.selected .search-dollies-check .icon{opacity:1;visibility:visible}
-  .search-dollies-title{font-size:12.5px;font-weight:800}.search-dollies-sub{font-size:10.5px;color:var(--text-secondary);margin-top:2px;line-height:1.35}
-  .search-dollies-value{margin-left:auto;text-align:right;font-size:12px;font-weight:800;color:var(--pink-accent);white-space:nowrap}
-  .search-weight-card{margin-top:11px;padding:12px;border-radius:15px;background:var(--surface-soft);border:1px solid var(--border)}
-  .search-weight-main{font-size:13px;font-weight:800}.search-weight-note{font-size:10.5px;color:var(--text-secondary);line-height:1.45;margin-top:5px}
-  .search-weight-total{font-size:12px;color:var(--text-secondary);margin-top:6px}.search-weight-total b{color:var(--text)}
-  .search-photo-lightbox{position:fixed;inset:0;z-index:10050;background:rgba(18,14,19,.96);display:none;align-items:center;justify-content:center;padding:18px}
-  .search-photo-lightbox.open{display:flex}.search-photo-lightbox img{max-width:96vw;max-height:90vh;object-fit:contain;border-radius:14px}
-  .search-photo-lightbox-close{position:absolute;top:16px;right:16px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:28px}
-  .search-empty{padding:30px 12px;text-align:center;color:var(--text-secondary)}
-  .search-empty h3{font-size:15px;color:var(--text);margin-bottom:5px}
-  .search-history{display:grid;gap:8px}.search-history-row{padding:10px 12px;border-left:3px solid var(--pink);background:var(--surface-soft);border-radius:0 11px 11px 0;font-size:11.5px}
-  @media(max-width:360px){.search-two-col,.search-requirements{grid-template-columns:1fr}.search-progress-line{grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr) 18px minmax(0,1fr) 18px minmax(0,1fr)}.search-progress-line .p-item{font-size:8.5px}.search-progress-line .p-arrow{font-size:13px}}
+  /* Как это работает */
+  .sr-how { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 0 0 18px; }
+  .sr-how-step { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 6px; text-align: center; }
+  .sr-how-num { width: 20px; height: 20px; border-radius: 50%; margin: 0 auto 6px; background: var(--pink-soft); color: var(--pink-accent); font-size: 10.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .sr-how-text { font-size: 10.5px; font-weight: 700; color: var(--text); line-height: 1.25; }
 
+  /* Выбор типа запроса */
+  .sr-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .sr-choice {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
+    padding: 16px 14px; border: 1px solid var(--border); border-radius: 22px; background: var(--surface);
+    box-shadow: var(--shadow-soft); color: var(--text); transition: transform .15s ease, border-color .15s ease;
+  }
+  .sr-choice:active { transform: scale(.98); border-color: var(--pink); }
+  .sr-choice-icon { width: 40px; height: 40px; border-radius: 13px; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; }
+  .sr-choice-icon .icon { width: 20px; height: 20px; }
+  .sr-choice-title { font-size: 14.5px; font-weight: 800; line-height: 1.25; }
+  .sr-choice-desc { font-size: 11.5px; line-height: 1.45; color: var(--text-secondary); flex: 1; }
+  .sr-choice-cta { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 800; color: var(--pink-accent); }
+  .sr-choice-cta .icon { width: 14px; height: 14px; }
+  @media (max-width: 340px) { .sr-choices { grid-template-columns: 1fr; } }
+
+  /* Список запросов */
+  .sr-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 24px 2px 10px; }
+  .sr-section-head b { font-size: 16px; font-weight: 800; color: var(--text); }
+  .sr-section-head span { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
+  .sr-list { display: grid; gap: 9px; }
+  .sr-row { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; border: 1px solid var(--border); background: var(--surface); border-radius: 20px; padding: 10px 12px 10px 10px; box-shadow: var(--shadow-soft); color: var(--text); }
+  .sr-row:active { transform: scale(.99); }
+  .sr-row.closed { opacity: .62; box-shadow: none; }
+  .sr-row-thumb { width: 60px; height: 60px; flex: none; border-radius: 15px; overflow: hidden; background: var(--surface-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; }
+  .sr-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sr-row-thumb .icon { width: 22px; height: 22px; }
+  .sr-row-main { flex: 1; min-width: 0; }
+  .sr-row-title { font-size: 14px; font-weight: 800; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sr-row-meta { font-size: 11px; color: var(--text-secondary); margin-top: 5px; }
+  .sr-row .chev { width: 17px; height: 17px; color: var(--text-secondary); flex: none; }
+
+  /* Статус-чип */
+  .sr-chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; line-height: 1.25; background: var(--surface-soft); color: var(--text-secondary); border: 1px solid var(--border); }
+  .sr-chip .sr-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+  .sr-chip.search { background: var(--pink-soft); color: var(--pink-accent); border-color: transparent; }
+  .sr-chip.search .sr-chip-dot { animation: sr-pulse 1.6s ease-in-out infinite; }
+  .sr-chip.action { background: var(--pink-accent); color: #fff; border-color: transparent; }
+  .sr-chip.done { background: var(--surface); color: var(--text); }
+  .sr-chip.closed { background: var(--surface-soft); color: var(--text-secondary); }
+  .sr-row .sr-chip { margin-top: 6px; font-size: 10.5px; padding: 4px 9px; }
+  @keyframes sr-pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+
+  /* Карточки и блоки детального экрана */
+  .sr-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 18px 16px; box-shadow: var(--shadow-soft); margin-bottom: 12px; }
+  .sr-hero { background: linear-gradient(160deg, var(--surface-soft) 0%, var(--surface) 70%); }
+  .sr-hero-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .sr-id { font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .sr-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 25px; line-height: 1.12; color: var(--text); margin: 12px 0 0; }
+  .sr-subtitle { font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin-top: 6px; }
+
+  /* Трекер: каждый этап — своя колонка, соединительная линия идёт между точками */
+  .sr-track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 20px -4px 2px; list-style: none; padding: 0; }
+  .sr-step { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 3px; }
+  .sr-step::before { content: ''; position: absolute; top: 6px; right: 50%; width: 100%; height: 2px; background: var(--border); }
+  .sr-step:first-child::before { display: none; }
+  .sr-step.done::before, .sr-step.current::before { background: var(--pink); }
+  .sr-step-dot { position: relative; z-index: 1; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); box-sizing: border-box; }
+  .sr-step.done .sr-step-dot { background: var(--pink); border-color: var(--pink); }
+  .sr-step.current .sr-step-dot { background: var(--pink-accent); border-color: var(--pink-accent); box-shadow: 0 0 0 4px var(--pink-soft); }
+  .sr-step-label { margin-top: 8px; font-size: 11px; line-height: 1.25; font-weight: 700; color: var(--text-secondary); opacity: .75; word-break: normal; overflow-wrap: break-word; }
+  .sr-step.done .sr-step-label { color: var(--text); opacity: .8; }
+  .sr-step.current .sr-step-label { color: var(--pink-accent); opacity: 1; font-weight: 800; }
+  @media (max-width: 345px) { .sr-step-label { font-size: 10px; } }
+
+  /* Что дальше */
+  .sr-next { display: flex; gap: 11px; align-items: flex-start; padding: 13px 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 12px; }
+  .sr-next.accent { border-color: var(--pink-accent); background: var(--pink-soft); }
+  .sr-next-icon { width: 32px; height: 32px; border-radius: 11px; background: var(--pink-soft); color: var(--pink-accent); display: flex; align-items: center; justify-content: center; flex: none; }
+  .sr-next.accent .sr-next-icon { background: var(--surface); }
+  .sr-next-icon .icon { width: 16px; height: 16px; }
+  .sr-next-title { font-size: 13px; font-weight: 800; color: var(--text); line-height: 1.3; }
+  .sr-next-text { font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-top: 2px; }
+
+  /* Галерея */
+  .sr-gallery { margin-top: 16px; }
+  .sr-gallery-main { position: relative; width: 100%; aspect-ratio: 4 / 3; max-height: 270px; border-radius: 18px; overflow: hidden; background: var(--surface-soft); border: 1px solid var(--border); padding: 0; display: block; }
+  .sr-gallery-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sr-gallery-count { position: absolute; right: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 5px; background: rgba(30,20,24,.6); color: #fff; font-size: 11px; font-weight: 800; padding: 5px 9px; border-radius: 999px; }
+  .sr-gallery-count .icon { width: 13px; height: 13px; }
+  .sr-thumbs { display: flex; gap: 7px; margin-top: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .sr-thumbs::-webkit-scrollbar { display: none; }
+  .sr-thumb { flex: 0 0 auto; width: 54px; height: 54px; border-radius: 12px; overflow: hidden; padding: 0; border: 2px solid transparent; background: var(--surface-soft); opacity: .7; }
+  .sr-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sr-thumb.active { border-color: var(--pink-accent); opacity: 1; }
+
+  /* Секции */
+  .sr-block-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 12px; }
+  .sr-block-title .icon { width: 17px; height: 17px; color: var(--pink-accent); }
+  .sr-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .sr-fact { padding: 10px 12px; border-radius: 14px; background: var(--surface-soft); }
+  .sr-fact.wide { grid-column: 1 / -1; }
+  .sr-fact span { display: block; font-size: 10.5px; color: var(--text-secondary); }
+  .sr-fact b { display: block; font-size: 13px; font-weight: 800; color: var(--text); margin-top: 3px; line-height: 1.3; }
+  .sr-quote { position: relative; padding: 12px 14px 12px 16px; border-radius: 16px; background: var(--surface-soft); border-left: 3px solid var(--pink-accent); font-size: 13px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
+  .sr-quote.clamped { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .sr-more-link { margin-top: 8px; font-size: 12px; font-weight: 800; color: var(--pink-accent); padding: 0; }
+  .sr-msg { padding: 11px 13px; border-radius: 14px; background: var(--surface-soft); font-size: 12.5px; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
+  .sr-msg + .sr-msg { margin-top: 8px; }
+  .sr-msg small { display: block; font-size: 10.5px; color: var(--text-secondary); margin-bottom: 4px; }
+
+  /* Ожидание вариантов */
+  .sr-waiting { text-align: center; padding: 22px 16px; }
+  .sr-waiting-dots { display: inline-flex; gap: 6px; margin-bottom: 12px; }
+  .sr-waiting-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--pink-accent); animation: sr-bounce 1.2s ease-in-out infinite; }
+  .sr-waiting-dots i:nth-child(2) { animation-delay: .15s; }
+  .sr-waiting-dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes sr-bounce { 0%,80%,100% { transform: translateY(0); opacity: .35; } 40% { transform: translateY(-6px); opacity: 1; } }
+  .sr-waiting h3 { font-size: 16px; font-weight: 800; color: var(--text); }
+  .sr-waiting p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin: 6px auto 0; max-width: 300px; }
+
+  /* Найденные варианты */
+  .sr-results-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 22px 2px 10px; }
+  .sr-results-head b { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 21px; color: var(--text); }
+  .sr-results-head span { font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
+  .sr-result { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-card); margin-bottom: 14px; }
+  .sr-result.rejected { opacity: .6; box-shadow: none; }
+  .sr-result.selected { border-color: var(--pink-accent); }
+  .sr-result-media { position: relative; display: block; width: 100%; padding: 0; aspect-ratio: 4 / 3; max-height: 300px; background: var(--surface-soft); }
+  .sr-result-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sr-result-media .sr-gallery-count { bottom: 10px; right: 10px; }
+  .sr-result-tag { position: absolute; left: 10px; top: 10px; display: inline-flex; align-items: center; gap: 5px; background: var(--surface); color: var(--text); font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 999px; box-shadow: 0 4px 12px rgba(30,20,24,.12); }
+  .sr-result-tag .icon { width: 12px; height: 12px; color: var(--pink-accent); }
+  .sr-result-body { padding: 15px 16px 16px; }
+  .sr-result-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--pink-accent); }
+  .sr-result-title { font-size: 17px; font-weight: 800; line-height: 1.3; color: var(--text); margin-top: 5px; }
+  .sr-result-line { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .sr-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .sr-tags span { font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; background: var(--surface-soft); color: var(--text-secondary); }
+  .sr-result-desc { font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); margin-top: 10px; white-space: pre-wrap; }
+  .sr-result-desc.clamped { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .sr-result-defects { margin-top: 10px; padding: 9px 11px; border-radius: 12px; background: var(--surface-soft); font-size: 12px; line-height: 1.45; color: var(--text); }
+  .sr-result-defects b { color: var(--text); }
+  .sr-source { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; font-size: 12px; font-weight: 800; color: var(--pink-accent); padding: 0; }
+  .sr-source .icon { width: 13px; height: 13px; }
+  .sr-result-note { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: var(--surface-soft); font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
+  .sr-result-note b { color: var(--text); }
+
+  /* Цена */
+  .sr-price { margin-top: 14px; padding: 13px 14px; border-radius: 16px; background: var(--surface-soft); }
+  .sr-price-label { font-size: 11.5px; color: var(--text-secondary); font-weight: 700; }
+  .sr-price-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: 3px; }
+  .sr-price-value { font-size: 24px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .sr-price-value.discounted { color: var(--pink-accent); }
+  .sr-price-old { font-size: 14px; font-weight: 700; color: var(--text-secondary); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+  .sr-price-note { font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+  .sr-weight { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; }
+  .sr-weight b { color: var(--text); }
+
+  /* Dollies — настоящий чекбокс */
+  .sr-dollies { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; margin-top: 10px; padding: 12px 14px; border-radius: 16px; border: 1px solid var(--border); background: var(--surface); color: var(--text); transition: border-color .15s ease, background .15s ease; }
+  .sr-dollies.on { border-color: var(--pink-accent); background: var(--pink-soft); }
+  .sr-dollies:disabled { opacity: .7; }
+  .sr-check { width: 24px; height: 24px; flex: none; border-radius: 8px; border: 2px solid var(--pink-accent); background: var(--surface); color: #fff; display: flex; align-items: center; justify-content: center; transition: background .15s ease; }
+  .sr-check .icon { width: 14px; height: 14px; stroke-width: 3; opacity: 0; transition: opacity .12s ease; }
+  .sr-dollies.on .sr-check { background: var(--pink-accent); }
+  .sr-dollies.on .sr-check .icon { opacity: 1; }
+  .sr-dollies:disabled .sr-check { border-color: var(--border); }
+  .sr-dollies-text { flex: 1; min-width: 0; }
+  .sr-dollies-title { display: block; font-size: 13.5px; font-weight: 800; color: var(--text); }
+  .sr-dollies-sub { display: block; font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.35; }
+  .sr-dollies-gain { font-size: 13px; font-weight: 800; color: var(--pink-accent); white-space: nowrap; }
+
+  /* Кнопки */
+  .sr-actions { display: grid; gap: 8px; margin-top: 14px; }
+  .sr-actions .btn { width: 100%; margin: 0; }
+  .sr-actions .btn-tertiary { min-height: 40px; color: var(--text-secondary); }
+  .sr-btn-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .sr-btn-row .btn { padding-left: 10px; padding-right: 10px; font-size: 13px; }
+  .sr-request-actions { display: grid; gap: 8px; margin-top: 6px; }
+  .sr-request-actions .btn { width: 100%; margin: 0; }
+  .sr-danger-zone { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--border); text-align: center; }
+  .sr-danger-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #B4233C; padding: 8px 12px; border-radius: 999px; }
+  .sr-danger-link .icon { width: 14px; height: 14px; }
+  .sr-danger-hint { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* Закрытый запрос */
+  .sr-closed { display: flex; gap: 12px; align-items: flex-start; }
+  .sr-closed-icon { width: 38px; height: 38px; border-radius: 13px; background: var(--surface-soft); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; flex: none; }
+  .sr-closed-icon .icon { width: 18px; height: 18px; }
+  .sr-closed h3 { font-size: 15px; font-weight: 800; color: var(--text); }
+  .sr-closed p { font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin-top: 3px; }
+  .sr-closed p b { color: var(--text); }
+
+  /* Форма (одна длинная форма для создания и изменения) */
+  .sr-form { display: grid; gap: 18px; }
+  .sr-field-label { display: block; font-size: 12.5px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+  .sr-field-label small { font-weight: 600; color: var(--text-secondary); margin-left: 4px; }
+  .sr-input, .sr-select, .sr-textarea { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 15px; background: var(--surface); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; -webkit-appearance: none; appearance: none; }
+  .sr-select { background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
+  .sr-textarea { min-height: 116px; resize: vertical; line-height: 1.5; }
+  .sr-input:focus, .sr-select:focus, .sr-textarea:focus { border-color: var(--pink-accent); box-shadow: 0 0 0 3px var(--pink-soft); }
+  .sr-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 360px) { .sr-two { grid-template-columns: 1fr; } }
+  .sr-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .sr-opt { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 9px 13px; font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.25; text-align: left; }
+  .sr-opt.selected { border-color: var(--pink-accent); background: var(--pink-soft); color: var(--text); }
+  .sr-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; text-align: center; min-height: 128px; padding: 16px; border: 1.5px dashed var(--pink); border-radius: 20px; background: var(--surface-soft); cursor: pointer; }
+  .sr-upload .icon { width: 28px; height: 28px; color: var(--pink-accent); }
+  .sr-upload-title { font-size: 14px; font-weight: 800; color: var(--text); }
+  .sr-upload-sub { font-size: 11.5px; color: var(--text-secondary); }
+  .sr-previews { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-top: 9px; }
+  .sr-previews:empty { display: none; }
+  .sr-preview { position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: var(--surface-soft); border: 1px solid var(--border); }
+  .sr-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sr-preview-remove { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; background: rgba(20,18,20,.72); color: #fff; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .sr-preview-remove .icon { width: 12px; height: 12px; }
+  .sr-preview-badge { position: absolute; left: 5px; bottom: 5px; background: rgba(20,18,20,.62); color: #fff; font-size: 9.5px; font-weight: 800; padding: 3px 6px; border-radius: 999px; }
+  .sr-form-note { font-size: 11px; color: var(--text-secondary); line-height: 1.45; margin-top: 7px; }
+
+  /* Модальные окна раздела */
+  .sr-modal { position: fixed; inset: 0; z-index: 10080; display: flex; align-items: flex-end; justify-content: center; padding: 12px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .18s ease, visibility .18s ease; }
+  .sr-modal.open { opacity: 1; visibility: visible; pointer-events: auto; }
+  .sr-modal-backdrop { position: absolute; inset: 0; background: rgba(45,35,40,.42); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .sr-modal-card { position: relative; z-index: 1; width: min(480px, 100%); max-height: calc(var(--tg-vh, 100vh) - 24px); overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 26px; padding: 20px 16px calc(16px + var(--safe-b)); box-shadow: 0 -12px 45px rgba(45,35,40,.18); transform: translateY(18px); transition: transform .24s cubic-bezier(.22,1,.36,1); }
+  .sr-modal.open .sr-modal-card { transform: translateY(0); }
+  .sr-modal-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+  .sr-modal-sub { font-size: 12.5px; line-height: 1.45; color: var(--text-secondary); margin-bottom: 14px; }
+  .sr-radio-list { display: grid; gap: 7px; margin-bottom: 12px; }
+  .sr-radio { display: flex; align-items: center; gap: 11px; width: 100%; padding: 12px 13px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); text-align: left; font-size: 13.5px; font-weight: 600; color: var(--text); }
+  .sr-radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex: none; display: flex; align-items: center; justify-content: center; }
+  .sr-radio.selected { border-color: var(--pink-accent); background: var(--pink-soft); }
+  .sr-radio.selected .sr-radio-dot { border-color: var(--pink-accent); }
+  .sr-radio.selected .sr-radio-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--pink-accent); }
+  .sr-modal-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+  .sr-modal-actions .btn { margin: 0; width: 100%; padding-left: 10px; padding-right: 10px; }
+  .btn-danger { background: #C4324A; color: #fff; box-shadow: 0 8px 18px rgba(196,50,74,.22); }
+  .btn-danger:disabled { opacity: .45; box-shadow: none; }
 </style>
 </head>
 <body>
@@ -2074,7 +2182,6 @@
         <svg class="icon" style="color:var(--text-secondary);width:18px;flex:none"><use href="#icon-chevron-right"/></svg>
       </div>
     </button>
-    
     <p class="catalog-intro">Куклы в наличии. Понравилась — оставьте заявку, и мы свяжемся с вами.</p>
     <div id="catalog-list"></div>
   </main>
@@ -2089,11 +2196,6 @@
   </main>
 
   <main class="tab-screen" id="tab-search">
-    <button type="button" class="search-back" onclick="switchTab('profile')">
-      <svg class="icon" style="width:17px;height:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Профиль
-    </button>
-    <header class="screen-header"><h1>Поиск для меня</h1></header>
-    <p class="search-screen-intro">Расскажи, какую куклу ты ищешь — мы попробуем её найти.</p>
     <div id="search-screen-content"></div>
   </main>
 
@@ -6033,332 +6135,872 @@ function showToast(msg) {
 document.getElementById('track-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); });
 
 
-/* ============ SEARCH REQUESTS ============ */
+/* ============ ПОИСК ДЛЯ МЕНЯ ============
+   Только интерфейс раздела. Все запросы к API — те же, что и раньше:
+   /api/me/search_requests (GET, POST), /<id> (GET, PATCH), /<id>/images,
+   /<id>/results/<rid>/open|select|reject, /<id>/more, /<id>/delete. */
 let searchRequestsCache = [];
 let searchCurrent = null;
-let searchFormType = null;
+let searchFormType = null;          // null | 'specific' | 'similar' | 'edit' | 'loading'
 let searchSelectedFiles = [];
+let searchReturnTab = 'catalog';
+let searchLightboxList = [];
+const srGalleries = {};
+let srDollies = { use: false, balance: null, rate: 100, cap: 300, price: 0, resultId: null };
 
 const SEARCH_STATUS_LABELS = {
-  NEW:'Новый запрос', SEARCHING:'Ищем варианты', FOUND:'Найден вариант',
-  WAITING_USER:'Ждём вашего решения', MORE_SEARCH:'Ищем другие варианты',
-  SELECTED:'Вариант выбран', ORDERED:'Заказ оформлен', CLOSED:'Запрос закрыт'
+  NEW: 'Запрос создан', SEARCHING: 'Ищем варианты', FOUND: 'Найден вариант',
+  WAITING_USER: 'Ждём вашего решения', MORE_SEARCH: 'Ищем другие варианты',
+  SELECTED: 'Вариант выбран', ORDERED: 'Заказ оформлен', CLOSED: 'Запрос закрыт'
 };
-const SEARCH_BRANDS = ['Monster High','Bratz','Barbie','Ever After High','Rainbow High','Shadow High','Другое'];
-const SEARCH_CONDITIONS = [['new','Новая'],['like_new','Как новая'],['good','Хорошее'],['minor_defects','Можно с небольшими дефектами'],['any','Неважно']];
-const SEARCH_COMPLETENESS = [['full','Полная'],['prefer_full','Желательно полная'],['any','Неважно']];
-const SEARCH_URGENCY = [['not_urgent','Не срочно'],['normal','Обычный поиск'],['notify_fast','Если появится — сообщите сразу']];
+const SEARCH_BRANDS = ['Monster High', 'Bratz', 'Barbie', 'Ever After High', 'Rainbow High', 'Shadow High', 'Другое'];
+const SEARCH_CONDITIONS = [['new', 'Новая'], ['like_new', 'Как новая'], ['good', 'Хорошее'], ['minor_defects', 'Можно с небольшими дефектами'], ['any', 'Неважно']];
+const SEARCH_COMPLETENESS = [['full', 'Полная'], ['prefer_full', 'Желательно полная'], ['any', 'Неважно']];
+const SEARCH_URGENCY = [['not_urgent', 'Не срочно'], ['normal', 'Обычный поиск'], ['notify_fast', 'Если появится — сообщите сразу']];
+const SEARCH_FEATURES = [['face', 'Лицо'], ['hair', 'Волосы'], ['clothing', 'Одежда'], ['style', 'Стиль'], ['colors', 'Цветовая гамма'], ['outfit', 'Образ'], ['all', 'Всё вместе']];
+const SEARCH_MAX_PHOTOS = 8;
+const SEARCH_DELETE_REASONS = [['not_relevant', 'Уже неактуально'], ['found_myself', 'Нашла сама'], ['too_expensive', 'Не подходит по цене'], ['changed_mind', 'Передумала'], ['other', 'Другое']];
+const SEARCH_REJECT_REASONS = [['price', 'Слишком дорого'], ['condition', 'Не подходит состояние'], ['completeness', 'Не та комплектация'], ['other_doll', 'Хочу другую куклу'], ['other', 'Другое']];
 
-function searchDate(iso){
-  if(!iso)return '';
-  const d=new Date(iso); if(isNaN(d))return '';
-  return d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+/* ---------- Утилиты ---------- */
+function searchDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso); if (isNaN(d)) return '';
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
 }
-function searchStatus(status){return SEARCH_STATUS_LABELS[status]||status||''}
-function openMySearchRequests(){
+function searchStatus(status) { return SEARCH_STATUS_LABELS[status] || status || ''; }
+function srRub(n) { return (Math.round(Number(n) || 0)).toLocaleString('ru-RU') + ' ₽'; }
+function srIcon(id, cls) { return `<svg class="icon ${cls || ''}"><use href="#icon-${id}"/></svg>`; }
+function srStage(status) {
+  if (status === 'CLOSED') return 'closed';
+  if (status === 'FOUND' || status === 'WAITING_USER') return 'action';
+  if (status === 'SELECTED' || status === 'ORDERED') return 'done';
+  return 'search';
+}
+function srChip(r) {
+  return `<span class="sr-chip ${srStage(r.status)}"><span class="sr-chip-dot"></span>${escapeHtml(searchStatus(r.status))}</span>`;
+}
+function srTitle(r) {
+  return r.title || r.character || (r.type === 'similar' ? 'Похожая кукла' : 'Поиск куклы');
+}
+function srActive(r) { return !['CLOSED', 'ORDERED', 'SELECTED'].includes(r.status); }
+function srEditable(r) { return !['CLOSED', 'ORDERED', 'SELECTED'].includes(r.status); }
+function srDeletable(r) { return !['CLOSED', 'ORDERED'].includes(r.status); }
+function srResultState(x) {
+  if (x.selected_at) return 'selected';
+  if (x.rejection_reason) return 'rejected';
+  return 'active';
+}
+function srSubtitle(r) {
+  if (r.type === 'similar') return 'Подбираем похожую куклу по вашим фото';
+  const cond = {
+    new: 'новую куклу', like_new: 'куклу в состоянии «как новая»', good: 'куклу в хорошем состоянии',
+    minor_defects: 'куклу, можно с небольшими дефектами'
+  }[r.condition] || 'куклу';
+  const compl = { full: ' в полной комплектации', prefer_full: ', желательно в полной комплектации' }[r.completeness] || '';
+  return `Ищем ${cond}${compl}`;
+}
+function srPlural(n, one, few, many) { return pluralize(Number(n) || 0, one, few, many); }
+
+function searchContent() { return document.getElementById('search-screen-content'); }
+function srScrollTop() { try { window.scrollTo(0, 0); } catch (_) {} }
+
+/* ---------- Вход в раздел ---------- */
+function rememberSearchReturn() {
+  const active = document.querySelector('.tab-screen.active');
+  const name = active ? active.id.replace('tab-', '') : 'catalog';
+  if (name !== 'search') searchReturnTab = name;
+}
+function openSearchRequests() {
+  rememberSearchReturn();
+  searchCurrent = null; searchFormType = null;
   switchTab('search');
-  searchFormType=null;
-  searchCurrent=null;
-  searchSelectedFiles=[];
-  const c=document.getElementById('search-screen-content');
-  if(!c)return;
-  c.innerHTML=`<button class="search-back" onclick="switchTab('profile')"><svg class="icon" style="width:17px;height:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Профиль</button>
-    <header class="screen-header" style="margin-top:8px"><h1>Мои запросы</h1></header>
-    <button class="btn btn-primary btn-block" style="margin:0 0 14px" onclick="openSearchForm('specific')">Создать новый запрос</button>
-    <div id="search-my-list"></div>`;
+}
+function openMySearchRequests() {
+  rememberSearchReturn();
+  searchCurrent = null; searchFormType = null;
+  switchTab('search');
+  setTimeout(() => document.getElementById('search-my-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+}
+function leaveSearch() {
+  searchCurrent = null; searchFormType = null;
+  switchTab(searchReturnTab && searchReturnTab !== 'search' ? searchReturnTab : 'catalog');
+}
+
+/* ---------- Главный экран раздела ---------- */
+function renderSearchHome() {
+  searchFormType = null; searchCurrent = null; searchSelectedFiles = [];
+  const c = searchContent(); if (!c) return;
+  const backLabel = searchReturnTab === 'profile' ? 'Профиль' : (searchReturnTab === 'home' ? 'Главная' : 'Каталог');
+  c.innerHTML = `
+  <div class="sr">
+    <button type="button" class="sr-back" onclick="leaveSearch()">${srIcon('chevron-right')} ${backLabel}</button>
+    <div class="sr-kicker">Поиск для меня</div>
+    <h1 class="sr-h1">Найдём куклу специально для вас</h1>
+    <p class="sr-lead">Расскажите, какую куклу вы ищете. DollieLand подберёт варианты, а вы выберете лучший.</p>
+    <div class="sr-how" aria-label="Как это работает">
+      ${['Запрос', 'Ищем', 'Варианты', 'Выбор'].map((t, i) => `<div class="sr-how-step"><div class="sr-how-num">${i + 1}</div><div class="sr-how-text">${t}</div></div>`).join('')}
+    </div>
+    <div class="sr-choices">
+      <button type="button" class="sr-choice" onclick="openSearchForm('specific')">
+        <span class="sr-choice-icon">${srIcon('search')}</span>
+        <span class="sr-choice-title">Конкретная кукла</span>
+        <span class="sr-choice-desc">Знаю, какую куклу хочу</span>
+        <span class="sr-choice-cta">Создать запрос ${srIcon('chevron-right')}</span>
+      </button>
+      <button type="button" class="sr-choice" onclick="openSearchForm('similar')">
+        <span class="sr-choice-icon">${srIcon('image')}</span>
+        <span class="sr-choice-title">Похожая по фото</span>
+        <span class="sr-choice-desc">Покажу фото — подберите похожую</span>
+        <span class="sr-choice-cta">Подобрать ${srIcon('chevron-right')}</span>
+      </button>
+    </div>
+    <div class="sr-section-head" id="search-my-section"><b>Мои запросы</b><span id="search-my-count"></span></div>
+    <div id="search-my-list">${skeletonOrdersHTML(1)}</div>
+  </div>`;
   loadSearchRequests();
 }
-function openSearchRequests(){
-  switchTab('search');
-  loadSearchRequests();
-}
-function searchChoiceHTML(){
- return `<div class="search-choice-grid">
-   <button class="search-choice" onclick="openSearchForm('specific')">
-    <div class="search-choice-icon"><svg class="icon"><use href="#icon-camera"/></svg></div>
-    <h3>Найти конкретную куклу</h3><p>Я знаю, какую куклу хочу</p>
-    <div class="search-choice-cta">Создать запрос <svg class="icon" style="width:17px"><use href="#icon-chevron-right"/></svg></div>
-   </button>
-   <button class="search-choice" onclick="openSearchForm('similar')">
-    <div class="search-choice-icon"><svg class="icon"><use href="#icon-image"/></svg></div>
-    <h3>Найти похожую</h3><p>Покажи фото — попробуем подобрать что-то похожее</p>
-    <div class="search-choice-cta">Подобрать <svg class="icon" style="width:17px"><use href="#icon-chevron-right"/></svg></div>
-   </button>
- </div>
- <div style="margin:22px 0 9px;font-size:15px;font-weight:800">Мои запросы</div>
- <div id="search-my-list"></div>`;
-}
-function searchFormHTML(type){
- const similar=type==='similar';
- return `<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад</button>
- <div class="search-form-card">
-  <div style="font-size:18px;font-weight:800;margin-bottom:4px">${similar?'Найти похожую':'Найти конкретную куклу'}</div>
-  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:18px">${similar?'Покажи фото и расскажи, что именно тебе нравится.':'Если не знаешь название — просто покажи нам куклу.'}</div>
-  <form onsubmit="submitSearchRequest(event,'${type}')">
-   <div class="search-form-section">
-    <label class="search-label">Фотографии</label>
-    <div class="search-upload-wrap">
-      <label class="search-upload" for="search-files">
-        <svg class="icon"><use href="#icon-camera"/></svg>
-        <div class="search-upload-title">Добавить фотографии</div>
-        <div class="search-upload-sub">Выбери одно или несколько фото · до 8</div>
-      </label>
-      <input id="search-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="previewSearchFiles(this)">
-      <div id="search-previews" class="search-previews"></div>
-      <div class="search-upload-note">Фото появятся здесь сразу после выбора. Их можно удалить до отправки.</div>
-    </div>
-   </div>
-   ${similar ? `<div class="search-form-section">
-      <label class="search-label">Что тебе нравится в этой кукле?</label>
-      <div class="search-chips" id="search-features">
-       ${[['face','лицо'],['hair','волосы'],['clothing','одежда'],['style','стиль'],['colors','цветовая гамма'],['outfit','образ'],['all','всё вместе']].map(x=>`<button type="button" class="search-chip" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}
-      </div>
-    </div>` : `<div class="search-two-col search-form-section">
-      <div><label class="search-label">Имя / персонаж</label><input class="search-input" name="character" placeholder="Spectra Vondergeist"></div>
-      <div><label class="search-label">Линейка</label><input class="search-input" name="line" placeholder="Dawn of the Dance"></div>
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">Бренд</label>
-      <select class="search-select" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x=>`<option>${x}</option>`).join('')}</select>
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">Состояние</label>
-      <div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div>
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">Комплектация</label>
-      <div class="search-chips">${SEARCH_COMPLETENESS.map(x=>`<button type="button" class="search-chip" data-group="completeness" data-value="${x[0]}" onclick="selectSearchChip(this,'completeness')">${x[1]}</button>`).join('')}</div>
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">Максимальный бюджет</label>
-      <input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽">
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">${similar?'Расскажи подробнее':'Что особенно важно?'}</label>
-      <textarea class="search-textarea" name="important" placeholder="${similar?'Хочу похожую по атмосфере, но не обязательно именно эту куклу.':'Обязательно оригинальные туфли и дневник. Небольшие потёртости допустимы.'}"></textarea>
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">Срочность</label>
-      <div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div>
-    </div>
-   `}
-   ${similar ? `<div class="search-two-col search-form-section">
-      <div><label class="search-label">Бренд · необязательно</label><select class="search-select" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x=>`<option>${x}</option>`).join('')}</select></div>
-      <div><label class="search-label">Бюджет · необязательно</label><input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽"></div>
-    </div>
-    <div class="search-form-section">
-      <label class="search-label">Расскажи подробнее</label>
-      <textarea class="search-textarea" name="important" placeholder="Хочу похожую по атмосфере, но не обязательно именно эту куклу."></textarea>
-    </div>
-    <div class="search-form-section"><label class="search-label">Состояние · необязательно</label><div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div></div>
-    <div class="search-form-section"><label class="search-label">Срочность</label><div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div></div>` : ''}
-   <button class="btn btn-primary btn-block search-submit" id="search-submit-btn" type="submit">Создать запрос</button>
-  </form>
- </div>`;
-}
-function toggleSearchChip(el){
- el.classList.toggle('selected');
- if(el.dataset.value==='all' && el.classList.contains('selected')) {
-   el.parentElement.querySelectorAll('.search-chip').forEach(x=>{if(x!==el)x.classList.remove('selected')});
- }
- if(el.dataset.value!=='all' && el.classList.contains('selected')) {
-   const all=el.parentElement.querySelector('.search-chip[data-value="all"]'); if(all)all.classList.remove('selected');
- }
-}
-function selectSearchChip(el,group){
- el.parentElement.querySelectorAll('.search-chip').forEach(x=>x.classList.remove('selected')); el.classList.add('selected');
- if(group==='brand'){const input=document.getElementById('search-brand-value');if(input)input.value=el.dataset.value||'';}
-}
-function selectedSearchValue(group){
- return document.querySelector(`.search-chip.selected[data-group="${group}"]`)?.dataset.value || '';
-}
-function previewSearchFiles(input){
- searchSelectedFiles=Array.from(input.files||[]).slice(0,8);
- renderSearchFilePreviews();
-}
-function renderSearchFilePreviews(){
- const box=document.getElementById('search-previews'); if(!box)return;
- box.innerHTML=searchSelectedFiles.map((f,i)=>`<div class="search-preview-item">
-   <img class="search-preview" src="${URL.createObjectURL(f)}" alt="">
-   <button type="button" class="search-preview-remove" aria-label="Удалить фото" onclick="removeSearchFile(${i})">×</button>
- </div>`).join('');
-}
-function removeSearchFile(index){
- if(index<0||index>=searchSelectedFiles.length)return;
- searchSelectedFiles.splice(index,1);
- const input=document.getElementById('search-files');
- if(input){
-   const dt=new DataTransfer();
-   searchSelectedFiles.forEach(f=>dt.items.add(f));
-   input.files=dt.files;
- }
- renderSearchFilePreviews();
-}
-function renderSearchHome(){
- searchFormType=null; searchSelectedFiles=[];
- const c=document.getElementById('search-screen-content'); if(!c)return;
- c.innerHTML=searchChoiceHTML(); loadSearchRequests();
-}
-async function loadSearchRequests(){
- const c=document.getElementById('search-screen-content'); if(!c)return;
- if(!searchFormType && !searchCurrent)c.innerHTML=searchChoiceHTML();
- try{
-  const d=await apiFetch('/api/me/search_requests',{}, {timeoutMs:10000,retries:1});
-  if(!d.ok)throw new Error('load');
-  searchRequestsCache=d.requests||[];
-  renderSearchMyList();
- }catch(e){const el=document.getElementById('search-my-list');if(el)el.innerHTML='<div class="search-empty"><h3>Не удалось загрузить запросы</h3><p>Попробуйте ещё раз.</p></div>'}
-}
-function renderSearchMyList(){const el=document.getElementById('search-my-list');if(!el)return;const countEl=document.getElementById('my-search-requests-count');if(countEl)countEl.textContent=String(searchRequestsCache.length||0);if(!searchRequestsCache.length){el.innerHTML='<div class="search-empty"><h3>Пока здесь пусто</h3><p>Создай первый поиск — и мы начнём искать куклу.</p></div>';return;}el.className='search-request-list';el.innerHTML=searchRequestsCache.map(r=>{const first=(r.images||[])[0],photo=first?`<img src="${escapeAttr(assetUrl(first))}" class="my-search-thumb" loading="lazy">`:`<div class="my-search-thumb"><svg class="icon"><use href="#icon-camera"/></svg></div>`,cnt=(r.results||[]).length,suffix=cnt?` · ${cnt} ${cnt===1?'вариант':'варианта'}`:'';return `<button class="my-search-row" onclick="openSearchRequest('${escapeAttr(r.id)}')">${photo}<div class="my-search-row-text"><div class="search-entry-title">${escapeHtml(r.title||r.character||'Поиск куклы')}</div><div class="my-search-status"><span class="my-search-status-dot"></span>${escapeHtml(r.status_label||r.type_label||'Новый запрос')}${suffix}</div><div class="my-search-date">${searchDate(r.created_at)}</div></div><svg class="icon my-search-chevron"><use href="#icon-chevron-right"/></svg></button>`}).join('');}
-function openSearchForm(type){
- searchFormType=type; searchCurrent=null; searchSelectedFiles=[];
- const c=document.getElementById('search-screen-content'); if(c)c.innerHTML=searchFormHTML(type);
- window.scrollTo(0,0);
-}
-async function submitSearchRequest(event,type){
- event.preventDefault(); if(!userId)return;
- const form=event.target, btn=document.getElementById('search-submit-btn');
- if(btn){btn.disabled=true;btn.textContent='Создаём запрос…'}
- const fd=new FormData(form);
- const payload={
-  type, title: type==='specific' ? (fd.get('character')||'') : '',
-  character: type==='specific' ? (fd.get('character')||'') : '',
-  line:type==='specific'?(fd.get('line')||''):'',
-  brand:fd.get('brand')||'', budget_max:String(fd.get('budget_max')||'').replace(/[^\d]/g,''),
-  condition:selectedSearchValue('condition'), completeness:selectedSearchValue('completeness'),
-  urgency:selectedSearchValue('urgency'),
-  important:fd.get('important')||'', description:fd.get('important')||'',
-  similar_features:Array.from(document.querySelectorAll('#search-features .selected')).map(x=>x.dataset.value)
- };
- try{
-  const d=await apiPost('/api/me/search_requests',payload);
-  if(!d.ok)throw new Error(d.error||'create_failed');
-  const rid=d.request.id;
-  if(searchSelectedFiles.length){
-   const imageFd=new FormData(); searchSelectedFiles.forEach(f=>imageFd.append('images',f,f.name));
-   const h={};Object.assign(h,DL_PWA.authHeaders());
-   const res=await fetch(API_BASE+'/api/me/search_requests/'+encodeURIComponent(rid)+'/images',{method:'POST',headers:h,body:imageFd});
-   const idata=await res.json(); if(!idata.ok)throw new Error(idata.error||'photo_failed');
+
+async function loadSearchRequests() {
+  try {
+    const d = await apiFetch('/api/me/search_requests', {}, { timeoutMs: 10000, retries: 1 });
+    if (!d.ok) throw new Error('load');
+    searchRequestsCache = d.requests || [];
+    renderSearchMyList();
+  } catch (e) {
+    const el = document.getElementById('search-my-list');
+    if (el) el.innerHTML = `<div class="sr-card sr-waiting"><h3>Не удалось загрузить запросы</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button type="button" class="btn btn-secondary" style="margin-top:12px" onclick="loadSearchRequests()">Повторить</button></div>`;
   }
-  hapticNotification('success'); showToast('Запрос создан');
-  await openSearchRequest(rid);
- }catch(e){
-  showToast(e.message==='too_many_images'?'Можно прикрепить максимум 8 фото':e.message==='photo_too_large'?'Фото слишком большое':'Не удалось создать запрос');
-  if(btn){btn.disabled=false;btn.textContent='Создать запрос'}
- }
 }
-async function openSearchRequest(id,resultId){
- searchFormType=null; searchCurrent=null;
- const c=document.getElementById('search-screen-content'); if(!c)return;
- c.innerHTML='<div class="search-empty"><h3>Загружаем запрос…</h3></div>';
- try{
-  const d=await apiFetch('/api/me/search_requests/'+encodeURIComponent(id),{}, {timeoutMs:10000,retries:1});
-  if(!d.ok)throw new Error(d.error||'load_failed');
-  searchCurrent=d.request;
-  renderSearchDetail(resultId||new URLSearchParams(location.search).get('search_result'));
-  switchTab('search');
- }catch(e){c.innerHTML='<div class="search-empty"><h3>Не удалось открыть запрос</h3><button class="btn btn-primary" onclick="loadSearchRequests()">Повторить</button></div>'}
-}
-function searchProgressHTML(status){const order=['NEW','SEARCHING','FOUND','SELECTED'];let idx=order.indexOf(status);if(idx<0)idx=(status==='WAITING_USER'||status==='MORE_SEARCH')?2:(status==='ORDERED'?3:0);const labels=['Создан','Ищем','Нашли','Выбор'];return `<div class="search-progress-line">${labels.map((x,i)=>{const state=i<idx?'done':(i===idx?'current':'');const item=`<div class="p-item ${state}"><div class="p-dot"></div>${x}</div>`;const arrow=i<3?`<div class="p-arrow ${i<idx?'done':''}" aria-hidden="true">›</div>`:'';return item+arrow;}).join('')}</div>`;}
-function renderSearchDetail(resultId){const r=searchCurrent,c=document.getElementById('search-screen-content');if(!r||!c)return;const photos=(r.images||[]).map(x=>`<img class="search-request-photo search-photo-clickable" src="${escapeAttr(assetUrl(x))}" onclick="openSearchPhotoLightbox('${escapeAttr(assetUrl(x))}')">`).join('');const reqInfo=`<div class="search-requirements"><div class="search-requirement"><span>Бюджет</span><b>${r.budget_max?Number(r.budget_max).toLocaleString('ru-RU')+' ₽':'Не указан'}</b></div><div class="search-requirement"><span>Состояние</span><b>${escapeHtml(r.condition_label||'Не указано')}</b></div><div class="search-requirement"><span>Комплектация</span><b>${escapeHtml(r.completeness_label||'Не указано')}</b></div><div class="search-requirement"><span>Бренд</span><b>${escapeHtml(r.brand||'Неважно')}</b></div></div>`;const results=(r.results||[]).map(x=>searchResultHTML(x,r)).join('');const msgs=(r.messages||[]).filter(m=>m.direction==='admin_to_user');const messagesHtml=msgs.length?`<div class="search-request-block"><div class="search-request-block-title">Сообщения от DollieLand</div><div class="search-status-card" style="display:grid;gap:9px">${msgs.map(m=>`<div style="background:var(--surface-soft);border-radius:13px;padding:10px 12px;font-size:11.5px;line-height:1.5"><div style="font-size:9.5px;color:var(--text-secondary);margin-bottom:4px">DollieLand · ${escapeHtml(searchDate(m.created_at))}</div>${escapeHtml(m.text)}</div>`).join('')}</div></div>`:'';const cnt=(r.results||[]).length;c.innerHTML=`<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Все запросы</button><div class="search-status-card"><div class="search-status-top"><span class="search-status-pill">${escapeHtml(r.status_label||'Поиск')}</span><span class="search-status-id">Запрос #${escapeHtml(String(r.id).slice(-6))}</span></div><div class="search-detail-title">${escapeHtml(r.title||r.character||'Поиск куклы')}</div><div class="search-detail-sub">${escapeHtml(r.line||r.type_label||'Поиск')} · создан ${searchDate(r.created_at)}</div>${searchProgressHTML(r.status)}${photos?`<div class="search-request-photo-row">${photos}</div>`:''}${r.important?`<div class="search-important"><b>Особенно важно</b><br>${escapeHtml(r.important)}</div>`:''}</div><div class="search-request-block"><div class="search-request-block-title">Твои пожелания</div>${reqInfo}</div>${messagesHtml}<div class="search-results-head"><b>${cnt?'Мы нашли варианты':'Ищем для тебя'}</b><span>${cnt?cnt+' '+(cnt===1?'вариант':'варианта'):'можно подождать'}</span></div>${results||'<div class="search-empty"><h3>Пока ничего подходящего</h3><p>Мы продолжаем поиск и сообщим, когда появится новый вариант.</p></div>'}${r.status!=='CLOSED'&&r.status!=='ORDERED'&&r.status!=='SELECTED'?`<button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(r.id)}')">Показать другие варианты</button>`:''}${r.status!=='CLOSED'&&r.status!=='ORDERED'?`${r.status!=='SELECTED'?`<button class="btn btn-tertiary btn-block" onclick="openEditSearchRequest('${escapeAttr(r.id)}')">Изменить запрос</button>`:''}<button class="btn btn-tertiary btn-block search-delete-btn" onclick="openDeleteSearchReason('${escapeAttr(r.id)}')">Удалить запрос</button>`:''}`;if(resultId)setTimeout(()=>document.getElementById('search-result-'+CSS.escape(String(resultId)))?.scrollIntoView({behavior:'smooth',block:'center'}),80);}
-function searchResultHTML(x,r){const photos=(x.images||[]).map(p=>`<img class="search-result-photo search-photo-clickable" src="${escapeAttr(assetUrl(p))}" onclick="openSearchPhotoLightbox('${escapeAttr(assetUrl(p))}')">`).join('');const price=x.price!=null?Number(x.price).toLocaleString('ru-RU')+' '+escapeHtml(x.currency||'₽'):'Цена не указана';const match=x.match_percent!=null?`<div class="search-match"><svg class="icon"><use href="#icon-check"/></svg> Подходит на ${Number(x.match_percent)}%</div>`:'';return `<article class="search-result-card" id="search-result-${escapeAttr(x.id)}">${photos?`<div class="search-result-photo-row">${photos}</div>`:''}<div class="search-result-title">${escapeHtml(x.title||'Найденный вариант')}</div>${match}<div class="search-result-line">${escapeHtml(x.line||'')}</div><div class="search-result-price">${price}</div><div class="search-result-meta"><span>${escapeHtml(x.condition||'Состояние не указано')}</span><span>${escapeHtml(x.completeness||'Комплектация не указана')}</span><span>${escapeHtml(x.country||'Страна не указана')}</span></div>${x.description?`<div class="search-result-description">${escapeHtml(x.description)}</div>`:''}${x.defects?`<div class="search-result-description"><b style="color:var(--text)">Важно:</b> ${escapeHtml(x.defects)}</div>`:''}${x.weight_cost!=null?`<div class="search-weight-card"><div class="search-weight-main">+ примерно ${Number(x.weight_cost).toLocaleString('ru-RU')} ₽ за вес</div><div class="search-weight-note">Вес — стоимость международной доставки. Точная сумма определяется после поступления куклы на склад и взвешивания.</div></div>`:''}${x.source_url?`<button class="btn btn-tertiary" style="padding-left:0" onclick="openExternalSearchLink('${escapeAttr(x.source_url)}')">Оригинальное объявление</button>`:''}<button class="btn btn-secondary btn-block" onclick="openSearchResult('${escapeAttr(r.id)}','${escapeAttr(x.id)}')">Посмотреть вариант →</button></article>`;}
-function openExternalSearchLink(url){try{tg?.openLink?tg.openLink(url):window.open(url,'_blank')}catch(_){window.open(url,'_blank')}}
-async function openSearchResult(rid,resultId){
- const x=searchCurrent?.results?.find(x=>String(x.id)===String(resultId)); if(!x)return;
- apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/open',{}).catch(()=>{});
- const c=document.getElementById('search-screen-content'); const priceValue=Number(x.price)||0;
- c.innerHTML=`<button class="search-back" onclick="openSearchRequest('${escapeAttr(rid)}')"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад к запросу</button>
- <div class="search-result-card">${searchResultHTML(x,searchCurrent)}
-  <div class="search-price-summary" id="search-price-summary"><div class="search-price-summary-row"><span>Стоимость куклы</span><b>${priceValue.toLocaleString('ru-RU')} ₽</b></div><div class="search-price-summary-row final"><span>Итоговая стоимость</span><b id="search-final-price">${priceValue.toLocaleString('ru-RU')} ₽</b></div><div class="search-price-note">Без учёта веса и доставки по России.</div></div>
-  <div class="search-dollies-box" id="search-dollies-box" onclick="toggleSearchDollies()"><div class="search-dollies-row"><span class="search-dollies-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span style="min-width:0;flex:1"><span class="search-dollies-title">Учесть Dollies</span><span class="search-dollies-sub" id="search-dollies-sub">Загружаем ваш баланс…</span></span><span class="search-dollies-value" id="search-dollies-value">—</span></div></div>
-  <button class="btn btn-primary btn-block" onclick="selectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Забрать эту</button>
-  <button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(rid)}')">Показать другие варианты</button>
-  <button class="btn btn-tertiary btn-block" onclick="rejectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Не подходит</button>
- </div>`;
- window.__searchDolliesUse=false; window.__searchDolliesInfo={balance:0,max:0,rate:100,total:priceValue,price:priceValue,discount:0}; loadSearchDolliesInfo(); window.scrollTo(0,0);
-}
-async function loadSearchDolliesInfo(){
- try{const d=await apiFetch('/api/me/loyalty',{}, {timeoutMs:8000,retries:1}); if(!d?.ok)return; const balance=Math.max(0,Number(d.balance)||0),rate=Number(d.redemption_rate_rub_per_100)||100,serverMax=Number(d.max_redeem_per_order)||300,maxRub=Math.min(priceValueForSearch(),Math.round(serverMax*rate/100),Math.round(balance*rate/100)); window.__searchDolliesInfo={...window.__searchDolliesInfo,balance,max:maxRub,rate,total:priceValueForSearch()}; const sub=document.getElementById('search-dollies-sub');if(sub)sub.textContent=balance>0?`На балансе ${balance} Dollies · скидка до ${maxRub.toLocaleString('ru-RU')} ₽`:'На балансе сейчас нет Dollies';const val=document.getElementById('search-dollies-value');if(val)val.textContent=balance>0?`до ${maxRub.toLocaleString('ru-RU')} ₽`:'0 ₽';updateSearchDolliesPrice();}catch(_){}
-}
-function priceValueForSearch(){return Number(window.__searchDolliesInfo?.price||window.__searchDolliesInfo?.total)||0}
-function updateSearchDolliesPrice(){const info=window.__searchDolliesInfo||{},price=priceValueForSearch(),discount=window.__searchDolliesUse?Math.min(price,Number(info.max)||0):0,final=Math.max(0,price-discount);const el=document.getElementById('search-final-price');if(el)el.innerHTML=discount?`<span class="search-price-old">${price.toLocaleString('ru-RU')} ₽</span>${final.toLocaleString('ru-RU')} ₽`:`${price.toLocaleString('ru-RU')} ₽`;const sub=document.getElementById('search-dollies-sub');if(sub&&Number(info.balance)>0)sub.textContent=window.__searchDolliesUse?`Скидка ${discount.toLocaleString('ru-RU')} ₽ применена`:`На балансе ${info.balance} Dollies · скидка до ${(Number(info.max)||0).toLocaleString('ru-RU')} ₽`}
-function toggleSearchDollies(){const info=window.__searchDolliesInfo||{balance:0,max:0};if(info.balance<=0){showToast('На балансе нет Dollies');return;}window.__searchDolliesUse=!window.__searchDolliesUse;document.getElementById('search-dollies-box')?.classList.toggle('selected',window.__searchDolliesUse);updateSearchDolliesPrice();}
-async function selectSearchResult(rid,resultId){
- const useDollies=!!window.__searchDolliesUse;
- const info=window.__searchDolliesInfo||{};
- if(useDollies && !(Number(info.balance)>0)){showToast('На балансе нет Dollies');return;}
- const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/select',{use_dollies:useDollies});
- if(!d.ok){showToast('Не удалось передать выбор');return}
- hapticNotification('success'); const used=Number(d.request?.results?.find(x=>String(x.id)===String(resultId))?.selected_dollies_discount_rub)||0; showToast(used?`Выбор передан · Dollies учтены на ${used} ₽`:'Выбор передан администратору');searchCurrent=d.request;renderSearchDetail(resultId);
-}
-async function requestMoreSearch(rid){
- const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/more',{});
- if(!d.ok){showToast('Не удалось отправить запрос');return}
- hapticNotification('success');showToast('Хорошо, продолжим поиск');searchCurrent=d.request;renderSearchDetail();
-}
-async function rejectSearchResult(rid,resultId){
- const reason=prompt('Почему вариант не подходит?\n\nНапример: слишком дорого, состояние, комплектация или хочу другую.');
- if(reason===null)return;
- const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/reject',{reason:reason||'другое'});
- if(!d.ok){showToast('Не удалось отправить ответ');return}
- showToast('Ответ передан администратору');searchCurrent=d.request;renderSearchDetail();
-}
-function searchEditFormHTML(r){
- const similar=r.type==='similar';
- const esc=v=>escapeAttr(v==null?'':String(v));
- const condition=r.condition||'';
- const completeness=r.completeness||'';
- const urgency=r.urgency||'';
- const features=Array.isArray(r.similar_features)?r.similar_features:[];
- return `<button class="search-back" onclick="renderSearchDetail()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад</button>
- <div class="search-form-card">
-  <div style="font-size:18px;font-weight:800;margin-bottom:4px">Изменить запрос</div>
-  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:18px">Измени пожелания — остальные части запроса останутся на месте.</div>
-  <form onsubmit="submitSearchEdit(event,'${escapeAttr(String(r.id))}','${similar?'similar':'specific'}')">
-   ${similar?`<div class="search-form-section"><label class="search-label">Что тебе нравится в этой кукле?</label><div class="search-chips" id="search-features">${[['face','лицо'],['hair','волосы'],['clothing','одежда'],['style','стиль'],['colors','цветовая гамма'],['outfit','образ'],['all','всё вместе']].map(x=>`<button type="button" class="search-chip ${features.includes(x[0])?'selected':''}" data-value="${x[0]}" onclick="toggleSearchChip(this)">${x[1]}</button>`).join('')}</div></div>`:`<div class="search-two-col search-form-section"><div><label class="search-label">Имя / персонаж</label><input class="search-input" name="character" value="${esc(r.character||r.title||'')}" placeholder="Spectra Vondergeist"></div><div><label class="search-label">Линейка</label><input class="search-input" name="line" value="${esc(r.line||'')}" placeholder="Dawn of the Dance"></div></div>`}
-   <div class="search-form-section"><label class="search-label">Бренд</label><select class="search-select" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x=>`<option ${String(r.brand||'')===x?'selected':''}>${x}</option>`).join('')}</select></div>
-   <div class="search-form-section"><label class="search-label">Состояние</label><div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip ${condition===x[0]?'selected':''}" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div></div>
-   ${!similar?`<div class="search-form-section"><label class="search-label">Комплектация</label><div class="search-chips">${SEARCH_COMPLETENESS.map(x=>`<button type="button" class="search-chip ${completeness===x[0]?'selected':''}" data-group="completeness" data-value="${x[0]}" onclick="selectSearchChip(this,'completeness')">${x[1]}</button>`).join('')}</div></div>`:''}
-   <div class="search-form-section"><label class="search-label">Максимальный бюджет</label><input class="search-input" name="budget_max" value="${esc(r.budget_max||'')}" inputmode="decimal" placeholder="До 8 000 ₽"></div>
-   <div class="search-form-section"><label class="search-label">${similar?'Расскажи подробнее':'Что особенно важно?'}</label><textarea class="search-textarea" name="important" placeholder="${similar?'Хочу похожую по атмосфере, но не обязательно именно эту куклу.':'Обязательно оригинальные туфли и дневник. Небольшие потёртости допустимы.'}">${escapeHtml(r.important||'')}</textarea></div>
-   <div class="search-form-section"><label class="search-label">Срочность</label><div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip ${urgency===x[0]?'selected':''}" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div></div>
-   <button class="btn btn-primary btn-block search-submit" id="search-edit-submit-btn" type="submit">Сохранить изменения</button>
-  </form>
- </div>`;
-}
-function openEditSearchRequest(rid){
- const r=searchCurrent;if(!r)return;
- searchFormType='edit';searchSelectedFiles=[];
- const c=document.getElementById('search-screen-content');if(c)c.innerHTML=searchEditFormHTML(r);
- window.scrollTo(0,0);
-}
-async function submitSearchEdit(event,rid,type){
- event.preventDefault(); const form=event.target,btn=document.getElementById('search-edit-submit-btn'); if(btn){btn.disabled=true;btn.textContent='Сохраняем…'}
- const fd=new FormData(form); const title=type==='specific'?(fd.get('character')||''):(searchCurrent.title||'');
- const payload={title,character:type==='specific'?(fd.get('character')||''):searchCurrent.character||'',line:type==='specific'?(fd.get('line')||''):searchCurrent.line||'',brand:fd.get('brand')||'',budget_max:String(fd.get('budget_max')||'').replace(/[^\d]/g,''),condition:selectedSearchValue('condition'),completeness:selectedSearchValue('completeness'),urgency:selectedSearchValue('urgency'),important:fd.get('important')||'',description:fd.get('important')||'',similar_features:Array.from(document.querySelectorAll('#search-features .selected')).map(x=>x.dataset.value)};
- try{const d=await apiPatch('/api/me/search_requests/'+encodeURIComponent(rid),payload);if(!d.ok)throw new Error();searchCurrent=d.request||searchCurrent;searchFormType=null;showToast('Запрос обновлён');renderSearchDetail();}catch(_){showToast('Не удалось изменить запрос');if(btn){btn.disabled=false;btn.textContent='Сохранить изменения'}}
-}
-function openDeleteSearchReason(rid){
- let modal=document.getElementById('search-reason-modal');
- if(!modal){modal=document.createElement('div');modal.id='search-reason-modal';modal.className='search-reason-modal';document.body.appendChild(modal)}
- modal.innerHTML=`<div class="search-reason-backdrop" onclick="closeDeleteSearchReason()"></div><div class="search-reason-card" role="dialog" aria-modal="true"><div class="search-reason-title">Закрыть запрос?</div><div class="search-reason-sub">Почему больше не нужен поиск? Выбери причину — это поможет нам улучшать сервис.</div><div class="search-reason-options">${[['not_relevant','Уже неактуально'],['found_myself','Нашла сама'],['too_expensive','Не подходит по цене'],['changed_mind','Передумала'],['other','Другое']].map(x=>`<button type="button" class="search-reason-option" data-reason="${x[0]}" onclick="selectDeleteSearchReason(this)">${x[1]}</button>`).join('')}</div><textarea id="search-reason-custom" class="search-textarea search-reason-custom" rows="3" placeholder="Напиши причину"></textarea><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn btn-tertiary btn-block" onclick="closeDeleteSearchReason()">Отмена</button><button class="btn btn-primary btn-block" id="search-delete-confirm" disabled onclick="confirmDeleteSearchRequest('${escapeAttr(String(rid))}')">Закрыть запрос</button></div></div>`;
- modal.classList.add('open');document.body.style.overflow='hidden';
-}
-function selectDeleteSearchReason(el){document.querySelectorAll('.search-reason-option').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');const custom=document.getElementById('search-reason-custom');if(custom)custom.classList.toggle('open',el.dataset.reason==='other');const btn=document.getElementById('search-delete-confirm');if(btn)btn.disabled=false;}
-function closeDeleteSearchReason(){const modal=document.getElementById('search-reason-modal');if(modal)modal.classList.remove('open');document.body.style.overflow='';}
-async function confirmDeleteSearchRequest(rid){const selected=document.querySelector('.search-reason-option.selected');if(!selected)return;const custom=document.getElementById('search-reason-custom');const reason=selected.dataset.reason==='other'?(custom?.value.trim()||'другое'):selected.textContent.trim();const btn=document.getElementById('search-delete-confirm');if(btn){btn.disabled=true;btn.textContent='Закрываем…'}try{const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/delete',{reason,reason_code:selected.dataset.reason});if(!d.ok)throw new Error();closeDeleteSearchReason();searchCurrent=null;showToast('Запрос закрыт');renderSearchHome();}catch(_){showToast('Не удалось закрыть запрос');if(btn){btn.disabled=false;btn.textContent='Закрыть запрос'}}}
 
-function openSearchPhotoLightbox(src){
- let box=document.getElementById('search-photo-lightbox');
- if(!box){box=document.createElement('div');box.id='search-photo-lightbox';box.className='search-photo-lightbox';box.innerHTML='<button class="search-photo-lightbox-close" type="button" aria-label="Закрыть">×</button><img id="search-photo-lightbox-img" alt="">';document.body.appendChild(box);box.addEventListener('click',e=>{if(e.target===box||e.target.closest('.search-photo-lightbox-close'))closeSearchPhotoLightbox();});}
- const img=document.getElementById('search-photo-lightbox-img');if(img)img.src=src;box.classList.add('open');document.body.style.overflow='hidden';
+function updateSearchBadge() {
+  const countEl = document.getElementById('my-search-requests-count');
+  if (countEl) countEl.textContent = String(searchRequestsCache.filter(r => r.status !== 'CLOSED').length);
 }
-function closeSearchPhotoLightbox(){const box=document.getElementById('search-photo-lightbox');if(box)box.classList.remove('open');document.body.style.overflow='';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSearchPhotoLightbox();});
 
-function handleSearchDeepLink(){
- const p=new URLSearchParams(location.search),rid=p.get('search_request'),res=p.get('search_result');
- if(rid&&userId){setTimeout(()=>openSearchRequest(rid,res),500)}
+function renderSearchMyList() {
+  updateSearchBadge();
+  const el = document.getElementById('search-my-list'); if (!el) return;
+  const count = document.getElementById('search-my-count');
+  if (count) count.textContent = searchRequestsCache.length ? `${searchRequestsCache.length} ${srPlural(searchRequestsCache.length, 'запрос', 'запроса', 'запросов')}` : '';
+  if (!searchRequestsCache.length) {
+    el.innerHTML = `<div class="sr-card sr-waiting"><h3>Пока запросов нет</h3><p>Создайте первый запрос — и мы начнём искать куклу для вас.</p></div>`;
+    return;
+  }
+  const order = { action: 0, search: 1, done: 2, closed: 3 };
+  const list = [...searchRequestsCache].sort((a, b) => order[srStage(a.status)] - order[srStage(b.status)]);
+  el.innerHTML = `<div class="sr-list">${list.map(r => {
+    const first = (r.images || [])[0];
+    const cnt = (r.results || []).length;
+    const thumb = first
+      ? `<img src="${escapeAttr(assetUrl(first))}" alt="" loading="lazy" decoding="async">`
+      : srIcon(r.type === 'similar' ? 'image' : 'search');
+    return `<button type="button" class="sr-row ${r.status === 'CLOSED' ? 'closed' : ''}" onclick="openSearchRequest('${escapeAttr(String(r.id))}')">
+      <span class="sr-row-thumb">${thumb}</span>
+      <span class="sr-row-main">
+        <span class="sr-row-title">${escapeHtml(srTitle(r))}</span>
+        ${srChip(r)}
+        <span class="sr-row-meta" style="display:block">${cnt ? `${cnt} ${srPlural(cnt, 'вариант', 'варианта', 'вариантов')} · ` : ''}${escapeHtml(searchDate(r.created_at))}</span>
+      </span>
+      <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
+    </button>`;
+  }).join('')}</div>`;
+}
+
+async function refreshSearchBadge() {
+  if (!userId) return;
+  try {
+    const d = await apiFetch('/api/me/search_requests', {}, { timeoutMs: 10000, retries: 0 });
+    if (d?.ok) { searchRequestsCache = d.requests || []; updateSearchBadge(); }
+  } catch (_) {}
+}
+
+/* ---------- Форма: одна и та же для создания и изменения ---------- */
+function srOptsHTML(group, items, selected, multi) {
+  const sel = Array.isArray(selected) ? selected : [selected];
+  return `<div class="sr-chips" data-group="${group}">${items.map(([v, l]) =>
+    `<button type="button" class="sr-opt ${sel.includes(v) ? 'selected' : ''}" data-value="${v}" onclick="${multi ? 'srToggleFeature(this)' : 'srPickOpt(this)'}">${escapeHtml(l)}</button>`
+  ).join('')}</div>`;
+}
+function srPickOpt(el) {
+  const wasSelected = el.classList.contains('selected');
+  el.parentElement.querySelectorAll('.sr-opt').forEach(x => x.classList.remove('selected'));
+  if (!wasSelected) el.classList.add('selected');
+  hapticSelection();
+}
+function srToggleFeature(el) {
+  el.classList.toggle('selected');
+  const box = el.parentElement;
+  if (el.dataset.value === 'all' && el.classList.contains('selected')) {
+    box.querySelectorAll('.sr-opt').forEach(x => { if (x !== el) x.classList.remove('selected'); });
+  } else if (el.classList.contains('selected')) {
+    box.querySelector('.sr-opt[data-value="all"]')?.classList.remove('selected');
+  }
+  hapticSelection();
+}
+function srGroupValue(group) {
+  return document.querySelector(`.sr-chips[data-group="${group}"] .sr-opt.selected`)?.dataset.value || '';
+}
+function srGroupValues(group) {
+  return Array.from(document.querySelectorAll(`.sr-chips[data-group="${group}"] .sr-opt.selected`)).map(x => x.dataset.value);
+}
+
+function searchFormHTML(type, r) {
+  const edit = !!r;
+  const similar = type === 'similar';
+  const v = k => escapeAttr(r && r[k] != null ? String(r[k]) : '');
+  const existing = edit ? (r.images || []) : [];
+  const head = edit
+    ? { kicker: 'Изменить запрос', h1: escapeHtml(srTitle(r)), lead: 'Обновите пожелания — запрос и найденные варианты сохранятся.' }
+    : similar
+      ? { kicker: 'Похожая по фото', h1: 'Покажите, что вам нравится', lead: 'Добавьте фото и отметьте, что в кукле важно. Подберём похожую.' }
+      : { kicker: 'Конкретная кукла', h1: 'Какую куклу ищем?', lead: 'Если не знаете точное название — просто добавьте фото.' };
+  return `
+  <div class="sr">
+    <button type="button" class="sr-back" onclick="${edit ? 'renderSearchDetail()' : 'renderSearchHome()'}">${srIcon('chevron-right')} ${edit ? 'К запросу' : 'Назад'}</button>
+    <div class="sr-kicker">${head.kicker}</div>
+    <h1 class="sr-h1">${head.h1}</h1>
+    <p class="sr-lead">${head.lead}</p>
+    <form class="sr-card sr-form" id="search-form" onsubmit="submitSearchForm(event, '${type}', ${edit ? `'${escapeAttr(String(r.id))}'` : 'null'})" novalidate>
+      <div>
+        <span class="sr-field-label">Фотографии <small>${similar ? 'обязательно хотя бы одно' : 'по желанию'} · до ${SEARCH_MAX_PHOTOS}</small></span>
+        <label class="sr-upload" for="search-files" id="search-upload-label">
+          ${srIcon('camera')}
+          <span class="sr-upload-title">Добавить фото</span>
+          <span class="sr-upload-sub">Можно выбрать несколько сразу</span>
+        </label>
+        <input id="search-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="previewSearchFiles(this)">
+        <div class="sr-previews" id="search-previews" data-existing="${existing.length}"></div>
+        ${edit && existing.length ? `<div class="sr-form-note">Уже загруженные фото сохранятся. Новые добавятся к ним.</div>` : ''}
+      </div>
+
+      ${similar ? `
+      <div>
+        <span class="sr-field-label">Что нравится в этой кукле?</span>
+        ${srOptsHTML('features', SEARCH_FEATURES, edit ? (r.similar_features || []) : [], true)}
+      </div>` : `
+      <div class="sr-two">
+        <div><label class="sr-field-label" for="sr-character">Кукла / персонаж</label><input class="sr-input" id="sr-character" name="character" value="${v('character') || v('title')}" placeholder="Rochelle Goyle" maxlength="180"></div>
+        <div><label class="sr-field-label" for="sr-line">Серия <small>если знаете</small></label><input class="sr-input" id="sr-line" name="line" value="${v('line')}" placeholder="Dawn of the Dance" maxlength="180"></div>
+      </div>`}
+
+      <div>
+        <label class="sr-field-label" for="sr-brand">Бренд</label>
+        <select class="sr-select" id="sr-brand" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x => `<option ${edit && String(r.brand || '') === x ? 'selected' : ''}>${escapeHtml(x)}</option>`).join('')}</select>
+      </div>
+
+      <div>
+        <span class="sr-field-label">Состояние</span>
+        ${srOptsHTML('condition', SEARCH_CONDITIONS, edit ? (r.condition || '') : '')}
+      </div>
+
+      ${similar ? '' : `
+      <div>
+        <span class="sr-field-label">Комплектация</span>
+        ${srOptsHTML('completeness', SEARCH_COMPLETENESS, edit ? (r.completeness || '') : '')}
+      </div>`}
+
+      <div>
+        <label class="sr-field-label" for="sr-budget">Бюджет на куклу <small>по желанию</small></label>
+        <input class="sr-input" id="sr-budget" name="budget_max" value="${edit && r.budget_max ? escapeAttr(String(r.budget_max)) : ''}" inputmode="numeric" placeholder="До 8 000 ₽">
+        <div class="sr-form-note">Без учёта веса и доставки по России.</div>
+      </div>
+
+      <div>
+        <label class="sr-field-label" for="sr-important">${similar ? 'Расскажите подробнее' : 'Что особенно важно?'}</label>
+        <textarea class="sr-textarea" id="sr-important" name="important" maxlength="3000" placeholder="${similar ? 'Например: хочу похожую по атмосфере, не обязательно именно эту куклу.' : 'Например: нужна именно оригинальная кукла, желательно NRFB.'}">${edit ? escapeHtml(r.important || '') : ''}</textarea>
+      </div>
+
+      <div>
+        <span class="sr-field-label">Срочность</span>
+        ${srOptsHTML('urgency', SEARCH_URGENCY, edit ? (r.urgency || '') : '')}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="search-submit-btn" style="margin-top:2px">${edit ? 'Сохранить изменения' : 'Отправить запрос'}</button>
+    </form>
+  </div>`;
+}
+
+function openSearchForm(type) {
+  searchFormType = type; searchCurrent = null; searchSelectedFiles = [];
+  const c = searchContent(); if (c) c.innerHTML = searchFormHTML(type, null);
+  renderSearchFilePreviews();
+  srScrollTop();
+}
+function openEditSearchRequest() {
+  const r = searchCurrent; if (!r || !srEditable(r)) return;
+  searchFormType = 'edit'; searchSelectedFiles = [];
+  const c = searchContent(); if (c) c.innerHTML = searchFormHTML(r.type === 'similar' ? 'similar' : 'specific', r);
+  renderSearchFilePreviews();
+  srScrollTop();
+}
+
+function previewSearchFiles(input) {
+  const existing = searchFormType === 'edit' && searchCurrent ? (searchCurrent.images || []).length : 0;
+  const room = SEARCH_MAX_PHOTOS - existing - searchSelectedFiles.length;
+  const incoming = Array.from(input.files || []).filter(f => /^image\/(jpeg|png|webp)$/.test(f.type));
+  if (incoming.length > room) showToast(`Можно прикрепить максимум ${SEARCH_MAX_PHOTOS} фото`);
+  searchSelectedFiles = searchSelectedFiles.concat(incoming.slice(0, Math.max(0, room)));
+  input.value = '';
+  renderSearchFilePreviews();
+}
+function renderSearchFilePreviews() {
+  const box = document.getElementById('search-previews'); if (!box) return;
+  const existing = searchFormType === 'edit' && searchCurrent ? (searchCurrent.images || []) : [];
+  box.innerHTML = existing.map(u => `<div class="sr-preview"><img src="${escapeAttr(assetUrl(u))}" alt=""><span class="sr-preview-badge">Загружено</span></div>`).join('')
+    + searchSelectedFiles.map((f, i) => `<div class="sr-preview"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" class="sr-preview-remove" aria-label="Удалить фото" onclick="removeSearchFile(${i})">${srIcon('x')}</button></div>`).join('');
+  const label = document.getElementById('search-upload-label');
+  if (label) label.style.display = existing.length + searchSelectedFiles.length >= SEARCH_MAX_PHOTOS ? 'none' : '';
+}
+function removeSearchFile(index) {
+  if (index < 0 || index >= searchSelectedFiles.length) return;
+  searchSelectedFiles.splice(index, 1);
+  renderSearchFilePreviews();
+}
+
+async function uploadSearchImages(rid) {
+  if (!searchSelectedFiles.length) return;
+  const fd = new FormData();
+  searchSelectedFiles.forEach(f => fd.append('images', f, f.name));
+  const h = {}; Object.assign(h, DL_PWA.authHeaders());
+  const res = await fetch(API_BASE + '/api/me/search_requests/' + encodeURIComponent(rid) + '/images', { method: 'POST', headers: h, body: fd });
+  let data = {}; try { data = await res.json(); } catch (_) {}
+  if (!data.ok) throw new Error(data.error || 'photo_failed');
+}
+
+const SEARCH_FORM_ERRORS = {
+  too_many_images: `Можно прикрепить максимум ${SEARCH_MAX_PHOTOS} фото`,
+  photo_too_large: 'Одно из фото слишком большое',
+  bad_photo_format: 'Формат фото не поддерживается',
+  photo_processing_failed: 'Не удалось обработать фото',
+  text_too_long: 'Слишком длинный текст',
+  request_locked: 'Этот запрос уже нельзя изменить',
+};
+
+async function submitSearchForm(event, type, editId) {
+  event.preventDefault();
+  if (!userId) { showToast('Откройте приложение из Telegram'); return; }
+  const form = event.target, btn = document.getElementById('search-submit-btn');
+  const fd = new FormData(form);
+  const similar = type === 'similar';
+  const existingCount = editId && searchCurrent ? (searchCurrent.images || []).length : 0;
+  const character = String(fd.get('character') || '').trim();
+  if (similar && !existingCount && !searchSelectedFiles.length) { showToast('Добавьте хотя бы одно фото'); return; }
+  if (!similar && !character && !existingCount && !searchSelectedFiles.length) { showToast('Укажите куклу или добавьте фото'); return; }
+  const brand = String(fd.get('brand') || '');
+  const important = String(fd.get('important') || '').trim();
+  const payload = {
+    brand,
+    budget_max: String(fd.get('budget_max') || '').replace(/[^\d]/g, ''),
+    condition: srGroupValue('condition'),
+    completeness: similar ? '' : srGroupValue('completeness'),
+    urgency: srGroupValue('urgency'),
+    important, description: important,
+    similar_features: similar ? srGroupValues('features') : [],
+  };
+  if (similar) {
+    if (!editId) payload.title = brand ? `Похожая по фото · ${brand}` : 'Похожая по фото';
+  } else {
+    payload.title = character; payload.character = character;
+    payload.line = String(fd.get('line') || '').trim();
+  }
+  const label = editId ? 'Сохранить изменения' : 'Отправить запрос';
+  if (btn) { btn.disabled = true; btn.textContent = editId ? 'Сохраняем…' : 'Отправляем…'; }
+  try {
+    let rid = editId;
+    if (editId) {
+      const d = await apiPatch('/api/me/search_requests/' + encodeURIComponent(editId), payload);
+      if (!d.ok) throw new Error(d.error || 'save_failed');
+      searchCurrent = d.request || searchCurrent;
+    } else {
+      const d = await apiPost('/api/me/search_requests', { type, ...payload });
+      if (!d.ok) throw new Error(d.error || 'create_failed');
+      rid = d.request.id;
+    }
+    try { await uploadSearchImages(rid); }
+    catch (e) { showToast(SEARCH_FORM_ERRORS[e.message] || 'Запрос сохранён, но фото не загрузились'); }
+    searchSelectedFiles = [];
+    hapticNotification('success');
+    showToast(editId ? 'Запрос обновлён' : 'Запрос отправлен — начинаем поиск');
+    await openSearchRequest(rid);
+  } catch (e) {
+    showToast(SEARCH_FORM_ERRORS[e.message] || (editId ? 'Не удалось сохранить изменения' : 'Не удалось создать запрос'));
+    hapticNotification('error');
+    if (btn) { btn.disabled = false; btn.textContent = label; }
+  }
+}
+
+/* ---------- Открыть запрос ---------- */
+async function openSearchRequest(id, resultId) {
+  const tabActive = document.getElementById('tab-search')?.classList.contains('active');
+  if (!tabActive) { rememberSearchReturn(); searchFormType = 'loading'; searchCurrent = null; switchTab('search'); }
+  searchFormType = 'loading';
+  const c = searchContent(); if (!c) return;
+  c.innerHTML = `<div class="sr">${skeletonOrdersHTML(2)}</div>`;
+  try {
+    const d = await apiFetch('/api/me/search_requests/' + encodeURIComponent(id), {}, { timeoutMs: 10000, retries: 1 });
+    if (!d.ok) throw new Error(d.error || 'load_failed');
+    searchCurrent = d.request;
+    searchFormType = null;
+    const idx = searchRequestsCache.findIndex(x => String(x.id) === String(d.request.id));
+    if (idx >= 0) searchRequestsCache[idx] = d.request;
+    renderSearchDetail(resultId);
+  } catch (e) {
+    searchFormType = null;
+    c.innerHTML = `<div class="sr"><button type="button" class="sr-back" onclick="renderSearchHome()">${srIcon('chevron-right')} Все запросы</button>
+      <div class="sr-card sr-waiting"><h3>Не удалось открыть запрос</h3><p>Проверьте соединение и попробуйте ещё раз.</p>
+      <button type="button" class="btn btn-primary" style="margin-top:12px" onclick="openSearchRequest('${escapeAttr(String(id))}')">Повторить</button></div></div>`;
+  }
+}
+
+/* ---------- Детальный экран ---------- */
+function srTrackHTML(status) {
+  let idx = { NEW: 0, SEARCHING: 1, MORE_SEARCH: 1, FOUND: 2, WAITING_USER: 2, SELECTED: 3, ORDERED: 4 }[status];
+  if (idx == null) idx = 0;
+  const labels = ['Создан', 'Ищем', 'Нашли', 'Выбор'];
+  return `<ol class="sr-track" aria-label="Этапы поиска">${labels.map((l, i) => {
+    const st = i < idx ? 'done' : (i === idx ? 'current' : '');
+    return `<li class="sr-step ${st}"${i === idx ? ' aria-current="step"' : ''}><span class="sr-step-dot"></span><span class="sr-step-label">${l}</span></li>`;
+  }).join('')}</ol>`;
+}
+
+function srNextStepHTML(r) {
+  const cnt = (r.results || []).filter(x => srResultState(x) === 'active').length;
+  const map = {
+    NEW: ['clock', 'Запрос получен', 'Скоро начнём поиск. Вам ничего делать не нужно — сообщим в боте, когда найдём варианты.'],
+    SEARCHING: ['search', 'Ищем варианты', 'Проверяем магазины и коллекционеров. Как только найдём подходящую куклу, она появится здесь.'],
+    MORE_SEARCH: ['refresh', 'Ищем другие варианты', 'Продолжаем поиск с учётом ваших пожеланий. Новые варианты появятся здесь.'],
+    FOUND: ['star', 'Нужно ваше решение', cnt ? 'Посмотрите найденные варианты ниже и выберите подходящий.' : 'Посмотрите найденные варианты ниже.'],
+    WAITING_USER: ['star', 'Нужно ваше решение', 'Посмотрите найденные варианты ниже и выберите подходящий.'],
+    SELECTED: ['check', 'Вариант выбран', 'Администратор свяжется с вами в Telegram, чтобы оформить заказ.'],
+    ORDERED: ['package', 'Заказ оформлен', 'Следите за доставкой в разделе «Мои заказы».'],
+  };
+  const m = map[r.status]; if (!m) return '';
+  const accent = r.status === 'FOUND' || r.status === 'WAITING_USER';
+  return `<div class="sr-next ${accent ? 'accent' : ''}"><span class="sr-next-icon">${srIcon(m[0])}</span><div style="min-width:0;flex:1"><div class="sr-next-title">${m[1]}</div><div class="sr-next-text">${m[2]}</div>${r.status === 'ORDERED' ? `<button type="button" class="text-link" style="margin-top:8px" onclick="switchTab('orders')">Мои заказы ${srIcon('chevron-right')}</button>` : ''}</div></div>`;
+}
+
+function srGalleryHTML(key, images) {
+  const urls = (images || []).map(assetUrl);
+  srGalleries[key] = urls;
+  if (!urls.length) return '';
+  return `<div class="sr-gallery">
+    <button type="button" class="sr-gallery-main" id="srg-main-${key}" data-index="0" onclick="openSearchGallery('${key}')" aria-label="Открыть фото">
+      <img src="${escapeAttr(urls[0])}" alt="" decoding="async">
+      ${urls.length > 1 ? `<span class="sr-gallery-count">${srIcon('image')}<span id="srg-count-${key}">1</span>/${urls.length}</span>` : ''}
+    </button>
+    ${urls.length > 1 ? `<div class="sr-thumbs">${urls.map((u, i) => `<button type="button" class="sr-thumb ${i === 0 ? 'active' : ''}" onclick="selectSearchThumb('${key}', ${i})" aria-label="Фото ${i + 1}"><img src="${escapeAttr(u)}" alt="" loading="lazy" decoding="async"></button>`).join('')}</div>` : ''}
+  </div>`;
+}
+function selectSearchThumb(key, i) {
+  const urls = srGalleries[key] || []; if (!urls[i]) return;
+  const main = document.getElementById('srg-main-' + key); if (!main) return;
+  main.dataset.index = String(i);
+  const img = main.querySelector('img'); if (img) img.src = urls[i];
+  const cnt = document.getElementById('srg-count-' + key); if (cnt) cnt.textContent = String(i + 1);
+  main.parentElement.querySelectorAll('.sr-thumb').forEach((t, j) => t.classList.toggle('active', j === i));
+  hapticSelection();
+}
+function openSearchGallery(key, index) {
+  const urls = srGalleries[key] || []; if (!urls.length) return;
+  const main = document.getElementById('srg-main-' + key);
+  const i = index != null ? index : Number(main?.dataset.index || 0);
+  searchLightboxList = urls;
+  openPhotoLightbox('search', 0, i);
+}
+/* Совместимость со старыми вызовами */
+function openSearchPhotoLightbox(src) { searchLightboxList = [src]; openPhotoLightbox('search', 0, 0); }
+
+function srFactsHTML(r) {
+  const facts = [];
+  const similar = r.type === 'similar';
+  if (!similar && (r.character || r.title)) facts.push(['Кукла', r.character || r.title, true]);
+  if (similar && (r.similar_features || []).length) {
+    const lbl = r.similar_features_labels || {};
+    facts.push(['Нравится', r.similar_features.map(f => lbl[f] || f).join(', '), true]);
+  }
+  facts.push(['Бренд', r.brand || 'Неважно']);
+  if (r.line) facts.push(['Серия', r.line]);
+  facts.push(['Состояние', r.condition_label || 'Неважно']);
+  if (!similar) facts.push(['Комплектация', r.completeness_label || 'Неважно']);
+  facts.push(['Бюджет', r.budget_max ? 'до ' + srRub(r.budget_max) : 'Не указан']);
+  facts.push(['Срочность', r.urgency_label || 'Не указана']);
+  const odd = facts.filter(f => !f[2]).length % 2 === 1;
+  let lastPlain = -1; facts.forEach((f, i) => { if (!f[2]) lastPlain = i; });
+  return `<div class="sr-facts">${facts.map((f, i) => `<div class="sr-fact ${f[2] || (odd && i === lastPlain) ? 'wide' : ''}"><span>${escapeHtml(f[0])}</span><b>${escapeHtml(f[1])}</b></div>`).join('')}</div>`;
+}
+
+function srLongText(text, id, cls) {
+  const t = String(text || '');
+  const long = t.length > 220 || (t.match(/\n/g) || []).length > 4;
+  return `<div class="${cls} ${long ? 'clamped' : ''}" id="${id}">${escapeHtml(t)}</div>${long ? `<button type="button" class="sr-more-link" onclick="toggleSearchText('${id}', this)">Показать полностью</button>` : ''}`;
+}
+function toggleSearchText(id, btn) {
+  const el = document.getElementById(id); if (!el) return;
+  const clamped = el.classList.toggle('clamped');
+  btn.textContent = clamped ? 'Показать полностью' : 'Свернуть';
+}
+
+function renderSearchDetail(resultId) {
+  const r = searchCurrent, c = searchContent(); if (!r || !c) return;
+  searchFormType = null;
+  const results = (r.results || []).slice().sort((a, b) => {
+    const o = { selected: 0, active: 1, rejected: 2 };
+    return o[srResultState(a)] - o[srResultState(b)];
+  });
+  const activeResults = results.filter(x => srResultState(x) === 'active').length;
+  const msgs = (r.messages || []).filter(m => m && m.direction === 'admin_to_user' && m.text);
+  const closed = r.status === 'CLOSED';
+
+  let resultsHTML = '';
+  if (results.length) {
+    resultsHTML = `<div class="sr-results-head"><b>Нашли для вас</b><span>${results.length} ${srPlural(results.length, 'вариант', 'варианта', 'вариантов')}</span></div>
+      ${results.map((x, i) => searchResultCardHTML(x, r, 'list', results.length - i)).join('')}
+      ${srActive(r) && activeResults ? `<button type="button" class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(String(r.id))}')">Показать другие варианты</button>` : ''}`;
+  } else if (!closed && srActive(r)) {
+    resultsHTML = `<div class="sr-card sr-waiting" style="margin-top:4px">
+      <div class="sr-waiting-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h3>Ищем варианты</h3>
+      <p>Мы уже занимаемся поиском подходящей куклы. Как только что-то найдём — пришлём сообщение в бот.</p>
+    </div>`;
+  }
+
+  c.innerHTML = `
+  <div class="sr">
+    <button type="button" class="sr-back" onclick="renderSearchHome()">${srIcon('chevron-right')} Все запросы</button>
+
+    <section class="sr-card sr-hero">
+      <div class="sr-hero-top">${srChip(r)}<span class="sr-id">Запрос #${escapeHtml(String(r.id))}</span></div>
+      <h2 class="sr-title">${escapeHtml(srTitle(r))}</h2>
+      <div class="sr-subtitle">${escapeHtml(srSubtitle(r))}${r.created_at ? ` · ${escapeHtml(searchDate(r.created_at))}` : ''}</div>
+      ${closed ? '' : srTrackHTML(r.status)}
+      ${srGalleryHTML('req', r.images)}
+    </section>
+
+    ${closed ? `<section class="sr-card"><div class="sr-closed"><span class="sr-closed-icon">${srIcon('x')}</span><div style="min-width:0"><h3>Запрос закрыт</h3>
+      <p>${r.close_reason ? `Причина: <b>${escapeHtml(r.close_reason)}</b>` : 'Поиск по этому запросу больше не ведётся.'}${r.closed_at ? `<br>${escapeHtml(searchDate(r.closed_at))}` : ''}</p></div></div></section>` : srNextStepHTML(r)}
+
+    <section class="sr-card">
+      <div class="sr-block-title">${srIcon('search')} Что ищем</div>
+      ${srFactsHTML(r)}
+    </section>
+
+    ${r.important ? `<section class="sr-card">
+      <div class="sr-block-title">${srIcon('alert-circle')} Важно</div>
+      ${srLongText(r.important, 'sr-important-text', 'sr-quote')}
+    </section>` : ''}
+
+    ${msgs.length ? `<section class="sr-card">
+      <div class="sr-block-title">${srIcon('message-circle')} Сообщения от DollieLand</div>
+      ${msgs.map(m => `<div class="sr-msg"><small>${escapeHtml(searchDate(m.created_at))}</small>${escapeHtml(m.text)}</div>`).join('')}
+    </section>` : ''}
+
+    ${resultsHTML}
+
+    ${srEditable(r) ? `<div class="sr-request-actions"><button type="button" class="btn btn-secondary" onclick="openEditSearchRequest()">${srIcon('settings')} Изменить запрос</button></div>` : ''}
+
+    ${srDeletable(r) ? `<div class="sr-danger-zone">
+      <button type="button" class="sr-danger-link" onclick="openDeleteSearchReason('${escapeAttr(String(r.id))}')">${srIcon('x')} Удалить запрос</button>
+      <div class="sr-danger-hint">Поиск остановится, а запрос переместится в закрытые</div>
+    </div>` : ''}
+  </div>`;
+  stripAfterInsert(c);
+  if (resultId) setTimeout(() => document.getElementById('sr-result-' + resultId)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+  else srScrollTop();
+}
+
+/* ---------- Карточка варианта ---------- */
+function srPriceHTML(x, withDollies) {
+  const price = x.price != null && x.price !== '' ? Number(x.price) : null;
+  const cur = x.currency && x.currency !== '₽' && x.currency !== 'RUB' ? ' ' + x.currency : '';
+  if (price == null || isNaN(price)) {
+    return `<div class="sr-price"><div class="sr-price-label">Стоимость куклы</div><div class="sr-price-value" style="font-size:16px">Уточняется</div></div>`;
+  }
+  const fmt = n => cur ? (Math.round(n)).toLocaleString('ru-RU') + cur : srRub(n);
+  const weight = x.weight_cost != null && x.weight_cost !== '' && Number(x.weight_cost) > 0
+    ? `<div class="sr-weight">Вес (доставка из США) — примерно <b>${srRub(x.weight_cost)}</b>. Оплачивается отдельно, после взвешивания на складе.</div>` : '';
+  return `<div class="sr-price">
+    <div class="sr-price-label">Стоимость куклы</div>
+    <div class="sr-price-row" ${withDollies ? 'id="sr-price-row"' : ''}><span class="sr-price-value">${fmt(price)}</span></div>
+    <div class="sr-price-note">Без учёта веса и доставки по России</div>
+    ${weight}
+  </div>`;
+}
+
+function searchResultCardHTML(x, r, mode, num) {
+  const state = srResultState(x);
+  const full = mode === 'full';
+  const rid = escapeAttr(String(r.id)), xid = escapeAttr(String(x.id));
+  const imgs = (x.images || []).map(assetUrl);
+  const gKey = 'res' + String(x.id).replace(/[^\w-]/g, '');
+  let media = '';
+  if (full) media = imgs.length ? `<div style="padding:12px 12px 0">${srGalleryHTML(gKey, x.images)}</div>` : '';
+  else if (imgs.length) {
+    srGalleries[gKey] = imgs;
+    media = `<button type="button" class="sr-result-media" onclick="openSearchResult('${rid}','${xid}')" aria-label="Подробнее о варианте">
+      <img src="${escapeAttr(imgs[0])}" alt="" loading="lazy" decoding="async">
+      ${state === 'selected' ? `<span class="sr-result-tag">${srIcon('check')} Ваш выбор</span>` : ''}
+      ${imgs.length > 1 ? `<span class="sr-gallery-count">${srIcon('image')}${imgs.length} фото</span>` : ''}
+    </button>`;
+  }
+  const tags = [x.condition, x.completeness, x.country].filter(Boolean);
+  const source = x.seller_info ? `<div class="sr-result-line">Источник: ${escapeHtml(x.seller_info)}</div>` : '';
+  const canAct = srActive(r) && state === 'active';
+  let actions = '';
+  if (state === 'selected') {
+    actions = `<div class="sr-result-note"><b>Вы выбрали этот вариант.</b> ${x.selected_dollies_discount_rub ? `Dollies учтены на ${srRub(x.selected_dollies_discount_rub)}. ` : ''}Администратор свяжется с вами для оформления заказа.</div>`;
+  } else if (state === 'rejected') {
+    actions = `<div class="sr-result-note">Вы отметили, что вариант не подходит${x.rejection_reason ? `: <b>${escapeHtml(x.rejection_reason)}</b>` : ''}.</div>`;
+  } else if (canAct && !full) {
+    actions = `<div class="sr-actions">
+      <button type="button" class="btn btn-primary" onclick="openSearchResult('${rid}','${xid}')">Выбрать этот вариант</button>
+      <button type="button" class="btn btn-tertiary" onclick="openRejectSearchResult('${rid}','${xid}')">Не подходит</button>
+    </div>`;
+  } else if (canAct && full) {
+    actions = `
+      <button type="button" class="sr-dollies" id="sr-dollies" onclick="toggleSearchDollies()" role="checkbox" aria-checked="false">
+        <span class="sr-check">${srIcon('check')}</span>
+        <span class="sr-dollies-text"><span class="sr-dollies-title">Учесть Dollies</span><span class="sr-dollies-sub" id="sr-dollies-sub">Загружаем баланс…</span></span>
+        <span class="sr-dollies-gain" id="sr-dollies-gain"></span>
+      </button>
+      <div class="sr-actions">
+        <button type="button" class="btn btn-primary" id="sr-select-btn" onclick="selectSearchResult('${rid}','${xid}')">Выбрать этот вариант</button>
+        <button type="button" class="btn btn-secondary" onclick="requestMoreSearch('${rid}')">Показать другие варианты</button>
+        <button type="button" class="btn btn-tertiary" onclick="openRejectSearchResult('${rid}','${xid}')">Не подходит</button>
+      </div>`;
+  }
+  return `<article class="sr-result ${state}" id="sr-result-${xid}">
+    ${media}
+    <div class="sr-result-body">
+      <div class="sr-result-kicker">Вариант${num ? ' ' + num : ''} · подобран DollieLand</div>
+      <div class="sr-result-title">${escapeHtml(x.title || 'Найденный вариант')}</div>
+      ${x.line ? `<div class="sr-result-line">${escapeHtml(x.line)}</div>` : ''}
+      ${source}
+      ${tags.length ? `<div class="sr-tags">${tags.map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      ${x.description ? (full ? `<div class="sr-result-desc">${escapeHtml(x.description)}</div>` : srLongText(x.description, 'sr-desc-' + xid, 'sr-result-desc')) : ''}
+      ${x.defects ? `<div class="sr-result-defects"><b>Обратите внимание:</b> ${escapeHtml(x.defects)}</div>` : ''}
+      ${x.source_url ? `<button type="button" class="sr-source" onclick="openExternalSearchLink('${escapeAttr(x.source_url)}')">Посмотреть объявление ${srIcon('chevron-right')}</button>` : ''}
+      ${srPriceHTML(x, full && canAct)}
+      ${actions}
+    </div>
+  </article>`;
+}
+
+function openExternalSearchLink(url) {
+  try { if (tg?.openLink) tg.openLink(url); else window.open(url, '_blank'); }
+  catch (_) { window.open(url, '_blank'); }
+}
+
+/* ---------- Экран варианта: цена, Dollies, выбор ---------- */
+function openSearchResult(rid, resultId) {
+  const r = searchCurrent;
+  const x = r?.results?.find(y => String(y.id) === String(resultId)); if (!x) return;
+  apiPost('/api/me/search_requests/' + encodeURIComponent(rid) + '/results/' + encodeURIComponent(resultId) + '/open', {}).catch(() => {});
+  searchFormType = 'result';
+  const c = searchContent(); if (!c) return;
+  c.innerHTML = `<div class="sr">
+    <button type="button" class="sr-back" onclick="renderSearchDetail('${escapeAttr(String(resultId))}')">${srIcon('chevron-right')} К запросу</button>
+    <div class="sr-kicker">${escapeHtml(srTitle(r))}</div>
+    <h1 class="sr-h1" style="font-size:23px">Вариант для вас</h1>
+    ${searchResultCardHTML(x, r, 'full')}
+  </div>`;
+  srDollies = { use: false, balance: null, rate: 100, cap: 300, price: Number(x.price) || 0, resultId: String(resultId) };
+  updateSearchDolliesUI();
+  loadSearchDolliesInfo();
+  srScrollTop();
+}
+
+function srDolliesDiscount() {
+  const d = srDollies;
+  if (!d.balance || d.balance <= 0 || d.price <= 0) return 0;
+  const byBalance = Math.floor(d.balance * d.rate / 100);
+  const byCap = Math.floor(d.cap * d.rate / 100);
+  return Math.max(0, Math.min(d.price, byBalance, byCap, 300));
+}
+
+async function loadSearchDolliesInfo() {
+  try {
+    const d = await apiFetch('/api/me/loyalty', {}, { timeoutMs: 8000, retries: 1 });
+    if (!d?.ok) throw new Error('loyalty');
+    srDollies.balance = Math.max(0, Number(d.balance) || 0);
+    srDollies.rate = Number(d.redemption_rate_rub_per_100) || 100;
+    srDollies.cap = Number(d.max_redeem_per_order) || 300;
+  } catch (_) {
+    srDollies.balance = Math.max(0, Number(loyaltyBalance) || 0);
+  }
+  updateSearchDolliesUI();
+}
+
+function updateSearchDolliesUI() {
+  const d = srDollies;
+  const box = document.getElementById('sr-dollies');
+  const sub = document.getElementById('sr-dollies-sub');
+  const gain = document.getElementById('sr-dollies-gain');
+  const discount = srDolliesDiscount();
+  if (discount <= 0) d.use = false;
+  if (box) {
+    box.classList.toggle('on', d.use);
+    box.setAttribute('aria-checked', d.use ? 'true' : 'false');
+    box.disabled = d.balance != null && discount <= 0;
+  }
+  if (sub) {
+    if (d.balance == null) sub.textContent = 'Загружаем баланс…';
+    else if (d.balance <= 0) sub.textContent = 'На балансе сейчас нет Dollies';
+    else if (discount <= 0) sub.textContent = `На балансе ${d.balance} Dollies`;
+    else sub.innerHTML = `На балансе ${d.balance} Dollies<br>Скидка ${srRub(discount)}${d.use ? ' — учтена' : ''}`;
+  }
+  if (gain) gain.textContent = discount > 0 ? `−${srRub(discount)}` : '';
+  const row = document.getElementById('sr-price-row');
+  if (row && d.price > 0) {
+    const finalPrice = Math.max(0, d.price - (d.use ? discount : 0));
+    row.innerHTML = d.use && discount > 0
+      ? `<span class="sr-price-old">${srRub(d.price)}</span><span class="sr-price-value discounted">${srRub(finalPrice)}</span>`
+      : `<span class="sr-price-value">${srRub(d.price)}</span>`;
+  }
+}
+
+function toggleSearchDollies() {
+  if (srDollies.balance == null) return;
+  if (srDolliesDiscount() <= 0) { showToast(srDollies.balance > 0 ? 'Dollies нельзя применить к этому варианту' : 'На балансе сейчас нет Dollies'); return; }
+  srDollies.use = !srDollies.use;
+  hapticSelection();
+  updateSearchDolliesUI();
+}
+
+function srApplyRequest(req) {
+  if (!req) return;
+  searchCurrent = req;
+  const idx = searchRequestsCache.findIndex(x => String(x.id) === String(req.id));
+  if (idx >= 0) searchRequestsCache[idx] = req;
+}
+
+let searchActionInFlight = false;
+async function selectSearchResult(rid, resultId) {
+  if (searchActionInFlight) return;
+  searchActionInFlight = true;
+  const btn = document.getElementById('sr-select-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Передаём выбор…'; }
+  try {
+    const d = await apiPost('/api/me/search_requests/' + encodeURIComponent(rid) + '/results/' + encodeURIComponent(resultId) + '/select', { use_dollies: !!srDollies.use });
+    if (!d.ok) throw new Error(d.error || 'select_failed');
+    hapticNotification('success');
+    srApplyRequest(d.request);
+    const used = Number(d.request?.results?.find(x => String(x.id) === String(resultId))?.selected_dollies_discount_rub) || 0;
+    showToast(used ? `Выбор передан · Dollies учтены на ${srRub(used)}` : 'Выбор передан администратору');
+    renderSearchDetail();
+  } catch (e) {
+    hapticNotification('error');
+    showToast('Не удалось передать выбор. Попробуйте ещё раз');
+    if (btn) { btn.disabled = false; btn.textContent = 'Выбрать этот вариант'; }
+  } finally { searchActionInFlight = false; }
+}
+
+async function requestMoreSearch(rid) {
+  if (searchActionInFlight) return;
+  searchActionInFlight = true;
+  try {
+    const d = await apiPost('/api/me/search_requests/' + encodeURIComponent(rid) + '/more', {});
+    if (!d.ok) throw new Error(d.error || 'more_failed');
+    hapticNotification('success');
+    srApplyRequest(d.request);
+    showToast('Хорошо, продолжаем поиск');
+    renderSearchDetail();
+  } catch (_) {
+    showToast('Не удалось отправить запрос. Попробуйте ещё раз');
+  } finally { searchActionInFlight = false; }
+}
+
+/* ---------- Модальные окна раздела ---------- */
+function srModal(html) {
+  let m = document.getElementById('search-modal');
+  if (!m) { m = document.createElement('div'); m.id = 'search-modal'; m.className = 'sr-modal'; document.body.appendChild(m); }
+  m.innerHTML = `<div class="sr-modal-backdrop" onclick="closeSearchModal()"></div><div class="sr-modal-card" role="dialog" aria-modal="true">${html}</div>`;
+  requestAnimationFrame(() => m.classList.add('open'));
+  document.body.style.overflow = 'hidden';
+}
+function closeSearchModal() {
+  const m = document.getElementById('search-modal'); if (m) m.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function srReasonList(items) {
+  return `<div class="sr-radio-list">${items.map(([v, l]) => `<button type="button" class="sr-radio" data-reason="${v}" onclick="selectSearchReason(this)"><span class="sr-radio-dot"></span><span>${escapeHtml(l)}</span></button>`).join('')}</div>
+  <textarea id="sr-reason-custom" class="sr-textarea" rows="3" maxlength="500" placeholder="Напишите причину" style="display:none;min-height:90px;margin-bottom:12px"></textarea>`;
+}
+function selectSearchReason(el) {
+  el.parentElement.querySelectorAll('.sr-radio').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected');
+  const custom = document.getElementById('sr-reason-custom');
+  if (custom) { custom.style.display = el.dataset.reason === 'other' ? 'block' : 'none'; if (el.dataset.reason === 'other') setTimeout(() => custom.focus(), 50); }
+  const btn = document.getElementById('sr-modal-confirm'); if (btn) btn.disabled = false;
+  hapticSelection();
+}
+function srSelectedReason() {
+  const sel = document.querySelector('#search-modal .sr-radio.selected'); if (!sel) return null;
+  const custom = (document.getElementById('sr-reason-custom')?.value || '').trim();
+  return { code: sel.dataset.reason, label: sel.textContent.trim(), custom };
+}
+
+function openDeleteSearchReason(rid) {
+  srModal(`<div class="sr-modal-title">Почему вы удаляете запрос?</div>
+    <div class="sr-modal-sub">Поиск остановится. Ответ поможет нам искать лучше.</div>
+    ${srReasonList(SEARCH_DELETE_REASONS)}
+    <div class="sr-modal-actions">
+      <button type="button" class="btn btn-secondary" onclick="closeSearchModal()">Отмена</button>
+      <button type="button" class="btn btn-danger" id="sr-modal-confirm" disabled onclick="confirmDeleteSearchRequest('${escapeAttr(String(rid))}')">Удалить запрос</button>
+    </div>`);
+}
+async function confirmDeleteSearchRequest(rid) {
+  const r = srSelectedReason(); if (!r) return;
+  if (r.code === 'other' && !r.custom) { showToast('Напишите причину'); document.getElementById('sr-reason-custom')?.focus(); return; }
+  const btn = document.getElementById('sr-modal-confirm');
+  if (btn) { btn.disabled = true; btn.textContent = 'Удаляем…'; }
+  try {
+    const d = await apiPost('/api/me/search_requests/' + encodeURIComponent(rid) + '/delete', { reason: r.code === 'other' ? r.custom : r.label, reason_code: r.code });
+    if (!d.ok) throw new Error(d.error || 'delete_failed');
+    closeSearchModal();
+    srApplyRequest(d.request);
+    hapticNotification('success');
+    showToast('Запрос удалён');
+    renderSearchHome();
+  } catch (_) {
+    showToast('Не удалось удалить запрос. Попробуйте ещё раз');
+    if (btn) { btn.disabled = false; btn.textContent = 'Удалить запрос'; }
+  }
+}
+
+function openRejectSearchResult(rid, resultId) {
+  srModal(`<div class="sr-modal-title">Что не подошло?</div>
+    <div class="sr-modal-sub">Мы учтём это и продолжим поиск. Запрос останется активным.</div>
+    ${srReasonList(SEARCH_REJECT_REASONS)}
+    <div class="sr-modal-actions">
+      <button type="button" class="btn btn-secondary" onclick="closeSearchModal()">Отмена</button>
+      <button type="button" class="btn btn-primary" id="sr-modal-confirm" disabled onclick="rejectSearchResult('${escapeAttr(String(rid))}','${escapeAttr(String(resultId))}')">Отправить</button>
+    </div>`);
+}
+async function rejectSearchResult(rid, resultId) {
+  const r = srSelectedReason(); if (!r) return;
+  const btn = document.getElementById('sr-modal-confirm');
+  if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
+  try {
+    const d = await apiPost('/api/me/search_requests/' + encodeURIComponent(rid) + '/results/' + encodeURIComponent(resultId) + '/reject',
+      { reason: r.code === 'other' ? (r.custom || 'Другое') : r.label, comment: r.code === 'other' ? '' : r.custom });
+    if (!d.ok) throw new Error(d.error || 'reject_failed');
+    closeSearchModal();
+    srApplyRequest(d.request);
+    showToast('Спасибо! Продолжаем поиск');
+    renderSearchDetail();
+  } catch (_) {
+    showToast('Не удалось отправить ответ');
+    if (btn) { btn.disabled = false; btn.textContent = 'Отправить'; }
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearchModal(); });
+
+function handleSearchDeepLink() {
+  const p = new URLSearchParams(location.search), rid = p.get('search_request'), res = p.get('search_result');
+  if (rid && userId) setTimeout(() => openSearchRequest(rid, res), 500);
+  else refreshSearchBadge();
 }
 
 /* Init */
