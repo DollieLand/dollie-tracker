@@ -231,6 +231,8 @@
     e.preventDefault();
     deferredPrompt = e;
     refreshInstallUI();
+    var ov = document.getElementById('dlp-install');
+    if (ov && ov.classList.contains('open')) openInstallSheet();
   });
   window.addEventListener('appinstalled', function () {
     deferredPrompt = null;
@@ -240,13 +242,23 @@
   });
 
   function appUrl() { return location.origin + location.pathname; }
+  function installUrl() { return appUrl() + '?install=1'; }
+
+  /* Из Telegram — сразу открываем сайт в браузере телефона, там окно установки
+     покажется само (параметр ?install=1). */
+  function goInstallFromTelegram() {
+    try { WebApp.HapticFeedback && WebApp.HapticFeedback.impactOccurred('light'); } catch (_) {}
+    try { WebApp.openLink(installUrl(), { try_instant_view: false }); }
+    catch (_) { window.open(installUrl(), '_blank'); }
+  }
+  window.DL_PWA.installFromTelegram = goInstallFromTelegram;
   function canOfferInstall() { return !standalone && (inTelegram || !!deferredPrompt || isIOS || !!session); }
 
   function ensureInstallSheet() {
     var ov = document.getElementById('dlp-install');
     if (ov) return ov;
     ov = el(
-      '<div class="review-prompt-overlay" id="dlp-install" style="z-index:85">' +
+      '<div class="review-prompt-overlay" id="dlp-install" style="z-index:10002">' +
       '<div class="review-prompt-card" role="dialog" aria-modal="true">' +
       '<img class="dlp-logo" src="icons/icon-192.png" alt="" style="width:64px;height:64px;border-radius:18px;margin:0 0 12px">' +
       '<h2>DollieLand как приложение</h2>' +
@@ -301,20 +313,36 @@
     var item = document.getElementById('dlp-install-item');
     if (item) item.hidden = !canOfferInstall();
     var card = document.getElementById('dlp-install-card');
-    if (card) card.hidden = !(canOfferInstall() && !inTelegram && lsGet(INSTALL_DISMISS_KEY) !== '1');
+    if (card) card.hidden = !(canOfferInstall() && lsGet(INSTALL_DISMISS_KEY) !== '1');
   }
 
   function injectUI() {
+    // В Telegram убираем старое «Добавить на главный экран» — вместо него «Установить приложение на телефон».
+    if (inTelegram) {
+      var oldItem = document.getElementById('hs-menu-item');
+      var oldCard = document.getElementById('homescreen-card');
+      var oldSheet = document.getElementById('sheet-homescreen');
+      var anchorItem = oldItem ? oldItem.previousElementSibling : null;
+      if (oldItem) oldItem.remove();
+      if (oldCard) oldCard.remove();
+      if (oldSheet) oldSheet.remove();
+    }
+
     var lists = document.querySelectorAll('#tab-profile .menu-list');
     var lastList = lists[lists.length - 1];
-    if (lastList && !document.getElementById('dlp-install-item')) {
+    var themeBtn = Array.prototype.find.call(document.querySelectorAll('#tab-profile .menu-item'), function (b) {
+      return (b.getAttribute('onclick') || '').indexOf("openSheet('theme')") !== -1;
+    });
+    if (!document.getElementById('dlp-install-item')) {
       var item = el(
         '<button type="button" class="menu-item" id="dlp-install-item" hidden>' +
         '<svg class="icon"><use href="#icon-house"/></svg>' +
-        '<span class="label">Установить как приложение</span>' +
+        '<span class="label">Установить приложение на телефон</span>' +
         '<svg class="icon chev"><use href="#icon-chevron-right"/></svg></button>');
-      item.onclick = openInstallSheet;
-      lastList.appendChild(item);
+      item.onclick = inTelegram ? goInstallFromTelegram : openInstallSheet;
+      var after = (inTelegram && anchorItem) || themeBtn;
+      if (after) after.insertAdjacentElement('afterend', item);
+      else if (lastList) lastList.appendChild(item);
     }
     if (!inTelegram && session && lastList && !document.getElementById('dlp-logout-item')) {
       var out = el(
@@ -324,16 +352,16 @@
       out.onclick = function () { if (confirm('Выйти из DollieLand на этом устройстве?')) logout(); };
       lastList.appendChild(out);
     }
-    // Карточка на главной (только в браузере, пока не установлено)
+    // Карточка на главной — и в Telegram, и в браузере
     var anchor = document.getElementById('orders-summary-card');
-    if (!inTelegram && anchor && !document.getElementById('dlp-install-card')) {
+    if (anchor && !document.getElementById('dlp-install-card')) {
       var card = el(
         '<button type="button" class="orders-summary-card homescreen-card" id="dlp-install-card" hidden>' +
         '<div class="orders-summary-icon"><svg class="icon"><use href="#icon-house"/></svg></div>' +
-        '<div class="orders-summary-text hs-text"><span class="hs-title">Установить DollieLand</span>' +
-        '<span class="hs-sub">Своя иконка на экране телефона</span></div>' +
+        '<div class="orders-summary-text hs-text"><span class="hs-title">Установить приложение на телефон</span>' +
+        '<span class="hs-sub">DollieLand со своей иконкой на экране</span></div>' +
         '<span class="hs-close" role="button" aria-label="Скрыть"><svg class="icon"><use href="#icon-x"/></svg></span></button>');
-      card.onclick = openInstallSheet;
+      card.onclick = inTelegram ? goInstallFromTelegram : openInstallSheet;
       card.querySelector('.hs-close').onclick = function (e) { e.stopPropagation(); lsSet(INSTALL_DISMISS_KEY, '1'); refreshInstallUI(); };
       anchor.insertAdjacentElement('afterend', card);
     }
@@ -345,5 +373,10 @@
     injectStyle();
     if (!inTelegram && !session) showLoginGate();
     injectUI();
+    if (!inTelegram && !standalone && /[?&]install=1/.test(location.search)) {
+      // Убираем параметр, чтобы установленная иконка открывала обычную главную.
+      try { history.replaceState(null, '', location.pathname + location.hash); } catch (_) {}
+      setTimeout(openInstallSheet, 500);
+    }
   });
 })();
