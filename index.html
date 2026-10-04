@@ -1847,63 +1847,6 @@
   .sr-modal-actions .btn { margin: 0; width: 100%; padding-left: 10px; padding-right: 10px; }
   .btn-danger { background: #C4324A; color: #fff; box-shadow: 0 8px 18px rgba(196,50,74,.22); }
   .btn-danger:disabled { opacity: .45; box-shadow: none; }
-
-/* ---------- Каталог: заметная карточка «Поиск для меня» ---------- */
-.catalog-search-entry {
-  display: block;
-  width: 100%;
-  margin: 0 0 14px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: var(--surface);
-  box-shadow: 0 5px 18px rgba(0,0,0,.06);
-  overflow: hidden;
-  text-align: left;
-  cursor: pointer;
-}
-.catalog-search-entry .search-entry-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 76px;
-  padding: 14px 14px 14px 16px;
-}
-.catalog-search-entry .search-entry-icon {
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 13px;
-  background: var(--pink-soft);
-  color: var(--pink-accent);
-}
-.catalog-search-entry .search-entry-icon .icon {
-  width: 21px;
-  height: 21px;
-}
-.catalog-search-entry .search-entry-title {
-  font-size: 15px;
-  line-height: 1.25;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.catalog-search-entry .search-entry-sub {
-  font-size: 12px;
-  line-height: 1.4;
-  color: var(--text-secondary);
-}
-.catalog-search-entry > .search-entry-top > .icon {
-  flex: 0 0 auto !important;
-  width: 20px !important;
-  height: 20px !important;
-  margin-left: auto;
-  color: var(--text-secondary);
-}
-.sr-h1 { font-style: normal; }
 </style>
 </head>
 <body>
@@ -2253,6 +2196,11 @@
   </main>
 
   <main class="tab-screen" id="tab-search">
+    <button type="button" class="search-back" onclick="switchTab('profile')">
+      <svg class="icon" style="width:17px;height:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Профиль
+    </button>
+    <header class="screen-header"><h1>Поиск для меня</h1></header>
+    <p class="search-screen-intro">Расскажи, какую куклу ты ищешь — мы попробуем её найти.</p>
     <div id="search-screen-content"></div>
   </main>
 
@@ -6347,7 +6295,7 @@ function renderSearchMyList() {
   const order = { action: 0, search: 1, done: 2, closed: 3 };
   const list = [...searchRequestsCache].sort((a, b) => order[srStage(a.status)] - order[srStage(b.status)]);
   el.innerHTML = `<div class="sr-list">${list.map(r => {
-    const first = (r.images || [])[0];
+    const first = (r.image_thumbs || r.images || [])[0];
     const cnt = (r.results || []).length;
     const thumb = first
       ? `<img src="${escapeAttr(assetUrl(first))}" alt="" loading="lazy" decoding="async">`
@@ -6637,16 +6585,17 @@ function srNextStepHTML(r) {
   return `<div class="sr-next ${accent ? 'accent' : ''}"><span class="sr-next-icon">${srIcon(m[0])}</span><div style="min-width:0;flex:1"><div class="sr-next-title">${m[1]}</div><div class="sr-next-text">${m[2]}</div>${r.status === 'ORDERED' ? `<button type="button" class="text-link" style="margin-top:8px" onclick="switchTab('orders')">Мои заказы ${srIcon('chevron-right')}</button>` : ''}</div></div>`;
 }
 
-function srGalleryHTML(key, images) {
+function srGalleryHTML(key, images, thumbImages) {
   const urls = (images || []).map(assetUrl);
+  const thumbs = (thumbImages || images || []).map(assetUrl);
   srGalleries[key] = urls;
   if (!urls.length) return '';
   return `<div class="sr-gallery">
     <button type="button" class="sr-gallery-main" id="srg-main-${key}" data-index="0" onclick="openSearchGallery('${key}')" aria-label="Открыть фото">
-      <img src="${escapeAttr(urls[0])}" alt="" decoding="async">
+      <img src="${escapeAttr(thumbs[0] || urls[0])}" alt="" decoding="async" fetchpriority="high">
       ${urls.length > 1 ? `<span class="sr-gallery-count">${srIcon('image')}<span id="srg-count-${key}">1</span>/${urls.length}</span>` : ''}
     </button>
-    ${urls.length > 1 ? `<div class="sr-thumbs">${urls.map((u, i) => `<button type="button" class="sr-thumb ${i === 0 ? 'active' : ''}" onclick="selectSearchThumb('${key}', ${i})" aria-label="Фото ${i + 1}"><img src="${escapeAttr(u)}" alt="" loading="lazy" decoding="async"></button>`).join('')}</div>` : ''}
+    ${urls.length > 1 ? `<div class="sr-thumbs">${urls.map((u, i) => `<button type="button" class="sr-thumb ${i === 0 ? 'active' : ''}" onclick="selectSearchThumb('${key}', ${i})" aria-label="Фото ${i + 1}"><img src="${escapeAttr(thumbs[i] || u)}" alt="" loading="lazy" decoding="async"></button>`).join('')}</div>` : ''}
   </div>`;
 }
 function selectSearchThumb(key, i) {
@@ -6731,7 +6680,7 @@ function renderSearchDetail(resultId) {
       <h2 class="sr-title">${escapeHtml(srTitle(r))}</h2>
       <div class="sr-subtitle">${escapeHtml(srSubtitle(r))}${r.created_at ? ` · ${escapeHtml(searchDate(r.created_at))}` : ''}</div>
       ${closed ? '' : srTrackHTML(r.status)}
-      ${srGalleryHTML('req', r.images)}
+      ${srGalleryHTML('req', r.images, r.image_thumbs)}
     </section>
 
     ${closed ? `<section class="sr-card"><div class="sr-closed"><span class="sr-closed-icon">${srIcon('x')}</span><div style="min-width:0"><h3>Запрос закрыт</h3>
@@ -6789,13 +6738,14 @@ function searchResultCardHTML(x, r, mode, num) {
   const full = mode === 'full';
   const rid = escapeAttr(String(r.id)), xid = escapeAttr(String(x.id));
   const imgs = (x.images || []).map(assetUrl);
+  const thumbImgs = (x.image_thumbs || x.images || []).map(assetUrl);
   const gKey = 'res' + String(x.id).replace(/[^\w-]/g, '');
   let media = '';
-  if (full) media = imgs.length ? `<div style="padding:12px 12px 0">${srGalleryHTML(gKey, x.images)}</div>` : '';
+  if (full) media = imgs.length ? `<div style="padding:12px 12px 0">${srGalleryHTML(gKey, x.images, x.image_thumbs)}</div>` : '';
   else if (imgs.length) {
     srGalleries[gKey] = imgs;
     media = `<button type="button" class="sr-result-media" onclick="openSearchResult('${rid}','${xid}')" aria-label="Подробнее о варианте">
-      <img src="${escapeAttr(imgs[0])}" alt="" loading="lazy" decoding="async">
+      <img src="${escapeAttr(thumbImgs[0] || imgs[0])}" alt="" loading="lazy" decoding="async">
       ${state === 'selected' ? `<span class="sr-result-tag">${srIcon('check')} Ваш выбор</span>` : ''}
       ${imgs.length > 1 ? `<span class="sr-gallery-count">${srIcon('image')}${imgs.length} фото</span>` : ''}
     </button>`;
