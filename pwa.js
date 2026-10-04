@@ -1,738 +1,1470 @@
+/* =========================================================
+   DollieLand PWA
+   Подключается в <head> сразу ПОСЛЕ telegram-web-app.js.
+
+   Что делает:
+   • определяет, где открыто приложение — в Telegram или как обычный сайт/PWA;
+   • вне Telegram даёт вход «через Telegram»: бот присылает кнопку
+     подтверждения, после неё сайт получает собственную сессию;
+   • отдаёт основному скрипту готовые заголовки авторизации (DL_PWA.authHeaders);
+   • регистрирует service worker и показывает «Установить приложение».
+   ========================================================= */
 (function () {
   'use strict';
 
-  var API_BASE = '/api';
+  var API_BASE = 'https://dollieland.pythonanywhere.com';
   var BOT_USERNAME = 'DollieHelper_bot';
 
-  var SESSION_KEY = 'dollieland_session';
-  var PENDING_KEY = 'dollieland_pending_install';
-  var DISMISSED_KEY = 'dollieland_install_dismissed';
-  var INSTALL_OFFERED_KEY = 'dollieland_install_offered';
+  var SESSION_KEY = 'dollieland_pwa_session';
+  var PENDING_KEY = 'dollieland_pwa_pending_login';
+  var INSTALL_DISMISS_KEY = 'dollieland_pwa_install_dismissed';
   var INSTALL_REQUEST_PARAM = 'install';
 
-  var tg = window.Telegram && window.Telegram.WebApp
-    ? window.Telegram.WebApp
-    : null;
+  /*
+   * =========================================================
+   * TELEGRAM
+   * =========================================================
+   */
 
-  var inTelegram = !!tg;
-  var session = null;
-  var deferredPrompt = null;
+  var WebApp = window.Telegram && window.Telegram.WebApp;
 
-  var ua = navigator.userAgent || '';
-  var isIOS = /iPhone|iPad|iPod/i.test(ua);
-  var isAndroid = /Android/i.test(ua);
+  /*
+   * ВАЖНО:
+   * initData может быть пустым в момент самого раннего запуска,
+   * поэтому сначала проверяем сам объект WebApp, а затем initData.
+   */
+  var inTelegram = !!(
+    WebApp &&
+    (
+      WebApp.initData ||
+      WebApp.initDataUnsafe
+    )
+  );
 
   var standalone =
-    window.matchMedia &&
-    window.matchMedia('(display-mode: standalone)').matches;
+    (window.matchMedia &&
+      window.matchMedia('(display-mode: standalone)').matches) ||
+    window.navigator.standalone === true;
 
-  if (window.navigator.standalone === true) {
-    standalone = true;
-  }
+  var ua = navigator.userAgent || '';
 
-  try {
-    session = localStorage.getItem(SESSION_KEY);
-  } catch (_) {
-    session = null;
-  }
+  var isIOS =
+    /iPad|iPhone|iPod/.test(ua) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-  if (tg) {
+  /*
+   * =========================================================
+   * LOCAL STORAGE
+   * =========================================================
+   */
+
+  function lsGet(k) {
     try {
-      tg.ready();
-      tg.expand();
+      return localStorage.getItem(k);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function lsSet(k, v) {
+    try {
+      localStorage.setItem(k, v);
     } catch (_) {}
   }
 
-  window.DL_PWA = {
-    isInstalled: function () {
-      return standalone;
-    },
-    isTelegram: function () {
-      return inTelegram;
-    },
-    openInstall: function () {
-      openInstallSheet();
+  function lsDel(k) {
+    try {
+      localStorage.removeItem(k);
+    } catch (_) {}
+  }
+
+  /*
+   * =========================================================
+   * SESSION
+   * =========================================================
+   */
+
+  function readSession() {
+    try {
+      var s = JSON.parse(lsGet(SESSION_KEY) || 'null');
+
+      return s &&
+        s.token &&
+        s.user &&
+        s.user.id
+        ? s
+        : null;
+
+    } catch (_) {
+      return null;
     }
+  }
+
+  /*
+   * В Telegram собственная PWA-сессия НЕ нужна.
+   * Пользователь определяется через Telegram WebApp.
+   */
+  var session = inTelegram ? null : readSession();
+
+  /*
+   * =========================================================
+   * TELEGRAM USER
+   * =========================================================
+   */
+
+  var telegramUser = null;
+
+  if (inTelegram && WebApp) {
+    try {
+      if (
+        WebApp.initDataUnsafe &&
+        WebApp.initDataUnsafe.user
+      ) {
+        telegramUser = WebApp.initDataUnsafe.user;
+      }
+    } catch (_) {
+      telegramUser = null;
+    }
+  }
+
+  /*
+   * =========================================================
+   * ПУБЛИЧНЫЙ ИНТЕРФЕЙС
+   * =========================================================
+   */
+
+  window.DL_PWA = {
+
+    inTelegram: inTelegram,
+
+    standalone: standalone,
+
+    /*
+     * Telegram WebApp доступен только внутри Telegram.
+     */
+    tg: inTelegram ? WebApp : null,
+
+    /*
+     * ВАЖНОЕ ИСПРАВЛЕНИЕ:
+     *
+     * Раньше здесь было:
+     *
+     * user: session ? session.user : undefined
+     *
+     * Из-за этого внутри Telegram пользователь всегда
+     * выглядел как гость.
+     *
+     * Теперь в Telegram используется настоящий Telegram user.
+     */
+    user: inTelegram
+      ? telegramUser
+      : (session ? session.user : undefined),
+
+    /*
+     * Заголовки авторизации API.
+     *
+     * В Telegram:
+     * Authorization: tma <initData>
+     *
+     * В браузере/PWA:
+     * Authorization: pwa <session token>
+     */
+    authHeaders: function () {
+
+      if (
+        inTelegram &&
+        WebApp &&
+        WebApp.initData
+      ) {
+        return {
+          Authorization: 'tma ' + WebApp.initData
+        };
+      }
+
+      if (session) {
+        return {
+          Authorization: 'pwa ' + session.token
+        };
+      }
+
+      return {};
+    },
+
+    logout: logout,
+
+    openInstall: openInstallSheet
   };
 
   /*
-   * ============================================================
-   * SERVICE WORKER
-   * ============================================================
+   * =========================================================
+   * TELEGRAM READY
+   * =========================================================
    */
 
-  if ('serviceWorker' in navigator) {
+  if (inTelegram && WebApp) {
+    try {
+      WebApp.ready();
+    } catch (_) {}
+
+    try {
+      WebApp.expand();
+    } catch (_) {}
+  }
+
+  /*
+   * =========================================================
+   * ПРОВЕРКА СЕССИИ
+   * =========================================================
+   */
+
+  if (!inTelegram && session && window.fetch) {
+
+    var origFetch = window.fetch.bind(window);
+    var checking = false;
+
+    window.fetch = function (input, init) {
+
+      return origFetch(input, init)
+        .then(function (res) {
+
+          var url =
+            typeof input === 'string'
+              ? input
+              : (input && input.url) || '';
+
+          if (
+            res.status === 401 &&
+            url.indexOf(API_BASE) === 0 &&
+            !checking
+          ) {
+
+            checking = true;
+
+            origFetch(
+              API_BASE + '/api/pwa/me',
+              {
+                headers: window.DL_PWA.authHeaders()
+              }
+            )
+              .then(function (r) {
+
+                if (r.status === 401) {
+                  lsDel(SESSION_KEY);
+                  location.reload();
+                }
+
+              })
+              .catch(function () {})
+              .then(function () {
+                checking = false;
+              });
+          }
+
+          return res;
+        });
+    };
+  }
+
+  /*
+   * =========================================================
+   * LOGOUT
+   * =========================================================
+   */
+
+  function logout() {
+
+    var headers = window.DL_PWA.authHeaders();
+
+    lsDel(SESSION_KEY);
+
+    fetch(
+      API_BASE + '/api/pwa/logout',
+      {
+        method: 'POST',
+        headers: headers
+      }
+    )
+      .catch(function () {})
+      .then(function () {
+        location.reload();
+      });
+  }
+
+  /*
+   * =========================================================
+   * SERVICE WORKER
+   * =========================================================
+   */
+
+  if (
+    !inTelegram &&
+    'serviceWorker' in navigator &&
+    location.protocol === 'https:'
+  ) {
+
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/pwa-sw.js')
-        .then(function (registration) {
-          try {
-            registration.update();
-          } catch (_) {}
-        })
-        .catch(function () {});
+
+      navigator.serviceWorker
+        .register('sw.js')
+        .catch(function (e) {
+
+          console.warn(
+            'DollieLand: SW не зарегистрирован —',
+            e
+          );
+
+        });
+
     });
   }
 
   /*
-   * ============================================================
-   * INSTALL PROMPT
-   * ============================================================
+   * =========================================================
+   * STYLES
+   * =========================================================
    */
 
-  window.addEventListener('beforeinstallprompt', function (event) {
-    event.preventDefault();
-    deferredPrompt = event;
+  var css = '' +
 
-    /*
-     * Если пользователь уже пришёл по специальной ссылке
-     * ?install=1, показываем инструкцию сразу.
-     */
-    if (hasInstallRequest() && !standalone) {
-      setTimeout(function () {
-        openInstallSheet({
-          fromTelegram: true
-        });
-      }, 100);
+    '.dlp-gate{' +
+      'position:fixed;' +
+      'inset:0;' +
+      'z-index:10001;' +
+      'background:var(--bg,#FFF9FB);' +
+      'display:flex;' +
+      'align-items:center;' +
+      'justify-content:center;' +
+      'padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));' +
+      'overflow-y:auto' +
+    '}' +
+
+    '.dlp-logo{' +
+      'width:84px;' +
+      'height:84px;' +
+      'border-radius:24px;' +
+      'display:block;' +
+      'margin:0 auto 16px;' +
+      'box-shadow:0 10px 28px rgba(231,142,173,.3)' +
+    '}' +
+
+    '.dlp-status{' +
+      'font-size:12.5px;' +
+      'color:var(--text-secondary);' +
+      'line-height:1.5;' +
+      'margin-top:14px;' +
+      'min-height:1em' +
+    '}' +
+
+    '.dlp-status b{' +
+      'color:var(--text)' +
+    '}' +
+
+    '.dlp-wait{' +
+      'display:flex;' +
+      'align-items:center;' +
+      'justify-content:center;' +
+      'gap:10px;' +
+      'font-size:13px;' +
+      'font-weight:700;' +
+      'color:var(--text);' +
+      'margin:4px 0 8px' +
+    '}' +
+
+    '.dlp-spin{' +
+      'width:18px;' +
+      'height:18px;' +
+      'border-radius:50%;' +
+      'border:2.5px solid var(--pink-soft);' +
+      'border-top-color:var(--pink-accent);' +
+      'animation:spin .9s linear infinite' +
+    '}' +
+
+    '.dlp-steps{' +
+      'display:grid;' +
+      'gap:8px;' +
+      'margin:4px 0 14px;' +
+      'text-align:left' +
+    '}' +
+
+    '.dlp-step{' +
+      'display:flex;' +
+      'gap:10px;' +
+      'align-items:flex-start;' +
+      'background:var(--surface-soft);' +
+      'border:1px solid var(--border);' +
+      'border-radius:14px;' +
+      'padding:11px 12px;' +
+      'font-size:12.5px;' +
+      'line-height:1.45;' +
+      'color:var(--text-secondary)' +
+    '}' +
+
+    '.dlp-step b{' +
+      'color:var(--text)' +
+    '}' +
+
+    '.dlp-num{' +
+      'width:22px;' +
+      'height:22px;' +
+      'border-radius:50%;' +
+      'background:var(--pink-soft);' +
+      'color:var(--pink-accent);' +
+      'font-size:11px;' +
+      'font-weight:800;' +
+      'display:flex;' +
+      'align-items:center;' +
+      'justify-content:center;' +
+      'flex-shrink:0' +
+    '}' +
+
+    '.dlp-ios-share{' +
+      'display:inline-block;' +
+      'vertical-align:-3px;' +
+      'width:16px;' +
+      'height:16px' +
+    '}' +
+
+    '#dlp-install-item[hidden],' +
+    '#dlp-install-card[hidden]{' +
+      'display:none!important' +
+    '}';
+
+  function injectStyle() {
+
+    var st = document.createElement('style');
+
+    st.textContent = css;
+
+    document.head.appendChild(st);
+  }
+
+  function el(html) {
+
+    var t = document.createElement('div');
+
+    t.innerHTML = html.trim();
+
+    return t.firstChild;
+  }
+
+  /*
+   * =========================================================
+   * ВХОД В БРАУЗЕРЕ
+   * =========================================================
+   */
+
+  var pollTimer = null;
+  var pollInFlight = false;
+
+  function readPending() {
+
+    try {
+
+      var p = JSON.parse(
+        lsGet(PENDING_KEY) || 'null'
+      );
+
+      return p &&
+        p.nonce &&
+        p.expires_at > Date.now()
+        ? p
+        : null;
+
+    } catch (_) {
+
+      return null;
+
     }
-  });
+  }
 
-  window.addEventListener('appinstalled', function () {
-    standalone = true;
-    deferredPrompt = null;
+  function tgLink(nonce) {
 
-    try {
-      localStorage.setItem(INSTALL_OFFERED_KEY, '1');
-      localStorage.removeItem(PENDING_KEY);
-      localStorage.removeItem(INSTALL_REQUEST_PARAM);
-    } catch (_) {}
+    return (
+      'tg://resolve?domain=' +
+      BOT_USERNAME +
+      '&start=pwa_' +
+      nonce
+    );
+  }
 
-    closeInstallSheet();
+  function webLink(nonce) {
 
-    try {
-      fetch(API_BASE + '/pwa-install', {
+    return (
+      'https://t.me/' +
+      BOT_USERNAME +
+      '?start=pwa_' +
+      nonce
+    );
+  }
+
+  function renderLogin(state, message) {
+
+    var gate =
+      document.getElementById('dlp-gate');
+
+    if (!gate) return;
+
+    var body =
+      gate.querySelector('#dlp-body');
+
+    var pending = readPending();
+
+    if (
+      state === 'waiting' &&
+      pending
+    ) {
+
+      body.innerHTML =
+
+        '<div class="dlp-wait">' +
+          '<span class="dlp-spin"></span>' +
+          'Ждём подтверждения…' +
+        '</div>' +
+
+        '<div class="dlp-steps">' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">1</span>' +
+            '<span>В Telegram откроется чат с <b>@' +
+            BOT_USERNAME +
+            '</b>. Нажмите <b>«Запустить»</b>, если бот попросит.</span>' +
+          '</div>' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">2</span>' +
+            '<span>Нажмите в сообщении бота <b>«Да, это я — войти»</b>.</span>' +
+          '</div>' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">3</span>' +
+            '<span>Вернитесь сюда — вход выполнится сам.</span>' +
+          '</div>' +
+
+        '</div>' +
+
+        '<button type="button" class="btn btn-primary btn-block" id="dlp-open-tg">' +
+          'Открыть Telegram' +
+        '</button>' +
+
+        '<a class="btn btn-tertiary btn-block" id="dlp-open-web" href="' +
+          webLink(pending.nonce) +
+          '" target="_blank" rel="noopener">' +
+          'Не открывается? Ссылка t.me' +
+        '</a>' +
+
+        '<button type="button" class="btn btn-tertiary btn-block" id="dlp-cancel">' +
+          'Отмена' +
+        '</button>';
+
+      body.querySelector(
+        '#dlp-open-tg'
+      ).onclick = function () {
+
+        location.href =
+          tgLink(pending.nonce);
+
+      };
+
+      body.querySelector(
+        '#dlp-cancel'
+      ).onclick = function () {
+
+        stopPolling();
+
+        lsDel(PENDING_KEY);
+
+        renderLogin('idle');
+      };
+
+    } else {
+
+      body.innerHTML =
+
+        '<button type="button" class="btn btn-primary btn-block" id="dlp-login-btn">' +
+
+          '<svg class="icon">' +
+            '<use href="#icon-send"/>' +
+          '</svg>' +
+
+          ' Войти через Telegram' +
+
+        '</button>' +
+
+        '<div class="dlp-status" id="dlp-status">' +
+
+          (
+            message ||
+            'Мы не узнаём ваш пароль и номер телефона — вход подтверждается кнопкой в нашем боте.'
+          ) +
+
+        '</div>';
+
+      body.querySelector(
+        '#dlp-login-btn'
+      ).onclick = startLogin;
+    }
+  }
+
+  function startLogin() {
+
+    var btn =
+      document.getElementById('dlp-login-btn');
+
+    if (btn) {
+
+      btn.disabled = true;
+
+      btn.textContent = 'Секунду…';
+    }
+
+    fetch(
+      API_BASE + '/api/pwa/login/start',
+      {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          installed: true
-        })
-      }).catch(function () {});
-    } catch (_) {}
-  });
+        body: '{}'
+      }
+    )
 
-  /*
-   * ============================================================
-   * STYLES
-   * ============================================================
-   */
+      .then(function (r) {
+        return r.json();
+      })
 
-  function injectStyle() {
-    if (document.getElementById('dollie-pwa-style')) {
+      .then(function (d) {
+
+        if (
+          !d ||
+          !d.ok ||
+          !d.nonce
+        ) {
+
+          throw new Error(
+            (d && d.error) ||
+            'start_failed'
+          );
+        }
+
+        lsSet(
+          PENDING_KEY,
+          JSON.stringify({
+            nonce: d.nonce,
+            expires_at:
+              Date.now() +
+              (Number(d.expires_in) || 300) * 1000
+          })
+        );
+
+        renderLogin('waiting');
+
+        startPolling();
+
+        location.href =
+          tgLink(d.nonce);
+      })
+
+      .catch(function (e) {
+
+        renderLogin(
+          'idle',
+
+          e &&
+          e.message === 'too_many_attempts'
+
+            ? 'Слишком много попыток. Подождите несколько минут.'
+
+            : 'Не удалось начать вход. Проверьте интернет и попробуйте ещё раз.'
+        );
+
+      });
+  }
+
+  function startPolling() {
+
+    stopPolling();
+
+    pollTimer =
+      setInterval(
+        pollLogin,
+        2500
+      );
+
+    pollLogin();
+  }
+
+  function stopPolling() {
+
+    if (pollTimer) {
+      clearInterval(pollTimer);
+    }
+
+    pollTimer = null;
+  }
+
+  function pollLogin() {
+
+    var pending =
+      readPending();
+
+    if (!pending) {
+
+      stopPolling();
+
+      lsDel(PENDING_KEY);
+
+      renderLogin(
+        'idle',
+        'Время на подтверждение вышло. Нажмите «Войти через Telegram» ещё раз.'
+      );
+
       return;
     }
 
-    var style = document.createElement('style');
-    style.id = 'dollie-pwa-style';
+    if (pollInFlight) return;
 
-    style.textContent = `
-      .dlp-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 10010;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        box-sizing: border-box;
-        background: rgba(0,0,0,.38);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-      }
+    pollInFlight = true;
 
-      .dlp-sheet {
-        width: min(430px, 100%);
-        max-height: min(760px, calc(100vh - 40px));
-        overflow-y: auto;
-        box-sizing: border-box;
-        border-radius: 28px;
-        background: #fff;
-        box-shadow: 0 25px 80px rgba(0,0,0,.22);
-        padding: 24px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Helvetica, Arial, sans-serif;
-        color: #282226;
-        position: relative;
-      }
+    fetch(
+      API_BASE +
+      '/api/pwa/login/poll?nonce=' +
+      encodeURIComponent(pending.nonce)
+    )
 
-      .dlp-close {
-        position: absolute;
-        top: 14px;
-        right: 14px;
-        width: 36px;
-        height: 36px;
-        border: 0;
-        border-radius: 50%;
-        background: #f5f1f3;
-        color: #5f555a;
-        font-size: 22px;
-        line-height: 36px;
-        text-align: center;
-        cursor: pointer;
-      }
+      .then(function (r) {
+        return r.json();
+      })
 
-      .dlp-title {
-        margin: 4px 42px 8px 0;
-        font-size: 24px;
-        line-height: 1.2;
-        font-weight: 700;
-      }
+      .then(function (d) {
 
-      .dlp-subtitle {
-        margin: 0 0 20px;
-        font-size: 14px;
-        line-height: 1.5;
-        color: #756b70;
-      }
+        if (!d) return;
 
-      .dlp-step {
-        display: flex;
-        gap: 13px;
-        margin: 15px 0;
-        padding: 15px;
-        border-radius: 18px;
-        background: #faf7f8;
-      }
+        if (
+          d.status === 'confirmed' &&
+          d.token &&
+          d.user
+        ) {
 
-      .dlp-step-number {
-        flex: 0 0 30px;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: #ead1dc;
-        color: #49333d;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+          stopPolling();
 
-      .dlp-step-content {
-        min-width: 0;
-        font-size: 14px;
-        line-height: 1.5;
-      }
+          lsDel(PENDING_KEY);
 
-      .dlp-step-content strong {
-        display: block;
-        margin-bottom: 3px;
-        font-size: 15px;
-      }
+          lsSet(
+            SESSION_KEY,
+            JSON.stringify({
+              token: d.token,
+              user: d.user,
+              created_at: Date.now()
+            })
+          );
 
-      .dlp-button {
-        width: 100%;
-        border: 0;
-        border-radius: 17px;
-        padding: 15px 18px;
-        font-size: 15px;
-        font-weight: 650;
-        cursor: pointer;
-        margin-top: 10px;
-      }
+          location.reload();
 
-      .dlp-button-primary {
-        background: #e8c4d2;
-        color: #392832;
-      }
+        } else if (
+          d.status === 'rejected'
+        ) {
 
-      .dlp-button-secondary {
-        background: #f4eff1;
-        color: #4c4247;
-      }
+          stopPolling();
 
-      .dlp-hint {
-        margin-top: 14px;
-        text-align: center;
-        font-size: 12px;
-        line-height: 1.45;
-        color: #8b8085;
-      }
+          lsDel(PENDING_KEY);
 
-      .dlp-gate {
-        position: fixed !important;
-        z-index: 10001 !important;
-      }
-    `;
+          renderLogin(
+            'idle',
+            'Вход отменён в Telegram.'
+          );
 
-    document.head.appendChild(style);
+        } else if (
+          d.status === 'expired'
+        ) {
+
+          stopPolling();
+
+          lsDel(PENDING_KEY);
+
+          renderLogin(
+            'idle',
+            'Время на подтверждение вышло. Нажмите «Войти через Telegram» ещё раз.'
+          );
+        }
+      })
+
+      .catch(function () {})
+
+      .then(function () {
+        pollInFlight = false;
+      });
   }
-
-  /*
-   * ============================================================
-   * LOGIN GATE
-   * ============================================================
-   */
 
   function showLoginGate() {
-    if (document.querySelector('.dlp-gate')) {
+
+    if (
+      document.getElementById('dlp-gate')
+    ) {
       return;
     }
 
-    var gate = document.createElement('div');
-    gate.className = 'dlp-gate';
+    var gate = el(
 
-    gate.innerHTML = `
-      <div style="
-        position:fixed;
-        inset:0;
-        z-index:10001;
-        background:rgba(255,255,255,.97);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        padding:24px;
-        box-sizing:border-box;
-        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
-      ">
-        <div style="
-          width:min(420px,100%);
-          text-align:center;
-        ">
-          <div style="
-            font-size:22px;
-            font-weight:700;
-            margin-bottom:10px;
-            color:#30272c;
-          ">
-            DollieLand
-          </div>
+      '<div class="dlp-gate" id="dlp-gate" role="dialog" aria-modal="true" aria-label="Вход в DollieLand">' +
 
-          <div style="
-            font-size:14px;
-            line-height:1.5;
-            color:#756b70;
-          ">
-            Для продолжения войдите в свой аккаунт.
-          </div>
-        </div>
-      </div>
-    `;
+        '<div class="consent-card">' +
+
+          '<img class="dlp-logo" src="icons/icon-192.png" alt="">' +
+
+          '<h2>DollieLand</h2>' +
+
+          '<p class="consent-text">' +
+
+            'Ваши заказы, Dollies и Фортуна — те же, что в Telegram. ' +
+            'Чтобы их показать, войдите через свой аккаунт Telegram.' +
+
+          '</p>' +
+
+          '<div id="dlp-body"></div>' +
+
+        '</div>' +
+
+      '</div>'
+    );
 
     document.body.appendChild(gate);
-  }
 
-  /*
-   * ============================================================
-   * INSTALL URL
-   * ============================================================
-   */
+    if (readPending()) {
 
-  function hasInstallRequest() {
-    try {
-      return new URLSearchParams(location.search)
-        .get(INSTALL_REQUEST_PARAM) === '1';
-    } catch (_) {
-      return /(?:^|[?&])install=1(?:&|$)/.test(location.search);
+      renderLogin('waiting');
+
+      startPolling();
+
+    } else {
+
+      renderLogin('idle');
     }
-  }
 
-  function appUrl() {
-    var url = location.origin + location.pathname;
+    document.addEventListener(
+      'visibilitychange',
+      function () {
 
-    return url +
-      (url.indexOf('?') >= 0 ? '&' : '?') +
-      INSTALL_REQUEST_PARAM +
-      '=1';
-  }
+        if (
+          document.visibilityState === 'visible' &&
+          readPending()
+        ) {
 
-  function canOfferInstall() {
-    return !standalone && (
-      inTelegram ||
-      !!deferredPrompt ||
-      isIOS ||
-      !!session ||
-      hasInstallRequest()
+          if (!pollTimer) {
+            startPolling();
+          } else {
+            pollLogin();
+          }
+        }
+      }
     );
   }
 
   /*
-   * ============================================================
-   * INSTALL SHEET
-   * ============================================================
+   * =========================================================
+   * УСТАНОВКА PWA
+   * =========================================================
    */
 
-  function openInstallSheet(options) {
-    options = options || {};
+  var deferredPrompt = null;
 
-    if (standalone) {
-      return;
+  window.addEventListener(
+    'beforeinstallprompt',
+    function (e) {
+
+      e.preventDefault();
+
+      deferredPrompt = e;
+
+      refreshInstallUI();
     }
+  );
 
-    var old = document.querySelector('.dlp-overlay');
+  window.addEventListener(
+    'appinstalled',
+    function () {
 
-    if (old) {
-      old.remove();
-    }
+      deferredPrompt = null;
 
-    var overlay = document.createElement('div');
-    overlay.className = 'dlp-overlay';
+      lsSet(
+        INSTALL_DISMISS_KEY,
+        '1'
+      );
 
-    var sheet = document.createElement('div');
-    sheet.className = 'dlp-sheet';
+      refreshInstallUI();
 
-    var close = document.createElement('button');
-    close.className = 'dlp-close';
-    close.type = 'button';
-    close.innerHTML = '×';
-
-    close.addEventListener('click', function () {
       closeInstallSheet();
-    });
-
-    sheet.appendChild(close);
-
-    var title = document.createElement('div');
-    title.className = 'dlp-title';
-    title.textContent = 'Установить DollieLand';
-
-    sheet.appendChild(title);
-
-    var subtitle = document.createElement('div');
-    subtitle.className = 'dlp-subtitle';
-    subtitle.textContent =
-      'Добавьте DollieLand на главный экран, чтобы открывать приложение как обычное приложение.';
-
-    sheet.appendChild(subtitle);
-
-    /*
-     * ============================================================
-     * TELEGRAM
-     * ============================================================
-     */
-
-    if (inTelegram && !options.fromTelegram) {
-      addStep(
-        sheet,
-        '1',
-        'Откройте DollieLand в браузере',
-        'Telegram может не показывать системную установку внутри Mini App.'
-      );
-
-      var telegramButton = document.createElement('button');
-      telegramButton.className =
-        'dlp-button dlp-button-primary';
-      telegramButton.textContent = 'Открыть в браузере';
-
-      telegramButton.addEventListener('click', function () {
-        var url = appUrl();
-
-        try {
-          if (tg && typeof tg.openLink === 'function') {
-            tg.openLink(url);
-          } else {
-            window.open(url, '_blank');
-          }
-        } catch (_) {
-          window.open(url, '_blank');
-        }
-      });
-
-      sheet.appendChild(telegramButton);
-
-      var telegramHint = document.createElement('div');
-      telegramHint.className = 'dlp-hint';
-      telegramHint.textContent =
-        'После открытия в браузере появится инструкция установки.';
-
-      sheet.appendChild(telegramHint);
     }
+  );
 
-    /*
-     * ============================================================
-     * ANDROID / CHROME
-     * ============================================================
-     */
-
-    else if (deferredPrompt) {
-      addStep(
-        sheet,
-        '1',
-        'Нажмите кнопку установки',
-        'Браузер предложит добавить DollieLand на главный экран.'
-      );
-
-      var installButton = document.createElement('button');
-      installButton.className =
-        'dlp-button dlp-button-primary';
-      installButton.textContent = 'Установить приложение';
-
-      installButton.addEventListener('click', function () {
-        try {
-          deferredPrompt.prompt();
-
-          deferredPrompt.userChoice
-            .then(function () {
-              deferredPrompt = null;
-              closeInstallSheet();
-            })
-            .catch(function () {
-              deferredPrompt = null;
-            });
-        } catch (_) {}
-      });
-
-      sheet.appendChild(installButton);
-
-      var androidHint = document.createElement('div');
-      androidHint.className = 'dlp-hint';
-      androidHint.textContent =
-        'Если окно установки не появилось, воспользуйтесь меню браузера.';
-
-      sheet.appendChild(androidHint);
-    }
-
-    /*
-     * ============================================================
-     * IOS
-     * ============================================================
-     */
-
-    else if (isIOS) {
-      addStep(
-        sheet,
-        '1',
-        'Нажмите кнопку «Поделиться»',
-        'Она находится в нижней панели Safari.'
-      );
-
-      addStep(
-        sheet,
-        '2',
-        'Выберите «На экран Домой»',
-        'Пролистайте меню действий, если пункт не виден сразу.'
-      );
-
-      addStep(
-        sheet,
-        '3',
-        'Нажмите «Добавить»',
-        'После этого DollieLand появится среди приложений на главном экране.'
-      );
-
-      var iosHint = document.createElement('div');
-      iosHint.className = 'dlp-hint';
-      iosHint.textContent =
-        'Важно: установка на iPhone выполняется через Safari.';
-
-      sheet.appendChild(iosHint);
-    }
-
-    /*
-     * ============================================================
-     * OTHER BROWSERS
-     * ============================================================
-     */
-
-    else {
-      addStep(
-        sheet,
-        '1',
-        'Откройте меню браузера',
-        'Найдите пункт «Установить приложение», «Установить DollieLand» или «Добавить на главный экран».'
-      );
-
-      addStep(
-        sheet,
-        '2',
-        'Подтвердите установку',
-        'Название пункта может немного отличаться в зависимости от браузера.'
-      );
-
-      var genericHint = document.createElement('div');
-      genericHint.className = 'dlp-hint';
-      genericHint.textContent =
-        'На Android обычно это меню ⋮ в правом верхнем углу.';
-
-      sheet.appendChild(genericHint);
-    }
-
-    overlay.appendChild(sheet);
-
-    overlay.addEventListener('click', function (event) {
-      if (event.target === overlay) {
-        closeInstallSheet();
-      }
-    });
-
-    document.body.appendChild(overlay);
+  function hasInstallRequest() {
 
     try {
-      localStorage.setItem(INSTALL_OFFERED_KEY, '1');
-    } catch (_) {}
+
+      return (
+        new URLSearchParams(
+          location.search
+        ).get(
+          INSTALL_REQUEST_PARAM
+        ) === '1'
+      );
+
+    } catch (_) {
+
+      return /(?:^|[?&])install=1(?:&|$)/
+        .test(location.search);
+    }
   }
 
-  function addStep(parent, number, title, text) {
-    var step = document.createElement('div');
-    step.className = 'dlp-step';
+  /*
+   * Ссылка, по которой Telegram открывает
+   * обычный браузер.
+   *
+   * ?install=1 заставляет браузер открыть
+   * инструкцию установки.
+   */
 
-    var numberEl = document.createElement('div');
-    numberEl.className = 'dlp-step-number';
-    numberEl.textContent = number;
+  function appUrl() {
 
-    var content = document.createElement('div');
-    content.className = 'dlp-step-content';
+    var url =
+      location.origin +
+      location.pathname;
 
-    var strong = document.createElement('strong');
-    strong.textContent = title;
+    return (
+      url +
+      (
+        url.indexOf('?') >= 0
+          ? '&'
+          : '?'
+      ) +
+      INSTALL_REQUEST_PARAM +
+      '=1'
+    );
+  }
 
-    var description = document.createElement('div');
-    description.textContent = text;
+  function canOfferInstall() {
 
-    content.appendChild(strong);
-    content.appendChild(description);
+    return (
+      !standalone &&
+      (
+        inTelegram ||
+        !!deferredPrompt ||
+        isIOS ||
+        !!session ||
+        hasInstallRequest()
+      )
+    );
+  }
 
-    step.appendChild(numberEl);
-    step.appendChild(content);
+  function ensureInstallSheet() {
 
-    parent.appendChild(step);
+    var ov =
+      document.getElementById(
+        'dlp-install'
+      );
+
+    if (ov) return ov;
+
+    ov = el(
+
+      '<div class="review-prompt-overlay" id="dlp-install" style="z-index:10010">' +
+
+        '<div class="review-prompt-card" role="dialog" aria-modal="true">' +
+
+          '<img class="dlp-logo" src="icons/icon-192.png" alt="" style="width:64px;height:64px;border-radius:18px;margin:0 0 12px">' +
+
+          '<h2>DollieLand как приложение</h2>' +
+
+          '<div id="dlp-install-body"></div>' +
+
+        '</div>' +
+
+      '</div>'
+    );
+
+    ov.addEventListener(
+      'click',
+      function (e) {
+
+        if (e.target === ov) {
+          closeInstallSheet();
+        }
+
+      }
+    );
+
+    document.body.appendChild(ov);
+
+    return ov;
   }
 
   function closeInstallSheet() {
-    var overlay = document.querySelector('.dlp-overlay');
 
-    if (overlay) {
-      overlay.remove();
+    var ov =
+      document.getElementById(
+        'dlp-install'
+      );
+
+    if (ov) {
+      ov.classList.remove('open');
     }
   }
 
-  /*
-   * ============================================================
-   * UI BUTTON
-   * ============================================================
-   */
+  function openInstallSheet() {
+
+    var ov =
+      ensureInstallSheet();
+
+    var body =
+      ov.querySelector(
+        '#dlp-install-body'
+      );
+
+    var later =
+      '<button type="button" class="btn btn-tertiary btn-block" id="dlp-inst-close">' +
+        'Позже' +
+      '</button>';
+
+    /*
+     * =========================================================
+     * TELEGRAM
+     * =========================================================
+     */
+
+    if (inTelegram) {
+
+      body.innerHTML =
+
+        '<p class="review-prompt-order">' +
+          'Своя иконка на экране телефона и вход без Telegram-чата.' +
+        '</p>' +
+
+        '<div class="dlp-steps">' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">1</span>' +
+            '<span>Откройте DollieLand в браузере — кнопка ниже. На iPhone выберите <b>Safari</b>.</span>' +
+          '</div>' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">2</span>' +
+            '<span>Нажмите там <b>«Установить приложение»</b> и войдите через Telegram.</span>' +
+          '</div>' +
+
+        '</div>' +
+
+        '<button type="button" class="btn btn-primary btn-block" id="dlp-inst-go">' +
+          'Открыть в браузере' +
+        '</button>' +
+
+        later;
+
+      body.querySelector(
+        '#dlp-inst-go'
+      ).onclick = function () {
+
+        var url = appUrl();
+
+        try {
+
+          if (
+            WebApp &&
+            typeof WebApp.openLink === 'function'
+          ) {
+
+            WebApp.openLink(url);
+
+          } else {
+
+            window.open(
+              url,
+              '_blank'
+            );
+          }
+
+        } catch (_) {
+
+          window.open(
+            url,
+            '_blank'
+          );
+        }
+      };
+
+    }
+
+    /*
+     * =========================================================
+     * ANDROID / CHROME
+     * =========================================================
+     */
+
+    else if (deferredPrompt) {
+
+      body.innerHTML =
+
+        '<p class="review-prompt-order">' +
+          'Иконка появится на главном экране, а DollieLand будет открываться в своём окне — как обычное приложение.' +
+        '</p>' +
+
+        '<button type="button" class="btn btn-primary btn-block" id="dlp-inst-go">' +
+          'Установить' +
+        '</button>' +
+
+        later;
+
+      body.querySelector(
+        '#dlp-inst-go'
+      ).onclick = function () {
+
+        var p =
+          deferredPrompt;
+
+        deferredPrompt = null;
+
+        p.prompt();
+
+        p.userChoice
+          .then(function (c) {
+
+            if (
+              c &&
+              c.outcome === 'accepted'
+            ) {
+
+              lsSet(
+                INSTALL_DISMISS_KEY,
+                '1'
+              );
+            }
+
+            closeInstallSheet();
+
+            refreshInstallUI();
+
+          });
+      };
+
+    }
+
+    /*
+     * =========================================================
+     * IOS
+     * =========================================================
+     */
+
+    else if (isIOS) {
+
+      var share =
+        '<svg class="dlp-ios-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<path d="M12 3v12"/>' +
+          '<path d="M8 7l4-4 4 4"/>' +
+          '<path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>' +
+        '</svg>';
+
+      body.innerHTML =
+
+        '<p class="review-prompt-order">' +
+          'На iPhone это делается в Safari за три касания.' +
+        '</p>' +
+
+        '<div class="dlp-steps">' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">1</span>' +
+            '<span>Нажмите <b>«Поделиться»</b> ' +
+            share +
+            ' внизу Safari.</span>' +
+          '</div>' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">2</span>' +
+            '<span>Выберите <b>«На экран «Домой»»</b>.</span>' +
+          '</div>' +
+
+          '<div class="dlp-step">' +
+            '<span class="dlp-num">3</span>' +
+            '<span>Нажмите <b>«Добавить»</b>, откройте DollieLand с новой иконки и войдите через Telegram.</span>' +
+          '</div>' +
+
+        '</div>' +
+
+        later;
+    }
+
+    /*
+     * =========================================================
+     * ДРУГИЕ БРАУЗЕРЫ
+     * =========================================================
+     */
+
+    else {
+
+      body.innerHTML =
+
+        '<p class="review-prompt-order">' +
+          'Откройте меню браузера (⋮) и выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>.' +
+        '</p>' +
+
+        later;
+    }
+
+    var closeButton =
+      body.querySelector(
+        '#dlp-inst-close'
+      );
+
+    if (closeButton) {
+      closeButton.onclick =
+        closeInstallSheet;
+    }
+
+    requestAnimationFrame(
+      function () {
+        ov.classList.add('open');
+      }
+    );
+  }
+
+  function refreshInstallUI() {
+
+    var item =
+      document.getElementById(
+        'dlp-install-item'
+      );
+
+    if (item) {
+      item.hidden =
+        !canOfferInstall();
+    }
+
+    var card =
+      document.getElementById(
+        'dlp-install-card'
+      );
+
+    if (card) {
+
+      card.hidden =
+        !(
+          canOfferInstall() &&
+          !inTelegram &&
+          lsGet(
+            INSTALL_DISMISS_KEY
+          ) !== '1'
+        );
+    }
+  }
 
   function injectUI() {
-    if (document.getElementById('dlp-install-button')) {
-      return;
+
+    var lists =
+      document.querySelectorAll(
+        '#tab-profile .menu-list'
+      );
+
+    var lastList =
+      lists[lists.length - 1];
+
+    if (
+      lastList &&
+      !document.getElementById(
+        'dlp-install-item'
+      )
+    ) {
+
+      var item = el(
+
+        '<button type="button" class="menu-item" id="dlp-install-item" hidden>' +
+
+          '<svg class="icon">' +
+            '<use href="#icon-house"/>' +
+          '</svg>' +
+
+          '<span class="label">' +
+            'Установить как приложение' +
+          '</span>' +
+
+          '<svg class="icon chev">' +
+            '<use href="#icon-chevron-right"/>' +
+          '</svg>' +
+
+        '</button>'
+      );
+
+      item.onclick =
+        openInstallSheet;
+
+      lastList.appendChild(item);
     }
 
-    if (!canOfferInstall()) {
-      return;
+    if (
+      !inTelegram &&
+      session &&
+      lastList &&
+      !document.getElementById(
+        'dlp-logout-item'
+      )
+    ) {
+
+      var out = el(
+
+        '<button type="button" class="menu-item" id="dlp-logout-item">' +
+
+          '<svg class="icon">' +
+            '<use href="#icon-x"/>' +
+          '</svg>' +
+
+          '<span class="label">' +
+            'Выйти из аккаунта' +
+          '</span>' +
+
+        '</button>'
+      );
+
+      out.onclick = function () {
+
+        if (
+          confirm(
+            'Выйти из DollieLand на этом устройстве?'
+          )
+        ) {
+          logout();
+        }
+
+      };
+
+      lastList.appendChild(out);
     }
-
-    var button = document.createElement('button');
-    button.id = 'dlp-install-button';
-    button.type = 'button';
-
-    button.textContent = 'Установить как приложение';
-
-    button.style.cssText = `
-      width:100%;
-      border:0;
-      border-radius:16px;
-      padding:14px 18px;
-      background:#ead1dc;
-      color:#3d3036;
-      font-size:14px;
-      font-weight:650;
-      cursor:pointer;
-      margin-top:10px;
-    `;
-
-    button.addEventListener('click', function () {
-      openInstallSheet();
-    });
 
     /*
-     * Сначала пытаемся найти подходящий контейнер.
+     * Карточка на главной.
+     * Только в обычном браузере.
      */
-    var target =
-      document.querySelector('[data-pwa-install]') ||
-      document.querySelector('.pwa-install') ||
-      document.querySelector('#pwa-install');
 
-    if (target) {
-      target.appendChild(button);
-      return;
+    var anchor =
+      document.getElementById(
+        'orders-summary-card'
+      );
+
+    if (
+      !inTelegram &&
+      anchor &&
+      !document.getElementById(
+        'dlp-install-card'
+      )
+    ) {
+
+      var card = el(
+
+        '<button type="button" class="orders-summary-card homescreen-card" id="dlp-install-card" hidden>' +
+
+          '<div class="orders-summary-icon">' +
+            '<svg class="icon">' +
+              '<use href="#icon-house"/>' +
+            '</svg>' +
+          '</div>' +
+
+          '<div class="orders-summary-text hs-text">' +
+
+            '<span class="hs-title">' +
+              'Установить DollieLand' +
+            '</span>' +
+
+            '<span class="hs-sub">' +
+              'Своя иконка на экране телефона' +
+            '</span>' +
+
+          '</div>' +
+
+          '<span class="hs-close" role="button" aria-label="Скрыть">' +
+
+            '<svg class="icon">' +
+              '<use href="#icon-x"/>' +
+            '</svg>' +
+
+          '</span>' +
+
+        '</button>'
+      );
+
+      card.onclick =
+        openInstallSheet;
+
+      card.querySelector(
+        '.hs-close'
+      ).onclick = function (e) {
+
+        e.stopPropagation();
+
+        lsSet(
+          INSTALL_DISMISS_KEY,
+          '1'
+        );
+
+        refreshInstallUI();
+      };
+
+      anchor.insertAdjacentElement(
+        'afterend',
+        card
+      );
     }
 
-    /*
-     * Если специального контейнера нет, кнопку не вставляем
-     * случайно в середину приложения.
-     */
+    refreshInstallUI();
   }
 
   /*
-   * ============================================================
-   * STARTUP
-   * ============================================================
+   * =========================================================
+   * СТАРТ
+   * =========================================================
    */
 
-  document.addEventListener('DOMContentLoaded', function () {
-    injectStyle();
+  document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
-    var installRequested = hasInstallRequest();
+      injectStyle();
 
-    /*
-     * ВАЖНО:
-     *
-     * Если пользователь пришёл из Mini App по ссылке
-     * ?install=1, инструкция установки должна открыться
-     * ДО экрана авторизации.
-     *
-     * Раньше showLoginGate() перекрывал её своим z-index,
-     * а автоматический показ вообще не запускался без session.
-     */
-
-    if (!inTelegram && !session && !installRequested) {
-      showLoginGate();
-    }
-
-    injectUI();
-
-    /*
-     * Пользователь пришёл из Mini App:
-     *
-     * Mini App
-     *     ↓
-     * Открыть в браузере
-     *     ↓
-     * ?install=1
-     *     ↓
-     * автоматически открываем инструкцию
-     */
-
-    if (installRequested && !standalone) {
-      var opened = false;
-
-      function openRequestedInstall() {
-        if (opened || standalone) {
-          return;
-        }
-
-        opened = true;
-
-        openInstallSheet({
-          fromTelegram: true
-        });
-      }
+      var installRequested =
+        hasInstallRequest();
 
       /*
-       * Если браузер уже передал beforeinstallprompt —
-       * показываем сразу.
+       * Если пользователь пришёл из Mini App
+       * по ?install=1 — НЕ показываем экран входа
+       * поверх инструкции.
        */
-      if (deferredPrompt) {
-        setTimeout(openRequestedInstall, 100);
+
+      if (
+        !inTelegram &&
+        !session &&
+        !installRequested
+      ) {
+
+        showLoginGate();
       }
 
+      injectUI();
+
       /*
-       * Если beforeinstallprompt ещё не успел сработать,
-       * всё равно показываем инструкцию.
+       * Автоматически открываем инструкцию
+       * после перехода из Telegram.
        */
-      else {
-        setTimeout(openRequestedInstall, 700);
+
+      if (
+        installRequested &&
+        !standalone
+      ) {
+
+        setTimeout(
+          function () {
+
+            openInstallSheet();
+
+          },
+          400
+        );
       }
     }
-  });
+  );
 
 })();
