@@ -7,10 +7,10 @@
 <title>DollieLand — Мои заказы</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#FFF9FB">
+<meta name="theme-color" content="#FFF9FB" id="dl-theme-color">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DollieLand">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -44,6 +44,14 @@
   html[data-theme="dark"] .icon-btn { background: var(--surface); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html {
+    background: var(--bg);
+    min-height: 100%;
+    width: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar { width: 0; height: 0; display: none; }
   html, body {
     background: var(--bg);
     width: 100%; max-width: 100%;
@@ -2461,26 +2469,44 @@ function getCurrentAppBackground() {
 }
 
 function syncBrowserThemeColor(color) {
-  const safeColor = (color || '#FFF9FB').trim();
-  let meta = document.querySelector('meta[name="theme-color"]');
+  const safeColor = (color || getCurrentAppBackground() || '#FFF9FB').trim();
+
+  let meta = document.getElementById('dl-theme-color');
+  if (!meta) meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) {
     meta = document.createElement('meta');
     meta.name = 'theme-color';
     document.head.appendChild(meta);
   }
   meta.setAttribute('content', safeColor);
+
+  // iOS PWA: don't create a white status-bar strip.
+  let appleMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+  if (!appleMeta) {
+    appleMeta = document.createElement('meta');
+    appleMeta.name = 'apple-mobile-web-app-status-bar-style';
+    document.head.appendChild(appleMeta);
+  }
+  appleMeta.setAttribute('content', 'black-translucent');
+
+  try {
+    document.documentElement.style.backgroundColor = safeColor;
+    document.body.style.backgroundColor = safeColor;
+  } catch (_) {}
 }
 
 function syncTelegramChrome(color) {
-  if (!tg) return;
   const safeColor = (color || getCurrentAppBackground() || '#FFF9FB').trim();
+  syncBrowserThemeColor(safeColor);
+  if (!tg) return;
   try { tg.setHeaderColor(safeColor); } catch (_) {}
   try { tg.setBackgroundColor(safeColor); } catch (_) {}
   try {
     if (supports('7.10') && tg.setBottomBarColor) tg.setBottomBarColor(safeColor);
   } catch (_) {}
-  syncBrowserThemeColor(safeColor);
 }
+
+syncBrowserThemeColor(getCurrentAppBackground());
 
 if (tg) {
   tg.ready();
@@ -6801,12 +6827,10 @@ window.addEventListener('unhandledrejection', (e) => {
         поэтому пользователь не видит, как экран «перепрыгивает». */
   const THEME_KEY = 'dollieland_theme_mode';
   function paintTelegramChrome(mode) {
-    if (!tg) return;
     const custom = typeof themeConfig === 'object' &&
       themeConfig.theme &&
       themeConfig.theme['colors_' + (mode === 'dark' ? 'dark' : 'light')];
-    const color = custom?.background || getCurrentAppBackground();
-    syncTelegramChrome(color);
+    syncTelegramChrome(custom?.background || getCurrentAppBackground());
   }
   paintTelegramChrome(lsGet(THEME_KEY) || document.documentElement.dataset.theme);
 
