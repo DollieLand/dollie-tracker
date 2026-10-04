@@ -1979,6 +1979,7 @@
   <symbol id="icon-lock" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
   <symbol id="icon-shop" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
   <symbol id="icon-calendar" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
+  <symbol id="icon-search" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="20.5" y1="20.5" x2="16" y2="16"/></symbol>
 
   <!-- Halloween SVG icon variants: no Unicode emoji. -->
   <symbol id="icon-heart-halloween" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.3 3 6.4 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2.4 5 5.3 0 4.3-4.6 8-8.2 10.9-.2.2-.5.3-.8.3z" fill="#FF7A00"/><path d="M8 10l1.2 1.2L10.5 10M13.5 10l1.3 1.2L16 10" stroke="#17120F" stroke-width="1.4" stroke-linecap="round"/></symbol>
@@ -2662,7 +2663,7 @@ function syncTelegramChrome(color) {
   try { tg.setHeaderColor(safeColor); } catch (_) {}
   try { tg.setBackgroundColor(safeColor); } catch (_) {}
   try {
-    if (supports('7.10') && tg.setBottomBarColor) tg.setBottomBarColor(safeColor);
+    if (tg.isVersionAtLeast && tg.isVersionAtLeast('7.10') && tg.setBottomBarColor) tg.setBottomBarColor(safeColor);
   } catch (_) {}
 }
 
@@ -6144,6 +6145,10 @@ function searchFormHTML(type){
       <div><label class="search-label">Бренд · необязательно</label><select class="search-select" name="brand"><option value="">Неважно</option>${SEARCH_BRANDS.map(x=>`<option>${x}</option>`).join('')}</select></div>
       <div><label class="search-label">Бюджет · необязательно</label><input class="search-input" name="budget_max" inputmode="decimal" placeholder="До 8 000 ₽"></div>
     </div>
+    <div class="search-form-section">
+      <label class="search-label">Расскажи подробнее</label>
+      <textarea class="search-textarea" name="important" placeholder="Хочу похожую по атмосфере, но не обязательно именно эту куклу."></textarea>
+    </div>
     <div class="search-form-section"><label class="search-label">Состояние · необязательно</label><div class="search-chips">${SEARCH_CONDITIONS.map(x=>`<button type="button" class="search-chip" data-group="condition" data-value="${x[0]}" onclick="selectSearchChip(this,'condition')">${x[1]}</button>`).join('')}</div></div>
     <div class="search-form-section"><label class="search-label">Срочность</label><div class="search-chips">${SEARCH_URGENCY.map(x=>`<button type="button" class="search-chip" data-group="urgency" data-value="${x[0]}" onclick="selectSearchChip(this,'urgency')">${x[1]}</button>`).join('')}</div></div>` : ''}
    <button class="btn btn-primary btn-block search-submit" id="search-submit-btn" type="submit">Создать запрос</button>
@@ -6218,7 +6223,7 @@ async function submitSearchRequest(event,type){
   type, title: type==='specific' ? (fd.get('character')||'') : '',
   character: type==='specific' ? (fd.get('character')||'') : '',
   line:type==='specific'?(fd.get('line')||''):'',
-  brand:fd.get('brand')||'', budget_max:fd.get('budget_max')||'',
+  brand:fd.get('brand')||'', budget_max:String(fd.get('budget_max')||'').replace(/[^\d]/g,''),
   condition:selectedSearchValue('condition'), completeness:selectedSearchValue('completeness'),
   urgency:selectedSearchValue('urgency'),
   important:fd.get('important')||'', description:fd.get('important')||'',
@@ -6254,7 +6259,7 @@ async function openSearchRequest(id,resultId){
  }catch(e){c.innerHTML='<div class="search-empty"><h3>Не удалось открыть запрос</h3><button class="btn btn-primary" onclick="loadSearchRequests()">Повторить</button></div>'}
 }
 function searchProgressHTML(status){const order=['NEW','SEARCHING','FOUND','SELECTED'];let idx=order.indexOf(status);if(idx<0)idx=(status==='WAITING_USER'||status==='MORE_SEARCH')?2:(status==='ORDERED'?3:0);const labels=['Создан','Ищем','Нашли','Выбор'];return `<div class="search-progress-line">${labels.map((x,i)=>{const state=i<idx?'done':(i===idx?'current':'');const item=`<div class="p-item ${state}"><div class="p-dot"></div>${x}</div>`;const arrow=i<3?`<div class="p-arrow ${i<idx?'done':''}" aria-hidden="true">›</div>`:'';return item+arrow;}).join('')}</div>`;}
-function renderSearchDetail(resultId){const r=searchCurrent,c=document.getElementById('search-screen-content');if(!r||!c)return;const photos=(r.images||[]).map(x=>`<img class="search-request-photo search-photo-clickable" src="${escapeAttr(assetUrl(x))}" onclick="openSearchPhotoLightbox('${escapeAttr(assetUrl(x))}')">`).join('');const reqInfo=`<div class="search-requirements"><div class="search-requirement"><span>Бюджет</span><b>${r.budget_max?Number(r.budget_max).toLocaleString('ru-RU')+' ₽':'Не указан'}</b></div><div class="search-requirement"><span>Состояние</span><b>${escapeHtml(r.condition_label||'Не указано')}</b></div><div class="search-requirement"><span>Комплектация</span><b>${escapeHtml(r.completeness_label||'Не указано')}</b></div><div class="search-requirement"><span>Бренд</span><b>${escapeHtml(r.brand||'Неважно')}</b></div></div>`;const results=(r.results||[]).map(x=>searchResultHTML(x,r)).join('');const msgs=(r.messages||[]).filter(m=>m.direction==='admin_to_user');const messagesHtml=msgs.length?`<div class="search-request-block"><div class="search-request-block-title">Сообщения от DollieLand</div><div class="search-status-card" style="display:grid;gap:9px">${msgs.map(m=>`<div style="background:var(--surface-soft);border-radius:13px;padding:10px 12px;font-size:11.5px;line-height:1.5"><div style="font-size:9.5px;color:var(--text-secondary);margin-bottom:4px">DollieLand · ${escapeHtml(searchDate(m.created_at))}</div>${escapeHtml(m.text)}</div>`).join('')}</div></div>`:'';const cnt=(r.results||[]).length;c.innerHTML=`<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Все запросы</button><div class="search-status-card"><div class="search-status-top"><span class="search-status-pill">${escapeHtml(r.status_label||'Поиск')}</span><span class="search-status-id">Запрос #${escapeHtml(String(r.id).slice(-6))}</span></div><div class="search-detail-title">${escapeHtml(r.title||r.character||'Поиск куклы')}</div><div class="search-detail-sub">${escapeHtml(r.line||r.type_label||'Поиск')} · создан ${searchDate(r.created_at)}</div>${searchProgressHTML(r.status)}${photos?`<div class="search-request-photo-row">${photos}</div>`:''}${r.important?`<div class="search-important"><b>Особенно важно</b><br>${escapeHtml(r.important)}</div>`:''}</div><div class="search-request-block"><div class="search-request-block-title">Твои пожелания</div>${reqInfo}</div>${messagesHtml}<div class="search-results-head"><b>${cnt?'Мы нашли варианты':'Ищем для тебя'}</b><span>${cnt?cnt+' '+(cnt===1?'вариант':'варианта'):'можно подождать'}</span></div>${results||'<div class="search-empty"><h3>Пока ничего подходящего</h3><p>Мы продолжаем поиск и сообщим, когда появится новый вариант.</p></div>'}${r.status!=='CLOSED'&&r.status!=='ORDERED'&&r.status!=='SELECTED'?`<button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(r.id)}')">Показать другие варианты</button>`:''}${r.status!=='CLOSED'&&r.status!=='ORDERED'?`<button class="btn btn-tertiary btn-block" onclick="openEditSearchRequest('${escapeAttr(r.id)}')">Изменить запрос</button><button class="btn btn-tertiary btn-block search-delete-btn" onclick="openDeleteSearchReason('${escapeAttr(r.id)}')">Удалить запрос</button>`:''}`;if(resultId)setTimeout(()=>document.getElementById('search-result-'+CSS.escape(String(resultId)))?.scrollIntoView({behavior:'smooth',block:'center'}),80);}
+function renderSearchDetail(resultId){const r=searchCurrent,c=document.getElementById('search-screen-content');if(!r||!c)return;const photos=(r.images||[]).map(x=>`<img class="search-request-photo search-photo-clickable" src="${escapeAttr(assetUrl(x))}" onclick="openSearchPhotoLightbox('${escapeAttr(assetUrl(x))}')">`).join('');const reqInfo=`<div class="search-requirements"><div class="search-requirement"><span>Бюджет</span><b>${r.budget_max?Number(r.budget_max).toLocaleString('ru-RU')+' ₽':'Не указан'}</b></div><div class="search-requirement"><span>Состояние</span><b>${escapeHtml(r.condition_label||'Не указано')}</b></div><div class="search-requirement"><span>Комплектация</span><b>${escapeHtml(r.completeness_label||'Не указано')}</b></div><div class="search-requirement"><span>Бренд</span><b>${escapeHtml(r.brand||'Неважно')}</b></div></div>`;const results=(r.results||[]).map(x=>searchResultHTML(x,r)).join('');const msgs=(r.messages||[]).filter(m=>m.direction==='admin_to_user');const messagesHtml=msgs.length?`<div class="search-request-block"><div class="search-request-block-title">Сообщения от DollieLand</div><div class="search-status-card" style="display:grid;gap:9px">${msgs.map(m=>`<div style="background:var(--surface-soft);border-radius:13px;padding:10px 12px;font-size:11.5px;line-height:1.5"><div style="font-size:9.5px;color:var(--text-secondary);margin-bottom:4px">DollieLand · ${escapeHtml(searchDate(m.created_at))}</div>${escapeHtml(m.text)}</div>`).join('')}</div></div>`:'';const cnt=(r.results||[]).length;c.innerHTML=`<button class="search-back" onclick="renderSearchHome()"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Все запросы</button><div class="search-status-card"><div class="search-status-top"><span class="search-status-pill">${escapeHtml(r.status_label||'Поиск')}</span><span class="search-status-id">Запрос #${escapeHtml(String(r.id).slice(-6))}</span></div><div class="search-detail-title">${escapeHtml(r.title||r.character||'Поиск куклы')}</div><div class="search-detail-sub">${escapeHtml(r.line||r.type_label||'Поиск')} · создан ${searchDate(r.created_at)}</div>${searchProgressHTML(r.status)}${photos?`<div class="search-request-photo-row">${photos}</div>`:''}${r.important?`<div class="search-important"><b>Особенно важно</b><br>${escapeHtml(r.important)}</div>`:''}</div><div class="search-request-block"><div class="search-request-block-title">Твои пожелания</div>${reqInfo}</div>${messagesHtml}<div class="search-results-head"><b>${cnt?'Мы нашли варианты':'Ищем для тебя'}</b><span>${cnt?cnt+' '+(cnt===1?'вариант':'варианта'):'можно подождать'}</span></div>${results||'<div class="search-empty"><h3>Пока ничего подходящего</h3><p>Мы продолжаем поиск и сообщим, когда появится новый вариант.</p></div>'}${r.status!=='CLOSED'&&r.status!=='ORDERED'&&r.status!=='SELECTED'?`<button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(r.id)}')">Показать другие варианты</button>`:''}${r.status!=='CLOSED'&&r.status!=='ORDERED'?`${r.status!=='SELECTED'?`<button class="btn btn-tertiary btn-block" onclick="openEditSearchRequest('${escapeAttr(r.id)}')">Изменить запрос</button>`:''}<button class="btn btn-tertiary btn-block search-delete-btn" onclick="openDeleteSearchReason('${escapeAttr(r.id)}')">Удалить запрос</button>`:''}`;if(resultId)setTimeout(()=>document.getElementById('search-result-'+CSS.escape(String(resultId)))?.scrollIntoView({behavior:'smooth',block:'center'}),80);}
 function searchResultHTML(x,r){const photos=(x.images||[]).map(p=>`<img class="search-result-photo search-photo-clickable" src="${escapeAttr(assetUrl(p))}" onclick="openSearchPhotoLightbox('${escapeAttr(assetUrl(p))}')">`).join('');const price=x.price!=null?Number(x.price).toLocaleString('ru-RU')+' '+escapeHtml(x.currency||'₽'):'Цена не указана';const match=x.match_percent!=null?`<div class="search-match"><svg class="icon"><use href="#icon-check"/></svg> Подходит на ${Number(x.match_percent)}%</div>`:'';return `<article class="search-result-card" id="search-result-${escapeAttr(x.id)}">${photos?`<div class="search-result-photo-row">${photos}</div>`:''}<div class="search-result-title">${escapeHtml(x.title||'Найденный вариант')}</div>${match}<div class="search-result-line">${escapeHtml(x.line||'')}</div><div class="search-result-price">${price}</div><div class="search-result-meta"><span>${escapeHtml(x.condition||'Состояние не указано')}</span><span>${escapeHtml(x.completeness||'Комплектация не указана')}</span><span>${escapeHtml(x.country||'Страна не указана')}</span></div>${x.description?`<div class="search-result-description">${escapeHtml(x.description)}</div>`:''}${x.defects?`<div class="search-result-description"><b style="color:var(--text)">Важно:</b> ${escapeHtml(x.defects)}</div>`:''}${x.weight_cost!=null?`<div class="search-weight-card"><div class="search-weight-main">+ примерно ${Number(x.weight_cost).toLocaleString('ru-RU')} ₽ за вес</div><div class="search-weight-note">Вес — стоимость международной доставки. Точная сумма определяется после поступления куклы на склад и взвешивания.</div></div>`:''}${x.source_url?`<button class="btn btn-tertiary" style="padding-left:0" onclick="openExternalSearchLink('${escapeAttr(x.source_url)}')">Оригинальное объявление</button>`:''}<button class="btn btn-secondary btn-block" onclick="openSearchResult('${escapeAttr(r.id)}','${escapeAttr(x.id)}')">Посмотреть вариант →</button></article>`;}
 function openExternalSearchLink(url){try{tg?.openLink?tg.openLink(url):window.open(url,'_blank')}catch(_){window.open(url,'_blank')}}
 async function openSearchResult(rid,resultId){
@@ -6264,7 +6269,7 @@ async function openSearchResult(rid,resultId){
  c.innerHTML=`<button class="search-back" onclick="openSearchRequest('${escapeAttr(rid)}')"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад к запросу</button>
  <div class="search-result-card">${searchResultHTML(x,searchCurrent)}
   <div class="search-price-summary" id="search-price-summary"><div class="search-price-summary-row"><span>Стоимость куклы</span><b>${priceValue.toLocaleString('ru-RU')} ₽</b></div><div class="search-price-summary-row final"><span>Итоговая стоимость</span><b id="search-final-price">${priceValue.toLocaleString('ru-RU')} ₽</b></div><div class="search-price-note">Без учёта веса и доставки по России.</div></div>
-  <div class="search-dollies-box" id="search-dollies-box" onclick="toggleSearchDollies()"><div class="search-dollies-row"><span class="search-dollies-check"><svg class="icon"><use href="#icon-check"/></svg></span><span style="min-width:0;flex:1"><span class="search-dollies-title">Учесть Dollies</span><span class="search-dollies-sub" id="search-dollies-sub">Загружаем ваш баланс…</span></span><span class="search-dollies-value" id="search-dollies-value">—</span></div></div>
+  <div class="search-dollies-box" id="search-dollies-box" onclick="toggleSearchDollies()"><div class="search-dollies-row"><span class="search-dollies-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span style="min-width:0;flex:1"><span class="search-dollies-title">Учесть Dollies</span><span class="search-dollies-sub" id="search-dollies-sub">Загружаем ваш баланс…</span></span><span class="search-dollies-value" id="search-dollies-value">—</span></div></div>
   <button class="btn btn-primary btn-block" onclick="selectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Забрать эту</button>
   <button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(rid)}')">Показать другие варианты</button>
   <button class="btn btn-tertiary btn-block" onclick="rejectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Не подходит</button>
@@ -6291,7 +6296,7 @@ async function requestMoreSearch(rid){
  hapticNotification('success');showToast('Хорошо, продолжим поиск');searchCurrent=d.request;renderSearchDetail();
 }
 async function rejectSearchResult(rid,resultId){
- const reason=prompt('Почему вариант не подходит?\\n\\nНапример: слишком дорого, состояние, комплектация или хочу другую.');
+ const reason=prompt('Почему вариант не подходит?\n\nНапример: слишком дорого, состояние, комплектация или хочу другую.');
  if(reason===null)return;
  const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/reject',{reason:reason||'другое'});
  if(!d.ok){showToast('Не удалось отправить ответ');return}
@@ -6329,7 +6334,7 @@ function openEditSearchRequest(rid){
 async function submitSearchEdit(event,rid,type){
  event.preventDefault(); const form=event.target,btn=document.getElementById('search-edit-submit-btn'); if(btn){btn.disabled=true;btn.textContent='Сохраняем…'}
  const fd=new FormData(form); const title=type==='specific'?(fd.get('character')||''):(searchCurrent.title||'');
- const payload={title,character:type==='specific'?(fd.get('character')||''):searchCurrent.character||'',line:type==='specific'?(fd.get('line')||''):searchCurrent.line||'',brand:fd.get('brand')||'',budget_max:fd.get('budget_max')||'',condition:selectedSearchValue('condition'),completeness:selectedSearchValue('completeness'),urgency:selectedSearchValue('urgency'),important:fd.get('important')||'',description:fd.get('important')||'',similar_features:Array.from(document.querySelectorAll('#search-features .selected')).map(x=>x.dataset.value)};
+ const payload={title,character:type==='specific'?(fd.get('character')||''):searchCurrent.character||'',line:type==='specific'?(fd.get('line')||''):searchCurrent.line||'',brand:fd.get('brand')||'',budget_max:String(fd.get('budget_max')||'').replace(/[^\d]/g,''),condition:selectedSearchValue('condition'),completeness:selectedSearchValue('completeness'),urgency:selectedSearchValue('urgency'),important:fd.get('important')||'',description:fd.get('important')||'',similar_features:Array.from(document.querySelectorAll('#search-features .selected')).map(x=>x.dataset.value)};
  try{const d=await apiPatch('/api/me/search_requests/'+encodeURIComponent(rid),payload);if(!d.ok)throw new Error();searchCurrent=d.request||searchCurrent;searchFormType=null;showToast('Запрос обновлён');renderSearchDetail();}catch(_){showToast('Не удалось изменить запрос');if(btn){btn.disabled=false;btn.textContent='Сохранить изменения'}}
 }
 function openDeleteSearchReason(rid){
@@ -6427,313 +6432,7 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 </script>
 
-<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
-<!-- =========================================================
-     DollieLand — предложение установить приложение
-     Показывается ОДИН РАЗ при первом открытии Mini App
-     внутри Telegram.
-     ========================================================= -->
-<div id="dl-install-prompt"
-     class="dl-install-prompt"
-     aria-hidden="true">
-  <div class="dl-install-backdrop"></div>
-
-  <div class="dl-install-card" role="dialog"
-       aria-modal="true"
-       aria-labelledby="dl-install-title">
-
-    <button type="button"
-            class="dl-install-close"
-            id="dl-install-close"
-            aria-label="Закрыть">
-      <svg class="icon"><use href="#icon-x"/></svg>
-    </button>
-
-    <div class="dl-install-icon">
-      <img src="icons/icon-192.png" alt="">
-    </div>
-
-    <div class="dl-install-title" id="dl-install-title">
-      Скачайте DollieLand
-    </div>
-
-    <div class="dl-install-text">
-      Установите DollieLand на телефон, чтобы открывать приложение
-      быстрее и пользоваться им как обычным приложением.
-    </div>
-
-    <button type="button"
-            class="btn btn-primary btn-block"
-            id="dl-install-download">
-      Скачать приложение
-    </button>
-
-    <button type="button"
-            class="btn btn-tertiary btn-block"
-            id="dl-install-later">
-      Позже
-    </button>
-  </div>
-</div>
-
-<style>
-  .dl-install-prompt {
-    position: fixed;
-    inset: 0;
-    z-index: 10050;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding:
-      18px
-      18px
-      calc(18px + env(safe-area-inset-bottom, 0px));
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity .22s ease, visibility .22s ease;
-  }
-
-  .dl-install-prompt.open {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .dl-install-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(57, 44, 49, .42);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-  }
-
-  .dl-install-card {
-    position: relative;
-    z-index: 1;
-    width: min(480px, 100%);
-    background: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    padding: 25px 19px 19px;
-    box-shadow: 0 -12px 48px rgba(57, 44, 49, .20);
-    transform: translateY(22px);
-    transition: transform .30s cubic-bezier(.22,1,.36,1);
-    text-align: center;
-  }
-
-  .dl-install-prompt.open .dl-install-card {
-    transform: translateY(0);
-  }
-
-  .dl-install-close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-    background: var(--surface-soft);
-  }
-
-  .dl-install-close .icon {
-    width: 17px;
-    height: 17px;
-  }
-
-  .dl-install-icon {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 15px;
-    border-radius: 21px;
-    overflow: hidden;
-    background: var(--pink-soft);
-    box-shadow: 0 10px 26px rgba(231, 142, 173, .20);
-  }
-
-  .dl-install-icon img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .dl-install-title {
-    font-size: 21px;
-    line-height: 1.2;
-    font-weight: 800;
-    letter-spacing: -.3px;
-  }
-
-  .dl-install-text {
-    max-width: 350px;
-    margin: 8px auto 16px;
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--text-secondary);
-  }
-
-  .dl-install-card .btn-block {
-    margin-top: 8px;
-  }
-
-  .dl-install-card .btn-tertiary {
-    margin-top: 3px;
-  }
-</style>
-
-
-<script>
-(function () {
-  'use strict';
-
-  /*
-   * Окно установки показываем только:
-   * 1. внутри Telegram Mini App;
-   * 2. один раз на данном устройстве/браузере.
-   *
-   * "Позже", X и "Скачать приложение" помечают окно как уже показанное,
-   * поэтому при следующих открытиях Mini App автоматически оно не появится.
-   */
-  var DL_INSTALL_KEY = 'dollieland_miniapp_install_prompt_shown_v2';
-
-  function isTelegramMiniApp() {
-    try {
-      var tg = window.Telegram && window.Telegram.WebApp;
-      return !!(tg && tg.initData);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  function getEl(id) {
-    return document.getElementById(id);
-  }
-
-  function wasShown() {
-    try {
-      return localStorage.getItem(DL_INSTALL_KEY) === '1';
-    } catch (_) {
-      return false;
-    }
-  }
-
-  function markShown() {
-    try {
-      localStorage.setItem(DL_INSTALL_KEY, '1');
-    } catch (_) {}
-  }
-
-  function openPrompt() {
-    var prompt = getEl('dl-install-prompt');
-    if (!prompt) return;
-
-    prompt.setAttribute('aria-hidden', 'false');
-
-    requestAnimationFrame(function () {
-      prompt.classList.add('open');
-    });
-  }
-
-  function closePrompt() {
-    var prompt = getEl('dl-install-prompt');
-    if (!prompt) return;
-
-    markShown();
-
-    prompt.classList.remove('open');
-    prompt.setAttribute('aria-hidden', 'true');
-  }
-
-  function openInBrowser() {
-    /*
-     * Telegram не может установить PWA непосредственно внутри
-     * WebView Mini App. Поэтому открываем эту же страницу во внешнем
-     * браузере.
-     */
-    var url = window.location.href;
-
-    try {
-      var tg = window.Telegram && window.Telegram.WebApp;
-
-      if (tg && typeof tg.openLink === 'function') {
-        tg.openLink(url);
-        return;
-      }
-    } catch (_) {}
-
-    try {
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (_) {
-      window.location.href = url;
-    }
-  }
-
-  function initInstallPrompt() {
-    /*
-     * В обычном браузере окно НЕ показываем.
-     * Оно предназначено именно для входа в Mini App через Telegram.
-     */
-    if (!isTelegramMiniApp()) return;
-
-    /*
-     * Уже показывали ранее — не показываем повторно.
-     */
-    if (wasShown()) return;
-
-    /*
-     * Дожидаемся первого нормального открытия интерфейса,
-     * чтобы окно появилось поверх уже загруженного Mini App,
-     * а не вместо него.
-     */
-    setTimeout(function () {
-      if (!wasShown() && isTelegramMiniApp()) {
-        openPrompt();
-      }
-    }, 650);
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var closeBtn = getEl('dl-install-close');
-    var laterBtn = getEl('dl-install-later');
-    var downloadBtn = getEl('dl-install-download');
-    var backdrop = document.querySelector('.dl-install-backdrop');
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closePrompt);
-    }
-
-    if (laterBtn) {
-      laterBtn.addEventListener('click', closePrompt);
-    }
-
-    if (backdrop) {
-      backdrop.addEventListener('click', closePrompt);
-    }
-
-    if (downloadBtn) {
-      downloadBtn.addEventListener('click', function () {
-        /*
-         * Сначала запоминаем показ, чтобы после возврата в Telegram
-         * окно не появилось снова.
-         */
-        markShown();
-        openInBrowser();
-        closePrompt();
-      });
-    }
-
-    initInstallPrompt();
-  });
-})();
-</script>
-
-</body>
+<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед </body> ===== -->
 <script>
 (function () {
   /* ---------- Карточка «Добавить заказ» сверху вкладки «Мои заказы» ---------- */
@@ -6923,7 +6622,7 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока привязки заказа ===== -->
 
-<!-- ===== DollieLand: Dollies в заявке из каталога (вставить прямо перед </body>
+<!-- ===== DollieLand: Dollies в заявке из каталога ===== -->
 <script>
 /* Переопределяет форму заявки из каталога: количество, Dollies с галочкой,
    лимит на один заказ и итоговая сумма со скидкой. Итоговую скидку всё равно
@@ -7156,7 +6855,7 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока Dollies в заявке ===== -->
 
-<!-- ===== DollieLand: «Нет в наличии» + «Сообщить о поступлении» (вставить прямо перед </body>, ПОСЛЕ остальных блоков) ===== -->
+<!-- ===== DollieLand: «Нет в наличии» + «Сообщить о поступлении» ===== -->
 <style>
   .cat-media { position: relative; }
   .cat-oos-badge {
@@ -7337,7 +7036,7 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока «Нет в наличии» ===== -->
 
-<!-- ===== DollieLand: иконка на главном экране + полноэкранный режим (вставить прямо перед </body>, после остальных блоков) ===== -->
+<!-- ===== DollieLand: иконка на главном экране + полноэкранный режим ===== -->
 <style>
   /* Карточка-подсказка на главной */
   .homescreen-card { position: relative; }
