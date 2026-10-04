@@ -1680,6 +1680,20 @@
   .search-result-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
   .search-result-meta span{font-size:10.5px;font-weight:700;padding:6px 8px;border-radius:999px;background:var(--surface-soft);color:var(--text-secondary)}
   .search-result-description{font-size:12.5px;line-height:1.5;color:var(--text-secondary);margin-top:10px}
+  .search-photo-clickable{cursor:zoom-in}
+  .search-dollies-box{margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:15px;background:var(--surface-soft)}
+  .search-dollies-row{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .search-dollies-check{width:22px;height:22px;border:1.5px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--surface)}
+  .search-dollies-box.selected .search-dollies-check{background:var(--pink-accent);border-color:var(--pink-accent);color:#fff}
+  .search-dollies-check .icon{width:13px;height:13px;opacity:0}.search-dollies-box.selected .search-dollies-check .icon{opacity:1}
+  .search-dollies-title{font-size:12.5px;font-weight:800}.search-dollies-sub{font-size:10.5px;color:var(--text-secondary);margin-top:2px;line-height:1.35}
+  .search-dollies-value{margin-left:auto;text-align:right;font-size:12px;font-weight:800;color:var(--pink-accent);white-space:nowrap}
+  .search-weight-card{margin-top:11px;padding:12px;border-radius:15px;background:var(--surface-soft);border:1px solid var(--border)}
+  .search-weight-main{font-size:13px;font-weight:800}.search-weight-note{font-size:10.5px;color:var(--text-secondary);line-height:1.45;margin-top:5px}
+  .search-weight-total{font-size:12px;color:var(--text-secondary);margin-top:6px}.search-weight-total b{color:var(--text)}
+  .search-photo-lightbox{position:fixed;inset:0;z-index:10050;background:rgba(18,14,19,.96);display:none;align-items:center;justify-content:center;padding:18px}
+  .search-photo-lightbox.open{display:flex}.search-photo-lightbox img{max-width:96vw;max-height:90vh;object-fit:contain;border-radius:14px}
+  .search-photo-lightbox-close{position:absolute;top:16px;right:16px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:28px}
   .search-empty{padding:30px 12px;text-align:center;color:var(--text-secondary)}
   .search-empty h3{font-size:15px;color:var(--text);margin-bottom:5px}
   .search-history{display:grid;gap:8px}.search-history-row{padding:10px 12px;border-left:3px solid var(--pink);background:var(--surface-soft);border-radius:0 11px 11px 0;font-size:11.5px}
@@ -6244,11 +6258,13 @@ function searchResultHTML(x,r){
  return `<article class="search-result-card" id="search-result-${escapeAttr(x.id)}">
   ${photos?`<div class="search-result-photo-row">${photos}</div>`:''}
   <div class="search-result-title">${escapeHtml(x.title||'Найденный вариант')}</div>
+  ${x.selected_at?`<div style="margin-top:8px;padding:8px 10px;border-radius:11px;background:var(--pink-soft);color:var(--pink-accent);font-size:11px;font-weight:800">Вы выбрали этот вариант${x.selected_dollies_discount_rub?` · Dollies учтены на ${Number(x.selected_dollies_discount_rub).toLocaleString('ru-RU')} ₽`:''}</div>`:''}
   <div class="search-result-line">${escapeHtml(x.line||'')}</div>
   <div class="search-result-price">${price}</div>
   <div class="search-result-meta"><span>${escapeHtml(x.condition||'Состояние не указано')}</span><span>${escapeHtml(x.completeness||'Комплектация не указана')}</span><span>${escapeHtml(x.country||'Страна не указана')}</span></div>
   ${x.description?`<div class="search-result-description">${escapeHtml(x.description)}</div>`:''}
   ${x.defects?`<div class="search-result-description"><b style="color:var(--text)">Важно:</b> ${escapeHtml(x.defects)}</div>`:''}
+  ${x.weight_cost!=null?`<div class="search-weight-card"><div class="search-weight-main">+ примерно ${Number(x.weight_cost).toLocaleString('ru-RU')} ₽ за вес</div><div class="search-weight-note">Вес — это стоимость международной доставки куклы из США в Россию. Точная сумма определяется после поступления куклы на склад и её взвешивания. Доставка по России оплачивается отдельно.</div></div>`:''}
   ${x.source_url?`<button class="btn btn-tertiary" style="padding-left:0" onclick="openExternalSearchLink('${escapeAttr(x.source_url)}')">Оригинальное объявление</button>`:''}
   <button class="btn btn-secondary btn-block" onclick="openSearchResult('${escapeAttr(r.id)}','${escapeAttr(x.id)}')">Посмотреть подробнее</button>
  </article>`;
@@ -6258,19 +6274,39 @@ async function openSearchResult(rid,resultId){
  const x=searchCurrent?.results?.find(x=>String(x.id)===String(resultId)); if(!x)return;
  apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/open',{}).catch(()=>{});
  const c=document.getElementById('search-screen-content');
+ const priceValue=Number(x.price)||0, weightValue=Number(x.weight_cost)||0;
+ const estimatedTotal=priceValue+weightValue;
  c.innerHTML=`<button class="search-back" onclick="openSearchRequest('${escapeAttr(rid)}')"><svg class="icon" style="width:17px;transform:rotate(180deg)"><use href="#icon-chevron-right"/></svg> Назад к запросу</button>
  <div class="search-result-card">${searchResultHTML(x,searchCurrent)}
+  ${weightValue?`<div class="search-weight-total">Ориентировочно к оплате: <b>${estimatedTotal.toLocaleString('ru-RU')} ₽ + доставка по России</b></div>`:''}
+  <div class="search-dollies-box" id="search-dollies-box" onclick="toggleSearchDollies()">
+    <div class="search-dollies-row">
+      <span class="search-dollies-check"><svg class="icon"><use href="#icon-check"/></svg></span>
+      <span style="min-width:0;flex:1"><span class="search-dollies-title">Учесть Dollies</span><span class="search-dollies-sub" id="search-dollies-sub">Загружаем ваш баланс…</span></span>
+      <span class="search-dollies-value" id="search-dollies-value">до 300 ₽</span>
+    </div>
+  </div>
   <button class="btn btn-primary btn-block" onclick="selectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Забрать эту</button>
   <button class="btn btn-secondary btn-block" onclick="requestMoreSearch('${escapeAttr(rid)}')">Показать другие варианты</button>
   <button class="btn btn-tertiary btn-block" onclick="rejectSearchResult('${escapeAttr(rid)}','${escapeAttr(resultId)}')">Не подходит</button>
  </div>`;
+ window.__searchDolliesUse=false; window.__searchDolliesInfo={balance:0,max:300,rate:100,total:estimatedTotal};
+ loadSearchDolliesInfo();
  window.scrollTo(0,0);
 }
+async function loadSearchDolliesInfo(){
+ try{const d=await apiFetch('/api/me/loyalty',{}, {timeoutMs:8000,retries:1}); if(!d?.ok)return; const balance=Math.max(0,Number(d.balance)||0), rate=Number(d.redemption_rate_rub_per_100)||100; const serverMax=Number(d.max_redeem_per_order)||300; const maxRub=Math.min(300,Math.round(serverMax*rate/100),Number(window.__searchDolliesInfo?.total)||300); window.__searchDolliesInfo={balance,max:maxRub,rate,total:Number(window.__searchDolliesInfo?.total)||0}; const sub=document.getElementById('search-dollies-sub'); if(sub)sub.textContent=balance>0?`На балансе ${balance} Dollies · можно учесть до ${maxRub.toLocaleString('ru-RU')} ₽`:'На балансе сейчас нет Dollies'; const val=document.getElementById('search-dollies-value'); if(val)val.textContent=`до ${maxRub.toLocaleString('ru-RU')} ₽`; }catch(_){}
+}
+function toggleSearchDollies(){
+ const info=window.__searchDolliesInfo||{balance:0,max:300,rate:100}; if(info.balance<=0){showToast('На балансе нет Dollies');return;} window.__searchDolliesUse=!window.__searchDolliesUse; document.getElementById('search-dollies-box')?.classList.toggle('selected',window.__searchDolliesUse);
+}
 async function selectSearchResult(rid,resultId){
- if(!confirm('Передать этот выбор администратору?'))return;
- const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/select',{});
+ const useDollies=!!window.__searchDolliesUse;
+ const info=window.__searchDolliesInfo||{};
+ if(useDollies && !(Number(info.balance)>0)){showToast('На балансе нет Dollies');return;}
+ const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/results/'+encodeURIComponent(resultId)+'/select',{use_dollies:useDollies});
  if(!d.ok){showToast('Не удалось передать выбор');return}
- hapticNotification('success');showToast('Выбор передан администратору');searchCurrent=d.request;renderSearchDetail(resultId);
+ hapticNotification('success'); const used=Number(d.request?.results?.find(x=>String(x.id)===String(resultId))?.selected_dollies_discount_rub)||0; showToast(used?`Выбор передан · Dollies учтены на ${used} ₽`:'Выбор передан администратору');searchCurrent=d.request;renderSearchDetail(resultId);
 }
 async function requestMoreSearch(rid){
  const d=await apiPost('/api/me/search_requests/'+encodeURIComponent(rid)+'/more',{});
@@ -6292,6 +6328,14 @@ async function editSearchRequest(rid){
  if(!d.ok){showToast('Не удалось изменить запрос');return}
  searchCurrent=d.request;showToast('Запрос обновлён');renderSearchDetail();
 }
+function openSearchPhotoLightbox(src){
+ let box=document.getElementById('search-photo-lightbox');
+ if(!box){box=document.createElement('div');box.id='search-photo-lightbox';box.className='search-photo-lightbox';box.innerHTML='<button class="search-photo-lightbox-close" type="button" aria-label="Закрыть">×</button><img id="search-photo-lightbox-img" alt="">';document.body.appendChild(box);box.addEventListener('click',e=>{if(e.target===box||e.target.closest('.search-photo-lightbox-close'))closeSearchPhotoLightbox();});}
+ const img=document.getElementById('search-photo-lightbox-img');if(img)img.src=src;box.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeSearchPhotoLightbox(){const box=document.getElementById('search-photo-lightbox');if(box)box.classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSearchPhotoLightbox();});
+
 function handleSearchDeepLink(){
  const p=new URLSearchParams(location.search),rid=p.get('search_request'),res=p.get('search_result');
  if(rid&&userId){setTimeout(()=>openSearchRequest(rid,res),500)}
