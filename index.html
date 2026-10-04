@@ -4289,7 +4289,7 @@ function reviewPhotoGridHTML(review, source) {
   return `<div class="review-photos">
     ${shown.map((url, i) => `
       <button type="button" class="review-photo-thumb" onclick="openPhotoLightbox('${escapeAttr(src)}', ${Number(review.id) || 0}, ${i})">
-        <img src="${escapeAttr(url)}" alt="" loading="lazy" decoding="async">
+        <img src="${escapeAttr(url)}" alt="" loading="eager" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src=this.src+(this.src.includes('?')?'&':'?')+'dl_retry=1'">
         ${i === 2 && photos.length > 3 ? `<span class="review-photo-more">+${photos.length - 3}</span>` : ''}
       </button>`).join('')}
   </div>`;
@@ -4415,7 +4415,7 @@ function renderAllPhotosGallery() {
       <div class="reviews-photos-grid">
         ${allPhotos.map((p, i) => `
           <button class="reviews-photo-cell" onclick="openPhotoLightbox('allPhotos', 0, ${i})">
-            <img src="${escapeAttr(p.url)}" alt="" loading="lazy" decoding="async">
+            <img src="${escapeAttr(p.url)}" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=this.src+(this.src.includes('?')?'&':'?')+'dl_retry=1'">
           </button>`).join('')}
       </div>
     </div>`;
@@ -4625,7 +4625,7 @@ function renderMyReviewsList() {
         <div class="my-review-stars">${[1,2,3,4,5].map(i => `<svg class="icon ${i > Number(r.rating || 0) ? 'off' : ''}"><use href="#icon-star"/></svg>`).join('')}</div>
         ${r.text ? `<div class="my-review-text">${escapeHtml(r.text)}</div>` : ''}
         ${(r.photos && r.photos.length) ? `<div class="my-review-photos">
-          ${r.photos.slice(0, 8).map((url, i) => `<img src="${escapeAttr(url)}" alt="" onclick="openPhotoLightbox('myReviews', ${Number(r.id) || 0}, ${i})">`).join('')}
+          ${r.photos.slice(0, 8).map((url, i) => `<img src="${escapeAttr(url)}" alt="" loading="eager" fetchpriority="high" decoding="async" onerror="this.onerror=null;this.src=this.src+(this.src.includes('?')?'&':'?')+'dl_retry=1'" onclick="openPhotoLightbox('myReviews', ${Number(r.id) || 0}, ${i})">`).join('')}
         </div>` : ''}
         <div style="font-size:10.5px;color:var(--text-secondary);margin-top:8px;">${r.is_anonymous ? 'Опубликован как анонимный' : 'Опубликован под вашим именем'}</div>
       </div>`).join('')}
