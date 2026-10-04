@@ -48,14 +48,25 @@
     background: var(--bg);
     width: 100%; max-width: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
     overscroll-behavior-x: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
   }
   body {
     font-family: 'Manrope', -apple-system, system-ui, sans-serif;
     background: var(--bg); color: var(--text);
     min-height: var(--tg-vh, 100vh);
     overflow-x: hidden;
-    overscroll-behavior-x: none;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     -webkit-font-smoothing: antialiased;
   }
   button, input, textarea, select { font-family: inherit; }
@@ -2439,11 +2450,42 @@ function normalizeReview(r) {
     author_avatar_url: r.author_avatar_url ? assetUrl(r.author_avatar_url) : r.author_avatar_url };
 }
 
+function getCurrentAppBackground() {
+  try {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue('--bg')
+      .trim() || '#FFF9FB';
+  } catch (_) {
+    return '#FFF9FB';
+  }
+}
+
+function syncBrowserThemeColor(color) {
+  const safeColor = (color || '#FFF9FB').trim();
+  let meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute('content', safeColor);
+}
+
+function syncTelegramChrome(color) {
+  if (!tg) return;
+  const safeColor = (color || getCurrentAppBackground() || '#FFF9FB').trim();
+  try { tg.setHeaderColor(safeColor); } catch (_) {}
+  try { tg.setBackgroundColor(safeColor); } catch (_) {}
+  try {
+    if (supports('7.10') && tg.setBottomBarColor) tg.setBottomBarColor(safeColor);
+  } catch (_) {}
+  syncBrowserThemeColor(safeColor);
+}
+
 if (tg) {
   tg.ready();
   tg.expand();
-  tg.setHeaderColor('#FFF9FB');
-  tg.setBackgroundColor('#FFF9FB');
+  syncTelegramChrome(getCurrentAppBackground());
   const updateViewportHeight = () => {
     const h = tg.viewportStableHeight || tg.viewportHeight || window.innerHeight;
     document.documentElement.style.setProperty('--tg-vh', h + 'px');
@@ -3138,7 +3180,8 @@ function applyTheme() {
     });
     if (colors.accent) root.style.setProperty('--pink-accent', colors.accent);
   }
-  if (tg && colors?.background) { tg.setHeaderColor(colors.background); tg.setBackgroundColor(colors.background); }
+  const appliedBackground = colors?.background || getCurrentAppBackground();
+  syncTelegramChrome(appliedBackground);
   renderThemeOptionsList();
   renderSeasonalBanner();
   renderThemeDecorations();
@@ -6757,13 +6800,13 @@ window.addEventListener('unhandledrejection', (e) => {
      3) Прелоадер не исчезает, пока Telegram не перешёл в полноэкранный режим,
         поэтому пользователь не видит, как экран «перепрыгивает». */
   const THEME_KEY = 'dollieland_theme_mode';
-  const BG = { light: '#FFF9FB', dark: '#1C1417' };
   function paintTelegramChrome(mode) {
     if (!tg) return;
-    const color = BG[mode === 'dark' ? 'dark' : 'light'];
-    try { tg.setHeaderColor(color); } catch (_) {}
-    try { tg.setBackgroundColor(color); } catch (_) {}
-    try { if (supports('7.10') && tg.setBottomBarColor) tg.setBottomBarColor(color); } catch (_) {}
+    const custom = typeof themeConfig === 'object' &&
+      themeConfig.theme &&
+      themeConfig.theme['colors_' + (mode === 'dark' ? 'dark' : 'light')];
+    const color = custom?.background || getCurrentAppBackground();
+    syncTelegramChrome(color);
   }
   paintTelegramChrome(lsGet(THEME_KEY) || document.documentElement.dataset.theme);
 
@@ -6773,8 +6816,7 @@ window.addEventListener('unhandledrejection', (e) => {
       origApplyTheme.apply(this, arguments);
       const mode = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
       lsSet(THEME_KEY, mode);
-      const custom = typeof themeConfig === 'object' && themeConfig.theme && themeConfig.theme['colors_' + mode];
-      if (!custom || !custom.background) paintTelegramChrome(mode);
+      paintTelegramChrome(mode);
     };
   }
 
