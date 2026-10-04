@@ -7191,8 +7191,10 @@ function handleSearchDeepLink() {
 function hidePreloader() {
   const p = document.getElementById('preloader');
   if (!p) return;
-  p.classList.add('hidden');
-  setTimeout(() => { if (p.parentNode) p.remove(); }, 500);
+  try { p.classList.add('hidden'); } catch (_) {}
+  setTimeout(() => {
+    try { if (p.parentNode) p.remove(); } catch (_) {}
+  }, 500);
 }
 
 async function loadAppData() {
@@ -7204,37 +7206,85 @@ async function loadAppData() {
     loadNotifications(false),
     loadFortuneStatus({ silent: true, offer: true }),
   ]);
-  setTimeout(() => checkReviewPrompt(), 800);
+  setTimeout(() => {
+    try { checkReviewPrompt(); } catch (e) { console.error('DollieLand: ошибка проверки отзыва —', e); }
+  }, 800);
 }
 
 function continueBootstrapAfterConsent() {
-  loadAppData();
+  loadAppData().catch(err => console.error('DollieLand: ошибка после согласия —', err));
 }
+
+/* Аварийная страховка: прелоадер не может зависнуть навсегда. */
+let preloaderSafetyTimer = setTimeout(() => {
+  console.warn('DollieLand: сработал аварийный таймер прелоадера');
+  hidePreloader();
+}, 4000);
 
 async function bootstrap() {
-  initReviewTextToggle();
-  renderHelpList();
-  watchAutoDetectLinks();
-  applySeasonalIcons();
-  updateOrdersSortLabel();
+  try {
+    try { initReviewTextToggle(); } catch (e) { console.error('DollieLand: initReviewTextToggle —', e); }
+    try { renderHelpList(); } catch (e) { console.error('DollieLand: renderHelpList —', e); }
+    try { watchAutoDetectLinks(); } catch (e) { console.error('DollieLand: watchAutoDetectLinks —', e); }
+    try { applySeasonalIcons(); } catch (e) { console.error('DollieLand: applySeasonalIcons —', e); }
+    try { updateOrdersSortLabel(); } catch (e) { console.error('DollieLand: updateOrdersSortLabel —', e); }
 
-  const minDelay = new Promise(r => setTimeout(r, 900));
+    const minDelay = new Promise(resolve => setTimeout(resolve, 900));
 
-  const accepted = await checkConsent();
+    let consentPromise;
+    try {
+      consentPromise = Promise.resolve(checkConsent());
+    } catch (e) {
+      console.error('DollieLand: checkConsent —', e);
+      consentPromise = Promise.resolve(true);
+    }
 
-  await minDelay;
-  hidePreloader();
+    const consentTimeout = new Promise(resolve => {
+      setTimeout(() => {
+        console.warn('DollieLand: checkConsent timeout — продолжаем запуск');
+        resolve(true);
+      }, 5000);
+    });
 
-  if (!accepted) {
-    showConsentGate();
-    return;
+    let accepted = true;
+    try {
+      accepted = await Promise.race([consentPromise, consentTimeout]);
+    } catch (e) {
+      console.error('DollieLand: ошибка проверки согласия —', e);
+      accepted = true;
+    }
+
+    await minDelay;
+    clearTimeout(preloaderSafetyTimer);
+    preloaderSafetyTimer = null;
+
+    /* Сначала показываем интерфейс, затем загружаем данные. */
+    hidePreloader();
+
+    if (!accepted) {
+      try { showConsentGate(); } catch (e) { console.error('DollieLand: ошибка consent gate —', e); }
+      return;
+    }
+
+    loadAppData().catch(err => console.error('DollieLand: ошибка загрузки данных —', err));
+
+    try { handleSearchDeepLink(); } catch (e) { console.error('DollieLand: handleSearchDeepLink —', e); }
+  } catch (err) {
+    console.error('DollieLand: ошибка запуска приложения —', err);
+    clearTimeout(preloaderSafetyTimer);
+    preloaderSafetyTimer = null;
+    hidePreloader();
+    try { consentAccepted = true; } catch (_) {}
+    try { handleSearchDeepLink(); } catch (_) {}
   }
-
-  await loadAppData();
-  handleSearchDeepLink();
 }
 
-bootstrap();
+bootstrap().catch(err => {
+  console.error('DollieLand: критическая ошибка bootstrap —', err);
+  clearTimeout(preloaderSafetyTimer);
+  preloaderSafetyTimer = null;
+  hidePreloader();
+});
 
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
