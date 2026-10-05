@@ -15,6 +15,13 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <script src="pwa.js?v=20261005-1"></script>
+<script>
+  window.__dlInstallPrompt = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    window.__dlInstallPrompt = e;
+  });
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <style>
@@ -6197,18 +6204,22 @@ function fortuneOfferDayKey() {
 }
 function maybeOfferFortune(attempt) {
   attempt = attempt || 0;
-  if (fortuneOfferShown || !fortuneStatus?.enabled || !fortuneStatus.available || !fortuneStatus.daily_available) return;
+  const st = fortuneStatus;
+  // Ежедневная бесплатная попытка — поле free_spin_available (daily_available сервер не отдаёт)
+  if (fortuneOfferShown || !st?.enabled || !st.free_spin_available) return;
   const offerKey = `dollieland_fortune_offer_${fortuneOfferDayKey()}`;
   try {
     if (localStorage.getItem(offerKey) === '1') return;
   } catch (_) {}
   const busy = !consentAccepted || isFortuneScreenOpen() || lightboxOpen || reviewPromptOpen
+    || window.__dlInstallOfferPending
     || isTypingField(document.activeElement)
     || document.getElementById('tab-search')?.classList.contains('active')
     || !!document.querySelector('.bottom-sheet.open')
-    || document.getElementById('consent-gate')?.classList.contains('open');
+    || document.getElementById('consent-gate')?.classList.contains('open')
+    || !!document.getElementById('preloader') && !document.getElementById('preloader').classList.contains('hidden');
   if (busy) {
-    if (attempt < 6) setTimeout(() => maybeOfferFortune(attempt + 1), 4000);
+    if (attempt < 60) setTimeout(() => maybeOfferFortune(attempt + 1), 3000);   // ждём до ~3 минут
     return;
   }
   fortuneOfferShown = true;
@@ -7341,6 +7352,13 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && consentAccepted) {
+    fortuneOfferShown = false;                       // повтор в тот же день не даст ключ в localStorage
+    loadFortuneStatus({ silent: true, offer: true });
+  }
+});
+
 window.addEventListener('error', (e) => {
   console.error('DollieLand: unhandled error —', e.error || e.message);
 });
@@ -7352,6 +7370,192 @@ window.addEventListener('unhandledrejection', (e) => {
 <!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
 
 
+<!-- ===== DollieLand: окно «Установите приложение» (один раз на устройство) ===== -->
+<div class="bottom-sheet" id="sheet-install-offer">
+  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
+  <div class="sheet-content hs-sheet">
+    <div class="sheet-header">
+      <h2>Приложение DollieLand</h2>
+      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+    </div>
+    <div id="install-offer-body"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Поменяйте v1 на v2, если захотите показать окно всем ещё раз.
+  const KEY = 'dollieland_install_offer_v1';
+  const tgw = window.Telegram && window.Telegram.WebApp;
+  const inTelegram = !!(tgw && tgw.initData);
+  const ua = navigator.userAgent || '';
+  const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isAndroid = /android/i.test(ua);
+  const isStandalone = (() => {
+    try { return matchMedia('(display-mode: standalone)').matches || !!navigator.standalone; }
+    catch (_) { return false; }
+  })();
+  const tgSupports = v => !!tgw && typeof tgw.isVersionAtLeast === 'function' && tgw.isVersionAtLeast(v);
+
+  const sheet = document.getElementById('sheet-install-offer');
+  if (sheet && typeof setupSheetDrag === 'function') setupSheetDrag(sheet);
+
+  // Пока решаем, показывать ли окно, Фортуна ждёт своей очереди.
+  window.__dlInstallOfferPending = true;
+  let finished = false;
+  function finish() {
+    if (finished) return;
+    finished = true;
+    window.__dlInstallOfferPending = false;
+    setTimeout(() => { try { maybeOfferFortune(); } catch (_) {} }, 700);
+  }
+
+  /* ---------- «уже показывали?» — localStorage + облако Telegram ---------- */
+  function localSeen() { try { return localStorage.getItem(KEY) === '1'; } catch (_) { return false; } }
+  function markSeen() {
+    try { localStorage.setItem(KEY, '1'); } catch (_) {}
+    try { if (inTelegram && tgSupports('6.9') && tgw.CloudStorage) tgw.CloudStorage.setItem(KEY, '1', () => {}); } catch (_) {}
+  }
+  function cloudSeen(cb) {
+    if (!inTelegram || !tgSupports('6.9') || !tgw.CloudStorage) return cb(false);
+    let called = false;
+    const t = setTimeout(() => { if (!called) { called = true; cb(false); } }, 2500);
+    try {
+      tgw.CloudStorage.getItem(KEY, (err, val) => {
+        if (called) return;
+        called = true; clearTimeout(t);
+        cb(!err && val === '1');
+      });
+    } catch (_) { if (!called) { called = true; clearTimeout(t); cb(false); } }
+  }
+
+  /* ---------- где мы и что можно предложить ---------- */
+  function detectMode(cb) {
+    if (inTelegram) {
+      const mobile = ['ios', 'android', 'android_x'].includes(tgw.platform);
+      if (!mobile || !tgSupports('8.0') || typeof tgw.addToHomeScreen !== 'function') return cb(null);
+      if (typeof tgw.checkHomeScreenStatus !== 'function') return cb('tg');
+      let called = false;
+      const t = setTimeout(() => { if (!called) { called = true; cb('tg'); } }, 2500);
+      try {
+        tgw.checkHomeScreenStatus(status => {
+          if (called) return;
+          called = true; clearTimeout(t);
+          if (status === 'added') { markSeen(); cb(null); }
+          else if (status === 'unsupported') cb(null);
+          else cb('tg');                                // missed / unknown
+        });
+      } catch (_) { if (!called) { called = true; clearTimeout(t); cb('tg'); } }
+      return;
+    }
+    if (isStandalone) { markSeen(); return cb(null); }  // уже открыто как установленное приложение
+    if (window.__dlInstallPrompt) return cb('prompt');
+    if (isIOS) return cb('ios');
+    if (isAndroid) return cb('android');
+    return cb(null);                                    // компьютер без возможности установки
+  }
+
+  const IOS_SHARE_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+
+  function bodyHTML(mode) {
+    let html = `<div class="hs-sheet-art">D</div>
+      <h3>DollieLand в одно касание</h3>
+      <p>Установите DollieLand на телефон — заказы, каталог и Фортуна будут открываться сразу, как обычное приложение.</p>`;
+    if (mode === 'tg' || mode === 'prompt') {
+      html += `
+        <button type="button" class="btn btn-primary btn-block" onclick="dlInstallOfferAction()">
+          <svg class="icon"><use href="#icon-house"/></svg> ${mode === 'tg' ? 'Добавить на главный экран' : 'Установить приложение'}
+        </button>
+        <button type="button" class="btn btn-tertiary btn-block" onclick="closeSheet()">Не сейчас</button>`;
+    } else if (mode === 'ios') {
+      html += `
+        <div class="hs-steps">
+          <div class="hs-step"><span class="hs-step-num">1</span><span>Нажмите <b>«Поделиться»</b> ${IOS_SHARE_ICON} внизу экрана Safari.</span></div>
+          <div class="hs-step"><span class="hs-step-num">2</span><span>Выберите <b>«На экран „Домой“»</b>.</span></div>
+          <div class="hs-step"><span class="hs-step-num">3</span><span>Нажмите <b>«Добавить»</b> — иконка DollieLand появится на экране.</span></div>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" onclick="closeSheet()">Понятно</button>`;
+    } else {
+      html += `
+        <div class="hs-steps">
+          <div class="hs-step"><span class="hs-step-num">1</span><span>Откройте меню браузера <b>⋮</b> в правом верхнем углу.</span></div>
+          <div class="hs-step"><span class="hs-step-num">2</span><span>Выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>.</span></div>
+        </div>
+        <button type="button" class="btn btn-primary btn-block" onclick="dlInstallOfferAction()">Понятно</button>`;
+    }
+    return html;
+  }
+
+  window.dlInstallOfferAction = function () {
+    try { hapticImpact('medium'); } catch (_) {}
+    if (inTelegram && tgw && typeof tgw.addToHomeScreen === 'function') {
+      try { tgw.addToHomeScreen(); }
+      catch (_) { showToast('Не получилось. Обновите Telegram и попробуйте ещё раз'); }
+      closeSheet();
+      return;
+    }
+    const p = window.__dlInstallPrompt;
+    closeSheet();
+    if (p) {
+      window.__dlInstallPrompt = null;
+      try {
+        p.prompt();
+        (p.userChoice || Promise.resolve()).then(c => {
+          if (c && c.outcome === 'accepted') showToast('DollieLand устанавливается на устройство');
+        }).catch(() => {});
+      } catch (_) {}
+    }
+  };
+
+  /* ---------- показ ---------- */
+  function isBusy() {
+    const pre = document.getElementById('preloader');
+    return !consentAccepted
+      || (pre && !pre.classList.contains('hidden'))
+      || document.getElementById('consent-gate')?.classList.contains('open')
+      || !!document.querySelector('.bottom-sheet.open')
+      || lightboxOpen || reviewPromptOpen
+      || isTypingField(document.activeElement)
+      || document.getElementById('search-modal')?.classList.contains('open');
+  }
+
+  function show(mode) {
+    // Если браузер к этому моменту уже предложил установку — используем её.
+    if (mode !== 'tg' && window.__dlInstallPrompt) mode = 'prompt';
+    const body = document.getElementById('install-offer-body');
+    if (!sheet || !body) return finish();
+    body.innerHTML = bodyHTML(mode);
+    markSeen();                                     // показываем ровно один раз
+    let opened = false;
+    const obs = new MutationObserver(() => {
+      if (sheet.classList.contains('open')) { opened = true; return; }
+      if (opened) { obs.disconnect(); finish(); }
+    });
+    obs.observe(sheet, { attributes: true, attributeFilter: ['class'] });
+    openSheet('install-offer');
+  }
+
+  function waitAndShow(mode, tries) {
+    if (tries > 120) return finish();               // ~3 минуты ожидания свободного экрана
+    if (isBusy()) return setTimeout(() => waitAndShow(mode, tries + 1), 1500);
+    show(mode);
+  }
+
+  function start() {
+    if (localSeen()) return finish();
+    cloudSeen(seen => {
+      if (seen) { try { localStorage.setItem(KEY, '1'); } catch (_) {} return finish(); }
+      detectMode(mode => {
+        if (!mode) return finish();
+        setTimeout(() => waitAndShow(mode, 0), 1200);
+      });
+    });
+  }
+
+  start();
+})();
+</script>
+<!-- ===== конец окна установки ===
 </body> ===== -->
 <script id="search-photo-zoom-js">
 (function () {
