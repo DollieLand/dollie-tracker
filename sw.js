@@ -3,7 +3,7 @@
    оно мгновенно открывалось с иконки. Запросы к API (другой домен) не
    трогаем — заказы и баланс всегда берутся свежими с сервера.
    При обновлении index.html или pwa.js поменяйте VERSION. */
-const VERSION = 'dl-v3';
+const VERSION = 'dl-v4';
 const SHELL = ['./', './index.html', './pwa.js', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
@@ -28,16 +28,29 @@ self.addEventListener('fetch', e => {
   if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req)
-        .then(res => { const copy = res.clone(); caches.open(VERSION).then(c => c.put('./index.html', copy)); return res; })
-        .catch(() => caches.match('./index.html'))
+        .then(res => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(VERSION).then(c => c.put('./index.html', copy));
+          }
+          return res;
+        })
+        .catch(() =>
+          caches.match('./index.html')
+            .then(cached => cached || caches.match(req, { ignoreSearch: true }))
+        )
     );
     return;
   }
+
   // Скрипт, иконки, манифест: из кэша, в фоне обновляем.
   e.respondWith(
     caches.match(req).then(cached => {
       const net = fetch(req).then(res => {
-        if (res.ok) { const copy = res.clone(); caches.open(VERSION).then(c => c.put(req, copy)); }
+        if (res.ok) {
+          const copy = res.clone();
+          caches.open(VERSION).then(c => c.put(req, copy));
+        }
         return res;
       }).catch(() => cached);
       return cached || net;
