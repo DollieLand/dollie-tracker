@@ -7367,379 +7367,7 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 </script>
 
-<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
-
-
-<!-- ===== DollieLand: окно «Установите приложение» (один раз на устройство) ===== -->
-<div class="bottom-sheet" id="sheet-install-offer">
-  <div class="sheet-handle-area"><div class="sheet-handle"></div></div>
-  <div class="sheet-content hs-sheet">
-    <div class="sheet-header">
-      <h2>Приложение DollieLand</h2>
-      <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
-    </div>
-    <div id="install-offer-body"></div>
-  </div>
-</div>
-
-<script>
-(function () {
-  // Поменяйте v1 на v2, если захотите показать окно всем ещё раз.
-  const KEY = 'dollieland_install_offer_v1';
-  const tgw = window.Telegram && window.Telegram.WebApp;
-  const inTelegram = !!(tgw && tgw.initData);
-  const ua = navigator.userAgent || '';
-  const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isAndroid = /android/i.test(ua);
-  const isStandalone = (() => {
-    try { return matchMedia('(display-mode: standalone)').matches || !!navigator.standalone; }
-    catch (_) { return false; }
-  })();
-  const tgSupports = v => !!tgw && typeof tgw.isVersionAtLeast === 'function' && tgw.isVersionAtLeast(v);
-
-  const sheet = document.getElementById('sheet-install-offer');
-  if (sheet && typeof setupSheetDrag === 'function') setupSheetDrag(sheet);
-
-  // Пока решаем, показывать ли окно, Фортуна ждёт своей очереди.
-  window.__dlInstallOfferPending = true;
-  let finished = false;
-  function finish() {
-    if (finished) return;
-    finished = true;
-    window.__dlInstallOfferPending = false;
-    setTimeout(() => { try { maybeOfferFortune(); } catch (_) {} }, 700);
-  }
-
-  /* ---------- «уже показывали?» — localStorage + облако Telegram ---------- */
-  function localSeen() { try { return localStorage.getItem(KEY) === '1'; } catch (_) { return false; } }
-  function markSeen() {
-    try { localStorage.setItem(KEY, '1'); } catch (_) {}
-    try { if (inTelegram && tgSupports('6.9') && tgw.CloudStorage) tgw.CloudStorage.setItem(KEY, '1', () => {}); } catch (_) {}
-  }
-  function cloudSeen(cb) {
-    if (!inTelegram || !tgSupports('6.9') || !tgw.CloudStorage) return cb(false);
-    let called = false;
-    const t = setTimeout(() => { if (!called) { called = true; cb(false); } }, 2500);
-    try {
-      tgw.CloudStorage.getItem(KEY, (err, val) => {
-        if (called) return;
-        called = true; clearTimeout(t);
-        cb(!err && val === '1');
-      });
-    } catch (_) { if (!called) { called = true; clearTimeout(t); cb(false); } }
-  }
-
-  /* ---------- где мы и что можно предложить ---------- */
-  function detectMode(cb) {
-    if (inTelegram) {
-      const mobile = ['ios', 'android', 'android_x'].includes(tgw.platform);
-      if (!mobile || !tgSupports('8.0') || typeof tgw.addToHomeScreen !== 'function') return cb(null);
-      if (typeof tgw.checkHomeScreenStatus !== 'function') return cb('tg');
-      let called = false;
-      const t = setTimeout(() => { if (!called) { called = true; cb('tg'); } }, 2500);
-      try {
-        tgw.checkHomeScreenStatus(status => {
-          if (called) return;
-          called = true; clearTimeout(t);
-          if (status === 'added') { markSeen(); cb(null); }
-          else if (status === 'unsupported') cb(null);
-          else cb('tg');                                // missed / unknown
-        });
-      } catch (_) { if (!called) { called = true; clearTimeout(t); cb('tg'); } }
-      return;
-    }
-    if (isStandalone) { markSeen(); return cb(null); }  // уже открыто как установленное приложение
-    if (window.__dlInstallPrompt) return cb('prompt');
-    if (isIOS) return cb('ios');
-    if (isAndroid) return cb('android');
-    return cb(null);                                    // компьютер без возможности установки
-  }
-
-  const IOS_SHARE_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:-2px" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
-
-  function bodyHTML(mode) {
-    let html = `<div class="install-logo">
-        <img src="icons/apple-touch-icon.png" alt="DollieLand" decoding="async"
-             onerror="this.parentNode.outerHTML='<div class=&quot;hs-sheet-art&quot;>D</div>'">
-      </div>
-      <h3>DollieLand в одно касание</h3>
-      <p>Установите DollieLand на телефон — заказы, каталог и Фортуна будут открываться сразу, как обычное приложение.</p>`;
-    if (mode === 'tg' || mode === 'prompt') {
-      html += `
-        <button type="button" class="btn btn-primary btn-block" onclick="dlInstallOfferAction()">
-          <svg class="icon"><use href="#icon-house"/></svg> ${mode === 'tg' ? 'Добавить на главный экран' : 'Установить приложение'}
-        </button>
-        <button type="button" class="btn btn-tertiary btn-block" onclick="closeSheet()">Не сейчас</button>`;
-    } else if (mode === 'ios') {
-      html += `
-        <div class="hs-steps">
-          <div class="hs-step"><span class="hs-step-num">1</span><span>Нажмите <b>«Поделиться»</b> ${IOS_SHARE_ICON} внизу экрана Safari.</span></div>
-          <div class="hs-step"><span class="hs-step-num">2</span><span>Выберите <b>«На экран „Домой“»</b>.</span></div>
-          <div class="hs-step"><span class="hs-step-num">3</span><span>Нажмите <b>«Добавить»</b> — иконка DollieLand появится на экране.</span></div>
-        </div>
-        <button type="button" class="btn btn-primary btn-block" onclick="closeSheet()">Понятно</button>`;
-    } else {
-      html += `
-        <div class="hs-steps">
-          <div class="hs-step"><span class="hs-step-num">1</span><span>Откройте меню браузера <b>⋮</b> в правом верхнем углу.</span></div>
-          <div class="hs-step"><span class="hs-step-num">2</span><span>Выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b>.</span></div>
-        </div>
-        <button type="button" class="btn btn-primary btn-block" onclick="dlInstallOfferAction()">Понятно</button>`;
-    }
-    return html;
-  }
-
-  window.dlInstallOfferAction = function () {
-    try { hapticImpact('medium'); } catch (_) {}
-    if (inTelegram && tgw && typeof tgw.addToHomeScreen === 'function') {
-      try { tgw.addToHomeScreen(); }
-      catch (_) { showToast('Не получилось. Обновите Telegram и попробуйте ещё раз'); }
-      closeSheet();
-      return;
-    }
-    const p = window.__dlInstallPrompt;
-    closeSheet();
-    if (p) {
-      window.__dlInstallPrompt = null;
-      try {
-        p.prompt();
-        (p.userChoice || Promise.resolve()).then(c => {
-          if (c && c.outcome === 'accepted') showToast('DollieLand устанавливается на устройство');
-        }).catch(() => {});
-      } catch (_) {}
-    }
-  };
-
-  /* ---------- показ ---------- */
-  function isBusy() {
-    const pre = document.getElementById('preloader');
-    return !consentAccepted
-      || (pre && !pre.classList.contains('hidden'))
-      || document.getElementById('consent-gate')?.classList.contains('open')
-      || !!document.querySelector('.bottom-sheet.open')
-      || lightboxOpen || reviewPromptOpen
-      || isTypingField(document.activeElement)
-      || document.getElementById('search-modal')?.classList.contains('open');
-  }
-
-  function show(mode) {
-    // Если браузер к этому моменту уже предложил установку — используем её.
-    if (mode !== 'tg' && window.__dlInstallPrompt) mode = 'prompt';
-    const body = document.getElementById('install-offer-body');
-    if (!sheet || !body) return finish();
-    body.innerHTML = bodyHTML(mode);
-    markSeen();                                     // показываем ровно один раз
-    let opened = false;
-    const obs = new MutationObserver(() => {
-      if (sheet.classList.contains('open')) { opened = true; return; }
-      if (opened) { obs.disconnect(); finish(); }
-    });
-    obs.observe(sheet, { attributes: true, attributeFilter: ['class'] });
-    openSheet('install-offer');
-  }
-
-  function waitAndShow(mode, tries) {
-    if (tries > 120) return finish();               // ~3 минуты ожидания свободного экрана
-    if (isBusy()) return setTimeout(() => waitAndShow(mode, tries + 1), 1500);
-    show(mode);
-  }
-
-  function start() {
-    if (localSeen()) return finish();
-    cloudSeen(seen => {
-      if (seen) { try { localStorage.setItem(KEY, '1'); } catch (_) {} return finish(); }
-      detectMode(mode => {
-        if (!mode) return finish();
-        setTimeout(() => waitAndShow(mode, 0), 1200);
-      });
-    });
-  }
-
-  start();
-})();
-</script>
-<!-- ===== конец окна установки ===
-</body> ===== -->
-<script id="search-photo-zoom-js">
-(function () {
-  let dlZoom = {
-    scale: 1,
-    x: 0,
-    y: 0,
-    startScale: 1,
-    startDistance: 0,
-    startX: 0,
-    startY: 0,
-    startPanX: 0,
-    startPanY: 0,
-    lastTap: 0,
-    pinching: false,
-    moved: false
-  };
-
-  function dlZoomImg() {
-    const vp = document.getElementById('photo-lightbox-viewport');
-    if (!vp) return null;
-    return vp.querySelector('.lightbox-track img, .photo-lightbox-slide img, img');
-  }
-
-  function dlApplyZoom() {
-    const img = dlZoomImg();
-    if (!img) return;
-    img.style.transform =
-      `translate3d(${dlZoom.x}px, ${dlZoom.y}px, 0) scale(${dlZoom.scale})`;
-  }
-
-  function dlResetZoom() {
-    dlZoom.scale = 1;
-    dlZoom.x = 0;
-    dlZoom.y = 0;
-    dlZoom.pinching = false;
-    dlZoom.moved = false;
-    const img = dlZoomImg();
-    if (img) {
-      img.style.transition = 'transform .18s ease';
-      img.style.transform = 'translate3d(0,0,0) scale(1)';
-      setTimeout(() => {
-        if (img) img.style.transition = '';
-      }, 190);
-    }
-  }
-
-  function dlDistance(a, b) {
-    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-  }
-
-  function dlMidpoint(a, b) {
-    return {
-      x: (a.clientX + b.clientX) / 2,
-      y: (a.clientY + b.clientY) / 2
-    };
-  }
-
-  document.addEventListener('touchstart', function (e) {
-    const vp = e.target.closest && e.target.closest('#photo-lightbox-viewport');
-    if (!vp) return;
-
-    const img = dlZoomImg();
-    if (!img) return;
-
-    if (e.touches.length === 2) {
-      dlZoom.pinching = true;
-      dlZoom.moved = true;
-      dlZoom.startDistance = dlDistance(e.touches[0], e.touches[1]);
-      dlZoom.startScale = dlZoom.scale;
-      const mid = dlMidpoint(e.touches[0], e.touches[1]);
-      dlZoom.startX = mid.x;
-      dlZoom.startY = mid.y;
-      dlZoom.startPanX = dlZoom.x;
-      dlZoom.startPanY = dlZoom.y;
-      img.style.transition = 'none';
-      e.preventDefault();
-      return;
-    }
-
-    if (e.touches.length === 1 && dlZoom.scale > 1) {
-      dlZoom.startX = e.touches[0].clientX;
-      dlZoom.startY = e.touches[0].clientY;
-      dlZoom.startPanX = dlZoom.x;
-      dlZoom.startPanY = dlZoom.y;
-      dlZoom.moved = false;
-    }
-  }, {passive: true});
-
-  document.addEventListener('touchmove', function (e) {
-    const vp = e.target.closest && e.target.closest('#photo-lightbox-viewport');
-    if (!vp) return;
-
-    const img = dlZoomImg();
-    if (!img) return;
-
-    if (e.touches.length === 2 && dlZoom.pinching) {
-      const d = dlDistance(e.touches[0], e.touches[1]);
-      if (!dlZoom.startDistance) return;
-      dlZoom.scale = Math.max(1, Math.min(4, dlZoom.startScale * d / dlZoom.startDistance));
-
-      const mid = dlMidpoint(e.touches[0], e.touches[1]);
-      dlZoom.x = dlZoom.startPanX + (mid.x - dlZoom.startX);
-      dlZoom.y = dlZoom.startPanY + (mid.y - dlZoom.startY);
-      dlZoom.moved = true;
-      dlApplyZoom();
-      e.preventDefault();
-      return;
-    }
-
-    if (e.touches.length === 1 && dlZoom.scale > 1) {
-      const dx = e.touches[0].clientX - dlZoom.startX;
-      const dy = e.touches[0].clientY - dlZoom.startY;
-      if (Math.abs(dx) + Math.abs(dy) > 3) dlZoom.moved = true;
-      dlZoom.x = dlZoom.startPanX + dx;
-      dlZoom.y = dlZoom.startPanY + dy;
-      dlApplyZoom();
-      e.preventDefault();
-    }
-  }, {passive: false});
-
-  document.addEventListener('touchend', function (e) {
-    const vp = e.target.closest && e.target.closest('#photo-lightbox-viewport');
-    if (!vp) return;
-
-    const now = Date.now();
-
-    // Double tap toggles between normal and 2x zoom.
-    if (e.touches.length === 0 && !dlZoom.pinching && !dlZoom.moved) {
-      if (now - dlZoom.lastTap < 300) {
-        dlZoom.scale = dlZoom.scale > 1 ? 1 : 2;
-        dlZoom.x = 0;
-        dlZoom.y = 0;
-        const img = dlZoomImg();
-        if (img) {
-          img.style.transition = 'transform .18s ease';
-          dlApplyZoom();
-          setTimeout(() => {
-            if (img) img.style.transition = '';
-          }, 190);
-        }
-        dlZoom.lastTap = 0;
-        e.preventDefault();
-        return;
-      }
-      dlZoom.lastTap = now;
-    }
-
-    if (dlZoom.pinching) {
-      dlZoom.pinching = false;
-      if (dlZoom.scale < 1.05) dlResetZoom();
-    }
-
-    if (e.touches.length === 0 && dlZoom.scale > 1) {
-      const img = dlZoomImg();
-      if (img) img.style.transition = 'transform .12s ease';
-    }
-  }, {passive: false});
-
-  // Reset zoom whenever the lightbox is opened/switched to another photo.
-  const observer = new MutationObserver(function () {
-    const vp = document.getElementById('photo-lightbox-viewport');
-    if (!vp) return;
-    const img = dlZoomImg();
-    if (img && !img.dataset.dlZoomBound) {
-      img.dataset.dlZoomBound = '1';
-      dlResetZoom();
-    }
-  });
-
-  const root = document.body || document.documentElement;
-  if (root) observer.observe(root, {childList: true, subtree: true});
-
-  document.addEventListener('click', function (e) {
-    const close = e.target.closest && e.target.closest('#photo-lightbox-close, .photo-lightbox-close');
-    if (close) dlResetZoom();
-  }, true);
-
-  window.dlResetPhotoZoom = dlResetZoom;
-})();
-</script>
+<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед </body>) ===== -->
 <script>
 (function () {
   /* ---------- Карточка «Добавить заказ» сверху вкладки «Мои заказы» ---------- */
@@ -8686,6 +8314,245 @@ window.addEventListener('unhandledrejection', (e) => {
   });
 })();
 </script>
+
+<!-- ===== DollieLand: «Поиск для меня» — все поля обязательны ===== -->
+<!-- Вставить в index.html прямо перед </body> (после всех остальных <script>). -->
+<style id="sr-required-css">
+  .sr-req { color: #C4324A; margin-left: 2px; }
+  .sr-field-error { display: none; font-size: 11.5px; font-weight: 700; color: #C4324A; margin-top: 6px; line-height: 1.35; }
+  .sr-field.sr-invalid .sr-field-error { display: block; }
+  .sr-field.sr-invalid .sr-input,
+  .sr-field.sr-invalid .sr-select,
+  .sr-field.sr-invalid .sr-textarea { border-color: #C4324A; box-shadow: 0 0 0 3px rgba(196,50,74,.12); }
+  .sr-field.sr-invalid .sr-upload { border-color: #C4324A; }
+  .sr-field.sr-invalid .sr-opt { border-color: rgba(196,50,74,.55); }
+  .sr-select:invalid, .sr-select option[value=""] { color: var(--text-secondary); }
+  .sr-select option { color: var(--text); }
+</style>
+<script id="sr-required-js">
+(function () {
+  const REQ = '<span class="sr-req">*</span>';
+  const ERR = msg => `<div class="sr-field-error">${escapeHtml(msg)}</div>`;
+
+  SEARCH_FORM_ERRORS.missing_fields = 'Заполните все поля запроса';
+
+  window.searchFormHTML = function (type, r) {
+    const edit = !!r;
+    const similar = type === 'similar';
+    const v = k => escapeAttr(r && r[k] != null ? String(r[k]) : '');
+    const existing = edit ? (r.images || []) : [];
+    const brand = edit ? String(r.brand || '') : '';
+    const brandOptions = SEARCH_BRANDS.concat(['Неважно']);
+    const head = edit
+      ? { kicker: 'Изменить запрос', h1: escapeHtml(srTitle(r)), lead: 'Обновите пожелания — запрос и найденные варианты сохранятся.' }
+      : similar
+        ? { kicker: 'Похожая по фото', h1: 'Покажите, что вам нравится', lead: 'Добавьте фото и заполните все поля — так мы подберём действительно похожую куклу.' }
+        : { kicker: 'Конкретная кукла', h1: 'Какую куклу ищем?', lead: 'Заполните все поля — так мы быстрее найдём именно то, что нужно.' };
+    return `
+    <div class="sr">
+      <button type="button" class="sr-back" onclick="${edit ? 'renderSearchDetail()' : 'renderSearchHome()'}">${srIcon('chevron-right')} ${edit ? 'К запросу' : 'Назад'}</button>
+      <div class="sr-kicker">${head.kicker}</div>
+      <h1 class="sr-h1">${head.h1}</h1>
+      <p class="sr-lead">${head.lead}</p>
+      <form class="sr-card sr-form" id="search-form" onsubmit="submitSearchForm(event, '${type}', ${edit ? `'${escapeAttr(String(r.id))}'` : 'null'})" novalidate>
+        <div class="sr-field" data-field="photos">
+          <span class="sr-field-label">Фотографии${similar ? REQ : ''} <small>${similar ? 'хотя бы одно' : 'по желанию'} · до ${SEARCH_MAX_PHOTOS}</small></span>
+          <label class="sr-upload" for="search-files" id="search-upload-label">
+            ${srIcon('camera')}
+            <span class="sr-upload-title">Добавить фото</span>
+            <span class="sr-upload-sub">Можно выбрать несколько сразу</span>
+          </label>
+          <input id="search-files" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onchange="previewSearchFiles(this); srClearInvalid('photos')">
+          <div class="sr-previews" id="search-previews" data-existing="${existing.length}"></div>
+          ${edit && existing.length ? `<div class="sr-form-note">Уже загруженные фото сохранятся. Новые добавятся к ним.</div>` : ''}
+          ${ERR('Добавьте хотя бы одно фото')}
+        </div>
+
+        ${similar ? `
+        <div class="sr-field" data-field="features">
+          <span class="sr-field-label">Что нравится в этой кукле?${REQ}</span>
+          ${srOptsHTML('features', SEARCH_FEATURES, edit ? (r.similar_features || []) : [], true)}
+          ${ERR('Отметьте хотя бы один пункт')}
+        </div>` : `
+        <div class="sr-field" data-field="character">
+          <label class="sr-field-label" for="sr-character">Кукла / персонаж${REQ}</label>
+          <input class="sr-input" id="sr-character" name="character" value="${v('character') || v('title')}" placeholder="Rochelle Goyle" maxlength="180">
+          ${ERR('Укажите куклу или персонажа')}
+        </div>
+        <div class="sr-field" data-field="line">
+          <label class="sr-field-label" for="sr-line">Серия${REQ} <small>если не знаете — напишите «не знаю»</small></label>
+          <input class="sr-input" id="sr-line" name="line" value="${v('line')}" placeholder="Dawn of the Dance" maxlength="180">
+          ${ERR('Укажите серию')}
+        </div>`}
+
+        <div class="sr-field" data-field="brand">
+          <label class="sr-field-label" for="sr-brand">Бренд${REQ}</label>
+          <select class="sr-select" id="sr-brand" name="brand" required>
+            <option value="" ${brand ? '' : 'selected'} disabled>Выберите бренд</option>
+            ${brandOptions.map(x => `<option value="${escapeAttr(x)}" ${brand === x ? 'selected' : ''}>${escapeHtml(x)}</option>`).join('')}
+          </select>
+          ${ERR('Выберите бренд')}
+        </div>
+
+        <div class="sr-field" data-field="condition">
+          <span class="sr-field-label">Состояние${REQ}</span>
+          ${srOptsHTML('condition', SEARCH_CONDITIONS, edit ? (r.condition || '') : '')}
+          ${ERR('Выберите состояние')}
+        </div>
+
+        ${similar ? '' : `
+        <div class="sr-field" data-field="completeness">
+          <span class="sr-field-label">Комплектация${REQ}</span>
+          ${srOptsHTML('completeness', SEARCH_COMPLETENESS, edit ? (r.completeness || '') : '')}
+          ${ERR('Выберите комплектацию')}
+        </div>`}
+
+        <div class="sr-field" data-field="budget">
+          <label class="sr-field-label" for="sr-budget">Бюджет на куклу${REQ}</label>
+          <input class="sr-input" id="sr-budget" name="budget_max" value="${edit && r.budget_max ? escapeAttr(String(r.budget_max)) : ''}" inputmode="numeric" placeholder="До 8 000 ₽">
+          <div class="sr-form-note">Без учёта веса и доставки по России.</div>
+          ${ERR('Укажите бюджет в рублях')}
+        </div>
+
+        <div class="sr-field" data-field="important">
+          <label class="sr-field-label" for="sr-important">${similar ? 'Расскажите подробнее' : 'Что особенно важно?'}${REQ}</label>
+          <textarea class="sr-textarea" id="sr-important" name="important" maxlength="3000" placeholder="${similar ? 'Например: хочу похожую по атмосфере, не обязательно именно эту куклу.' : 'Например: нужна именно оригинальная кукла, желательно NRFB.'}">${edit ? escapeHtml(r.important || '') : ''}</textarea>
+          ${ERR('Напишите пару слов о том, что важно')}
+        </div>
+
+        <div class="sr-field" data-field="urgency">
+          <span class="sr-field-label">Срочность${REQ}</span>
+          ${srOptsHTML('urgency', SEARCH_URGENCY, edit ? (r.urgency || '') : '')}
+          ${ERR('Выберите срочность')}
+        </div>
+
+        <div class="sr-notify-section">
+          <span class="sr-field-label">Уведомления</span>
+          <label class="sr-notify-toggle ${(!edit || r.notifications_enabled !== false) ? 'on' : ''}">
+            <input type="checkbox" id="sr-notify-enabled" name="notifications_enabled"
+              onchange="this.closest('.sr-notify-toggle').classList.toggle('on', this.checked)"
+              ${(!edit || r.notifications_enabled !== false) ? 'checked' : ''}>
+            <span class="sr-notify-box">${srIcon('bell')}</span>
+            <span class="sr-notify-copy">
+              <b>Уведомлять меня о найденных куклах</b>
+              <small>Новый вариант, изменение статуса или сообщение от DollieLand — сразу сообщим вам.</small>
+            </span>
+            <span class="sr-check-mark">${srIcon('check')}</span>
+          </label>
+        </div>
+
+        <div class="sr-form-note" style="margin-top:-6px"><span class="sr-req">*</span> — обязательные поля</div>
+        <button type="submit" class="btn btn-primary btn-block" id="search-submit-btn" style="margin-top:2px">${edit ? 'Сохранить изменения' : 'Отправить запрос'}</button>
+      </form>
+    </div>`;
+  };
+
+  /* Подсветка ошибок */
+  window.srClearInvalid = function (field) {
+    document.querySelector(`#search-form .sr-field[data-field="${field}"]`)?.classList.remove('sr-invalid');
+  };
+  function markInvalid(fields) {
+    document.querySelectorAll('#search-form .sr-field.sr-invalid').forEach(x => x.classList.remove('sr-invalid'));
+    fields.forEach(f => document.querySelector(`#search-form .sr-field[data-field="${f}"]`)?.classList.add('sr-invalid'));
+    const first = document.querySelector('#search-form .sr-field.sr-invalid');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  // Ошибка снимается, как только пользователь начинает заполнять поле
+  ['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, e => {
+    const field = e.target.closest && e.target.closest('#search-form .sr-field.sr-invalid');
+    if (!field) return;
+    if (ev === 'click' && !e.target.closest('.sr-opt')) return;
+    setTimeout(() => field.classList.remove('sr-invalid'), 0);
+  }, true));
+
+  // Поля сервера → поля формы
+  const SERVER_FIELD_MAP = {
+    character: 'character', line: 'line', completeness: 'completeness',
+    similar_features: 'features', brand: 'brand', condition: 'condition',
+    budget_max: 'budget', important: 'important', urgency: 'urgency',
+  };
+
+  window.submitSearchForm = async function (event, type, editId) {
+    event.preventDefault();
+    if (!userId) { showToast('Откройте приложение из Telegram'); return; }
+    const btn = document.getElementById('search-submit-btn');
+    if (btn && btn.disabled) return;
+    const similar = type === 'similar';
+    const val = id => (document.getElementById(id)?.value || '').trim();
+
+    const existingCount = editId && searchCurrent ? (searchCurrent.images || []).length : 0;
+    const character = val('sr-character');
+    const line = val('sr-line');
+    const brand = val('sr-brand');
+    const budget = val('sr-budget').replace(/[^\d]/g, '');
+    const important = val('sr-important');
+    const condition = srGroupValue('condition');
+    const completeness = similar ? '' : srGroupValue('completeness');
+    const urgency = srGroupValue('urgency');
+    const features = similar ? srGroupValues('features') : [];
+
+    const missing = [];
+    if (similar && !existingCount && !searchSelectedFiles.length) missing.push('photos');
+    if (similar && !features.length) missing.push('features');
+    if (!similar && !character) missing.push('character');
+    if (!similar && !line) missing.push('line');
+    if (!brand) missing.push('brand');
+    if (!condition) missing.push('condition');
+    if (!similar && !completeness) missing.push('completeness');
+    if (!budget || Number(budget) <= 0) missing.push('budget');
+    if (!important) missing.push('important');
+    if (!urgency) missing.push('urgency');
+
+    if (missing.length) {
+      markInvalid(missing);
+      hapticNotification('error');
+      showToast(missing.length === 1 ? 'Заполните отмеченное поле' : 'Заполните все отмеченные поля');
+      return;
+    }
+
+    const payload = {
+      brand, budget_max: budget, condition, completeness, urgency,
+      important, description: important,
+      similar_features: features,
+      notifications_enabled: document.getElementById('sr-notify-enabled')?.checked !== false,
+    };
+    if (similar) {
+      if (!editId) payload.title = brand && brand !== 'Неважно' ? `Похожая по фото · ${brand}` : 'Похожая по фото';
+    } else {
+      payload.title = character; payload.character = character; payload.line = line;
+    }
+
+    const label = editId ? 'Сохранить изменения' : 'Отправить запрос';
+    if (btn) { btn.disabled = true; btn.textContent = editId ? 'Сохраняем…' : 'Отправляем…'; }
+    try {
+      let rid = editId;
+      if (editId) {
+        const d = await apiPatch('/api/me/search_requests/' + encodeURIComponent(editId), payload);
+        if (!d.ok) { const err = new Error(d.error || 'save_failed'); err.fields = d.fields; throw err; }
+        searchCurrent = d.request || searchCurrent;
+      } else {
+        const d = await apiPost('/api/me/search_requests', { type, ...payload });
+        if (!d.ok) { const err = new Error(d.error || 'create_failed'); err.fields = d.fields; throw err; }
+        rid = d.request.id;
+      }
+      try { await uploadSearchImages(rid); }
+      catch (e) { showToast(SEARCH_FORM_ERRORS[e.message] || 'Запрос сохранён, но фото не загрузились'); }
+      searchSelectedFiles = [];
+      hapticNotification('success');
+      showToast(editId ? 'Запрос обновлён' : 'Запрос отправлен — начинаем поиск');
+      await openSearchRequest(rid);
+    } catch (e) {
+      if (e.message === 'missing_fields' && Array.isArray(e.fields)) {
+        markInvalid(e.fields.map(f => SERVER_FIELD_MAP[f]).filter(Boolean));
+      }
+      showToast(SEARCH_FORM_ERRORS[e.message] || (editId ? 'Не удалось сохранить изменения' : 'Не удалось создать запрос'));
+      hapticNotification('error');
+      if (btn) { btn.disabled = false; btn.textContent = label; }
+    }
+  };
+})();
+</script>
+<!-- ===== конец блока «все поля обязательны» ===== -->
 
 </body>
 </html>
