@@ -8554,8 +8554,6 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока «все поля обязательны» ===== -->
 
-
-
 <!-- ===== DollieLand: скидки и категории в каталоге ===== -->
 <!-- Вставить в index.html (Mini App) прямо перед </body>, ПОСЛЕ всех остальных блоков. -->
 <style id="dl-catalog-sale-css">
@@ -8600,6 +8598,30 @@ window.addEventListener('unhandledrejection', (e) => {
   .catalog-req-price .pct { color: #E5384F; margin-left: 4px; }
   .catalog-card.oos .catalog-price.sale { color: var(--text-secondary); }
   html[data-theme="dark"] .catalog-price.sale, html[data-theme="dark"] .catalog-detail-price.sale { color: #FF7A8C; }
+
+  /* Коллекция куклы: «Из этой коллекции» в подробной карточке */
+  .coll-block { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .coll-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .coll-title b { font-size: 15px; font-weight: 800; color: var(--text); overflow-wrap: anywhere; }
+  .coll-title span { font-size: 11.5px; color: var(--text-secondary); white-space: nowrap; }
+  .coll-row { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; scrollbar-width: none; margin: 0 -20px; padding: 2px 20px 6px; }
+  .coll-row::-webkit-scrollbar { display: none; }
+  .coll-card { flex: 0 0 132px; scroll-snap-align: start; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-soft); color: var(--text); transition: transform .15s ease; }
+  .coll-card:active { transform: scale(.97); }
+  .coll-img { position: relative; display: block; aspect-ratio: 1 / 1; background: var(--pink-soft); }
+  .coll-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .coll-img .tag { position: absolute; left: 6px; top: 6px; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; color: #fff; background: #E5384F; }
+  .coll-img .tag.oos { background: rgba(57,44,49,.78); }
+  .coll-card.oos .coll-img img { filter: grayscale(.35); opacity: .85; }
+  .coll-info { display: block; padding: 8px 9px 10px; }
+  .coll-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; font-weight: 800; line-height: 1.3; min-height: 2.6em; overflow-wrap: anywhere; }
+  .coll-price { display: block; margin-top: 4px; font-size: 13px; font-weight: 800; color: var(--pink-accent); font-variant-numeric: tabular-nums; }
+  .coll-price.sale { color: #E5384F; }
+  .coll-price s { display: block; font-size: 10.5px; font-weight: 600; color: var(--text-secondary); }
+  .coll-back { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 8px; padding: 4px 0; font-size: 12.5px; font-weight: 700; color: var(--pink-accent); max-width: 100%; }
+  .coll-back .icon { width: 15px; height: 15px; transform: rotate(180deg); flex-shrink: 0; }
+  .coll-back span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 </style>
 <script id="dl-catalog-sale-js">
 (function () {
@@ -8669,6 +8691,67 @@ window.addEventListener('unhandledrejection', (e) => {
       </article>`;
   };
 
+  /* ---------- Коллекция: блок в подробной карточке и переходы ---------- */
+  let collStack = [];
+  let detailId = null;
+
+  function collectionBlockHTML(p) {
+    if (!p.collection_id) return '';
+    const others = catalogCache.filter(x => String(x.collection_id || '') === String(p.collection_id) && String(x.id) !== String(p.id));
+    if (!others.length) return '';
+    const cards = others.map(x => {
+      const img = (typeof catalogImages === 'function' ? catalogImages(x) : [])[0];
+      const sale = hasSale(x);
+      const oos = isOOS(x);
+      return `<button type="button" class="coll-card ${oos ? 'oos' : ''}" onclick="openCollectionItem('${escapeAttr(String(x.id))}')">
+        <span class="coll-img">
+          ${img ? `<img src="${escapeAttr(img)}" alt="" loading="lazy" decoding="async">` : ''}
+          ${oos ? '<span class="tag oos">Нет в наличии</span>' : (sale ? `<span class="tag">−${Number(x.discount_percent)}%</span>` : '')}
+        </span>
+        <span class="coll-info">
+          <span class="coll-name">${escapeHtml(x.name)}</span>
+          <span class="coll-price ${sale ? 'sale' : ''}">${escapeHtml(formatRub(x.price))}${sale ? `<s>${escapeHtml(formatRub(x.old_price))}</s>` : ''}</span>
+        </span>
+      </button>`;
+    }).join('');
+    const count = others.length;
+    const countText = typeof pluralize === 'function' ? pluralize(count, 'кукла', 'куклы', 'кукол') : (count === 1 ? 'кукла' : (count < 5 ? 'куклы' : 'кукол'));
+    return `<div class="coll-block">
+      <div class="coll-title"><b>Из коллекции «${escapeHtml(p.collection_name || 'Коллекция')}»</b><span>${count} ${countText}</span></div>
+      <div class="coll-row">${cards}</div>
+    </div>`;
+  }
+  function collBackHTML() {
+    if (!collStack.length) return '';
+    const prev = catalogCache.find(x => String(x.id) === String(collStack[collStack.length - 1]));
+    return `<button type="button" class="coll-back" onclick="collectionBack()"><svg class="icon"><use href="#icon-chevron-right"/></svg><span>Назад${prev ? ' к «' + escapeHtml(prev.name) + '»' : ''}</span></button>`;
+  }
+  function sheetToTop() {
+    const el = document.getElementById('sheet-catalog-product');
+    if (el) el.scrollTop = 0;
+  }
+  const origOpenProduct = window.openCatalogProduct;
+  if (typeof origOpenProduct === 'function') {
+    window.openCatalogProduct = function (id, keepStack) {
+      if (keepStack !== true) collStack = [];
+      detailId = String(id);
+      return origOpenProduct.call(this, id);
+    };
+  }
+  window.openCollectionItem = function (id) {
+    if (detailId) collStack.push(detailId);
+    hapticSelection();
+    window.openCatalogProduct(id, true);
+    sheetToTop();
+  };
+  window.collectionBack = function () {
+    const prev = collStack.pop();
+    if (!prev) return;
+    hapticSelection();
+    window.openCatalogProduct(prev, true);
+    sheetToTop();
+  };
+
   /* ---------- Подробная карточка ---------- */
   window.catalogDetailHTML = function (p) {
     const w = formatCatalogWeight(p);
@@ -8676,6 +8759,7 @@ window.addEventListener('unhandledrejection', (e) => {
     const pid = escapeAttr(String(p.id));
     const oos = isOOS(p);
     return `
+      ${collBackHTML()}
       <div class="sheet-header">
         <h2>${escapeHtml(p.name)}</h2>
         <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
@@ -8705,6 +8789,7 @@ window.addEventListener('unhandledrejection', (e) => {
         <div class="catalog-oos-note"><svg class="icon"><use href="#icon-bell"/></svg><span id="catalog-oos-note-text" data-pid="${pid}">${oosNoteText(p)}</span></div>
         ${waitBtnHTML(p, 'btn-block')}`
       : `<button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>`}
+      ${collectionBlockHTML(p)}
     `;
   };
 
