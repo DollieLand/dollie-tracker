@@ -8559,11 +8559,10 @@ window.addEventListener('unhandledrejection', (e) => {
 <!-- ===== DollieLand: скидки и категории в каталоге ===== -->
 <!-- Вставить в index.html (Mini App) прямо перед </body>, ПОСЛЕ всех остальных блоков. -->
 <style id="dl-catalog-sale-css">
-  /* Категории — строка сверху каталога, прилипает при прокрутке */
+  /* Категории — строка над списком кукол, без своего фона (сливается со страницей и темой) */
   .cat-chips-bar {
-    position: sticky; top: var(--safe-t, 0px); z-index: 5;
-    margin: -4px -18px 12px; padding: 8px 18px 10px;
-    background: var(--bg);
+    margin: 0 -18px 14px; padding: 2px 18px 4px;
+    background: transparent;
   }
   .cat-chips-bar[hidden] { display: none !important; }
   .cat-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 2px 0; }
@@ -8726,7 +8725,10 @@ window.addEventListener('unhandledrejection', (e) => {
   function ensureChipsBar() {
     let bar = document.getElementById('cat-chips-bar');
     if (bar) return bar;
-    const header = document.querySelector('#tab-catalog .screen-header');
+    // Под блоком «Поиск для меня» и подсказкой — прямо над списком кукол
+    const header = document.querySelector('#tab-catalog .catalog-intro')
+      || document.querySelector('#tab-catalog .catalog-search-entry')
+      || document.querySelector('#tab-catalog .screen-header');
     if (!header) return null;
     bar = document.createElement('div');
     bar.className = 'cat-chips-bar';
@@ -8780,8 +8782,6 @@ window.addEventListener('unhandledrejection', (e) => {
     document.querySelectorAll('#cat-chips .cat-chip').forEach(b => b.classList.toggle('active', b.dataset.cat === catalogCategory));
     document.querySelector(`#cat-chips .cat-chip[data-cat="${CSS.escape(catalogCategory)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     renderGrid();
-    const bar = document.getElementById('cat-chips-bar');
-    if (bar && bar.getBoundingClientRect().top <= 1) bar.scrollIntoView({ block: 'start' });
   };
 
   /* Загрузка каталога — та же, что и раньше, плюс список категорий */
