@@ -8554,5 +8554,269 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока «все поля обязательны» ===== -->
 
+
+
+<!-- ===== DollieLand: скидки и категории в каталоге ===== -->
+<!-- Вставить в index.html (Mini App) прямо перед </body>, ПОСЛЕ всех остальных блоков. -->
+<style id="dl-catalog-sale-css">
+  /* Категории — строка сверху каталога, прилипает при прокрутке */
+  .cat-chips-bar {
+    position: sticky; top: var(--safe-t, 0px); z-index: 5;
+    margin: -4px -18px 12px; padding: 8px 18px 10px;
+    background: var(--bg);
+  }
+  .cat-chips-bar[hidden] { display: none !important; }
+  .cat-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 2px 0; }
+  .cat-chips::-webkit-scrollbar { display: none; }
+  .cat-chip {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 15px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 13px; font-weight: 700;
+    white-space: nowrap; box-shadow: var(--shadow-soft); transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .cat-chip .n { font-size: 11px; font-weight: 700; color: var(--text-secondary); }
+  .cat-chip.active { background: var(--pink-accent); border-color: var(--pink-accent); color: #fff; }
+  .cat-chip.active .n { color: rgba(255,255,255,.85); }
+  .cat-chip:active { transform: scale(.96); }
+
+  /* Скидки */
+  .cat-sale-badge {
+    position: absolute; left: 8px; bottom: 8px; z-index: 2; pointer-events: none;
+    background: #E5384F; color: #fff; font-size: 11.5px; font-weight: 800;
+    padding: 4px 9px; border-radius: 999px; box-shadow: 0 4px 10px rgba(229,56,79,.3);
+    font-variant-numeric: tabular-nums;
+  }
+  .cat-media.detail .cat-sale-badge { left: 12px; bottom: 26px; font-size: 13px; padding: 5px 11px; }
+  .catalog-price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 7px; margin-top: 4px; }
+  .catalog-price-row .catalog-price { margin-top: 0; }
+  .catalog-price.sale { color: #E5384F; }
+  .catalog-old-price { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+  .catalog-detail-price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 2px 0 12px; }
+  .catalog-detail-price-row .catalog-detail-price { margin: 0; }
+  .catalog-detail-price.sale { color: #E5384F; }
+  .catalog-detail-old { font-size: 16px; font-weight: 700; color: var(--text-secondary); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+  .catalog-detail-save { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #E5384F; background: rgba(229,56,79,.1); padding: 4px 10px; border-radius: 999px; }
+  .catalog-detail-cat { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--pink-accent); margin-bottom: 4px; }
+  .catalog-req-price .old { color: var(--text-secondary); text-decoration: line-through; font-weight: 600; margin-left: 4px; }
+  .catalog-req-price .pct { color: #E5384F; margin-left: 4px; }
+  .catalog-card.oos .catalog-price.sale { color: var(--text-secondary); }
+  html[data-theme="dark"] .catalog-price.sale, html[data-theme="dark"] .catalog-detail-price.sale { color: #FF7A8C; }
+</style>
+<script id="dl-catalog-sale-js">
+(function () {
+  let catalogCategories = [];
+  let catalogCategory = 'all';
+
+  const isOOS = p => p && p.in_stock === false;
+  const hasSale = p => p && Number(p.discount_percent) > 0 && Number(p.old_price) > Number(p.price);
+  const saleBadge = p => hasSale(p) ? `<span class="cat-sale-badge">−${Number(p.discount_percent)}%</span>` : '';
+
+  function waitBtnHTML(p, extraCls) {
+    const pid = escapeAttr(String(p.id));
+    const on = !!p.waitlisted;
+    return `<button type="button" class="btn btn-wait ${on ? 'on' : ''} ${extraCls || ''}" data-wait-btn="${pid}"
+      onclick="toggleCatalogWaitlist('${pid}', event); return false;" aria-pressed="${on ? 'true' : 'false'}">
+      ${on ? '<svg class="icon"><use href="#icon-check"/></svg> Сообщим о поступлении'
+           : '<svg class="icon"><use href="#icon-bell"/></svg> Сообщить о поступлении'}</button>`;
+  }
+  function oosNoteText(p) {
+    return p.waitlisted
+      ? '<b>Вы в списке ожидания.</b> Как только кукла появится, мы пришлём сообщение в чат с ботом. Нажмите кнопку ещё раз, чтобы отписаться.'
+      : '<b>Сейчас этой куклы нет в наличии.</b> Нажмите «Сообщить о поступлении» — мы напишем в бот, как только она появится.';
+  }
+
+  /* ---------- Цена ---------- */
+  function cardPriceHTML(p) {
+    if (!hasSale(p)) return `<div class="catalog-price">${escapeHtml(formatRub(p.price))}</div>`;
+    return `<div class="catalog-price-row">
+      <span class="catalog-price sale">${escapeHtml(formatRub(p.price))}</span>
+      <span class="catalog-old-price">${escapeHtml(formatRub(p.old_price))}</span>
+    </div>`;
+  }
+  function detailPriceHTML(p) {
+    const oos = isOOS(p);
+    if (!hasSale(p)) return `<div class="catalog-detail-price ${oos ? 'oos' : ''}">${escapeHtml(formatRub(p.price))}</div>`;
+    const save = Number(p.old_price) - Number(p.price);
+    return `<div class="catalog-detail-price-row">
+      <span class="catalog-detail-price sale ${oos ? 'oos' : ''}">${escapeHtml(formatRub(p.price))}</span>
+      <span class="catalog-detail-old">${escapeHtml(formatRub(p.old_price))}</span>
+      <span class="catalog-detail-save">−${Number(p.discount_percent)}% · экономия ${escapeHtml(formatRub(save))}</span>
+    </div>`;
+  }
+
+  /* ---------- Карточка в сетке ---------- */
+  window.catalogCardHTML = function (p) {
+    const w = formatCatalogWeight(p);
+    const pid = escapeAttr(String(p.id));
+    const oos = isOOS(p);
+    return `
+      <article class="catalog-card ${oos ? 'oos' : ''}">
+        <div class="cat-media">
+          ${catalogGalleryHTML(p, 'card')}
+          ${oos ? '<span class="cat-oos-badge">Нет в наличии</span>' : ''}
+          ${saleBadge(p)}
+        </div>
+        <div class="catalog-card-body">
+          <div class="catalog-card-title">${escapeHtml(p.name)}</div>
+          ${cardPriceHTML(p)}
+          ${oos ? '<div class="catalog-oos-line">Нет в наличии</div>' : ''}
+          ${w ? `<div class="catalog-weight">Примерный вес: <b>${escapeHtml(w)}</b></div>` : ''}
+          ${p.short_description ? `<div class="catalog-short">${escapeHtml(p.short_description)}</div>` : ''}
+          <div class="catalog-actions">
+            <button type="button" class="btn btn-secondary" onclick="openCatalogProduct('${pid}')">Подробнее</button>
+            ${oos ? waitBtnHTML(p) : `<button type="button" class="btn btn-primary" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>`}
+          </div>
+        </div>
+      </article>`;
+  };
+
+  /* ---------- Подробная карточка ---------- */
+  window.catalogDetailHTML = function (p) {
+    const w = formatCatalogWeight(p);
+    const extra = Array.isArray(p.extra_params) ? p.extra_params.filter(x => x && x.label) : [];
+    const pid = escapeAttr(String(p.id));
+    const oos = isOOS(p);
+    return `
+      <div class="sheet-header">
+        <h2>${escapeHtml(p.name)}</h2>
+        <button class="sheet-close-btn" onclick="closeSheet()" aria-label="Закрыть"><svg class="icon"><use href="#icon-x"/></svg></button>
+      </div>
+      <div class="cat-media detail">
+        ${catalogGalleryHTML(p, 'detail')}
+        ${oos ? '<span class="cat-oos-badge">Нет в наличии</span>' : ''}
+        ${saleBadge(p)}
+      </div>
+      ${p.category_name ? `<div class="catalog-detail-cat">${escapeHtml(p.category_name)}</div>` : ''}
+      ${detailPriceHTML(p)}
+      ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
+        : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
+      ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
+      ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
+      ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
+      ${w ? `<div class="catalog-weight-note"><svg class="icon"><use href="#icon-alert-circle"/></svg><span>Вес указан примерно. Итоговая стоимость определяется после взвешивания куклы на складе в США и может отличаться.</span></div>` : ''}
+      <div class="help-item weight-faq" id="weight-faq">
+        <button type="button" class="help-item-head" onclick="toggleWeightFaq()">
+          <svg class="icon"><use href="#icon-help-circle"/></svg>
+          <span class="label">Что такое вес?</span>
+          <svg class="icon chev"><use href="#icon-chevron-down"/></svg>
+        </button>
+        <div class="help-item-body">${WEIGHT_FAQ_HTML}</div>
+      </div>
+      ${oos ? `
+        <div class="catalog-oos-note"><svg class="icon"><use href="#icon-bell"/></svg><span id="catalog-oos-note-text" data-pid="${pid}">${oosNoteText(p)}</span></div>
+        ${waitBtnHTML(p, 'btn-block')}`
+      : `<button type="button" class="btn btn-primary btn-block" style="margin-top:14px" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>`}
+    `;
+  };
+
+  /* ---------- Цена в форме заявки ---------- */
+  const origRenderRequestForm = window.renderCatalogRequestForm;
+  if (typeof origRenderRequestForm === 'function') {
+    window.renderCatalogRequestForm = function () {
+      origRenderRequestForm.apply(this, arguments);
+      const p = catalogCurrentProduct;
+      const el = document.querySelector('#catalog-request-body .catalog-req-price');
+      if (el && hasSale(p)) {
+        el.innerHTML = `${escapeHtml(formatRub(p.price))}<span class="old">${escapeHtml(formatRub(p.old_price))}</span><span class="pct">−${Number(p.discount_percent)}%</span> за шт.`;
+      }
+    };
+  }
+
+  /* ---------- Категории ---------- */
+  function ensureChipsBar() {
+    let bar = document.getElementById('cat-chips-bar');
+    if (bar) return bar;
+    const header = document.querySelector('#tab-catalog .screen-header');
+    if (!header) return null;
+    bar = document.createElement('div');
+    bar.className = 'cat-chips-bar';
+    bar.id = 'cat-chips-bar';
+    bar.hidden = true;
+    bar.innerHTML = '<div class="cat-chips" id="cat-chips" role="tablist" aria-label="Категории"></div>';
+    header.insertAdjacentElement('afterend', bar);
+    return bar;
+  }
+
+  function renderCategoryChips() {
+    const bar = ensureChipsBar();
+    if (!bar) return;
+    if (catalogCategory !== 'all' && !catalogCategories.some(c => String(c.id) === String(catalogCategory))) catalogCategory = 'all';
+    if (!catalogCategories.length) { bar.hidden = true; return; }
+    bar.hidden = false;
+    const chip = (id, name, n) => `<button type="button" class="cat-chip ${String(catalogCategory) === String(id) ? 'active' : ''}" data-cat="${escapeAttr(String(id))}" role="tab" onclick="selectCatalogCategory('${escapeAttr(String(id))}')">${escapeHtml(name)}${n != null ? `<span class="n">${Number(n)}</span>` : ''}</button>`;
+    document.getElementById('cat-chips').innerHTML =
+      chip('all', 'Все', catalogCache.length) + catalogCategories.map(c => chip(c.id, c.name, c.count)).join('');
+  }
+
+  function visibleProducts() {
+    if (catalogCategory === 'all') return catalogCache;
+    return catalogCache.filter(p => String(p.category_id || '') === String(catalogCategory));
+  }
+
+  function renderGrid() {
+    const list = document.getElementById('catalog-list');
+    if (!list) return;
+    if (!catalogCache.length) {
+      list.innerHTML = `<div class="empty-state"><h3>Скоро здесь появятся куклы</h3><p>Загляните чуть позже — мы готовим новые поступления.</p></div>`;
+      return;
+    }
+    const items = visibleProducts();
+    list.innerHTML = items.length
+      ? `<div class="catalog-grid">${items.map(catalogCardHTML).join('')}</div>`
+      : `<div class="empty-state"><h3>В этой категории пока пусто</h3><p>Загляните позже или посмотрите все куклы.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Все куклы</button></div>`;
+    bindCatalogGalleries(list);
+    stripAfterInsert(list);
+  }
+
+  window.renderCatalog = function () {
+    renderCategoryChips();
+    renderGrid();
+  };
+
+  window.selectCatalogCategory = function (id) {
+    if (String(id) === String(catalogCategory)) return;
+    catalogCategory = String(id);
+    hapticSelection();
+    document.querySelectorAll('#cat-chips .cat-chip').forEach(b => b.classList.toggle('active', b.dataset.cat === catalogCategory));
+    document.querySelector(`#cat-chips .cat-chip[data-cat="${CSS.escape(catalogCategory)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    renderGrid();
+    const bar = document.getElementById('cat-chips-bar');
+    if (bar && bar.getBoundingClientRect().top <= 1) bar.scrollIntoView({ block: 'start' });
+  };
+
+  /* Загрузка каталога — та же, что и раньше, плюс список категорий */
+  window.loadCatalog = async function (isManual) {
+    if (catalogLoadInflight) return;
+    const list = document.getElementById('catalog-list');
+    const btn = document.getElementById('catalog-refresh-btn');
+    if (!list) return;
+    if (!userId) { list.innerHTML = `<div class="empty-state"><h3>Откройте приложение из Telegram</h3></div>`; return; }
+    catalogLoadInflight = true;
+    if (isManual) { btn?.classList.add('spinning'); btn?.setAttribute('disabled', ''); }
+    if (!catalogLoadedOnce) list.innerHTML = skeletonOrdersHTML(2);
+    try {
+      const data = await apiFetch('/api/catalog', {}, { timeoutMs: 10000, retries: 1 });
+      if (!data?.ok) throw new Error('catalog');
+      catalogCache = data.products || [];
+      catalogCategories = Array.isArray(data.categories) ? data.categories : [];
+      catalogLoadedOnce = true;
+      renderCatalog();
+    } catch (e) {
+      if (!catalogLoadedOnce) {
+        list.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить каталог</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadCatalog(true)">Повторить</button></div>`;
+      } else showToast('Не удалось обновить каталог');
+    } finally {
+      btn?.classList.remove('spinning'); btn?.removeAttribute('disabled');
+      catalogLoadInflight = false;
+    }
+  };
+
+  ensureChipsBar();
+  // Если каталог уже успели загрузить старой версией — подтянем категории заново.
+  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) loadCatalog(false);
+})();
+</script>
+<!-- ===== конец блока «скидки и категории» ===== -->
+
 </body>
 </html>
