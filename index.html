@@ -7380,7 +7380,7 @@ window.addEventListener('unhandledrejection', (e) => {
     --fw-bulb-a:#FFFFFF; --fw-bulb-b:#FFF3D6;
     --fw-inner:#FFFFFF;
     --fw-a1:#FFF6F9;    --fw-a2:#FBDCE7;
-    --fw-b1:#FFFFFF;    --fw-b2:#FDEFF4;
+    --fw-b1:#F8C6D8;    --fw-b2:#EC9FBC;   /* сектор «100»: розовый, а не белый — иначе белые звёздочки сливаются */
     --fw-gold1:#FFF9EC; --fw-gold2:#F9E4B4;
     --fw-doll1:#F6DDEB; --fw-doll2:#E7B9D2;
     --fw-center1:#F6A9C3; --fw-center2:#D9719A; --fw-center-d:#FFFFFF;
@@ -7448,6 +7448,7 @@ window.addEventListener('unhandledrejection', (e) => {
   .dl-reward-img { object-fit: contain; -webkit-user-drag: none; user-select: none; pointer-events: none; }
   .fortune-prize .dl-ico { width: 46px; height: 46px; }
   .fortune-result-art .dl-ico { width: 112px; height: 112px; }
+  html:not([data-seasonal-theme="halloween"]) .fortune-prize { background: linear-gradient(160deg, var(--pink-soft), var(--surface-soft)); }
 
   /* ---------- Halloween: остальные детали раздела «Фортуна» ---------- */
   html[data-seasonal-theme="halloween"] .fortune-stage {
