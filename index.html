@@ -7507,13 +7507,13 @@ window.addEventListener('unhandledrejection', (e) => {
 
 <script id="dl-fortune-theme-js">
 (function () {
-  const VER = '20261013-2';                       // поменяйте, если замените PNG — обновится кэш
+  const VER = '20261013-3';                        // поменяйте, если замените PNG — обновится кэш
   const SYMBOL_SUFFIX = { 'dl-coin': '1', 'dl-coin-2': '2', 'dl-coin-5': '5', 'dl-coin-100': '100', 'dl-medal-500': '500', 'dl-secret-doll': 'secret' };
   const KEY_SUFFIX = { dollies_1: '1', dollies_2: '2', dollies_5: '5', dollies_100: '100', dollies_500: '500', secret_doll: 'secret' };
   const SUFFIXES = ['1', '2', '5', '100', '500', 'secret', 'center'];
 
   const isHalloween = () => document.documentElement.dataset.seasonalTheme === 'halloween';
-  const imgUrl = suffix => `icons/fortune/${isHalloween() ? 'halloween' : 'pink'}_${suffix}.png?v=${VER}`;
+  const imgUrl = suffix => `fortune/${isHalloween() ? 'halloween' : 'pink'}_${suffix}.png?v=${VER}`;
 
   /* ---------- Иконки наград ---------- */
   const origDLIcon = window.DLIcon;
