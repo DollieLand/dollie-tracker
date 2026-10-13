@@ -7367,7 +7367,262 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 </script>
 
-<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед </body>) ===== -->
+<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
+<!-- ===== DollieLand: Фортуна — новые иконки наград, логотип DL в центре + цвета колеса под тему ===== -->
+<!-- Вставить в index.html прямо перед </body>, ПОСЛЕ всех остальных блоков (после блока «скидки и категории»).
+     Рядом с index.html должна лежать папка icons/fortune/ с 14 PNG из архива fortune-icons.zip. -->
+<style id="dl-fortune-theme-css">
+  /* ---------- Цвета колеса: стандартная (розовая) тема ----------
+     Всё колесо красится через переменные, поэтому при смене темы или режима
+     (светлая / тёмная) цвета меняются сразу, без перерисовки. */
+  :root {
+    --fw-rim1:#F7B9CE; --fw-rim2:#E78EAD; --fw-rim3:#C9688D;
+    --fw-bulb-a:#FFFFFF; --fw-bulb-b:#FFF3D6;
+    --fw-inner:#FFFFFF;
+    --fw-a1:#FFF6F9;    --fw-a2:#FBDCE7;
+    --fw-b1:#FFFFFF;    --fw-b2:#FDEFF4;
+    --fw-gold1:#FFF9EC; --fw-gold2:#F9E4B4;
+    --fw-doll1:#F6DDEB; --fw-doll2:#E7B9D2;
+    --fw-center1:#F6A9C3; --fw-center2:#D9719A; --fw-center-d:#FFFFFF;
+    --fw-pointer1:#EE9BB9; --fw-pointer2:#C9688D;
+    --fw-spoke:#FFFFFF; --fw-edge:#FFFFFF; --fw-ring:#FFFFFF;
+    --fw-hub:#FFFFFF; --fw-hub-op:.55;
+    --fw-cap:#B9577B; --fw-cap-gold:#8F5F14; --fw-cap-doll:#7A3F62;
+    --fw-glow:#F7B9CE;
+    --fw-pointer-shadow:rgba(180,88,124,.35);
+  }
+
+  /* ---------- Halloween · светлая тема ----------
+     Тёмный обод с оранжевыми лампочками, светлые «тёплые» сектора:
+     чёрные контуры иконок на них хорошо читаются. */
+  html[data-seasonal-theme="halloween"] {
+    --fw-rim1:#46306A; --fw-rim2:#241638; --fw-rim3:#100A1A;
+    --fw-bulb-a:#FF9500; --fw-bulb-b:#FFE2B0;
+    --fw-inner:#FFF6E8;
+    --fw-a1:#FFF3E0;    --fw-a2:#FFD9A6;
+    --fw-b1:#FFFAF0;    --fw-b2:#FFE8C8;
+    --fw-gold1:#EBDDFF; --fw-gold2:#BFA1FF;
+    --fw-doll1:#EAF6C8; --fw-doll2:#BEDB7A;
+    --fw-center1:#FF9A1F; --fw-center2:#E24A00; --fw-center-d:#FFF7E8;
+    --fw-pointer1:#FF9A1F; --fw-pointer2:#C93F00;
+    --fw-spoke:#2A1B3D; --fw-edge:#FF9500; --fw-ring:#FFB347;
+    --fw-hub:#FFF6E8; --fw-hub-op:.7;
+    --fw-cap:#6B2F00; --fw-cap-gold:#4B2A8C; --fw-cap-doll:#3F5A0F;
+    --fw-glow:#FF9500;
+    --fw-pointer-shadow:rgba(226,74,0,.45);
+  }
+  /* ---------- Halloween · тёмная тема ----------
+     Обод становится оранжевым и «светится» на тёмном фоне,
+     сектора остаются светлыми, чтобы чёрные контуры иконок не терялись. */
+  html[data-theme="dark"][data-seasonal-theme="halloween"] {
+    --fw-rim1:#FFB04A; --fw-rim2:#FF7A00; --fw-rim3:#BF3F00;
+    --fw-bulb-a:#FFF3D6; --fw-bulb-b:#FFD27A;
+    --fw-inner:#FFF1DC;
+    --fw-a1:#F8E2C2;    --fw-a2:#E6BE8E;
+    --fw-b1:#FCEFD8;    --fw-b2:#EDD0A6;
+    --fw-gold1:#D8C6FF; --fw-gold2:#A689EC;
+    --fw-doll1:#D6E8A6; --fw-doll2:#A6C462;
+    --fw-spoke:#2A1B3D; --fw-edge:#1B1226; --fw-ring:#FFF1DC;
+    --fw-hub:#FFF1DC; --fw-hub-op:.6;
+    --fw-cap:#5C2A00; --fw-cap-gold:#3D2480; --fw-cap-doll:#34500C;
+    --fw-glow:#FF9500;
+    --fw-pointer-shadow:rgba(255,122,0,.5);
+  }
+
+  /* ---------- Части колеса ---------- */
+  .fw-bulb.even { fill: var(--fw-bulb-a); }
+  .fw-bulb.odd  { fill: var(--fw-bulb-b); }
+  .fw-inner { fill: var(--fw-inner); }
+  .fw-spoke { stroke: var(--fw-spoke); stroke-width: 3; }
+  .fw-edge  { fill: none; stroke: var(--fw-edge); stroke-width: 2.5; }
+  .fw-ring  { fill: none; stroke: var(--fw-ring); stroke-opacity: .55; stroke-width: 1.5; }
+  .fw-hub   { fill: var(--fw-hub); fill-opacity: var(--fw-hub-op); }
+  .fw-cap   { fill: var(--fw-cap); font-family: 'Manrope', sans-serif; font-weight: 800; letter-spacing: .3px; }
+  .fw-cap.gold { fill: var(--fw-cap-gold); }
+  .fw-cap.doll { fill: var(--fw-cap-doll); }
+  .fw-c-outer { fill: var(--fw-inner); }
+  .fw-p-dot   { fill: var(--fw-inner); }
+  .fw-pointer { filter: drop-shadow(0 4px 6px var(--fw-pointer-shadow)); }
+
+  /* ---------- Иконки наград (PNG) ---------- */
+  .dl-reward-img { object-fit: contain; -webkit-user-drag: none; user-select: none; pointer-events: none; }
+  .fortune-prize .dl-ico { width: 46px; height: 46px; }
+  .fortune-result-art .dl-ico { width: 112px; height: 112px; }
+
+  /* ---------- Halloween: остальные детали раздела «Фортуна» ---------- */
+  html[data-seasonal-theme="halloween"] .fortune-stage {
+    background: radial-gradient(120% 70% at 50% 0%, rgba(255,122,0,.17) 0%, var(--surface) 70%);
+    border-color: rgba(255,122,0,.32);
+  }
+  html[data-seasonal-theme="halloween"] .fortune-stage::before,
+  html[data-seasonal-theme="halloween"] .fortune-stage::after { border-color: #FF7A00; }
+  html[data-seasonal-theme="halloween"] .fortune-today-prize { background: rgba(255,122,0,.15); }
+  html[data-seasonal-theme="halloween"] .fortune-countdown { color: #FF7A00; }
+  html[data-seasonal-theme="halloween"] .fortune-prize.rare { background: linear-gradient(160deg, rgba(123,63,242,.15), var(--surface)); }
+  html[data-seasonal-theme="halloween"] .fortune-result-amount { color: #FF7A00; }
+  html[data-seasonal-theme="halloween"] .fortune-result-amount.gold { color: #E86A00; }
+  html[data-seasonal-theme="halloween"] .fortune-result-art::before {
+    background: radial-gradient(circle, rgba(255,149,0,.40) 0%, rgba(255,149,0,0) 70%);
+  }
+  html[data-seasonal-theme="halloween"] .fortune-result-art.gold::before {
+    background: radial-gradient(circle, rgba(255,170,60,.75) 0%, rgba(255,170,60,0) 70%);
+  }
+  html[data-seasonal-theme="halloween"] .fortune-result-art.gold::after {
+    background: conic-gradient(from 0deg, transparent 0 8%, rgba(255,149,0,.6) 10%, transparent 13% 33%, rgba(255,149,0,.6) 35%, transparent 38% 58%, rgba(255,149,0,.6) 60%, transparent 63% 83%, rgba(255,149,0,.6) 85%, transparent 88%);
+  }
+  html[data-seasonal-theme="halloween"] .fw-center:not(:disabled) { animation-name: fw-breathe-hw; }
+  @keyframes fw-breathe-hw {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(255,122,0,0)); }
+    50%      { filter: drop-shadow(0 0 11px rgba(255,122,0,.65)); }
+  }
+</style>
+
+<!-- Градиенты колеса и «хеллоуинская» маленькая иконка Фортуны.
+     Цвета берутся из переменных выше. Не display:none — иначе градиенты не рисуются. -->
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <linearGradient id="fwg-rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--fw-rim1)"/><stop offset=".5" style="stop-color:var(--fw-rim2)"/><stop offset="1" style="stop-color:var(--fw-rim3)"/></linearGradient>
+    <linearGradient id="fwg-a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--fw-a1)"/><stop offset="1" style="stop-color:var(--fw-a2)"/></linearGradient>
+    <linearGradient id="fwg-b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--fw-b1)"/><stop offset="1" style="stop-color:var(--fw-b2)"/></linearGradient>
+    <linearGradient id="fwg-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--fw-gold1)"/><stop offset="1" style="stop-color:var(--fw-gold2)"/></linearGradient>
+    <linearGradient id="fwg-doll" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--fw-doll1)"/><stop offset="1" style="stop-color:var(--fw-doll2)"/></linearGradient>
+    <linearGradient id="fwg-center" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--fw-center1)"/><stop offset="1" style="stop-color:var(--fw-center2)"/></linearGradient>
+    <linearGradient id="fwg-pointer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--fw-pointer1)"/><stop offset="1" style="stop-color:var(--fw-pointer2)"/></linearGradient>
+    <radialGradient id="fwg-glow" cx=".5" cy=".5" r=".5"><stop offset="0" style="stop-color:var(--fw-glow);stop-opacity:.9"/><stop offset="1" style="stop-color:var(--fw-glow);stop-opacity:0"/></radialGradient>
+  </defs>
+
+  <!-- Маленькая иконка Фортуны для Halloween (главная, шапка раздела, окна) -->
+  <symbol id="dl-fortune-hw" viewBox="0 0 48 48">
+    <circle cx="24" cy="26" r="22" fill="url(#fwg-glow)"/>
+    <circle cx="24" cy="26" r="17.4" fill="url(#fwg-rim)"/>
+    <path d="M24 26L24 10.5A15.5 15.5 0 0 1 37.42 18.25Z" fill="url(#fwg-a)"/><path d="M24 26L37.42 18.25A15.5 15.5 0 0 1 37.42 33.75Z" fill="url(#fwg-b)"/><path d="M24 26L37.42 33.75A15.5 15.5 0 0 1 24 41.5Z" fill="url(#fwg-gold)"/><path d="M24 26L24 41.5A15.5 15.5 0 0 1 10.58 33.75Z" fill="url(#fwg-a)"/><path d="M24 26L10.58 33.75A15.5 15.5 0 0 1 10.58 18.25Z" fill="url(#fwg-doll)"/><path d="M24 26L10.58 18.25A15.5 15.5 0 0 1 24 10.5Z" fill="url(#fwg-b)"/>
+    <g style="stroke:var(--fw-spoke)" stroke-width="1.2"><line x1="24" y1="26" x2="24" y2="10.5"/><line x1="24" y1="26" x2="37.42" y2="18.25"/><line x1="24" y1="26" x2="37.42" y2="33.75"/><line x1="24" y1="26" x2="24" y2="41.5"/><line x1="24" y1="26" x2="10.58" y2="33.75"/><line x1="24" y1="26" x2="10.58" y2="18.25"/></g>
+    <g style="fill:var(--fw-bulb-a)"><circle cx="29.1" cy="17.17" r="1.4"/><circle cx="34.2" cy="26" r="1.4"/><circle cx="29.1" cy="34.83" r="1.4"/><circle cx="18.9" cy="34.83" r="1.4"/><circle cx="13.8" cy="26" r="1.4"/><circle cx="18.9" cy="17.17" r="1.4"/></g>
+    <circle cx="24" cy="26" r="15.5" fill="none" style="stroke:var(--fw-ring)" stroke-width="1.1"/>
+    <circle cx="24" cy="26" r="4.4" fill="url(#fwg-center)" style="stroke:var(--fw-inner)" stroke-width="1.3"/>
+    <path d="M24 13.6c-1.6-2.4-3.4-3.6-3.4-5.6a3.4 3.4 0 0 1 6.8 0c0 2-1.8 3.2-3.4 5.6z" fill="url(#fwg-pointer)" style="stroke:var(--fw-inner)" stroke-width="1.1"/>
+  </symbol>
+</svg>
+
+<script id="dl-fortune-theme-js">
+(function () {
+  const VER = '20261013-2';                       // поменяйте, если замените PNG — обновится кэш
+  const SYMBOL_SUFFIX = { 'dl-coin': '1', 'dl-coin-2': '2', 'dl-coin-5': '5', 'dl-coin-100': '100', 'dl-medal-500': '500', 'dl-secret-doll': 'secret' };
+  const KEY_SUFFIX = { dollies_1: '1', dollies_2: '2', dollies_5: '5', dollies_100: '100', dollies_500: '500', secret_doll: 'secret' };
+  const SUFFIXES = ['1', '2', '5', '100', '500', 'secret', 'center'];
+
+  const isHalloween = () => document.documentElement.dataset.seasonalTheme === 'halloween';
+  const imgUrl = suffix => `icons/fortune/${isHalloween() ? 'halloween' : 'pink'}_${suffix}.png?v=${VER}`;
+
+  /* ---------- Иконки наград ---------- */
+  const origDLIcon = window.DLIcon;
+  window.DLIcon = function (symbolId, cls) {
+    const suffix = SYMBOL_SUFFIX[symbolId];
+    if (suffix) {
+      return `<img class="dl-ico dl-reward-img ${cls || ''}" src="${imgUrl(suffix)}" alt="" decoding="async" draggable="false">`;
+    }
+    if (symbolId === 'dl-fortune' && isHalloween()) return origDLIcon('dl-fortune-hw', cls);
+    return origDLIcon(symbolId, cls);
+  };
+
+  /* ---------- Колесо ---------- */
+  // g — какой градиент заливает сектор, cap — подпись под иконкой, size — размер иконки
+  const WHEEL_STYLE = {
+    dollies_1:   { g: 'a',    cap: '1',      capCls: '',     size: 72 },
+    dollies_2:   { g: 'a',    cap: '2',      capCls: '',     size: 74 },
+    dollies_5:   { g: 'a',    cap: '5',      capCls: '',     size: 76 },
+    dollies_100: { g: 'b',    cap: '100',    capCls: '',     size: 76 },
+    dollies_500: { g: 'gold', cap: '500',    capCls: 'gold', size: 80 },
+    secret_doll: { g: 'doll', cap: 'Secret', capCls: 'doll', size: 78 },
+  };
+
+  window.FortuneWheel = function (enabled) {
+    const C = 200, R = 176;
+    const p = (deg, r) => { const a = (deg - 90) * Math.PI / 180; return [(C + r * Math.cos(a)).toFixed(2), (C + r * Math.sin(a)).toFixed(2)]; };
+    const bulbs = Array.from({ length: 24 }, (_, i) => {
+      const [x, y] = p(i * 15 + 7.5, 189);
+      return `<circle class="fw-bulb ${i % 2 ? 'odd' : 'even'}" cx="${x}" cy="${y}" r="3.7" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="1"/>`;
+    }).join('');
+    const sectors = FORTUNE_WHEEL_ORDER.map((key, i) => {
+      const st = WHEEL_STYLE[key];
+      const a0 = i * FORTUNE_SEG, a1 = a0 + FORTUNE_SEG, mid = a0 + FORTUNE_SEG / 2;
+      const [x0, y0] = p(a0, R), [x1, y1] = p(a1, R);
+      const s = st.size;
+      return `
+        <path d="M${C} ${C}L${x0} ${y0}A${R} ${R} 0 0 1 ${x1} ${y1}Z" fill="url(#fwg-${st.g})"/>
+        <g transform="rotate(${mid} ${C} ${C})">
+          <image href="${imgUrl(KEY_SUFFIX[key])}" x="${C - s / 2}" y="${C - 124 - s / 2}" width="${s}" height="${s}" preserveAspectRatio="xMidYMid meet"/>
+          <text class="fw-cap ${st.capCls}" x="${C}" y="${C - 73}" font-size="${st.cap.length > 3 ? 12 : 15}" text-anchor="middle" dominant-baseline="central">${st.cap}</text>
+        </g>`;
+    }).join('');
+    const spokes = FORTUNE_WHEEL_ORDER.map((_, i) => { const [x, y] = p(i * FORTUNE_SEG, R); return `<line class="fw-spoke" x1="${C}" y1="${C}" x2="${x}" y2="${y}"/>`; }).join('');
+
+    const center = `<button type="button" class="fw-center" id="fw-center" ${enabled ? '' : 'disabled'} onclick="spinFortune()" aria-label="Крутить">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="fw-c-outer" cx="50" cy="50" r="48" filter="url(#dlf-soft)"/>
+        <image href="${imgUrl('center')}" x="5" y="5" width="90" height="90" preserveAspectRatio="xMidYMid meet"/>
+      </svg>
+    </button>`;
+    const pointer = `<svg class="fw-pointer" viewBox="0 0 40 52" aria-hidden="true">
+      <path d="M20 50C15 39 6 31 6 20a14 14 0 0 1 28 0c0 11-9 19-14 30z" fill="url(#fwg-pointer)" style="stroke:var(--fw-inner)" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle class="fw-p-dot" cx="20" cy="20" r="5.6"/>
+    </svg>`;
+
+    return `
+      <div class="fw" id="fortune-wheel-wrap">
+        <svg class="fw-layer" viewBox="0 0 400 400" aria-hidden="true">
+          <circle cx="${C}" cy="${C}" r="197" fill="url(#fwg-rim)" filter="url(#dlf-soft)"/>
+          <circle class="fw-ring" cx="${C}" cy="${C}" r="182"/>
+          ${bulbs}
+          <circle class="fw-inner" cx="${C}" cy="${C}" r="${R + 2}"/>
+        </svg>
+        <svg class="fw-layer fw-rotor" id="fortune-wheel" viewBox="0 0 400 400" style="transform:rotate(${fortuneWheelRotation}deg)" aria-label="Колесо Фортуны" role="img">
+          ${sectors}
+          ${spokes}
+          <circle class="fw-edge" cx="${C}" cy="${C}" r="${R}"/>
+          <circle class="fw-hub" cx="${C}" cy="${C}" r="58"/>
+        </svg>
+        ${center}
+        ${pointer}
+      </div>`;
+  };
+
+  /* ---------- Смена темы ---------- */
+  function syncStaticIcons() {
+    const target = isHalloween() ? '#dl-fortune-hw' : '#dl-fortune';
+    document.querySelectorAll('svg.dl-ico use').forEach(u => {
+      const h = u.getAttribute('href');
+      if ((h === '#dl-fortune' || h === '#dl-fortune-hw') && h !== target) u.setAttribute('href', target);
+    });
+  }
+  function preload() { SUFFIXES.forEach(s => { const i = new Image(); i.decoding = 'async'; i.src = imgUrl(s); }); }
+
+  let lastSet = null;
+  function refreshFortuneTheme() {
+    syncStaticIcons();
+    const set = isHalloween() ? 'halloween' : 'pink';
+    if (set === lastSet) return;                       // цвета колеса уже сменились сами через CSS
+    lastSet = set;
+    preload();
+    try {
+      if (!fortuneSpinInFlight && fortuneStatus) renderFortune();   // перерисовываем только ради новых картинок
+    } catch (_) {}
+  }
+
+  const prevApplyTheme = window.applyTheme;
+  if (typeof prevApplyTheme === 'function') {
+    window.applyTheme = function () {
+      const r = prevApplyTheme.apply(this, arguments);
+      refreshFortuneTheme();
+      return r;
+    };
+  }
+  refreshFortuneTheme();
+})();
+</script>
+<!-- ===== конец блока «Фортуна: иконки и цвета» ===== -->
+
+</body>) ===== -->
 <script>
 (function () {
   /* ---------- Карточка «Добавить заказ» сверху вкладки «Мои заказы» ---------- */
