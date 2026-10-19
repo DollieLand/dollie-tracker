@@ -1227,6 +1227,7 @@
   .cat-gallery.card .cat-counter { top: 7px; right: 7px; font-size: 10px; padding: 3px 7px; }
 
   .catalog-detail-price { font-size: 24px; font-weight: 800; color: var(--pink-accent); margin: 2px 0 12px; font-variant-numeric: tabular-nums; }
+  .catalog-desc-collapsed { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden; } .catalog-desc-expanded { display:block; overflow:visible; } .catalog-desc-toggle { padding:4px 0; min-height:32px; margin-top:-8px; margin-bottom:12px; font-size:12px; }
   .catalog-desc { font-size: 13.5px; line-height: 1.6; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 14px; }
   .catalog-weight-note { font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; background: var(--surface-soft); border-radius: var(--r-md); padding: 10px 12px; margin: 10px 0; display: flex; gap: 8px; align-items: flex-start; }
   .catalog-weight-note .icon { width: 16px; height: 16px; color: var(--pink-accent); margin-top: 1px; }
@@ -5618,6 +5619,20 @@ async function loadCatalog(isManual) {
   }
 }
 
+function catalogDescriptionHTML(p) {
+  const value = String(p.description || p.short_description || '').trim();
+  if (!value) return '';
+  if (value.length <= 260) return `<div class="catalog-desc">${escapeHtml(value)}</div>`;
+  const id = 'catalog-desc-' + escapeAttr(String(p.id));
+  return `<div class="catalog-desc catalog-desc-collapsed" id="${id}">${escapeHtml(value)}</div><button type="button" class="btn btn-tertiary catalog-desc-toggle" onclick="toggleCatalogDescription('${id}', this)">Читать полностью</button>`;
+}
+window.toggleCatalogDescription = function(id, btn) {
+  const el = document.getElementById(id); if (!el) return;
+  const expanded = el.classList.toggle('catalog-desc-expanded');
+  el.classList.toggle('catalog-desc-collapsed', !expanded);
+  if (btn) btn.textContent = expanded ? 'Свернуть' : 'Читать полностью';
+};
+
 function catalogDetailHTML(p) {
   const w = formatCatalogWeight(p);
   const extra = Array.isArray(p.extra_params) ? p.extra_params.filter(x => x && x.label) : [];
@@ -5629,8 +5644,7 @@ function catalogDetailHTML(p) {
     </div>
     ${catalogGalleryHTML(p, 'detail')}
     <div class="catalog-detail-price">${escapeHtml(formatRub(p.price))}</div>
-    ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
-      : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
+    ${catalogDescriptionHTML(p)}
     ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
     ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
     ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
@@ -5749,6 +5763,8 @@ async function submitCatalogRequest(event) {
   catalogRequestInFlight = true;
   const btn = document.getElementById('catalog-submit-btn');
   const comment = (document.getElementById('catalog-comment')?.value || '').trim();
+    const sizeControl = document.getElementById('catalog-selected-size');
+    if (sizeControl && !sizeControl.value) { showToast('Выберите размер'); catalogRequestInFlight = false; return; }
   if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
   try {
     // Telegram ID НЕ передаём — сервер берёт его из подписанного initData.
@@ -7880,6 +7896,8 @@ window.addEventListener('unhandledrejection', (e) => {
         <div class="req-qty-unit">до ${CATALOG_MAX_QTY} шт.<br>в одной заявке</div>
       </div>
 
+      ${(p.product_type === 'clothing' || p.product_type === 'shoes') ? `<div class="req-section-title">${p.product_type === 'shoes' ? 'Размер обуви' : 'Размер одежды'} <span style="color:#C43C6B">*</span></div><select class="form-select" id="catalog-selected-size" required><option value="">Выберите размер</option>${(Array.isArray(p.available_sizes) && p.available_sizes.length ? p.available_sizes : (p.product_type === 'shoes' ? ['35','36','37','38','39'] : ['XS','S','M','L','XL','2XL'])).map(sz => `<option value="${escapeAttr(String(sz))}">${escapeHtml(String(sz))}</option>`).join('')}</select>${p.product_type === 'shoes' ? '<div class="review-form-note">Сверьтесь с таблицей размеров на последнем фото товара.</div>' : ''}` : ''}
+
       <div class="req-dollies" id="req-dollies">
         <div class="req-dollies-row" onclick="toggleRequestDollies()" role="checkbox" aria-checked="false" id="req-dollies-toggle" tabindex="0">
           <span class="req-dollies-check"><svg class="icon"><use href="#icon-check"/></svg></span>
@@ -7986,6 +8004,8 @@ window.addEventListener('unhandledrejection', (e) => {
     catalogRequestInFlight = true;
     const btn = document.getElementById('catalog-submit-btn');
     const comment = (document.getElementById('catalog-comment')?.value || '').trim();
+    const sizeControl = document.getElementById('catalog-selected-size');
+    if (sizeControl && !sizeControl.value) { showToast('Выберите размер'); catalogRequestInFlight = false; return; }
     if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
     try {
       // Telegram ID не передаём — сервер берёт его из подписанного initData.
@@ -7994,11 +8014,14 @@ window.addEventListener('unhandledrejection', (e) => {
         product_id: catalogCurrentProduct.id,
         quantity: catalogRequestQty,
         comment,
+        selected_size: (document.getElementById('catalog-selected-size')?.value || '').trim(),
         use_dollies: reqUseDollies,
       });
       if (!res?.ok) {
         const messages = {
-          product_unavailable: 'Эта кукла больше недоступна',
+          product_unavailable: 'Этот товар больше недоступен',
+          size_required: 'Выберите размер',
+          invalid_size: 'Выберите размер из списка',
           invalid_quantity: `Количество — от 1 до ${CATALOG_MAX_QTY}`,
           comment_too_long: `Комментарий не длиннее ${CATALOG_MAX_COMMENT} символов`,
           too_many_requests: 'Слишком много заявок подряд. Попробуйте чуть позже',
@@ -8150,8 +8173,7 @@ window.addEventListener('unhandledrejection', (e) => {
         ${oos ? '<span class="cat-oos-badge">Нет в наличии</span>' : ''}
       </div>
       <div class="catalog-detail-price ${oos ? 'oos' : ''}">${escapeHtml(formatRub(p.price))}</div>
-      ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
-        : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
+      ${catalogDescriptionHTML(p)}
       ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
       ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
       ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
@@ -9027,8 +9049,7 @@ window.addEventListener('unhandledrejection', (e) => {
       </div>
       ${p.category_name ? `<div class="catalog-detail-cat">${escapeHtml(p.category_name)}</div>` : ''}
       ${detailPriceHTML(p)}
-      ${p.description ? `<div class="catalog-desc">${escapeHtml(p.description)}</div>`
-        : (p.short_description ? `<div class="catalog-desc">${escapeHtml(p.short_description)}</div>` : '')}
+      ${catalogDescriptionHTML(p)}
       ${p.size ? `<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>` : ''}
       ${w ? `<div class="info-row"><svg class="icon"><use href="#icon-package"/></svg>Примерный вес: <b>&nbsp;${escapeHtml(w)}</b></div>` : ''}
       ${extra.map(x => `<div class="info-row"><svg class="icon"><use href="#icon-check"/></svg>${escapeHtml(x.label)}${x.value ? `: <b>&nbsp;${escapeHtml(x.value)}</b>` : ''}</div>`).join('')}
