@@ -1227,8 +1227,17 @@
   .cat-gallery.card .cat-counter { top: 7px; right: 7px; font-size: 10px; padding: 3px 7px; }
 
   .catalog-detail-price { font-size: 24px; font-weight: 800; color: var(--pink-accent); margin: 2px 0 12px; font-variant-numeric: tabular-nums; }
-  .catalog-desc-collapsed { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4; overflow:hidden; } .catalog-desc-expanded { display:block; overflow:visible; } .catalog-desc-toggle { padding:4px 0; min-height:32px; margin-top:-8px; margin-bottom:12px; font-size:12px; }
-  .catalog-desc { font-size: 13.5px; line-height: 1.6; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 14px; }
+  .catalog-desc { font-size: 13.5px; line-height: 1.65; color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 8px; }
+  .catalog-desc-collapsed { display:block; max-height: calc(1.65em * 4); overflow:hidden; position:relative; }
+  .catalog-desc-expanded { display:block; max-height:none; overflow:visible; }
+  .catalog-desc-toggle { display:inline-flex; align-items:center; gap:6px; padding:6px 0; min-height:34px; margin:0 0 12px; font-size:12.5px; font-weight:800; color:var(--pink-accent); cursor:pointer; touch-action:manipulation; }
+  .catalog-size-picker { margin: 8px 0 16px; }
+  .catalog-size-options { display:grid; grid-template-columns:repeat(auto-fit,minmax(58px,1fr)); gap:8px; }
+  .catalog-size-option { min-height:46px; padding:10px 8px; border:1px solid var(--border); border-radius:14px; background:var(--surface); color:var(--text); font-size:14px; font-weight:800; box-shadow:var(--shadow-soft); transition:background .15s,border-color .15s,transform .15s; }
+  .catalog-size-option:active { transform:scale(.97); }
+  .catalog-size-option.selected { background:var(--pink-soft); border-color:var(--pink-accent); color:var(--pink-accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--pink-accent) 16%,transparent); }
+  .catalog-size-option[aria-pressed="true"]::after { content:' ✓'; }
+  .catalog-size-help { margin-top:8px; font-size:11.5px; line-height:1.45; color:var(--text-secondary); }
   .catalog-weight-note { font-size: 11.5px; color: var(--text-secondary); line-height: 1.45; background: var(--surface-soft); border-radius: var(--r-md); padding: 10px 12px; margin: 10px 0; display: flex; gap: 8px; align-items: flex-start; }
   .catalog-weight-note .icon { width: 16px; height: 16px; color: var(--pink-accent); margin-top: 1px; }
   .weight-faq { margin-top: 4px; border: 1px solid var(--border); box-shadow: none; }
@@ -5622,15 +5631,39 @@ async function loadCatalog(isManual) {
 function catalogDescriptionHTML(p) {
   const value = String(p.description || p.short_description || '').trim();
   if (!value) return '';
-  if (value.length <= 260) return `<div class="catalog-desc">${escapeHtml(value)}</div>`;
   const id = 'catalog-desc-' + escapeAttr(String(p.id));
-  return `<div class="catalog-desc catalog-desc-collapsed" id="${id}">${escapeHtml(value)}</div><button type="button" class="btn btn-tertiary catalog-desc-toggle" onclick="toggleCatalogDescription('${id}', this)">Читать полностью</button>`;
+  // Always use explicit max-height toggling: works consistently inside Telegram WebView.
+  if (value.length <= 220) return `<div class="catalog-desc">${escapeHtml(value)}</div>`;
+  return `<div class="catalog-desc catalog-desc-collapsed" id="${id}" data-expanded="false">${escapeHtml(value)}</div><button type="button" class="catalog-desc-toggle" aria-expanded="false" onclick="return window.toggleCatalogDescription('${id}', this)">Читать полностью <span aria-hidden="true">⌄</span></button>`;
 }
 window.toggleCatalogDescription = function(id, btn) {
-  const el = document.getElementById(id); if (!el) return;
-  const expanded = el.classList.toggle('catalog-desc-expanded');
+  const el = document.getElementById(id);
+  if (!el) return false;
+  const expanded = el.dataset.expanded !== 'true';
+  el.dataset.expanded = expanded ? 'true' : 'false';
+  el.classList.toggle('catalog-desc-expanded', expanded);
   el.classList.toggle('catalog-desc-collapsed', !expanded);
-  if (btn) btn.textContent = expanded ? 'Свернуть' : 'Читать полностью';
+  el.style.maxHeight = expanded ? 'none' : '';
+  el.style.overflow = expanded ? 'visible' : 'hidden';
+  if (btn) {
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    btn.innerHTML = expanded ? 'Свернуть <span aria-hidden="true">⌃</span>' : 'Читать полностью <span aria-hidden="true">⌄</span>';
+  }
+  if (typeof hapticSelection === 'function') hapticSelection();
+  return false;
+};
+window.selectCatalogSize = function(value, btn) {
+  const select = document.getElementById('catalog-selected-size');
+  if (!select) return;
+  select.value = String(value);
+  document.querySelectorAll('#catalog-size-options .catalog-size-option').forEach(el => {
+    const active = el.dataset.size === String(value);
+    el.classList.toggle('selected', active);
+    el.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+  const error = document.getElementById('catalog-size-error');
+  if (error) error.hidden = true;
+  if (typeof hapticSelection === 'function') hapticSelection();
 };
 
 function catalogDetailHTML(p) {
@@ -5764,7 +5797,7 @@ async function submitCatalogRequest(event) {
   const btn = document.getElementById('catalog-submit-btn');
   const comment = (document.getElementById('catalog-comment')?.value || '').trim();
     const sizeControl = document.getElementById('catalog-selected-size');
-    if (sizeControl && !sizeControl.value) { showToast('Выберите размер'); catalogRequestInFlight = false; return; }
+    if (sizeControl && !sizeControl.value) { const err = document.getElementById('catalog-size-error'); if (err) err.hidden = false; showToast('Выберите размер'); catalogRequestInFlight = false; return; }
   if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
   try {
     // Telegram ID НЕ передаём — сервер берёт его из подписанного initData.
@@ -7896,7 +7929,7 @@ window.addEventListener('unhandledrejection', (e) => {
         <div class="req-qty-unit">до ${CATALOG_MAX_QTY} шт.<br>в одной заявке</div>
       </div>
 
-      ${(p.product_type === 'clothing' || p.product_type === 'shoes') ? `<div class="req-section-title">${p.product_type === 'shoes' ? 'Размер обуви' : 'Размер одежды'} <span style="color:#C43C6B">*</span></div><select class="form-select" id="catalog-selected-size" required><option value="">Выберите размер</option>${(Array.isArray(p.available_sizes) && p.available_sizes.length ? p.available_sizes : (p.product_type === 'shoes' ? ['35','36','37','38','39'] : ['XS','S','M','L','XL','2XL'])).map(sz => `<option value="${escapeAttr(String(sz))}">${escapeHtml(String(sz))}</option>`).join('')}</select>${p.product_type === 'shoes' ? '<div class="review-form-note">Сверьтесь с таблицей размеров на последнем фото товара.</div>' : ''}` : ''}
+      ${(p.product_type === 'clothing' || p.product_type === 'shoes') ? (() => { const sizes = Array.isArray(p.available_sizes) && p.available_sizes.length ? p.available_sizes : (p.product_type === 'shoes' ? ['35','36','37','38','39','40','41','42'] : ['XS','S','M','L','XL','2XL','3XL']); return `<div class="catalog-size-picker"><div class="req-section-title">${p.product_type === 'shoes' ? 'Выберите размер обуви' : 'Выберите размер одежды'} <span style="color:#C43C6B">*</span></div><div class="catalog-size-options" id="catalog-size-options">${sizes.map(sz => `<button type="button" class="catalog-size-option" data-size="${escapeAttr(String(sz))}" aria-pressed="false" onclick="selectCatalogSize('${escapeAttr(String(sz))}', this)">${escapeHtml(String(sz))}</button>`).join('')}</div><select class="form-select" id="catalog-selected-size" required aria-label="Размер" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"><option value="">Выберите размер</option>${sizes.map(sz => `<option value="${escapeAttr(String(sz))}">${escapeHtml(String(sz))}</option>`).join('')}</select><div id="catalog-size-error" class="catalog-size-help" hidden>Пожалуйста, выберите размер.</div>${p.product_type === 'shoes' ? '<div class="catalog-size-help">Размеры указаны по таблице товара. Перед выбором сверьтесь с последним фото.</div>' : '<div class="catalog-size-help">Выберите размер, который указан на странице товара.</div>'}</div>`; })() : ''}
 
       <div class="req-dollies" id="req-dollies">
         <div class="req-dollies-row" onclick="toggleRequestDollies()" role="checkbox" aria-checked="false" id="req-dollies-toggle" tabindex="0">
@@ -8005,7 +8038,7 @@ window.addEventListener('unhandledrejection', (e) => {
     const btn = document.getElementById('catalog-submit-btn');
     const comment = (document.getElementById('catalog-comment')?.value || '').trim();
     const sizeControl = document.getElementById('catalog-selected-size');
-    if (sizeControl && !sizeControl.value) { showToast('Выберите размер'); catalogRequestInFlight = false; return; }
+    if (sizeControl && !sizeControl.value) { const err = document.getElementById('catalog-size-error'); if (err) err.hidden = false; showToast('Выберите размер'); catalogRequestInFlight = false; return; }
     if (btn) { btn.disabled = true; btn.textContent = 'Отправляем…'; }
     try {
       // Telegram ID не передаём — сервер берёт его из подписанного initData.
