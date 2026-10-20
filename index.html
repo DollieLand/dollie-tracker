@@ -5507,8 +5507,12 @@ function catalogImages(p) {
 
 /* Галерея: листается свайпом (scroll-snap), точки и счётчик обновляются при прокрутке */
 function catalogGalleryHTML(p, mode) {
-  const imgs = catalogImages(p);
+  const allImgs = catalogImages(p);
   const pid = escapeAttr(String(p.id));
+  const total = Math.max(allImgs.length, Number(p.image_count) || 0);
+  // В сетке показываем только обложку. Полная галерея создаётся только
+  // в подробном просмотре, чтобы сотни товаров не создавали тысячи img-узлов.
+  const imgs = mode === 'card' ? allImgs.slice(0, 1) : allImgs;
   if (!imgs.length) {
     return `<div class="cat-gallery ${mode}"><div class="cat-gallery-empty"><svg class="icon"><use href="#icon-shop"/></svg></div></div>`;
   }
@@ -5516,16 +5520,16 @@ function catalogGalleryHTML(p, mode) {
     ? `openCatalogProduct('${pid}')`
     : `openCatalogLightbox('${pid}', ${i})`;
   return `
-    <div class="cat-gallery ${mode}" data-count="${imgs.length}">
+    <div class="cat-gallery ${mode}" data-count="${mode === 'card' ? total : imgs.length}">
       <div class="cat-gallery-track">
         ${imgs.map((url, i) => `
           <button type="button" class="cat-slide" onclick="${click(i)}" aria-label="Фото ${i + 1}">
-            <img src="${escapeAttr(url)}" alt="" ${mode === 'card' && i > 0 ? 'loading="lazy"' : ''} decoding="async">
+            <img src="${escapeAttr(url)}" alt="" loading="lazy" decoding="async">
           </button>`).join('')}
       </div>
-      ${imgs.length > 1 ? `
+      ${mode === 'card' && total > 1 ? `<div class="cat-counter">${total} фото</div>` : (mode !== 'card' && imgs.length > 1 ? `
         <div class="cat-counter">1/${imgs.length}</div>
-        <div class="cat-dots">${imgs.map((_, i) => `<span class="cat-dot ${i === 0 ? 'active' : ''}"></span>`).join('')}</div>` : ''}
+        <div class="cat-dots">${imgs.map((_, i) => `<span class="cat-dot ${i === 0 ? 'active' : ''}"></span>`).join('')}</div>` : '')}
     </div>`;
 }
 function bindCatalogGalleries(root) {
@@ -9149,6 +9153,9 @@ window.addEventListener('unhandledrejection', (e) => {
     return catalogCache.filter(p => String(p.category_id || '') === String(catalogCategory));
   }
 
+  const CATALOG_GRID_BATCH = 24;
+  let catalogGridShownCount = CATALOG_GRID_BATCH;
+
   function renderGrid() {
     const list = document.getElementById('catalog-list');
     if (!list) return;
@@ -9157,12 +9164,21 @@ window.addEventListener('unhandledrejection', (e) => {
       return;
     }
     const items = visibleProducts();
-    list.innerHTML = items.length
-      ? `<div class="catalog-grid">${items.map(catalogCardHTML).join('')}</div>`
-      : `<div class="empty-state"><h3>В этой категории пока пусто</h3><p>Загляните позже или посмотрите все куклы.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Все куклы</button></div>`;
+    const shown = items.slice(0, catalogGridShownCount);
+    if (!items.length) {
+      list.innerHTML = `<div class="empty-state"><h3>В этой категории пока пусто</h3><p>Загляните позже или посмотрите все куклы.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Все куклы</button></div>`;
+      return;
+    }
+    list.innerHTML = `<div class="catalog-grid">${shown.map(catalogCardHTML).join('')}</div>` +
+      (shown.length < items.length ? `<button type="button" class="btn btn-secondary btn-block catalog-load-more" onclick="loadMoreCatalogProducts()">Показать ещё (${items.length - shown.length})</button>` : '');
     bindCatalogGalleries(list);
     stripAfterInsert(list);
   }
+
+  window.loadMoreCatalogProducts = function () {
+    catalogGridShownCount += CATALOG_GRID_BATCH;
+    renderGrid();
+  };
 
   window.renderCatalog = function () {
     renderCategoryChips();
@@ -9172,6 +9188,7 @@ window.addEventListener('unhandledrejection', (e) => {
   window.selectCatalogCategory = function (id) {
     if (String(id) === String(catalogCategory)) return;
     catalogCategory = String(id);
+    catalogGridShownCount = CATALOG_GRID_BATCH;
     hapticSelection();
     document.querySelectorAll('#cat-chips .cat-chip').forEach(b => b.classList.toggle('active', b.dataset.cat === catalogCategory));
     document.querySelector(`#cat-chips .cat-chip[data-cat="${CSS.escape(catalogCategory)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -9185,6 +9202,9 @@ window.addEventListener('unhandledrejection', (e) => {
     const btn = document.getElementById('catalog-refresh-btn');
     if (!list) return;
     if (!userId) { list.innerHTML = `<div class="empty-state"><h3>Откройте приложение из Telegram</h3></div>`; return; }
+    // При повторном открытии вкладки используем уже загруженный каталог.
+    // Полное обновление выполняется по кнопке обновления (isManual=true).
+    if (catalogLoadedOnce && !isManual) { renderCatalog(); return; }
     catalogLoadInflight = true;
     if (isManual) { btn?.classList.add('spinning'); btn?.setAttribute('disabled', ''); }
     if (!catalogLoadedOnce) list.innerHTML = skeletonOrdersHTML(2);
