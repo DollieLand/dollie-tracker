@@ -9213,5 +9213,280 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока «скидки и категории» ===== -->
 
+
+
+<!-- ===== DollieLand: размеры с сайта, материалы, срок доставки ===== -->
+<!-- Вставить в index.html (Mini App) прямо перед </body>, ПОСЛЕ ВСЕХ остальных блоков
+     (после блока «скидки и категории»). -->
+<style id="dl-sizes-materials-css">
+  /* ---------- Срок доставки в карточке ---------- */
+  .catalog-delivery {
+    display: flex; align-items: center; gap: 5px; margin-top: 6px;
+    font-size: 11.5px; font-weight: 700; color: var(--text-secondary); line-height: 1.3;
+  }
+  .catalog-delivery .icon { width: 14px; height: 14px; color: var(--pink-accent); flex-shrink: 0; }
+
+  /* ---------- Выбор размера ---------- */
+  .dl-size { margin: 0 0 18px; }
+  .dl-size-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .dl-size-title { font-size: 13.5px; font-weight: 800; color: var(--text); }
+  .dl-size-title .req { color: #C4324A; margin-left: 2px; }
+  .dl-size-chart {
+    display: inline-flex; align-items: center; gap: 3px; padding: 0;
+    font-size: 12px; font-weight: 700; color: var(--pink-accent); white-space: nowrap;
+  }
+  .dl-size-chart .icon { width: 13px; height: 13px; }
+  .dl-size-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+  .dl-size-tile {
+    position: relative; overflow: hidden;
+    min-height: 52px; padding: 6px 4px; border-radius: 14px;
+    border: 1.5px solid var(--border); background: var(--surface); color: var(--text);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1;
+    transition: background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease;
+  }
+  .dl-size-tile:active { transform: scale(.95); }
+  .dl-size-tile .v { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dl-size-tile.selected {
+    background: var(--pink-accent); border-color: var(--pink-accent); color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(231,142,173,.35);
+  }
+  .dl-size-tile.sold {
+    background: var(--surface-soft); border-style: dashed; color: var(--text-secondary);
+    cursor: not-allowed;
+  }
+  .dl-size-tile.sold .v { opacity: .55; }
+  .dl-size-tile.sold::after {            /* диагональ через плитку — «нет в наличии» */
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to top right, transparent calc(50% - .75px), var(--border) calc(50% - .75px), var(--border) calc(50% + .75px), transparent calc(50% + .75px));
+  }
+  .dl-size-tile.sold .s { font-size: 9.5px; font-weight: 700; letter-spacing: .1px; }
+  .dl-size-tile.sold:active { transform: none; }
+  .dl-size.invalid .dl-size-tile:not(.sold) { border-color: rgba(196,50,74,.6); }
+  .dl-size-status { margin-top: 9px; font-size: 12px; line-height: 1.45; color: var(--text-secondary); min-height: 17px; }
+  .dl-size-status b { color: var(--text); }
+  .dl-size.invalid .dl-size-status { color: #C4324A; font-weight: 700; }
+  .dl-size-empty {
+    padding: 12px 14px; border-radius: 14px; background: var(--surface-soft); border: 1px dashed var(--border);
+    font-size: 12.5px; line-height: 1.45; color: var(--text-secondary);
+  }
+
+  /* Размеры в подробной карточке (только просмотр) */
+  .dl-size.view { margin: 14px 0 4px; }
+  .dl-size.view .dl-size-grid { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 6px; }
+  .dl-size.view .dl-size-tile { min-height: 40px; font-size: 13.5px; border-radius: 11px; cursor: default; }
+  .dl-size.view .dl-size-tile:active { transform: none; }
+  .dl-size.view .dl-size-tile.sold .s { display: none; }
+
+  /* ---------- Материалы ---------- */
+  .dl-materials {
+    margin: 14px 0 4px; padding: 13px 14px; border-radius: var(--r-md);
+    background: var(--surface-soft); border: 1px solid var(--border);
+  }
+  .dl-materials-title { display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .dl-materials-title .icon { width: 16px; height: 16px; color: var(--pink-accent); }
+  .dl-materials ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .dl-materials li { font-size: 13px; line-height: 1.5; color: var(--text); overflow-wrap: anywhere; padding-left: 12px; position: relative; }
+  .dl-materials li::before { content: ''; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--pink-accent); }
+</style>
+<script id="dl-sizes-materials-js">
+(function () {
+  const sizeOptions = p => {
+    const list = Array.isArray(p?.size_options) ? p.size_options : [];
+    if (list.length) return list.filter(o => o && String(o.value || '').trim()).map(o => ({ value: String(o.value), available: o.available !== false }));
+    return (Array.isArray(p?.available_sizes) ? p.available_sizes : []).map(v => ({ value: String(v), available: true }));
+  };
+  const hasChart = p => (p?.product_type === 'clothing' || p?.product_type === 'shoes') && catalogImages(p).length > 0;
+  const materialLines = p => String(p?.materials || '').split(/\n+/).map(x => x.trim()).filter(Boolean);
+
+  /* ---------- Карточка: срок доставки с иконкой ---------- */
+  const origCard = window.catalogCardHTML;
+  window.catalogCardHTML = function (p) {
+    let html = origCard(p);
+    const short = String(p?.short_description || '');
+    if (/^доставка/i.test(short)) {
+      html = html.replace(`<div class="catalog-short">${escapeHtml(short)}</div>`,
+        `<div class="catalog-delivery"><svg class="icon"><use href="#icon-truck"/></svg>${escapeHtml(short)}</div>`);
+    }
+    return html;
+  };
+
+  /* ---------- Подробная карточка: размеры и материалы ---------- */
+  function sizesViewHTML(p) {
+    const opts = sizeOptions(p);
+    if (!opts.length) return '';
+    const left = opts.filter(o => o.available).length;
+    return `<div class="dl-size view">
+      <div class="dl-size-head">
+        <span class="dl-size-title">Размеры</span>
+        ${hasChart(p) ? `<button type="button" class="dl-size-chart" onclick="openCatalogSizeChart('${escapeAttr(String(p.id))}')">Таблица размеров <svg class="icon"><use href="#icon-chevron-right"/></svg></button>` : ''}
+      </div>
+      <div class="dl-size-grid">${opts.map(o => `<span class="dl-size-tile ${o.available ? '' : 'sold'}" ${o.available ? '' : 'title="Распродан"'}><span class="v">${escapeHtml(o.value)}</span></span>`).join('')}</div>
+      <div class="dl-size-status">${left === opts.length ? 'Все размеры в наличии' : (left ? `В наличии ${left} из ${opts.length}. Зачёркнутые размеры распроданы.` : 'Все размеры распроданы')}</div>
+    </div>`;
+  }
+  function materialsHTML(p) {
+    const lines = materialLines(p);
+    if (!lines.length) return '';
+    return `<div class="dl-materials">
+      <div class="dl-materials-title"><svg class="icon"><use href="#icon-layers"/></svg>Материалы</div>
+      <ul>${lines.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ul>
+    </div>`;
+  }
+
+  const origDetail = window.catalogDetailHTML;
+  window.catalogDetailHTML = function (p) {
+    let html = origDetail(p);
+    const opts = sizeOptions(p);
+    // Старая строка «Размер: S, M, L» не нужна, если есть плитки размеров
+    if (opts.length && p.size) {
+      html = html.replace(`<div class="info-row"><svg class="icon"><use href="#icon-layers"/></svg>Размер: <b>&nbsp;${escapeHtml(p.size)}</b></div>`, '');
+    }
+    const extra = materialsHTML(p) + sizesViewHTML(p);
+    if (!extra) return html;
+    const desc = catalogDescriptionHTML(p);
+    if (desc && html.includes(desc)) return html.replace(desc, desc + extra);
+    const anchor = '<div class="help-item weight-faq"';
+    return html.includes(anchor) ? html.replace(anchor, extra + anchor) : html + extra;
+  };
+
+  window.openCatalogSizeChart = function (productId) {
+    const p = catalogCache.find(x => String(x.id) === String(productId));
+    const n = p ? catalogImages(p).length : 0;
+    if (!n) return;
+    openCatalogLightbox(productId, n - 1);   // таблица мерок — последнее фото товара
+  };
+
+  /* ---------- Выбор размера в заявке ---------- */
+  function pickerHTML(p) {
+    const opts = sizeOptions(p);
+    if (!opts.length) return '';
+    const pid = escapeAttr(String(p.id));
+    const avail = opts.filter(o => o.available);
+    const chart = hasChart(p) ? `<button type="button" class="dl-size-chart" onclick="openCatalogSizeChart('${pid}')">Таблица размеров <svg class="icon"><use href="#icon-chevron-right"/></svg></button>` : '';
+    if (!avail.length) {
+      return `<div class="dl-size" id="dl-size">
+        <div class="dl-size-head"><span class="dl-size-title">Размер</span>${chart}</div>
+        <div class="dl-size-empty">Все размеры этого товара сейчас распроданы.</div>
+        <input type="hidden" id="catalog-selected-size" value="">
+      </div>`;
+    }
+    const auto = avail.length === 1 ? avail[0].value : '';
+    return `<div class="dl-size" id="dl-size">
+      <div class="dl-size-head"><span class="dl-size-title">Размер<span class="req">*</span></span>${chart}</div>
+      <div class="dl-size-grid" role="radiogroup" aria-label="Размер">
+        ${opts.map(o => `<button type="button" role="radio"
+            class="dl-size-tile ${o.available ? '' : 'sold'} ${o.value === auto ? 'selected' : ''}"
+            data-size="${escapeAttr(o.value)}" aria-checked="${o.value === auto ? 'true' : 'false'}"
+            ${o.available ? '' : 'aria-disabled="true"'}
+            onclick="selectCatalogSize('${escapeAttr(o.value)}', this)">
+            <span class="v">${escapeHtml(o.value)}</span>${o.available ? '' : '<span class="s">нет</span>'}
+          </button>`).join('')}
+      </div>
+      <div class="dl-size-status" id="dl-size-status">${statusText(opts, auto)}</div>
+      <input type="hidden" id="catalog-selected-size" value="${escapeAttr(auto)}">
+    </div>`;
+  }
+  function statusText(opts, selected) {
+    const sold = opts.some(o => !o.available);
+    if (selected) return `Выбран размер <b>${escapeHtml(selected)}</b>${sold ? ' · зачёркнутые распроданы' : ''}`;
+    return sold ? 'Выберите размер. Зачёркнутые размеры распроданы.' : 'Выберите размер.';
+  }
+
+  window.selectCatalogSize = function (value, btn) {
+    const box = document.getElementById('dl-size');
+    const input = document.getElementById('catalog-selected-size');
+    if (!box || !input) return;
+    if (btn?.classList.contains('sold')) {
+      showToast(`Размер ${value} распродан`);
+      hapticNotification('warning');
+      return;
+    }
+    input.value = String(value);
+    box.classList.remove('invalid');
+    box.querySelectorAll('.dl-size-tile').forEach(el => {
+      const on = el.dataset.size === String(value);
+      el.classList.toggle('selected', on);
+      el.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+    const st = document.getElementById('dl-size-status');
+    if (st) st.innerHTML = statusText(sizeOptions(catalogCurrentProduct), String(value));
+    hapticSelection();
+  };
+
+  function mountPicker() {
+    const body = document.getElementById('catalog-request-body');
+    const p = catalogCurrentProduct;
+    if (!body || !p) return;
+    body.querySelector('.catalog-size-picker')?.remove();     // прежний выбор размера
+    body.querySelector('#dl-size')?.remove();
+    const html = pickerHTML(p);
+    if (!html) return;
+    const anchor = body.querySelector('#req-dollies') || body.querySelector('.req-total');
+    if (anchor) anchor.insertAdjacentHTML('beforebegin', html);
+    else body.insertAdjacentHTML('afterbegin', html);
+  }
+
+  const origRender = window.renderCatalogRequestForm;
+  window.renderCatalogRequestForm = function () {
+    origRender.apply(this, arguments);
+    mountPicker();
+  };
+
+  /* Перед отправкой: размер выбран и он в наличии */
+  const origSubmit = window.submitCatalogRequest;
+  window.submitCatalogRequest = function (event) {
+    const p = catalogCurrentProduct;
+    const opts = sizeOptions(p);
+    if (opts.length) {
+      const box = document.getElementById('dl-size');
+      const val = document.getElementById('catalog-selected-size')?.value || '';
+      if (!opts.some(o => o.available)) {
+        event?.preventDefault?.();
+        showToast('Все размеры распроданы');
+        return false;
+      }
+      const match = opts.find(o => o.value === val);
+      if (!match || !match.available) {
+        event?.preventDefault?.();
+        box?.classList.add('invalid');
+        const st = document.getElementById('dl-size-status');
+        if (st) st.textContent = 'Выберите размер, чтобы отправить заявку';
+        box?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        hapticNotification('error');
+        return false;
+      }
+    }
+    return origSubmit.apply(this, arguments);
+  };
+
+  /* Если размер распродали, пока заявка была открыта, — обновляем плитки */
+  const origApiPost = window.apiPost;
+  window.apiPost = async function (path, body) {
+    const res = await origApiPost(path, body);
+    if (path === '/api/catalog/requests' && res && res.error === 'size_sold_out' && catalogCurrentProduct) {
+      const size = body?.selected_size || '';
+      setTimeout(() => showToast(`Размер ${size} только что распродан — выберите другой`), 60);
+      try {
+        const d = await apiFetch('/api/catalog/' + encodeURIComponent(catalogCurrentProduct.id), {}, { timeoutMs: 8000, retries: 0 });
+        if (d?.ok && d.product) {
+          const i = catalogCache.findIndex(x => String(x.id) === String(d.product.id));
+          if (i !== -1) catalogCache[i] = d.product;
+          catalogCurrentProduct = d.product;
+        }
+      } catch (_) {
+        (catalogCurrentProduct.size_options || []).forEach(o => { if (o.value === size) o.available = false; });
+      }
+      mountPicker();
+    }
+    return res;
+  };
+
+  // Каталог мог отрисоваться раньше — перерисуем с новыми карточками.
+  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) renderCatalog();
+})();
+</script>
+<!-- ===== конец блока «размеры, материалы, доставка» ===== -->
+
 </body>
 </html>
