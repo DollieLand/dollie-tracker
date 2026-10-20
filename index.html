@@ -9431,7 +9431,29 @@ window.addEventListener('unhandledrejection', (e) => {
   window.renderCatalogRequestForm = function () {
     origRender.apply(this, arguments);
     mountPicker();
+    refreshSizesFromServer();
   };
+
+  /* Наличие размеров могло измениться с момента загрузки каталога —
+     сверяем с сервером при каждом открытии заявки. */
+  async function refreshSizesFromServer() {
+    const p = catalogCurrentProduct;
+    if (!p || !sizeOptions(p).length) return;
+    try {
+      const d = await apiFetch('/api/catalog/' + encodeURIComponent(p.id), {}, { timeoutMs: 8000, retries: 0 });
+      if (!d?.ok || !d.product || catalogCurrentProduct !== p) return;
+      if (JSON.stringify(sizeOptions(d.product)) === JSON.stringify(sizeOptions(p))) return;
+      const keep = document.getElementById('catalog-selected-size')?.value || '';
+      p.size_options = d.product.size_options;
+      p.available_sizes = d.product.available_sizes;
+      const i = catalogCache.findIndex(x => String(x.id) === String(p.id));
+      if (i !== -1) catalogCache[i] = { ...catalogCache[i], size_options: p.size_options, available_sizes: p.available_sizes };
+      mountPicker();
+      const still = sizeOptions(p).find(o => o.value === keep && o.available);
+      if (still) selectCatalogSize(keep, document.querySelector(`#dl-size .dl-size-tile[data-size="${CSS.escape(keep)}"]`));
+      else if (keep) showToast(`Размер ${keep} только что закончился`);
+    } catch (_) {}
+  }
 
   /* Перед отправкой: размер выбран и он в наличии */
   const origSubmit = window.submitCatalogRequest;
