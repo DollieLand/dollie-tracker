@@ -7416,227 +7416,9 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 </script>
 
-<!-- ===== DollieLand: привязка заказа по номеру в «Мои заказы» (вставить прямо перед 
-<!-- ===== DollieLand: Фортуна — новые иконки наград, логотип DL в центре + цвета колеса под тему ===== -->
-<!-- Вставить в index.html прямо перед <!-- ===== DollieLand: выбор цвета / оттенка (в «Подробнее» и в заявке) ===== -->
-<!-- Вставить в index.html (Mini App) прямо перед </body>, ПОСЛЕ блока «комбо со скидкой». -->
-<style id="dl-variants-css">
-  .vr-card-line { display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 11px; font-weight: 700; color: var(--text-secondary); }
-  .vr-dots { display: flex; }
-  .vr-dots i { width: 16px; height: 16px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--surface); margin-left: -5px; background: var(--pink-soft); box-shadow: 0 0 0 1px var(--border); }
-  .vr-dots i:first-child { margin-left: 0; }
-  .vr-dots img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .vr-pick { margin: 4px 0 16px; }
-  .vr-group + .vr-group { margin-top: 14px; }
-  .vr-head { display: flex; align-items: baseline; gap: 4px; margin-bottom: 9px; font-size: 13.5px; font-weight: 800; color: var(--text); }
-  .vr-head .req { color: #C4324A; }
-  .vr-head .vr-chosen { font-weight: 600; color: var(--text-secondary); overflow-wrap: anywhere; }
-  .vr-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-  .vr-tile {
-    position: relative; display: inline-flex; align-items: center; gap: 7px; min-height: 40px;
-    padding: 6px 12px; border-radius: 13px; border: 1.5px solid var(--border); background: var(--surface);
-    color: var(--text); font-size: 12.5px; font-weight: 700; line-height: 1.25; text-align: left;
-    transition: border-color .15s ease, background .15s ease, transform .12s ease; overflow: hidden;
-  }
-  .vr-tile:active { transform: scale(.96); }
-  .vr-tile.selected { border-color: var(--pink-accent); background: var(--pink-soft); box-shadow: 0 0 0 2px color-mix(in srgb, var(--pink-accent) 18%, transparent); }
-  .vr-tile.sold { border-style: dashed; color: var(--text-secondary); background: var(--surface-soft); }
-  .vr-tile.sold .vr-v { text-decoration: line-through; opacity: .7; }
-  .vr-tile .vr-s { font-size: 9.5px; font-weight: 800; color: var(--text-secondary); }
-  /* Варианты с картинками — квадратные плитки с подписью */
-  .vr-grid.img { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
-  .vr-grid.img .vr-tile { flex-direction: column; align-items: stretch; gap: 0; padding: 0; min-height: 0; border-radius: 14px; }
-  .vr-grid.img .vr-img { display: block; aspect-ratio: 1; background: var(--pink-soft); }
-  .vr-grid.img .vr-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .vr-grid.img .vr-tile.sold .vr-img img { filter: grayscale(.7); opacity: .55; }
-  .vr-grid.img .vr-v { display: block; padding: 5px 6px 6px; font-size: 10.5px; text-align: center;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .vr-grid.img .vr-s { position: absolute; top: 5px; right: 5px; background: rgba(57,44,49,.75); color: #fff; padding: 1px 6px; border-radius: 999px; }
-  .vr-grid.img .vr-tile.selected .vr-v { color: var(--pink-accent); }
-  .vr-status { margin-top: 8px; font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
-  .vr-group.invalid .vr-tile:not(.sold) { border-color: rgba(196,50,74,.6); }
-  .vr-group.invalid .vr-head { color: #C4324A; }
-</style>
-<script id="dl-variants-js">
-(function () {
-  const variantSel = {};          // id товара → { ключ группы: значение }
-  const groups = p => (Array.isArray(p?.option_groups) ? p.option_groups : []);
-  const sel = pid => (variantSel[String(pid)] = variantSel[String(pid)] || {});
-  const findProduct = pid => catalogCache.find(x => String(x.id) === String(pid))
-    || (catalogCurrentProduct && String(catalogCurrentProduct.id) === String(pid) ? catalogCurrentProduct : null);
 
-  function countWord(label, n) {
-    const l = String(label || '').toLowerCase();
-    if (l.startsWith('цвет')) return pluralize(n, 'цвет', 'цвета', 'цветов');
-    if (l.startsWith('оттен')) return pluralize(n, 'оттенок', 'оттенка', 'оттенков');
-    return pluralize(n, 'вариант', 'варианта', 'вариантов');
-  }
-
-  /* ---------- Карточка в сетке: «5 оттенков» с кружками ---------- */
-  const prevCard = window.catalogCardHTML;
-  window.catalogCardHTML = function (p) {
-    let html = prevCard(p);
-    const g = groups(p)[0];
-    if (!g) return html;
-    const pics = g.options.filter(o => o.image_url).slice(0, 5);
-    const line = `<div class="vr-card-line">${pics.length ? `<span class="vr-dots">${pics.map(o => `<i><img src="${escapeAttr(assetUrl(o.image_url))}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></i>`).join('')}</span>` : ''}${g.options.length} ${countWord(g.label, g.options.length)}</div>`;
-    const title = `<div class="catalog-card-title">${escapeHtml(p.name)}</div>`;
-    return html.includes(title) ? html.replace(title, title + line) : html;
-  };
-
-  /* ---------- Выбор ---------- */
-  function pickerHTML(p, mode) {
-    const gs = groups(p);
-    if (!gs.length) return '';
-    const pid = String(p.id);
-    const s = sel(pid);
-    if (mode === 'request') {
-      gs.forEach(g => {
-        const avail = g.options.filter(o => o.available);
-        if (s[g.key] && !avail.some(o => o.value === s[g.key])) delete s[g.key];   // выбранный уже распродан
-        if (!s[g.key] && avail.length === 1) s[g.key] = avail[0].value;
-      });
-    }
-    return `<div class="vr-pick" data-pid="${escapeAttr(pid)}" data-mode="${mode}">
-      ${gs.map(g => {
-        const withImg = g.options.some(o => o.image_url);
-        return `<div class="vr-group" data-key="${escapeAttr(String(g.key))}">
-          <div class="vr-head">${escapeHtml(g.label)}${mode === 'request' ? '<span class="req">*</span>' : ''}<span class="vr-chosen">${s[g.key] ? ': ' + escapeHtml(s[g.key]) : ''}</span></div>
-          <div class="vr-grid ${withImg ? 'img' : ''}" role="radiogroup" aria-label="${escapeAttr(g.label)}">
-            ${g.options.map(o => `<button type="button" role="radio" class="vr-tile ${o.available ? '' : 'sold'} ${s[g.key] === o.value ? 'selected' : ''}"
-                data-value="${escapeAttr(o.value)}" aria-checked="${s[g.key] === o.value}"
-                onclick="selectVariant('${escapeAttr(pid)}', '${escapeAttr(String(g.key))}', '${escapeAttr(o.value)}', this)">
-                ${withImg ? `<span class="vr-img">${o.image_url ? `<img src="${escapeAttr(assetUrl(o.image_url))}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}</span>` : ''}
-                <span class="vr-v">${escapeHtml(o.value)}</span>${o.available ? '' : '<span class="vr-s">нет</span>'}
-              </button>`).join('')}
-          </div>
-        </div>`;
-      }).join('')}
-      <div class="vr-status">${statusText(p)}</div>
-    </div>`;
-  }
-  function statusText(p) {
-    const gs = groups(p);
-    const s = sel(p.id);
-    const sold = gs.some(g => g.options.some(o => !o.available));
-    if (gs.every(g => s[g.key])) return sold ? 'Зачёркнутые варианты закончились.' : '';
-    return 'Выберите ' + gs.map(g => g.label.toLowerCase()).join(' и ') + (sold ? '. Зачёркнутые закончились.' : '.');
-  }
-
-  window.selectVariant = function (pid, key, value, btn) {
-    if (btn?.classList.contains('sold')) { showToast(`«${value}» сейчас нет в наличии`); hapticNotification('warning'); return; }
-    const p = findProduct(pid);
-    if (!p) return;
-    sel(pid)[key] = String(value);
-    document.querySelectorAll(`.vr-pick[data-pid="${CSS.escape(String(pid))}"]`).forEach(box => {
-      const grp = box.querySelector(`.vr-group[data-key="${CSS.escape(String(key))}"]`);
-      if (!grp) return;
-      grp.classList.remove('invalid');
-      grp.querySelectorAll('.vr-tile').forEach(t => {
-        const on = t.dataset.value === String(value);
-        t.classList.toggle('selected', on);
-        t.setAttribute('aria-checked', on ? 'true' : 'false');
-      });
-      const ch = grp.querySelector('.vr-chosen');
-      if (ch) ch.textContent = ': ' + value;
-      const st = box.querySelector('.vr-status');
-      if (st) st.textContent = statusText(p);
-    });
-    const opt = (groups(p).find(g => String(g.key) === String(key))?.options || []).find(o => o.value === String(value));
-    // «Подробнее»: листаем галерею к фото этого цвета
-    if (opt && Number.isInteger(opt.image_index)) {
-      const track = document.querySelector('#sheet-catalog-product-content .cat-gallery.detail .cat-gallery-track');
-      if (track) track.scrollTo({ left: track.clientWidth * opt.image_index, behavior: 'smooth' });
-    }
-    // Заявка: миниатюра товара показывает выбранный цвет
-    if (opt?.image_url) {
-      const thumb = document.querySelector('#catalog-request-body .catalog-req-thumb');
-      if (thumb) thumb.innerHTML = `<img src="${escapeAttr(assetUrl(opt.image_url))}" alt="">`;
-    }
-    hapticSelection();
-  };
-
-  /* ---------- «Подробнее» ---------- */
-  const prevDetail = window.catalogDetailHTML;
-  window.catalogDetailHTML = function (p) {
-    const html = prevDetail(p);
-    const picker = pickerHTML(p, 'detail');
-    if (!picker) return html;
-    const desc = catalogDescriptionHTML(p);
-    if (desc && html.includes(desc)) return html.replace(desc, picker + desc);
-    const anchor = '<div class="help-item weight-faq"';
-    return html.includes(anchor) ? html.replace(anchor, picker + anchor) : html + picker;
-  };
-
-  /* ---------- Заявка ---------- */
-  function mountRequestPicker() {
-    const body = document.getElementById('catalog-request-body');
-    const p = catalogCurrentProduct;
-    if (!body || !p) return;
-    body.querySelector('.vr-pick')?.remove();
-    const html = pickerHTML(p, 'request');
-    if (!html) return;
-    const anchor = body.querySelector('.req-section-title') || body.querySelector('#req-dollies');
-    if (anchor) anchor.insertAdjacentHTML('beforebegin', html);
-    else body.insertAdjacentHTML('afterbegin', html);
-    // если цвет уже выбран в «Подробнее» — покажем его фото
-    const g = groups(p)[0];
-    const opt = g && g.options.find(o => o.value === sel(p.id)[g.key]);
-    const thumb = body.querySelector('.catalog-req-thumb');
-    if (opt?.image_url && thumb) thumb.innerHTML = `<img src="${escapeAttr(assetUrl(opt.image_url))}" alt="">`;
-  }
-  const prevRender = window.renderCatalogRequestForm;
-  window.renderCatalogRequestForm = function () {
-    prevRender.apply(this, arguments);
-    mountRequestPicker();
-  };
-
-  const prevSubmit = window.submitCatalogRequest;
-  window.submitCatalogRequest = function (event) {
-    const p = catalogCurrentProduct;
-    const missing = groups(p).filter(g => !sel(p.id)[g.key]);
-    if (missing.length) {
-      event?.preventDefault?.();
-      missing.forEach(g => document.querySelector(`#catalog-request-body .vr-group[data-key="${CSS.escape(String(g.key))}"]`)?.classList.add('invalid'));
-      document.querySelector('#catalog-request-body .vr-group.invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      hapticNotification('error');
-      showToast('Выберите ' + missing.map(g => g.label.toLowerCase()).join(' и '));
-      return false;
-    }
-    return prevSubmit.apply(this, arguments);
-  };
-
-  const prevApiPost = window.apiPost;
-  window.apiPost = async function (path, body) {
-    const p = catalogCurrentProduct;
-    const isReq = path === '/api/catalog/requests';
-    if (isReq && p && groups(p).length && body) body = { ...body, selected_options: { ...sel(p.id) } };
-    const res = await prevApiPost(path, body);
-    if (isReq && res && (res.error === 'option_sold_out' || res.error === 'option_required' || res.error === 'invalid_option') && p) {
-      setTimeout(() => showToast(res.error === 'option_sold_out'
-        ? `«${res.value}» только что закончился — выберите другой вариант`
-        : `Выберите: ${res.group || 'вариант'}`), 90);
-      try {
-        const d = await apiFetch('/api/catalog/' + encodeURIComponent(p.id), {}, { timeoutMs: 8000, retries: 0 });
-        if (d?.ok && d.product) {
-          const i = catalogCache.findIndex(x => String(x.id) === String(d.product.id));
-          if (i !== -1) catalogCache[i] = d.product;
-          catalogCurrentProduct = d.product;
-        }
-      } catch (_) {}
-      mountRequestPicker();
-    }
-    return res;
-  };
-
-  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) renderCatalog();
-})();
-</script>
-<!-- ===== конец блока «выбор цвета» ===== -->
-
-</body>, ПОСЛЕ всех остальных блоков (после блока «скидки и категории»).
-     Рядом с index.html должна лежать папка icons/fortune/ с 14 PNG из архива fortune-icons.zip. -->
+<!-- ===== DollieLand: Фортуна — иконки и цвета ===== -->
 <style id="dl-fortune-theme-css">
   /* ---------- Цвета колеса: стандартная (розовая) тема ----------
      Всё колесо красится через переменные, поэтому при смене темы или режима
@@ -9409,8 +9191,10 @@ window.addEventListener('unhandledrejection', (e) => {
     try {
       const data = await apiFetch('/api/catalog', {}, { timeoutMs: 10000, retries: 1 });
       if (!data?.ok) throw new Error('catalog');
-      catalogCache = data.products || [];
-      catalogCategories = Array.isArray(data.categories) ? data.categories : [];
+      catalogCache = (data.products || []).filter(p => !p.is_bundle && p.product_type !== 'bundle');
+      catalogCategories = (Array.isArray(data.categories) ? data.categories : [])
+        .map(c => ({ ...c, count: catalogCache.filter(p => String(p.category_id || '') === String(c.id)).length }))
+        .filter(c => c.count > 0);
       catalogLoadedOnce = true;
       renderCatalog();
     } catch (e) {
@@ -9727,480 +9511,206 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец блока «размеры, материалы, доставка» ===== -->
 
-<!-- ===== DollieLand: комбо со скидкой (корсет + юбка и т.п.) ===== -->
-<!-- Вставить в index.html (Mini App) прямо перед </body>, ПОСЛЕ ВСЕХ остальных блоков
-     (после блока «размеры, материалы, доставка»). Нужен обновлённый web_panel.py. -->
-<style id="dl-combo-css">
-  /* Бейджи и строки в карточке */
-  .combo-badge {
-    position: absolute; left: 8px; top: 8px; z-index: 3; pointer-events: none;
-    display: inline-flex; align-items: center; gap: 4px;
-    background: linear-gradient(135deg, var(--pink-accent), #C9688D); color: #fff;
-    font-size: 10.5px; font-weight: 800; letter-spacing: .3px; padding: 4px 9px; border-radius: 999px;
-    box-shadow: 0 4px 10px rgba(201,104,141,.35);
-  }
-  .combo-badge .icon { width: 12px; height: 12px; }
-  .combo-card .cat-oos-badge { top: 36px; }
-  .cat-media.detail .combo-badge { left: 12px; top: 12px; font-size: 12px; padding: 5px 11px; }
-  .cat-media.detail .combo-badge + .cat-oos-badge, .combo-detail .cat-oos-badge { top: 42px; }
-  .combo-parts { font-size: 11.5px; color: var(--text-secondary); line-height: 1.35; margin-top: 5px; overflow-wrap: anywhere;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .combo-save {
-    display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; margin-top: 5px;
-    font-size: 11px; font-weight: 800; color: #E5384F; background: rgba(229,56,79,.1);
-    padding: 3px 8px; border-radius: 999px; font-variant-numeric: tabular-nums;
-  }
-  html[data-theme="dark"] .combo-save { color: #FF7A8C; background: rgba(255,122,140,.14); }
-  .combo-thumbs { display: flex; align-items: center; margin-top: 7px; }
-  .combo-thumbs .t {
-    width: 26px; height: 26px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
-    border: 2px solid var(--surface); background: var(--pink-soft); margin-left: -7px;
-    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--pink-accent);
-  }
-  .combo-thumbs .t:first-child { margin-left: 0; }
-  .combo-thumbs .t img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .combo-thumbs .plus { font-size: 13px; font-weight: 800; color: var(--text-secondary); margin: 0 2px 0 3px; }
 
-  /* Полоса «Комбо со скидкой» сверху каталога */
-  .combo-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 10px; }
-  .combo-row-head b { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 800; color: var(--text); }
-  .combo-row-head b .icon { width: 18px; height: 18px; color: var(--pink-accent); }
-  .combo-row-head button { font-size: 12.5px; font-weight: 700; color: var(--pink-accent); padding: 0; }
-  .combo-row { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; margin: 0 -18px 18px; padding: 2px 18px 6px; }
-  .combo-row::-webkit-scrollbar { display: none; }
-  .combo-mini {
-    flex: 0 0 min(250px, 72%); scroll-snap-align: start; text-align: left; color: var(--text);
-    background: linear-gradient(160deg, var(--surface-soft), var(--surface)); border: 1px solid var(--border);
-    border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-card); display: flex; flex-direction: column;
+
+<!-- ===== DollieLand: выбор цвета / оттенка (в «Подробнее» и в заявке) ===== -->
+<style id="dl-variants-css">
+  .vr-card-line { display: flex; align-items: center; gap: 6px; margin-top: 5px; font-size: 11px; font-weight: 700; color: var(--text-secondary); }
+  .vr-dots { display: flex; }
+  .vr-dots i { width: 16px; height: 16px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--surface); margin-left: -5px; background: var(--pink-soft); box-shadow: 0 0 0 1px var(--border); }
+  .vr-dots i:first-child { margin-left: 0; }
+  .vr-dots img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .vr-pick { margin: 4px 0 16px; }
+  .vr-group + .vr-group { margin-top: 14px; }
+  .vr-head { display: flex; align-items: baseline; gap: 4px; margin-bottom: 9px; font-size: 13.5px; font-weight: 800; color: var(--text); }
+  .vr-head .req { color: #C4324A; }
+  .vr-head .vr-chosen { font-weight: 600; color: var(--text-secondary); overflow-wrap: anywhere; }
+  .vr-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+  .vr-tile {
+    position: relative; display: inline-flex; align-items: center; gap: 7px; min-height: 40px;
+    padding: 6px 12px; border-radius: 13px; border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--text); font-size: 12.5px; font-weight: 700; line-height: 1.25; text-align: left;
+    transition: border-color .15s ease, background .15s ease, transform .12s ease; overflow: hidden;
   }
-  .combo-mini:active { transform: scale(.98); }
-  .combo-mini-img { position: relative; aspect-ratio: 16 / 10; background: var(--pink-soft); }
-  .combo-mini-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .combo-mini.oos .combo-mini-img img { filter: grayscale(.35); opacity: .85; }
-  .combo-mini-img .cat-sale-badge { left: auto; right: 8px; bottom: 8px; }
-  .combo-mini-body { padding: 10px 12px 12px; display: flex; flex-direction: column; flex: 1; }
-  .combo-mini-name { font-size: 13.5px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .combo-mini .catalog-price-row { margin-top: 5px; }
-
-  /* Подробная карточка комбо: состав */
-  .combo-comp { margin: 4px 0 14px; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
-  .combo-comp-title { display: flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 800; color: var(--text);
-    padding: 12px 14px 8px; }
-  .combo-comp-title .icon { width: 16px; height: 16px; color: var(--pink-accent); }
-  .combo-comp-row { width: 100%; display: flex; align-items: center; gap: 11px; padding: 9px 14px; text-align: left;
-    color: var(--text); border-top: 1px solid var(--border); }
-  .combo-comp-row:active { background: var(--surface-soft); }
-  .combo-comp-row .img { width: 48px; height: 48px; border-radius: 12px; overflow: hidden; background: var(--pink-soft); flex-shrink: 0; }
-  .combo-comp-row .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .combo-comp-row .main { flex: 1; min-width: 0; }
-  .combo-comp-row .nm { display: block; font-size: 13px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
-  .combo-comp-row .sub { display: block; font-size: 11.5px; color: var(--text-secondary); margin-top: 2px; }
-  .combo-comp-row .pr { font-size: 13px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .combo-comp-row .chev { width: 16px; height: 16px; color: var(--text-secondary); flex-shrink: 0; }
-  .combo-comp-sum { background: var(--surface-soft); border-top: 1px dashed var(--border); padding: 11px 14px; display: grid; gap: 4px; }
-  .combo-comp-sum .r { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--text-secondary); }
-  .combo-comp-sum .r b { color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .combo-comp-sum .r s { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .combo-comp-sum .r.save b { color: #E5384F; }
-  html[data-theme="dark"] .combo-comp-sum .r.save b { color: #FF7A8C; }
-  .combo-comp-note { padding: 0 14px 12px; font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
-
-  /* Подробная карточка вещи: «Выгоднее в комбо» */
-  .combo-offer { margin: 18px 0 4px; }
-  .combo-offer-title { display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
-  .combo-offer-title .icon { width: 17px; height: 17px; color: var(--pink-accent); }
-  .combo-offer-card {
-    width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; color: var(--text);
-    padding: 12px 13px; margin-bottom: 8px; border-radius: var(--r-lg);
-    border: 1.5px solid var(--pink); background: linear-gradient(150deg, var(--pink-soft), var(--surface));
-    box-shadow: var(--shadow-soft);
-  }
-  .combo-offer-card:active { transform: scale(.985); }
-  .combo-offer-card.oos { border-style: dashed; opacity: .8; }
-  .combo-offer-card .combo-thumbs { margin-top: 0; flex-shrink: 0; }
-  .combo-offer-card .combo-thumbs .t { width: 40px; height: 40px; margin-left: -12px; border-width: 2.5px; }
-  .combo-offer-card .combo-thumbs .t:first-child { margin-left: 0; }
-  .combo-offer-main { flex: 1; min-width: 0; }
-  .combo-offer-name { display: block; font-size: 13px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
-  .combo-offer-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 7px; margin-top: 4px; }
-  .combo-offer-price b { font-size: 15px; color: #E5384F; font-variant-numeric: tabular-nums; }
-  html[data-theme="dark"] .combo-offer-price b { color: #FF7A8C; }
-  .combo-offer-price s { font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-  .combo-offer-card .chev { width: 18px; height: 18px; color: var(--text-secondary); flex-shrink: 0; }
-
-  /* Заявка на комбо */
-  .combo-req-line { display: flex; gap: 8px; align-items: flex-start; margin: -8px 0 16px; padding: 10px 12px;
-    background: var(--pink-soft); border-radius: var(--r-md); font-size: 12px; line-height: 1.45; color: var(--text); }
-  .combo-req-line .icon { width: 16px; height: 16px; color: var(--pink-accent); flex-shrink: 0; margin-top: 1px; }
-  .combo-req-line b { color: #E5384F; white-space: nowrap; }
-  .combo-sizes .combo-size-group + .combo-size-group { margin-top: 14px; }
-  .combo-sizes .combo-size-group.invalid .dl-size-tile:not(.sold) { border-color: rgba(196,50,74,.6); }
-  .combo-sizes .combo-size-group.invalid .dl-size-title { color: #C4324A; }
-  .combo-chip .icon { width: 14px; height: 14px; }
+  .vr-tile:active { transform: scale(.96); }
+  .vr-tile.selected { border-color: var(--pink-accent); background: var(--pink-soft); box-shadow: 0 0 0 2px color-mix(in srgb, var(--pink-accent) 18%, transparent); }
+  .vr-tile.sold { border-style: dashed; color: var(--text-secondary); background: var(--surface-soft); }
+  .vr-tile.sold .vr-v { text-decoration: line-through; opacity: .7; }
+  .vr-tile .vr-s { font-size: 9.5px; font-weight: 800; color: var(--text-secondary); }
+  /* Варианты с картинками — квадратные плитки с подписью */
+  .vr-grid.img { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+  .vr-grid.img .vr-tile { flex-direction: column; align-items: stretch; gap: 0; padding: 0; min-height: 0; border-radius: 14px; }
+  .vr-grid.img .vr-img { display: block; aspect-ratio: 1; background: var(--pink-soft); }
+  .vr-grid.img .vr-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vr-grid.img .vr-tile.sold .vr-img img { filter: grayscale(.7); opacity: .55; }
+  .vr-grid.img .vr-v { display: block; padding: 5px 6px 6px; font-size: 10.5px; text-align: center;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vr-grid.img .vr-s { position: absolute; top: 5px; right: 5px; background: rgba(57,44,49,.75); color: #fff; padding: 1px 6px; border-radius: 999px; }
+  .vr-grid.img .vr-tile.selected .vr-v { color: var(--pink-accent); }
+  .vr-status { margin-top: 8px; font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .vr-group.invalid .vr-tile:not(.sold) { border-color: rgba(196,50,74,.6); }
+  .vr-group.invalid .vr-head { color: #C4324A; }
 </style>
-<script id="dl-combo-js">
+<script id="dl-variants-js">
 (function () {
-  const COMBO = '__combo';
-  let cats = [];
-  let currentCat = 'all';
-  let comboSel = {};
+  const variantSel = {};          // id товара → { ключ группы: значение }
+  const groups = p => (Array.isArray(p?.option_groups) ? p.option_groups : []);
+  const sel = pid => (variantSel[String(pid)] = variantSel[String(pid)] || {});
+  const findProduct = pid => catalogCache.find(x => String(x.id) === String(pid))
+    || (catalogCurrentProduct && String(catalogCurrentProduct.id) === String(pid) ? catalogCurrentProduct : null);
 
-  const isBundle = p => !!(p && p.is_bundle);
-  const isOOS = p => p && p.in_stock === false;
-  const hasSale = p => p && Number(p.discount_percent) > 0 && Number(p.old_price) > Number(p.price);
-  const items = p => (Array.isArray(p?.bundle_items) ? p.bundle_items : []);
-  const combos = () => catalogCache.filter(isBundle);
-  const combosWith = id => catalogCache.filter(p => isBundle(p) && items(p).some(x => String(x.id) === String(id)));
-  const inCache = id => catalogCache.find(x => String(x.id) === String(id));
-  const ico = id => `<svg class="icon"><use href="#icon-${id}"/></svg>`;
-  const firstImg = p => (typeof catalogImages === 'function' ? catalogImages(p) : [])[0] || '';
-
-  function thumbsHTML(list, max) {
-    const shown = list.slice(0, max || 3);
-    return `<span class="combo-thumbs">${shown.map(x => `<span class="t">${x.image_url
-      ? `<img src="${escapeAttr(assetUrl(x.image_url))}" alt="" loading="lazy" decoding="async">`
-      : escapeHtml(String(x.name || '?').charAt(0))}</span>`).join('')}${list.length > shown.length
-      ? `<span class="t">+${list.length - shown.length}</span>` : ''}</span>`;
-  }
-  function partsText(p) { return items(p).map(x => x.name).join(' + '); }
-  function saving(p) {
-    const s = Number(p.bundle_saving) || (hasSale(p) ? Number(p.old_price) - Number(p.price) : 0);
-    return Math.max(0, s);
-  }
-  function priceRowHTML(p) {
-    if (!hasSale(p)) return `<div class="catalog-price">${escapeHtml(formatRub(p.price))}</div>`;
-    return `<div class="catalog-price-row"><span class="catalog-price sale">${escapeHtml(formatRub(p.price))}</span>
-      <span class="catalog-old-price">${escapeHtml(formatRub(p.old_price))}</span></div>`;
-  }
-  function waitBtnHTML(p, extra) {
-    const pid = escapeAttr(String(p.id));
-    const on = !!p.waitlisted;
-    return `<button type="button" class="btn btn-wait ${on ? 'on' : ''} ${extra || ''}" data-wait-btn="${pid}"
-      onclick="toggleCatalogWaitlist('${pid}', event); return false;" aria-pressed="${on}">
-      ${on ? ico('check') + ' Сообщим о поступлении' : ico('bell') + ' Сообщить о поступлении'}</button>`;
+  function countWord(label, n) {
+    const l = String(label || '').toLowerCase();
+    if (l.startsWith('цвет')) return pluralize(n, 'цвет', 'цвета', 'цветов');
+    if (l.startsWith('оттен')) return pluralize(n, 'оттенок', 'оттенка', 'оттенков');
+    return pluralize(n, 'вариант', 'варианта', 'вариантов');
   }
 
-  /* ---------- Карточка комбо в сетке ---------- */
-  function comboCardHTML(p) {
-    const pid = escapeAttr(String(p.id));
-    const oos = isOOS(p);
-    const list = items(p);
-    const save = saving(p);
-    return `
-      <article class="catalog-card combo-card ${oos ? 'oos' : ''}">
-        <div class="cat-media">
-          ${catalogGalleryHTML(p, 'card')}
-          <span class="combo-badge">${ico('gift')} Комбо</span>
-          ${oos ? '<span class="cat-oos-badge">Нет в наличии</span>' : ''}
-          ${hasSale(p) ? `<span class="cat-sale-badge">−${Number(p.discount_percent)}%</span>` : ''}
-        </div>
-        <div class="catalog-card-body">
-          <div class="catalog-card-title">${escapeHtml(p.name)}</div>
-          ${priceRowHTML(p)}
-          ${save > 0 ? `<span class="combo-save">Выгода ${escapeHtml(formatRub(save))}</span>` : ''}
-          ${list.length >= 2 ? thumbsHTML(list, 3) + `<div class="combo-parts">${escapeHtml(partsText(p))}</div>` : ''}
-          <div class="catalog-actions">
-            <button type="button" class="btn btn-secondary" onclick="openCatalogProduct('${pid}')">Подробнее</button>
-            ${oos ? waitBtnHTML(p) : `<button type="button" class="btn btn-primary" onclick="openCatalogRequest('${pid}')">Оставить заявку</button>`}
-          </div>
-        </div>
-      </article>`;
-  }
+  /* ---------- Карточка в сетке: «5 оттенков» с кружками ---------- */
   const prevCard = window.catalogCardHTML;
-  window.catalogCardHTML = p => (isBundle(p) ? comboCardHTML(p) : prevCard(p));
-
-  function comboMiniHTML(p) {
-    const img = firstImg(p);
-    const save = saving(p);
-    return `<button type="button" class="combo-mini ${isOOS(p) ? 'oos' : ''}" onclick="openCatalogProduct('${escapeAttr(String(p.id))}')">
-      <span class="combo-mini-img">
-        ${img ? `<img src="${escapeAttr(img)}" alt="" loading="lazy" decoding="async">` : ''}
-        <span class="combo-badge">${ico('gift')} Комбо</span>
-        ${hasSale(p) ? `<span class="cat-sale-badge">−${Number(p.discount_percent)}%</span>` : ''}
-      </span>
-      <span class="combo-mini-body">
-        <span class="combo-mini-name">${escapeHtml(p.name)}</span>
-        ${priceRowHTML(p)}
-        ${isOOS(p) ? '<span class="catalog-oos-line">Нет в наличии</span>'
-          : (save > 0 ? `<span class="combo-save">Выгода ${escapeHtml(formatRub(save))}</span>` : '')}
-        ${items(p).length >= 2 ? thumbsHTML(items(p), 4) : ''}
-      </span>
-    </button>`;
-  }
-
-  /* ---------- Категории + полоса «Комбо со скидкой» ---------- */
-  function catChipsHTML() {
-    const nCombo = combos().length;
-    // Категорию, в которой только комбо (например «Комбо со скидкой»), не дублируем.
-    const shownCats = cats.filter(c => {
-      const inCat = catalogCache.filter(p => String(p.category_id || '') === String(c.id));
-      return inCat.length && !inCat.every(isBundle);
-    });
-    const chip = (id, label, n, extra) => `<button type="button" class="cat-chip ${extra || ''} ${String(currentCat) === String(id) ? 'active' : ''}"
-      data-cat="${escapeAttr(String(id))}" role="tab" onclick="selectCatalogCategory('${escapeAttr(String(id))}')">${label}${n != null ? `<span class="n">${Number(n)}</span>` : ''}</button>`;
-    return { html: chip('all', 'Все', catalogCache.length)
-      + (nCombo ? chip(COMBO, `${ico('gift')} Комбо`, nCombo, 'combo-chip') : '')
-      + shownCats.map(c => chip(c.id, escapeHtml(c.name), catalogCache.filter(p => String(p.category_id || '') === String(c.id)).length)).join(''),
-      any: nCombo > 0 || shownCats.length > 0 };
-  }
-  function renderChips() {
-    const bar = document.getElementById('cat-chips-bar');
-    const box = document.getElementById('cat-chips');
-    if (!bar || !box) return;
-    if (currentCat === COMBO && !combos().length) currentCat = 'all';
-    if (currentCat !== 'all' && currentCat !== COMBO && !cats.some(c => String(c.id) === String(currentCat))) currentCat = 'all';
-    const r = catChipsHTML();
-    bar.hidden = !r.any;
-    box.innerHTML = r.html;
-  }
-  function visibleProducts() {
-    if (currentCat === 'all') return combos().length ? catalogCache.filter(p => !isBundle(p)) : catalogCache;
-    if (currentCat === COMBO) return combos();
-    return catalogCache.filter(p => String(p.category_id || '') === String(currentCat));
-  }
-  function comboRowHTML() {
-    const list = combos().slice().sort((a, b) => (isOOS(a) - isOOS(b)) || (saving(b) - saving(a)));
-    if (!list.length) return '';
-    return `<div class="combo-row-head"><b>${ico('gift')} Комбо со скидкой</b>
-        <button type="button" onclick="selectCatalogCategory('${COMBO}')">Все ${list.length > 1 ? list.length : ''}</button></div>
-      <div class="combo-row">${list.map(comboMiniHTML).join('')}</div>`;
-  }
-  function renderGrid() {
-    const list = document.getElementById('catalog-list');
-    if (!list) return;
-    if (!catalogCache.length) {
-      list.innerHTML = `<div class="empty-state"><h3>Скоро здесь появятся куклы</h3><p>Загляните чуть позже — мы готовим новые поступления.</p></div>`;
-      return;
-    }
-    const shown = visibleProducts();
-    list.innerHTML = (currentCat === 'all' ? comboRowHTML() : '')
-      + (shown.length
-        ? `<div class="catalog-grid">${shown.map(catalogCardHTML).join('')}</div>`
-        : `<div class="empty-state"><h3>Здесь пока пусто</h3><p>Загляните позже или посмотрите весь каталог.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Весь каталог</button></div>`);
-    bindCatalogGalleries(list);
-    stripAfterInsert(list);
-  }
-  window.renderCatalog = function () { renderChips(); renderGrid(); };
-  window.selectCatalogCategory = function (id) {
-    id = String(id);
-    if (id === String(currentCat)) return;
-    currentCat = id;
-    hapticSelection();
-    document.querySelectorAll('#cat-chips .cat-chip').forEach(b => b.classList.toggle('active', b.dataset.cat === currentCat));
-    document.querySelector(`#cat-chips .cat-chip[data-cat="${CSS.escape(currentCat)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    renderGrid();
-  };
-  window.loadCatalog = async function (isManual) {
-    if (catalogLoadInflight) return;
-    const list = document.getElementById('catalog-list');
-    const btn = document.getElementById('catalog-refresh-btn');
-    if (!list) return;
-    if (!userId) { list.innerHTML = `<div class="empty-state"><h3>Откройте приложение из Telegram</h3></div>`; return; }
-    catalogLoadInflight = true;
-    if (isManual) { btn?.classList.add('spinning'); btn?.setAttribute('disabled', ''); }
-    if (!catalogLoadedOnce) list.innerHTML = skeletonOrdersHTML(2);
-    try {
-      const data = await apiFetch('/api/catalog', {}, { timeoutMs: 12000, retries: 1 });
-      if (!data?.ok) throw new Error('catalog');
-      catalogCache = data.products || [];
-      cats = Array.isArray(data.categories) ? data.categories : [];
-      catalogLoadedOnce = true;
-      renderCatalog();
-    } catch (e) {
-      if (!catalogLoadedOnce) {
-        list.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить каталог</h3><p>Проверьте соединение и попробуйте ещё раз.</p><button class="btn btn-primary" onclick="loadCatalog(true)">Повторить</button></div>`;
-      } else showToast('Не удалось обновить каталог');
-    } finally {
-      btn?.classList.remove('spinning'); btn?.removeAttribute('disabled');
-      catalogLoadInflight = false;
-    }
+  window.catalogCardHTML = function (p) {
+    let html = prevCard(p);
+    const g = groups(p)[0];
+    if (!g) return html;
+    const pics = g.options.filter(o => o.image_url).slice(0, 5);
+    const line = `<div class="vr-card-line">${pics.length ? `<span class="vr-dots">${pics.map(o => `<i><img src="${escapeAttr(assetUrl(o.image_url))}" alt="" loading="lazy" decoding="async" onerror="this.remove()"></i>`).join('')}</span>` : ''}${g.options.length} ${countWord(g.label, g.options.length)}</div>`;
+    const title = `<div class="catalog-card-title">${escapeHtml(p.name)}</div>`;
+    return html.includes(title) ? html.replace(title, title + line) : html;
   };
 
-  /* ---------- Подробная карточка ---------- */
-  window.openComboItem = function (id) {
-    if (!inCache(id)) { showToast('Эта вещь сейчас не показывается в каталоге'); return; }
-    if (typeof window.openCollectionItem === 'function') window.openCollectionItem(id);
-    else openCatalogProduct(id);
-  };
-
-  function compositionHTML(p) {
-    const list = items(p);
-    const save = saving(p);
-    if (list.length < 2) {
-      return `<div class="combo-comp">
-        <div class="combo-comp-title">${ico('gift')} Комбо-набор</div>
-        <div class="combo-comp-note">Несколько вещей в одном наборе${save > 0 ? ` — дешевле на <b>${escapeHtml(formatRub(save))}</b>` : ''}. Подробнее о составе — в описании ниже.</div>
-      </div>`;
-    }
-    const full = Number(p.bundle_full_price) || list.reduce((s, x) => s + (Number(x.price) || 0), 0);
-    return `<div class="combo-comp">
-      <div class="combo-comp-title">${ico('gift')} Что входит в комбо</div>
-      ${list.map(x => {
-        const open = !!inCache(x.id);
-        const tag = open ? 'button' : 'div';
-        return `<${tag} ${open ? `type="button" onclick="openComboItem('${escapeAttr(String(x.id))}')"` : ''} class="combo-comp-row">
-          <span class="img">${x.image_url ? `<img src="${escapeAttr(assetUrl(x.image_url))}" alt="" loading="lazy" decoding="async">` : ''}</span>
-          <span class="main"><span class="nm">${escapeHtml(x.name)}</span>
-            <span class="sub">${x.in_stock === false ? 'Нет в наличии отдельно' : (open ? 'Посмотреть вещь' : 'Отдельно не продаётся')}</span></span>
-          <span class="pr">${escapeHtml(formatRub(x.price))}</span>
-          ${open ? `<svg class="icon chev"><use href="#icon-chevron-right"/></svg>` : ''}
-        </${tag}>`;
-      }).join('')}
-      <div class="combo-comp-sum">
-        <div class="r"><span>По отдельности</span><s>${escapeHtml(formatRub(full))}</s></div>
-        <div class="r"><span>В комбо</span><b>${escapeHtml(formatRub(p.price))}</b></div>
-        ${save > 0 ? `<div class="r save"><span>Вы экономите</span><b>${escapeHtml(formatRub(save))}${p.discount_percent ? ` · −${Number(p.discount_percent)}%` : ''}</b></div>` : ''}
-      </div>
-    </div>`;
-  }
-
-  function offerHTML(p, list) {
-    list = list.slice().sort((a, b) => (isOOS(a) - isOOS(b)) || (saving(b) - saving(a))).slice(0, 4);
-    return `<div class="combo-offer">
-      <div class="combo-offer-title">${ico('gift')} Выгоднее в комбо</div>
-      ${list.map(b => {
-        const others = items(b).filter(x => String(x.id) !== String(p.id)).map(x => x.name);
-        const save = saving(b);
-        return `<button type="button" class="combo-offer-card ${isOOS(b) ? 'oos' : ''}" onclick="openComboItem('${escapeAttr(String(b.id))}')">
-          ${thumbsHTML(items(b), 3)}
-          <span class="combo-offer-main">
-            <span class="combo-offer-name">${others.length ? 'Вместе с: ' + escapeHtml(others.join(', ')) : escapeHtml(b.name)}</span>
-            <span class="combo-offer-price"><b>${escapeHtml(formatRub(b.price))}</b>${hasSale(b) ? `<s>${escapeHtml(formatRub(b.old_price))}</s>` : ''}
-              ${isOOS(b) ? '<span class="catalog-oos-line" style="margin:0">Нет в наличии</span>'
-                : (save > 0 ? `<span class="combo-save" style="margin:0">−${escapeHtml(formatRub(save))}</span>` : '')}</span>
-          </span>
-          <svg class="icon chev"><use href="#icon-chevron-right"/></svg>
-        </button>`;
-      }).join('')}
-    </div>`;
-  }
-
-  const prevDetail = window.catalogDetailHTML;
-  window.catalogDetailHTML = function (p) {
-    let html = prevDetail(p);
-    if (isBundle(p)) {
-      html = html.replace('<div class="cat-media detail">', `<div class="cat-media detail combo-detail"><span class="combo-badge">${ico('gift')} Комбо</span>`);
-      const block = compositionHTML(p);
-      const desc = catalogDescriptionHTML(p);
-      if (desc && html.includes(desc)) html = html.replace(desc, block + desc);
-      else {
-        const anchor = '<div class="help-item weight-faq"';
-        html = html.includes(anchor) ? html.replace(anchor, block + anchor) : html + block;
-      }
-      return html;
-    }
-    const list = combosWith(p.id);
-    if (!list.length) return html;
-    const block = offerHTML(p, list);
-    const anchor = '<div class="coll-block">';
-    return html.includes(anchor) ? html.replace(anchor, block + anchor) : html + block;
-  };
-
-  /* ---------- Заявка: размер для каждой вещи комбо ---------- */
-  function groups(p) { return Array.isArray(p?.size_groups) ? p.size_groups : []; }
-  function chartLink(key) {
-    const q = inCache(key);
-    if (!q || !(q.product_type === 'clothing' || q.product_type === 'shoes') || !catalogImages(q).length) return '';
-    return `<button type="button" class="dl-size-chart" onclick="openCatalogSizeChart('${escapeAttr(String(key))}')">Таблица размеров ${ico('chevron-right')}</button>`;
-  }
-  function groupsPickerHTML(p) {
+  /* ---------- Выбор ---------- */
+  function pickerHTML(p, mode) {
     const gs = groups(p);
-    return `<div class="dl-size combo-sizes" id="combo-sizes">
-      ${gs.map(g => {
+    if (!gs.length) return '';
+    const pid = String(p.id);
+    const s = sel(pid);
+    if (mode === 'request') {
+      gs.forEach(g => {
         const avail = g.options.filter(o => o.available);
-        if (avail.length === 1 && !comboSel[g.key]) comboSel[g.key] = avail[0].value;
-        return `<div class="combo-size-group" data-key="${escapeAttr(String(g.key))}">
-          <div class="dl-size-head"><span class="dl-size-title">${escapeHtml(g.label)}<span class="req">*</span></span>${chartLink(g.key)}</div>
-          <div class="dl-size-grid" role="radiogroup" aria-label="${escapeAttr(g.label)}">
-            ${g.options.map(o => `<button type="button" role="radio"
-                class="dl-size-tile ${o.available ? '' : 'sold'} ${comboSel[g.key] === o.value ? 'selected' : ''}"
-                data-size="${escapeAttr(o.value)}" aria-checked="${comboSel[g.key] === o.value}"
-                onclick="selectComboSize('${escapeAttr(String(g.key))}', '${escapeAttr(o.value)}', this)">
-                <span class="v">${escapeHtml(o.value)}</span>${o.available ? '' : '<span class="s">нет</span>'}</button>`).join('')}
+        if (s[g.key] && !avail.some(o => o.value === s[g.key])) delete s[g.key];   // выбранный уже распродан
+        if (!s[g.key] && avail.length === 1) s[g.key] = avail[0].value;
+      });
+    }
+    return `<div class="vr-pick" data-pid="${escapeAttr(pid)}" data-mode="${mode}">
+      ${gs.map(g => {
+        const withImg = g.options.some(o => o.image_url);
+        return `<div class="vr-group" data-key="${escapeAttr(String(g.key))}">
+          <div class="vr-head">${escapeHtml(g.label)}${mode === 'request' ? '<span class="req">*</span>' : ''}<span class="vr-chosen">${s[g.key] ? ': ' + escapeHtml(s[g.key]) : ''}</span></div>
+          <div class="vr-grid ${withImg ? 'img' : ''}" role="radiogroup" aria-label="${escapeAttr(g.label)}">
+            ${g.options.map(o => `<button type="button" role="radio" class="vr-tile ${o.available ? '' : 'sold'} ${s[g.key] === o.value ? 'selected' : ''}"
+                data-value="${escapeAttr(o.value)}" aria-checked="${s[g.key] === o.value}"
+                onclick="selectVariant('${escapeAttr(pid)}', '${escapeAttr(String(g.key))}', '${escapeAttr(o.value)}', this)">
+                ${withImg ? `<span class="vr-img">${o.image_url ? `<img src="${escapeAttr(assetUrl(o.image_url))}" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}</span>` : ''}
+                <span class="vr-v">${escapeHtml(o.value)}</span>${o.available ? '' : '<span class="vr-s">нет</span>'}
+              </button>`).join('')}
           </div>
         </div>`;
       }).join('')}
-      <div class="dl-size-status" id="combo-size-status">${statusText(p)}</div>
+      <div class="vr-status">${statusText(p)}</div>
     </div>`;
   }
   function statusText(p) {
     const gs = groups(p);
-    const chosen = gs.filter(g => comboSel[g.key]);
-    if (!gs.length) return '';
-    if (chosen.length === gs.length) return 'Выбрано: ' + gs.map(g => `<b>${escapeHtml(g.label)} — ${escapeHtml(comboSel[g.key])}</b>`).join(', ');
-    return gs.length > 1 ? 'Выберите размер для каждой вещи. Зачёркнутые размеры распроданы.' : 'Выберите размер.';
+    const s = sel(p.id);
+    const sold = gs.some(g => g.options.some(o => !o.available));
+    if (gs.every(g => s[g.key])) return sold ? 'Зачёркнутые варианты закончились.' : '';
+    return 'Выберите ' + gs.map(g => g.label.toLowerCase()).join(' и ') + (sold ? '. Зачёркнутые закончились.' : '.');
   }
-  window.selectComboSize = function (key, value, btn) {
-    if (btn?.classList.contains('sold')) { showToast(`Размер ${value} распродан`); hapticNotification('warning'); return; }
-    comboSel[key] = String(value);
-    const grp = btn?.closest('.combo-size-group');
-    grp?.classList.remove('invalid');
-    grp?.querySelectorAll('.dl-size-tile').forEach(el => {
-      const on = el.dataset.size === String(value);
-      el.classList.toggle('selected', on);
-      el.setAttribute('aria-checked', on ? 'true' : 'false');
+
+  window.selectVariant = function (pid, key, value, btn) {
+    if (btn?.classList.contains('sold')) { showToast(`«${value}» сейчас нет в наличии`); hapticNotification('warning'); return; }
+    const p = findProduct(pid);
+    if (!p) return;
+    sel(pid)[key] = String(value);
+    document.querySelectorAll(`.vr-pick[data-pid="${CSS.escape(String(pid))}"]`).forEach(box => {
+      const grp = box.querySelector(`.vr-group[data-key="${CSS.escape(String(key))}"]`);
+      if (!grp) return;
+      grp.classList.remove('invalid');
+      grp.querySelectorAll('.vr-tile').forEach(t => {
+        const on = t.dataset.value === String(value);
+        t.classList.toggle('selected', on);
+        t.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+      const ch = grp.querySelector('.vr-chosen');
+      if (ch) ch.textContent = ': ' + value;
+      const st = box.querySelector('.vr-status');
+      if (st) st.textContent = statusText(p);
     });
-    const st = document.getElementById('combo-size-status');
-    if (st) st.innerHTML = statusText(catalogCurrentProduct);
+    const opt = (groups(p).find(g => String(g.key) === String(key))?.options || []).find(o => o.value === String(value));
+    // «Подробнее»: листаем галерею к фото этого цвета
+    if (opt && Number.isInteger(opt.image_index)) {
+      const track = document.querySelector('#sheet-catalog-product-content .cat-gallery.detail .cat-gallery-track');
+      if (track) track.scrollTo({ left: track.clientWidth * opt.image_index, behavior: 'smooth' });
+    }
+    // Заявка: миниатюра товара показывает выбранный цвет
+    if (opt?.image_url) {
+      const thumb = document.querySelector('#catalog-request-body .catalog-req-thumb');
+      if (thumb) thumb.innerHTML = `<img src="${escapeAttr(assetUrl(opt.image_url))}" alt="">`;
+    }
     hapticSelection();
   };
-  function mountComboExtras() {
+
+  /* ---------- «Подробнее» ---------- */
+  const prevDetail = window.catalogDetailHTML;
+  window.catalogDetailHTML = function (p) {
+    const html = prevDetail(p);
+    const picker = pickerHTML(p, 'detail');
+    if (!picker) return html;
+    const desc = catalogDescriptionHTML(p);
+    if (desc && html.includes(desc)) return html.replace(desc, picker + desc);
+    const anchor = '<div class="help-item weight-faq"';
+    return html.includes(anchor) ? html.replace(anchor, picker + anchor) : html + picker;
+  };
+
+  /* ---------- Заявка ---------- */
+  function mountRequestPicker() {
     const body = document.getElementById('catalog-request-body');
     const p = catalogCurrentProduct;
     if (!body || !p) return;
-    body.querySelector('.combo-req-line')?.remove();
-    body.querySelector('#combo-sizes')?.remove();
-    if (isBundle(p) && items(p).length >= 2) {
-      const save = saving(p);
-      body.querySelector('.catalog-req-product')?.insertAdjacentHTML('afterend',
-        `<div class="combo-req-line">${ico('gift')}<span>В комбо: ${escapeHtml(partsText(p))}${save > 0 ? ` · выгода <b>${escapeHtml(formatRub(save))}</b>` : ''}</span></div>`);
-    }
-    if (!groups(p).length) return;
-    body.querySelector('.catalog-size-picker')?.remove();
-    body.querySelector('#dl-size')?.remove();
-    const html = groupsPickerHTML(p);
-    const anchor = body.querySelector('#req-dollies') || body.querySelector('.req-total');
+    body.querySelector('.vr-pick')?.remove();
+    const html = pickerHTML(p, 'request');
+    if (!html) return;
+    const anchor = body.querySelector('.req-section-title') || body.querySelector('#req-dollies');
     if (anchor) anchor.insertAdjacentHTML('beforebegin', html);
     else body.insertAdjacentHTML('afterbegin', html);
+    // если цвет уже выбран в «Подробнее» — покажем его фото
+    const g = groups(p)[0];
+    const opt = g && g.options.find(o => o.value === sel(p.id)[g.key]);
+    const thumb = body.querySelector('.catalog-req-thumb');
+    if (opt?.image_url && thumb) thumb.innerHTML = `<img src="${escapeAttr(assetUrl(opt.image_url))}" alt="">`;
   }
   const prevRender = window.renderCatalogRequestForm;
   window.renderCatalogRequestForm = function () {
-    comboSel = {};
     prevRender.apply(this, arguments);
-    mountComboExtras();
+    mountRequestPicker();
   };
 
   const prevSubmit = window.submitCatalogRequest;
   window.submitCatalogRequest = function (event) {
-    const gs = groups(catalogCurrentProduct);
-    if (gs.length) {
-      const missing = gs.filter(g => !comboSel[g.key]);
-      if (missing.length) {
-        event?.preventDefault?.();
-        missing.forEach(g => document.querySelector(`#combo-sizes .combo-size-group[data-key="${CSS.escape(String(g.key))}"]`)?.classList.add('invalid'));
-        const st = document.getElementById('combo-size-status');
-        if (st) st.textContent = 'Выберите размер: ' + missing.map(g => g.label).join(', ');
-        document.querySelector('#combo-sizes .combo-size-group.invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        hapticNotification('error');
-        showToast('Выберите размер для каждой вещи');
-        return false;
-      }
+    const p = catalogCurrentProduct;
+    const missing = groups(p).filter(g => !sel(p.id)[g.key]);
+    if (missing.length) {
+      event?.preventDefault?.();
+      missing.forEach(g => document.querySelector(`#catalog-request-body .vr-group[data-key="${CSS.escape(String(g.key))}"]`)?.classList.add('invalid'));
+      document.querySelector('#catalog-request-body .vr-group.invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      hapticNotification('error');
+      showToast('Выберите ' + missing.map(g => g.label.toLowerCase()).join(' и '));
+      return false;
     }
     return prevSubmit.apply(this, arguments);
   };
 
-  /* В запрос заявки добавляем выбранные размеры; размер, распроданный
-     за время заполнения формы, сразу зачёркиваем. */
   const prevApiPost = window.apiPost;
   window.apiPost = async function (path, body) {
     const p = catalogCurrentProduct;
     const isReq = path === '/api/catalog/requests';
-    if (isReq && p && groups(p).length && body) body = { ...body, selected_sizes: { ...comboSel }, selected_size: '' };
+    if (isReq && p && groups(p).length && body) body = { ...body, selected_options: { ...sel(p.id) } };
     const res = await prevApiPost(path, body);
-    if (isReq && res && res.error === 'combo_size_sold_out' && p) {
-      setTimeout(() => showToast(`${res.group || 'Размер'}: ${res.size || ''} только что распродан — выберите другой`), 90);
+    if (isReq && res && (res.error === 'option_sold_out' || res.error === 'option_required' || res.error === 'invalid_option') && p) {
+      setTimeout(() => showToast(res.error === 'option_sold_out'
+        ? `«${res.value}» только что закончился — выберите другой вариант`
+        : `Выберите: ${res.group || 'вариант'}`), 90);
       try {
         const d = await apiFetch('/api/catalog/' + encodeURIComponent(p.id), {}, { timeoutMs: 8000, retries: 0 });
         if (d?.ok && d.product) {
@@ -10209,20 +9719,15 @@ window.addEventListener('unhandledrejection', (e) => {
           catalogCurrentProduct = d.product;
         }
       } catch (_) {}
-      Object.keys(comboSel).forEach(k => {
-        const g = groups(catalogCurrentProduct).find(x => String(x.key) === String(k));
-        if (!g || !g.options.some(o => o.value === comboSel[k] && o.available)) delete comboSel[k];
-      });
-      mountComboExtras();
+      mountRequestPicker();
     }
     return res;
   };
 
-  // Каталог мог загрузиться раньше этого блока — перезагрузим, чтобы подтянуть комбо.
-  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) loadCatalog(false);
+  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) renderCatalog();
 })();
 </script>
-<!-- ===== конец блока «комбо со скидкой» ===== -->
+<!-- ===== конец блока «выбор цвета» ===== -->
 
 </body>
 </html>
