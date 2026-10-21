@@ -1983,6 +1983,18 @@
 .notification-premium-card{position:relative;display:flex;gap:11px;padding:13px;margin:0 0 9px;border:1px solid var(--border);border-radius:17px;background:var(--surface);box-shadow:0 5px 18px rgba(0,0,0,.055)}.notification-premium-card.unread{border-color:color-mix(in srgb,var(--pink-accent) 28%,var(--border));box-shadow:0 6px 20px rgba(0,0,0,.07)}.notification-premium-icon{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;border-radius:13px;background:var(--surface-soft);color:var(--pink-accent)}.notification-premium-icon .icon{width:18px;height:18px}.notification-premium-title{font-size:13.5px;line-height:1.3;font-weight:800;color:var(--text)}.notification-premium-body{margin-top:4px;font-size:12px;line-height:1.45;color:var(--text-secondary)}.notification-premium-time{margin-top:6px;font-size:10.5px;color:var(--text-secondary)}.notification-premium-unread{position:absolute;top:13px;right:13px;width:7px;height:7px;border-radius:50%;background:var(--pink-accent)}
 </style>
 
+
+<style id="dl-catalog-search-css">
+  .dl-catalog-search{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:0 13px;min-height:46px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);box-shadow:0 3px 12px rgba(0,0,0,.035)}
+  .dl-catalog-search svg{width:18px;height:18px;flex:0 0 auto;color:var(--text-secondary)}
+  .dl-catalog-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:14px;padding:12px 0}
+  .dl-catalog-search input::placeholder{color:var(--text-secondary);opacity:.85}
+  .dl-catalog-search-clear{border:0;background:transparent;color:var(--text-secondary);padding:6px;display:none;align-items:center;justify-content:center}
+  .dl-catalog-search-clear.visible{display:flex}
+  .dl-catalog-search-hint{font-size:11px;color:var(--text-secondary);margin:-5px 2px 10px;line-height:1.4}
+  @media(prefers-reduced-motion:no-preference){.dl-catalog-search{transition:border-color .18s,box-shadow .18s}.dl-catalog-search:focus-within{border-color:var(--pink-accent);box-shadow:0 0 0 3px rgba(217,140,139,.12)}}
+</style>
+
 </head>
 <body>
 
@@ -9119,10 +9131,53 @@ window.addEventListener('unhandledrejection', (e) => {
     };
   }
 
+  /* ---------- Поиск по каталогу: встроен в существующую отрисовку ---------- */
+  let catalogSearchQuery = '';
+  const catalogSearchAliases = {
+    'монстер хай':'monster high', 'монстер хай':'monster high', 'монстр хай':'monster high',
+    'дракулаура':'draculaura', 'дракулара':'draculaura', 'фрэнки':'frankie', 'френки':'frankie',
+    'клаудин':'clawdeen', 'клео':'cleo', 'лагуна':'lagoona', 'гуллия':'ghoulia',
+    'спектра':'spectra', 'торелей':'toralei', 'робекка':'robecca', 'оператта':'operetta',
+    'джиджи':'gigi', 'джинафаер':' jinafire', 'барби':'barbie', 'братц':'bratz',
+    'новая':'new', 'новые':'new', 'б/у':'used', 'бу':'used', 'в коробке':'in box'
+  };
+  function normalizeCatalogSearch(value) {
+    let q = String(value || '').toLowerCase().replace(/ё/g, 'е').replace(/[’'`]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+    const alias = catalogSearchAliases[q];
+    if (alias) q += ' ' + alias;
+    return q;
+  }
+  function catalogProductSearchText(p) {
+    const parts = [p.name, p.title, p.character, p.brand, p.collection, p.series, p.category, p.category_name, p.description, p.short_description, p.condition, p.product_type, p.sku];
+    if (Array.isArray(p.tags)) parts.push(p.tags.join(' '));
+    if (Array.isArray(p.variants)) parts.push(p.variants.map(v => typeof v === 'string' ? v : [v.name, v.title, v.color, v.size].filter(Boolean).join(' ')).join(' '));
+    return normalizeCatalogSearch(parts.filter(Boolean).join(' '));
+  }
+  function ensureCatalogSearchInput() {
+    if (document.getElementById('dl-catalog-search')) return;
+    const catalog = document.querySelector('#tab-catalog');
+    const intro = catalog && catalog.querySelector('.catalog-intro');
+    if (!catalog || !intro) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'dl-catalog-search-wrap';
+    wrap.innerHTML = '<label class="dl-catalog-search" for="dl-catalog-search"><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg><input id="dl-catalog-search" type="search" autocomplete="off" enterkeyhint="search" placeholder="Найти куклу, персонажа или коллекцию…" aria-label="Поиск по каталогу"><button type="button" class="dl-catalog-search-clear" id="dl-catalog-search-clear" aria-label="Очистить поиск"><svg class="icon"><use href="#icon-x"/></svg></button></label><div class="dl-catalog-search-hint">Можно искать на русском или английском. Например: Дракулаура, Draculaura, Monster High.</div>';
+    intro.insertAdjacentElement('afterend', wrap);
+    const input = wrap.querySelector('#dl-catalog-search');
+    const clear = wrap.querySelector('#dl-catalog-search-clear');
+    let raf = 0;
+    input.addEventListener('input', () => {
+      catalogSearchQuery = normalizeCatalogSearch(input.value);
+      clear.classList.toggle('visible', !!input.value);
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => { catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); });
+    });
+    clear.addEventListener('click', () => { input.value = ''; catalogSearchQuery = ''; clear.classList.remove('visible'); catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); input.focus(); });
+  }
+
   /* ---------- Категории ---------- */
   function ensureChipsBar() {
     let bar = document.getElementById('cat-chips-bar');
-    if (bar) return bar;
+    if (bar) { ensureCatalogSearchInput(); return bar; }
     // Под блоком «Поиск для меня» и подсказкой — прямо над списком кукол
     const header = document.querySelector('#tab-catalog .catalog-intro')
       || document.querySelector('#tab-catalog .catalog-search-entry')
@@ -9134,6 +9189,7 @@ window.addEventListener('unhandledrejection', (e) => {
     bar.hidden = true;
     bar.innerHTML = '<div class="cat-chips" id="cat-chips" role="tablist" aria-label="Категории"></div>';
     header.insertAdjacentElement('afterend', bar);
+    ensureCatalogSearchInput();
     return bar;
   }
 
@@ -9149,8 +9205,16 @@ window.addEventListener('unhandledrejection', (e) => {
   }
 
   function visibleProducts() {
-    if (catalogCategory === 'all') return catalogCache;
-    return catalogCache.filter(p => String(p.category_id || '') === String(catalogCategory));
+    let products = catalogCache;
+    if (catalogCategory !== 'all') products = products.filter(p => String(p.category_id || '') === String(catalogCategory));
+    if (catalogSearchQuery) {
+      const terms = catalogSearchQuery.split(/\s+/).filter(Boolean);
+      products = products.filter(p => {
+        const haystack = catalogProductSearchText(p);
+        return terms.every(term => haystack.includes(term));
+      });
+    }
+    return products;
   }
 
   const CATALOG_GRID_BATCH = 24;
@@ -9166,7 +9230,9 @@ window.addEventListener('unhandledrejection', (e) => {
     const items = visibleProducts();
     const shown = items.slice(0, catalogGridShownCount);
     if (!items.length) {
-      list.innerHTML = `<div class="empty-state"><h3>В этой категории пока пусто</h3><p>Загляните позже или посмотрите все куклы.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Все куклы</button></div>`;
+      list.innerHTML = catalogSearchQuery
+        ? `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другое название, имя персонажа или английское написание.</p><button class="btn btn-secondary" onclick="document.getElementById('dl-catalog-search').value='';document.getElementById('dl-catalog-search').dispatchEvent(new Event('input',{bubbles:true}));selectCatalogCategory('all')">Сбросить поиск</button></div>`
+        : `<div class="empty-state"><h3>В этой категории пока пусто</h3><p>Загляните позже или посмотрите все куклы.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Все куклы</button></div>`;
       return;
     }
     list.innerHTML = `<div class="catalog-grid">${shown.map(catalogCardHTML).join('')}</div>` +
@@ -9227,6 +9293,7 @@ window.addEventListener('unhandledrejection', (e) => {
     }
   };
 
+  ensureCatalogSearchInput();
   ensureChipsBar();
   // Если каталог уже успели загрузить старой версией — подтянем категории заново.
   if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) loadCatalog(false);
