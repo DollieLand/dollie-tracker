@@ -1987,7 +1987,7 @@
 <style id="dl-catalog-search-css">
   .dl-catalog-search{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:0 13px;min-height:46px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);box-shadow:0 3px 12px rgba(0,0,0,.035)}
   .dl-catalog-search svg{width:18px;height:18px;flex:0 0 auto;color:var(--text-secondary)}
-  .dl-catalog-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:14px;padding:12px 0}
+  .dl-catalog-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);-webkit-text-fill-color:var(--text);caret-color:var(--pink-accent);font:inherit;font-size:14px;padding:12px 0;opacity:1;user-select:text;-webkit-user-select:text;touch-action:manipulation}
   .dl-catalog-search input::placeholder{color:var(--text-secondary);opacity:.85}
   .dl-catalog-search-clear{border:0;background:transparent;color:var(--text-secondary);padding:6px;display:none;align-items:center;justify-content:center}
   .dl-catalog-search-clear.visible{display:flex}
@@ -5712,9 +5712,13 @@ function catalogDetailHTML(p) {
 
 const catalogDetailCache = new Map();          // id → { product, at }
 const CATALOG_DETAIL_TTL = 5 * 60 * 1000;
+const catalogDetailInFlight = new Map();
 
 function catalogDetailSig(p, withImages) {
-  return JSON.stringify(withImages ? p : { ...p, images: null });
+  if (withImages) return JSON.stringify(p);
+  const copy = { ...p };
+  ['images', 'image_url', 'image_count', 'thumbnail', 'thumbnail_url', 'photos'].forEach(k => delete copy[k]);
+  return JSON.stringify(copy);
 }
 
 /* Дописывает недостающие фото в уже открытую галерею, не трогая первое фото */
@@ -5724,14 +5728,16 @@ function upgradeCatalogGallery(content, product) {
   if (!gallery || !track) return false;
   const urls = catalogImages(product);
   const have = Array.from(track.querySelectorAll('img')).map(i => i.getAttribute('src'));
-  if (!have.length || have.length > urls.length || have.some((u, i) => u !== urls[i])) return false;
-  if (have.length === urls.length) return true;
+  if (!urls.length) return true;
+  const missing = urls.filter(url => !have.includes(url));
+  if (!have.length) return false;
+  if (!missing.length && have.length === urls.length) return true;
   const pid = escapeAttr(String(product.id));
-  track.insertAdjacentHTML('beforeend', urls.slice(have.length).map((url, k) => {
-    const i = have.length + k;
-    return `<button type="button" class="cat-slide" onclick="openCatalogLightbox('${pid}', ${i})" aria-label="Фото ${i + 1}">
-      <img src="${escapeAttr(url)}" alt="" loading="lazy" decoding="async"></button>`;
-  }).join(''));
+  missing.forEach(url => {
+    const i = urls.indexOf(url);
+    track.insertAdjacentHTML('beforeend', `<button type="button" class="cat-slide" onclick="openCatalogLightbox('${pid}', ${i})" aria-label="Фото ${i + 1}">
+      <img src="${escapeAttr(url)}" alt="" loading="lazy" decoding="async"></button>`);
+  });
   gallery.dataset.count = urls.length;
   gallery.querySelector('.cat-counter')?.remove();
   gallery.querySelector('.cat-dots')?.remove();
@@ -5759,9 +5765,12 @@ async function openCatalogProduct(productId) {
   openSheet('catalog-product');
 
   if (entry && Date.now() - entry.at < CATALOG_DETAIL_TTL) return;   // свежие данные уже есть
+  if (catalogDetailInFlight.has(id)) return;
 
+  const request = apiFetch('/api/catalog/' + encodeURIComponent(id), {}, { timeoutMs: 10000, retries: 1 });
+  catalogDetailInFlight.set(id, request);
   try {
-    const data = await apiFetch('/api/catalog/' + encodeURIComponent(id), {}, { timeoutMs: 10000, retries: 1 });
+    const data = await request;
     if (!data?.ok || !data.product) return;
     const fresh = data.product;
     catalogDetailCache.set(id, { product: fresh, at: Date.now() });
@@ -5792,6 +5801,8 @@ async function openCatalogProduct(productId) {
     } else if (!shown) {
       content.innerHTML = `<div class="empty-state"><h3>Не удалось загрузить</h3><button class="btn btn-primary" onclick="openCatalogProduct('${escapeAttr(id)}')">Повторить</button></div>`;
     }
+  } finally {
+    if (catalogDetailInFlight.get(id) === request) catalogDetailInFlight.delete(id);
   }
 }
 function openCatalogRequest(productId) {
