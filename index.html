@@ -8702,7 +8702,255 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 
 <!-- ===== DollieLand: «Поиск для меня» — все поля обязательны ===== -->
-<!-- Вставить в index.html прямо перед </body> (после всех остальных <script>). -->
+<!-- Вставить в index.html прямо перед 
+<!-- =========================================================
+     DOLLIELAND — SPEED OPTIMIZATION V3
+     Дополнительный блок. Не заменяет существующие скрипты.
+     ========================================================= -->
+<script id="dl-speed-js-v3">
+(function () {
+  'use strict';
+
+  if (window.__dlSpeedV3) return;
+  window.__dlSpeedV3 = true;
+
+  const log = (...args) => console.log('[DollieLand Speed]', ...args);
+
+  /* ---------------------------------------------------------
+     1. URL миниатюр
+     Оригиналы остаются в данных товара и используются лайтбоксом.
+     --------------------------------------------------------- */
+
+  const THUMB_RE =
+    /^(?:https?:\/\/dollieland\.pythonanywhere\.com)?\/static\/(catalog|reviews|banners|search_requests)\/([^\/?#]+)(?:[?#].*)?$/i;
+
+  function thumbUrl(url, width) {
+    const match = THUMB_RE.exec(String(url || ''));
+    if (!match) return null;
+
+    return `${API_BASE}/img/${width}/${match[1]}/${match[2]}`;
+  }
+
+  window.dlThumbUrl = thumbUrl;
+
+  /* ---------------------------------------------------------
+     2. Правила обработки изображений
+     --------------------------------------------------------- */
+
+  const THUMB_RULES = [
+    ['.cat-gallery.card img', 480, false],
+    ['.cat-gallery.detail img', 800, false],
+    ['.coll-img img', 320, true],
+    ['.catalog-req-thumb img', 160, false],
+    ['.vr-dots img', 160, true],
+    ['.vr-img img', 160, true],
+    ['.review-photo-thumb img', 320, true],
+    ['.reviews-photo-cell img', 320, true],
+    ['.my-review-photos img', 320, true],
+    ['.banner-image-wrap img', 320, false],
+    ['.sr-row-thumb img', 160, true],
+    ['.sr-preview img', 320, false],
+    ['.sr-gallery img', 800, false]
+  ];
+
+  function processImg(img) {
+    if (!img || img.tagName !== 'IMG' || img.dataset.dlOrig) return;
+
+    const src = img.getAttribute('src');
+    if (!src || /^(blob:|data:)/i.test(src)) return;
+
+    for (const [selector, width, lazy] of THUMB_RULES) {
+      if (!img.matches(selector)) continue;
+
+      const thumbnail = thumbUrl(src, width);
+      if (!thumbnail || thumbnail === src) return;
+
+      // Запоминаем исходный URL, чтобы восстановить фото при ошибке.
+      img.dataset.dlOrig = src;
+      img.decoding = 'async';
+
+      if (lazy) {
+        img.loading = 'lazy';
+        img.removeAttribute('fetchpriority');
+      }
+
+      img.setAttribute('src', thumbnail);
+      return;
+    }
+  }
+
+  function processTree(node) {
+    if (!node || node.nodeType !== 1) return;
+
+    if (node.tagName === 'IMG') processImg(node);
+
+    if (node.querySelectorAll) {
+      node.querySelectorAll('img').forEach(processImg);
+    }
+  }
+
+  /* ---------------------------------------------------------
+     3. Наблюдение за динамически добавленными изображениями
+     --------------------------------------------------------- */
+
+  function startImageObserver() {
+    if (!document.body || window.__dlSpeedImageObserver) return;
+
+    const observer = new MutationObserver(mutations => {
+      for (const mutation of mutations) {
+        mutation.addedNodes.forEach(processTree);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    window.__dlSpeedImageObserver = observer;
+    processTree(document.body);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startImageObserver, { once: true });
+  } else {
+    startImageObserver();
+  }
+
+  /* ---------------------------------------------------------
+     4. Если миниатюра не загрузилась — вернуть оригинал
+     --------------------------------------------------------- */
+
+  document.addEventListener('error', event => {
+    const img = event.target;
+
+    if (!img || img.tagName !== 'IMG' || !img.dataset.dlOrig) return;
+
+    const original = img.dataset.dlOrig;
+    if (img.getAttribute('src') === original) return;
+
+    delete img.dataset.dlOrig;
+
+    // Останавливаем дальнейшую обработку этого события,
+    // чтобы другие обработчики не мешали восстановлению.
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    img.setAttribute('src', original);
+  }, true);
+
+  /* ---------------------------------------------------------
+     5. Не вмешиваемся в штатную галерею каталога.
+     В ней уже есть upgradeCatalogGallery(), catalogImages()
+     и openCatalogLightbox(). Оригиналы фотографий сохраняются.
+     --------------------------------------------------------- */
+
+  /* ---------------------------------------------------------
+     6. Ненавязчивая предварительная загрузка каталога.
+     Только после штатного подтверждения согласия.
+     --------------------------------------------------------- */
+
+  let prefetchStarted = false;
+  let prefetchScheduled = false;
+  const preloadedImages = [];
+
+  function prefetchCatalog() {
+    if (prefetchStarted) return;
+
+    try {
+      if (
+        !userId ||
+        !consentAccepted ||
+        catalogLoadedOnce ||
+        catalogLoadInflight ||
+        typeof window.loadCatalog !== 'function'
+      ) {
+        return;
+      }
+
+      prefetchStarted = true;
+
+      Promise.resolve(window.loadCatalog(false))
+        .then(() => {
+          if (!catalogLoadedOnce || !Array.isArray(catalogCache)) {
+            prefetchStarted = false;
+            return;
+          }
+
+          // Подготавливаем только первые несколько обложек.
+          catalogCache.slice(0, 6).forEach(product => {
+            const original = catalogImages(product)[0];
+            const thumbnail = thumbUrl(original, 480);
+            if (!thumbnail) return;
+
+            const img = new Image();
+            img.decoding = 'async';
+            img.src = thumbnail;
+            preloadedImages.push(img);
+          });
+
+          log('Предварительная загрузка каталога завершена');
+        })
+        .catch(error => {
+          prefetchStarted = false;
+          log('Предварительная загрузка каталога не удалась:', error);
+        });
+
+    } catch (error) {
+      prefetchStarted = false;
+      log('Ошибка предварительной загрузки:', error);
+    }
+  }
+
+  function scheduleCatalogPrefetch() {
+    if (prefetchScheduled || prefetchStarted || !consentAccepted) return;
+
+    prefetchScheduled = true;
+
+    const run = () => {
+      prefetchScheduled = false;
+      if (consentAccepted) prefetchCatalog();
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(run, { timeout: 4000 });
+    } else {
+      window.setTimeout(run, 1200);
+    }
+  }
+
+  // Даём штатному запуску приложения завершить проверку согласия.
+  // Если пользователь примет условия позже, повторные проверки
+  // заметят это и запустят предзагрузку.
+  let consentWatchCount = 0;
+
+  const consentWatcher = window.setInterval(() => {
+    consentWatchCount++;
+
+    if (consentAccepted) {
+      window.clearInterval(consentWatcher);
+      window.setTimeout(scheduleCatalogPrefetch, 1800);
+      return;
+    }
+
+    if (consentWatchCount >= 120) {
+      window.clearInterval(consentWatcher);
+    }
+  }, 1000);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && consentAccepted) {
+      scheduleCatalogPrefetch();
+    }
+  });
+
+  log('Оптимизация V3 подключена');
+
+})();
+</script>
+<!-- ===== конец DollieLand Speed Optimization V3 ===== -->
+
+</body> (после всех остальных <script>). -->
 <style id="sr-required-css">
   .sr-req { color: #C4324A; margin-left: 2px; }
   .sr-field-error { display: none; font-size: 11.5px; font-weight: 700; color: #C4324A; margin-top: 6px; line-height: 1.35; }
