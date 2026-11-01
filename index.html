@@ -8950,7 +8950,7 @@ window.addEventListener('unhandledrejection', (e) => {
 </script>
 <!-- ===== конец DollieLand Speed Optimization V3 ===== -->
 
-</body> <script>). -->
+</body> (после всех остальных <script>). -->
 <style id="sr-required-css">
   .sr-req { color: #C4324A; margin-left: 2px; }
   .sr-field-error { display: none; font-size: 11.5px; font-weight: 700; color: #C4324A; margin-top: 6px; line-height: 1.35; }
@@ -10146,5 +10146,219 @@ window.addEventListener('unhandledrejection', (e) => {
   /* Каталог не «проявляется» заново при каждом заходе во вкладку */
   #tab-catalog.active > * { animation: none; }
 </style>
+<!-- ===== DollieLand: «Новинки» на главном экране ===== -->
+<!-- Вставить в index.html прямо перед </body>, ПОСЛЕ всех остальных блоков
+     (в том числе после блока «быстрый запуск и лёгкие фото»). -->
+<style id="dl-new-arrivals-css">
+  .na-section { margin: 0 0 14px; }
+  .na-section[hidden] { display: none !important; }
+  .na-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 2px 2px 10px; }
+  .na-title { display: inline-flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 800; color: var(--text); }
+  .na-title .na-spark { width: 18px; height: 18px; color: var(--pink-accent); }
+  .na-count { font-size: 11.5px; font-weight: 700; color: var(--text-secondary); white-space: nowrap; }
+  .na-row {
+    display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    margin: 0 -18px; padding: 2px 18px 10px;
+  }
+  .na-row::-webkit-scrollbar { display: none; }
+  .na-card {
+    flex: 0 0 158px; scroll-snap-align: start; min-width: 0;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-soft);
+    color: var(--text);
+  }
+  .na-row.few .na-card { flex: 1 1 0; max-width: calc(50% - 5px); }
+  .na-img { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; padding: 0; background: var(--pink-soft); }
+  .na-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .na-img .icon { position: absolute; inset: 0; margin: auto; width: 30px; height: 30px; color: var(--pink-accent); }
+  .na-card.oos .na-img img { filter: grayscale(.35); opacity: .85; }
+  .na-badge, .cat-new-badge {
+    position: absolute; left: 7px; top: 7px; z-index: 2; pointer-events: none;
+    background: linear-gradient(135deg, #E78EAD, #C9688D); color: #fff;
+    font-size: 10.5px; font-weight: 800; letter-spacing: .2px;
+    padding: 3px 9px; border-radius: 999px; box-shadow: 0 3px 8px rgba(201,104,141,.35);
+  }
+  .na-sale { position: absolute; left: 7px; bottom: 7px; z-index: 2; background: #E5384F; color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
+  .na-oos { position: absolute; right: 7px; bottom: 7px; z-index: 2; background: rgba(57,44,49,.78); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
+  .na-body { padding: 9px 10px 11px; display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .na-name {
+    font-size: 13px; font-weight: 800; line-height: 1.3; min-height: 2.6em; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .na-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 1px 6px; margin-top: 5px; }
+  .na-price b { font-size: 15px; font-weight: 800; color: var(--pink-accent); font-variant-numeric: tabular-nums; }
+  .na-price b.sale { color: #E5384F; }
+  .na-price s { font-size: 11px; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+  .na-card.oos .na-price b { color: var(--text-secondary); }
+  .na-weight { font-size: 10.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.3; }
+  .na-btn { margin-top: auto; padding-top: 9px; }
+  .na-btn .btn { width: 100%; min-height: 36px; padding: 8px 6px; font-size: 12.5px; }
+  .na-btn .btn .icon { width: 14px; height: 14px; }
+  html[data-theme="dark"] .na-price b.sale { color: #FF7A8C; }
+
+  /* Значок «Новинка» в каталоге */
+  .cat-media.has-new .cat-oos-badge { top: 34px; }
+  .cat-media.detail .cat-new-badge { left: 12px; top: 12px; font-size: 12px; padding: 5px 11px; }
+  .cat-media.detail.has-new .cat-oos-badge { top: 44px; }
+</style>
+<script id="dl-new-arrivals-js">
+(function () {
+  let newArrivals = [];
+  let lastLoad = 0;
+  let inflight = false;
+
+  const hasSale = p => Number(p.discount_percent) > 0 && Number(p.old_price) > Number(p.price);
+  const isOOS = p => p && p.in_stock === false;
+  const NEW_ICON = `<svg class="na-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.8 5.5 2.5 7.2 8 8-5.5.8-7.2 2.5-8 8-.8-5.5-2.5-7.2-8-8 5.5-.8 7.2-2.5 8-8z"/><path d="M19 15c.35 2.2 1 2.9 3 3.2-2 .3-2.65 1-3 3.2-.35-2.2-1-2.9-3-3.2 2-.3 2.65-1 3-3.2z" opacity=".6"/></svg>`;
+
+  /* Актуальная копия товара: если каталог уже загружен — берём из него */
+  function current(p) {
+    return (catalogCache || []).find(x => String(x.id) === String(p.id)) || p;
+  }
+  /* Товар должен быть в catalogCache — через него работают «Подробнее» и заявка */
+  function ensureInCache(id) {
+    let p = (catalogCache || []).find(x => String(x.id) === String(id));
+    if (!p) {
+      p = newArrivals.find(x => String(x.id) === String(id));
+      if (p) catalogCache.push(p);
+    }
+    return p;
+  }
+
+  function ensureSection() {
+    let sec = document.getElementById('home-new-section');
+    if (sec) return sec;
+    sec = document.createElement('section');
+    sec.id = 'home-new-section';
+    sec.className = 'na-section';
+    sec.hidden = true;
+    const anchor = document.getElementById('banner-section') || document.getElementById('seasonal-banner-slot');
+    if (anchor) anchor.insertAdjacentElement('afterend', sec);
+    else document.querySelector('#tab-home .greeting')?.insertAdjacentElement('afterend', sec);
+    return sec;
+  }
+
+  function imgHTML(p) {
+    const orig = (typeof catalogImages === 'function' ? catalogImages(p) : [])[0];
+    if (!orig) return `<svg class="icon"><use href="#icon-shop"/></svg>`;
+    const thumb = typeof window.dlThumbUrl === 'function' ? window.dlThumbUrl(orig, 320) : null;
+    return thumb
+      ? `<img src="${escapeAttr(thumb)}" data-dl-orig="${escapeAttr(orig)}" alt="" loading="lazy" decoding="async">`
+      : `<img src="${escapeAttr(orig)}" alt="" loading="lazy" decoding="async">`;
+  }
+
+  function cardHTML(raw) {
+    const p = current(raw);
+    const pid = escapeAttr(String(p.id));
+    const oos = isOOS(p);
+    const sale = hasSale(p);
+    const w = typeof formatCatalogWeight === 'function' ? formatCatalogWeight(p) : '';
+    const action = oos
+      ? `<button type="button" class="btn btn-wait ${p.waitlisted ? 'on' : ''}" data-wait-btn="${pid}" onclick="newArrivalWait('${pid}', event)">
+           ${p.waitlisted ? '<svg class="icon"><use href="#icon-check"/></svg> Сообщим' : '<svg class="icon"><use href="#icon-bell"/></svg> Сообщить'}</button>`
+      : `<button type="button" class="btn btn-primary" onclick="newArrivalOrder('${pid}', event)">Заказать</button>`;
+    return `
+      <article class="na-card ${oos ? 'oos' : ''}">
+        <button type="button" class="na-img" onclick="newArrivalOpen('${pid}')" aria-label="${escapeAttr(p.name)}">
+          ${imgHTML(p)}
+          <span class="na-badge">Новинка</span>
+          ${sale ? `<span class="na-sale">−${Number(p.discount_percent)}%</span>` : ''}
+          ${oos ? '<span class="na-oos">Нет в наличии</span>' : ''}
+        </button>
+        <div class="na-body" onclick="if(!event.target.closest('button')) newArrivalOpen('${pid}')">
+          <div class="na-name">${escapeHtml(p.name)}</div>
+          <div class="na-price">
+            <b class="${sale ? 'sale' : ''}">${escapeHtml(formatRub(p.price))}</b>
+            ${sale ? `<s>${escapeHtml(formatRub(p.old_price))}</s>` : ''}
+          </div>
+          ${w ? `<div class="na-weight">+ вес ${escapeHtml(w)}</div>` : ''}
+          <div class="na-btn">${action}</div>
+        </div>
+      </article>`;
+  }
+
+  function render() {
+    const sec = ensureSection();
+    if (!sec) return;
+    if (!newArrivals.length) { sec.hidden = true; sec.innerHTML = ''; return; }
+    const n = newArrivals.length;
+    sec.innerHTML = `
+      <div class="na-head">
+        <span class="na-title">${NEW_ICON}Новинки</span>
+        <span class="na-count">${n} ${pluralize(n, 'новинка', 'новинки', 'новинок')}</span>
+      </div>
+      <div class="na-row ${n <= 2 ? 'few' : ''}">${newArrivals.map(cardHTML).join('')}</div>`;
+    sec.hidden = false;
+  }
+
+  async function loadNewArrivals(force) {
+    if (!userId || inflight) return;
+    if (!force && Date.now() - lastLoad < 60000 && newArrivals.length) return;
+    inflight = true;
+    try {
+      const d = await apiFetch('/api/catalog/new', {}, { timeoutMs: 10000, retries: 1 });
+      if (d && d.ok) {
+        newArrivals = (d.products || []).filter(p => !p.is_bundle && p.product_type !== 'bundle');
+        lastLoad = Date.now();
+        render();
+      }
+    } catch (_) {
+      // блок просто не покажется — на остальное приложение это не влияет
+    } finally {
+      inflight = false;
+    }
+  }
+  window.loadNewArrivals = loadNewArrivals;
+
+  window.newArrivalOpen = function (id) {
+    if (!ensureInCache(id)) return;
+    hapticImpact('light');
+    openCatalogProduct(id);
+  };
+  window.newArrivalOrder = function (id, event) {
+    event?.stopPropagation?.();
+    if (!ensureInCache(id)) return;
+    hapticImpact('light');
+    openCatalogRequest(id);
+  };
+  window.newArrivalWait = async function (id, event) {
+    event?.stopPropagation?.();
+    if (!ensureInCache(id)) return;
+    if (typeof toggleCatalogWaitlist === 'function') await toggleCatalogWaitlist(id, event);
+    render();
+  };
+
+  /* ---------- Значок «Новинка» в каталоге ---------- */
+  const prevCard = window.catalogCardHTML;
+  window.catalogCardHTML = function (p) {
+    const html = prevCard(p);
+    if (!p || !p.is_new) return html;
+    return html.replace('<div class="cat-media">', '<div class="cat-media has-new"><span class="cat-new-badge">Новинка</span>');
+  };
+  const prevDetail = window.catalogDetailHTML;
+  window.catalogDetailHTML = function (p) {
+    const html = prevDetail(p);
+    if (!p || !p.is_new) return html;
+    return html.replace('<div class="cat-media detail">', '<div class="cat-media detail has-new"><span class="cat-new-badge">Новинка</span>');
+  };
+
+  /* Каталог загрузился или обновился — подтягиваем свежие цены и наличие в блок */
+  const prevRenderCatalog = window.renderCatalog;
+  window.renderCatalog = function () {
+    const r = prevRenderCatalog.apply(this, arguments);
+    if (newArrivals.length) render();
+    return r;
+  };
+
+  ensureSection();
+  loadNewArrivals(true);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') loadNewArrivals(false);
+  });
+  if (typeof catalogLoadedOnce !== 'undefined' && catalogLoadedOnce) renderCatalog();
+})();
+</script>
+<!-- ===== конец блока «Новинки» ===== -->
 </body>
 </html>
