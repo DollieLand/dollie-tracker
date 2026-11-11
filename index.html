@@ -9265,6 +9265,7 @@ window.addEventListener('unhandledrejection', (e) => {
   let catalogCategories = [];
   let catalogCategory = 'all';       // главная категория
   let catalogSubCategory = 'all';    // подкатегория внутри главной
+  let catalogMoreObserver = null;
   let catalogCatRank = {};           // порядок категорий из админки: id → место (главная, затем её подкатегории)
 
   const isOOS = p => p && p.in_stock === false;
@@ -9596,6 +9597,15 @@ window.addEventListener('unhandledrejection', (e) => {
       (shown.length < items.length ? `<button type="button" class="btn btn-secondary btn-block catalog-load-more" onclick="loadMoreCatalogProducts()">Показать ещё (${items.length - shown.length})</button>` : '');
     bindCatalogGalleries(list);
     stripAfterInsert(list);
+    // Следующие карточки подгружаются сами, когда пользователь докручивает до конца (кнопка остаётся запасной)
+    try {
+      if (catalogMoreObserver) { catalogMoreObserver.disconnect(); catalogMoreObserver = null; }
+      const more = list.querySelector('.catalog-load-more');
+      if (more && 'IntersectionObserver' in window) {
+        catalogMoreObserver = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) loadMoreCatalogProducts(); }, { rootMargin: '900px' });
+        catalogMoreObserver.observe(more);
+      }
+    } catch (_) {}
   }
 
   window.loadMoreCatalogProducts = function () {
