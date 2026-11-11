@@ -9209,6 +9209,9 @@ window.addEventListener('unhandledrejection', (e) => {
   .cat-chip.active { background: var(--pink-accent); border-color: var(--pink-accent); color: #fff; }
   .cat-chip.active .n { color: rgba(255,255,255,.85); }
   .cat-chip:active { transform: scale(.96); }
+  /* Подкатегории — второй ряд под основными категориями */
+  .cat-chips-bar.sub { margin-top: -6px; margin-bottom: 12px; }
+  .cat-chips-bar.sub .cat-chip { padding: 7px 13px; font-size: 12.5px; }
 
   /* Скидки */
   .cat-sale-badge {
@@ -9260,7 +9263,8 @@ window.addEventListener('unhandledrejection', (e) => {
 <script id="dl-catalog-sale-js">
 (function () {
   let catalogCategories = [];
-  let catalogCategory = 'all';
+  let catalogCategory = 'all';       // главная категория
+  let catalogSubCategory = 'all';    // подкатегория внутри главной
 
   const isOOS = p => p && p.in_stock === false;
   const hasSale = p => p && Number(p.discount_percent) > 0 && Number(p.old_price) > Number(p.price);
@@ -9501,20 +9505,56 @@ window.addEventListener('unhandledrejection', (e) => {
     return bar;
   }
 
+  const topCategories = () => catalogCategories.filter(c => !c.parent_id);
+  const subCategoriesOf = id => catalogCategories.filter(c => c.parent_id && String(c.parent_id) === String(id));
+
+  function ensureSubChipsBar(mainBar) {
+    let sub = document.getElementById('cat-subchips-bar');
+    if (!sub) {
+      sub = document.createElement('div');
+      sub.className = 'cat-chips-bar sub';
+      sub.id = 'cat-subchips-bar';
+      sub.hidden = true;
+      sub.innerHTML = '<div class="cat-chips" id="cat-subchips" role="tablist" aria-label="Подкатегории"></div>';
+    }
+    // между основными категориями и поиском
+    if (sub.previousElementSibling !== mainBar) mainBar.insertAdjacentElement('afterend', sub);
+    return sub;
+  }
+
   function renderCategoryChips() {
     const bar = ensureChipsBar();
     if (!bar) return;
-    if (catalogCategory !== 'all' && !catalogCategories.some(c => String(c.id) === String(catalogCategory))) catalogCategory = 'all';
-    if (!catalogCategories.length) { bar.hidden = true; return; }
+    const tops = topCategories();
+    if (catalogCategory !== 'all' && !tops.some(c => String(c.id) === String(catalogCategory))) { catalogCategory = 'all'; catalogSubCategory = 'all'; }
+    const subs = catalogCategory === 'all' ? [] : subCategoriesOf(catalogCategory);
+    if (catalogSubCategory !== 'all' && !subs.some(c => String(c.id) === String(catalogSubCategory))) catalogSubCategory = 'all';
+    const subBar = ensureSubChipsBar(bar);
+    if (!tops.length) { bar.hidden = true; subBar.hidden = true; return; }
     bar.hidden = false;
     const chip = (id, name, n) => `<button type="button" class="cat-chip ${String(catalogCategory) === String(id) ? 'active' : ''}" data-cat="${escapeAttr(String(id))}" role="tab" onclick="selectCatalogCategory('${escapeAttr(String(id))}')">${escapeHtml(name)}${n != null ? `<span class="n">${Number(n)}</span>` : ''}</button>`;
     document.getElementById('cat-chips').innerHTML =
-      chip('all', 'Все', catalogCache.length) + catalogCategories.map(c => chip(c.id, c.name, c.count)).join('');
+      chip('all', 'Все', catalogCache.length) + tops.map(c => chip(c.id, c.name, c.count)).join('');
+    // второй ряд: только когда выбрана главная категория, у которой есть подкатегории
+    if (!subs.length) { subBar.hidden = true; return; }
+    subBar.hidden = false;
+    const schip = (id, name, n) => `<button type="button" class="cat-chip ${String(catalogSubCategory) === String(id) ? 'active' : ''}" data-sub="${escapeAttr(String(id))}" role="tab" onclick="selectCatalogSubCategory('${escapeAttr(String(id))}')">${escapeHtml(name)}${n != null ? `<span class="n">${Number(n)}</span>` : ''}</button>`;
+    const parent = tops.find(c => String(c.id) === String(catalogCategory));
+    document.getElementById('cat-subchips').innerHTML =
+      schip('all', 'Все', parent ? parent.count : null) + subs.map(c => schip(c.id, c.name, c.count)).join('');
   }
 
   function visibleProducts() {
     let products = catalogCache;
-    if (catalogCategory !== 'all') products = products.filter(p => String(p.category_id || '') === String(catalogCategory));
+    if (catalogCategory !== 'all') {
+      if (catalogSubCategory !== 'all') {
+        products = products.filter(p => String(p.category_id || '') === String(catalogSubCategory));
+      } else {
+        // подкатегория не выбрана — товары главной категории и всех её подкатегорий идут одним потоком
+        const ids = new Set([String(catalogCategory), ...subCategoriesOf(catalogCategory).map(c => String(c.id))]);
+        products = products.filter(p => ids.has(String(p.category_id || '')));
+      }
+    }
     if (catalogSearchQuery) {
       const terms = catalogSearchQuery.split(/\s+/).filter(Boolean);
       products = products.filter(p => {
@@ -9562,10 +9602,21 @@ window.addEventListener('unhandledrejection', (e) => {
   window.selectCatalogCategory = function (id) {
     if (String(id) === String(catalogCategory)) return;
     catalogCategory = String(id);
+    catalogSubCategory = 'all';
     catalogGridShownCount = CATALOG_GRID_BATCH;
     hapticSelection();
-    document.querySelectorAll('#cat-chips .cat-chip').forEach(b => b.classList.toggle('active', b.dataset.cat === catalogCategory));
+    renderCategoryChips();          // перерисовывает и второй ряд подкатегорий
     document.querySelector(`#cat-chips .cat-chip[data-cat="${CSS.escape(catalogCategory)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    renderGrid();
+  };
+
+  window.selectCatalogSubCategory = function (id) {
+    if (String(id) === String(catalogSubCategory)) return;
+    catalogSubCategory = String(id);
+    catalogGridShownCount = CATALOG_GRID_BATCH;
+    hapticSelection();
+    document.querySelectorAll('#cat-subchips .cat-chip').forEach(b => b.classList.toggle('active', b.dataset.sub === catalogSubCategory));
+    document.querySelector(`#cat-subchips .cat-chip[data-sub="${CSS.escape(catalogSubCategory)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     renderGrid();
   };
 
@@ -9591,8 +9642,14 @@ window.addEventListener('unhandledrejection', (e) => {
       const data = await apiFetch('/api/catalog', {}, { timeoutMs: 10000, retries: 1 });
       if (!data?.ok) throw new Error('catalog');
       catalogCache = (data.products || []).filter(p => !p.is_bundle && p.product_type !== 'bundle');
-      catalogCategories = (Array.isArray(data.categories) ? data.categories : [])
-        .map(c => ({ ...c, count: catalogCache.filter(p => String(p.category_id || '') === String(c.id)).length }))
+      const rawCats = (Array.isArray(data.categories) ? data.categories : [])
+        .map(c => ({ ...c, id: String(c.id), parent_id: c.parent_id ? String(c.parent_id) : '' }));
+      const catIds = new Set(rawCats.map(c => c.id));
+      rawCats.forEach(c => { if (c.parent_id && !catIds.has(c.parent_id)) c.parent_id = ''; });
+      const own = {};
+      catalogCache.forEach(p => { const k = String(p.category_id || ''); own[k] = (own[k] || 0) + 1; });
+      catalogCategories = rawCats
+        .map(c => ({ ...c, count: (own[c.id] || 0) + rawCats.filter(k => k.parent_id === c.id).reduce((a, k) => a + (own[k.id] || 0), 0) }))
         .filter(c => c.count > 0);
       catalogLoadedOnce = true;
       renderCatalog();
