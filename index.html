@@ -9265,6 +9265,7 @@ window.addEventListener('unhandledrejection', (e) => {
   let catalogCategories = [];
   let catalogCategory = 'all';       // главная категория
   let catalogSubCategory = 'all';    // подкатегория внутри главной
+  let catalogCatRank = {};           // порядок категорий из админки: id → место (главная, затем её подкатегории)
 
   const isOOS = p => p && p.in_stock === false;
   const hasSale = p => p && Number(p.discount_percent) > 0 && Number(p.old_price) > Number(p.price);
@@ -9544,6 +9545,13 @@ window.addEventListener('unhandledrejection', (e) => {
       schip('all', 'Все', parent ? parent.count : null) + subs.map(c => schip(c.id, c.name, c.count)).join('');
   }
 
+  // Товары идут в порядке категорий: сначала все товары 1-й категории, потом 2-й и т. д.
+  // (внутри категории порядок, заданный в админке, сохраняется — сортировка устойчивая).
+  function sortByCategoryOrder(list) {
+    const rank = p => { const r = catalogCatRank[String(p.category_id || '')]; return r === undefined ? 1e9 : r; };
+    return list.map((p, i) => [p, i]).sort((a, b) => (rank(a[0]) - rank(b[0])) || (a[1] - b[1])).map(x => x[0]);
+  }
+
   function visibleProducts() {
     let products = catalogCache;
     if (catalogCategory !== 'all') {
@@ -9555,6 +9563,7 @@ window.addEventListener('unhandledrejection', (e) => {
         products = products.filter(p => ids.has(String(p.category_id || '')));
       }
     }
+    if (catalogSubCategory === 'all') products = sortByCategoryOrder(products);
     if (catalogSearchQuery) {
       const terms = catalogSearchQuery.split(/\s+/).filter(Boolean);
       products = products.filter(p => {
@@ -9648,6 +9657,12 @@ window.addEventListener('unhandledrejection', (e) => {
       rawCats.forEach(c => { if (c.parent_id && !catIds.has(c.parent_id)) c.parent_id = ''; });
       const own = {};
       catalogCache.forEach(p => { const k = String(p.category_id || ''); own[k] = (own[k] || 0) + 1; });
+      catalogCatRank = {};
+      let rk = 0;
+      rawCats.filter(c => !c.parent_id).forEach(t => {
+        catalogCatRank[t.id] = rk++;
+        rawCats.filter(k => k.parent_id === t.id).forEach(k => { catalogCatRank[k.id] = rk++; });
+      });
       catalogCategories = rawCats
         .map(c => ({ ...c, count: (own[c.id] || 0) + rawCats.filter(k => k.parent_id === c.id).reduce((a, k) => a + (own[k.id] || 0), 0) }))
         .filter(c => c.count > 0);
