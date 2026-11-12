@@ -1993,6 +1993,22 @@
   .dl-catalog-search-clear.visible{display:flex}
   .dl-catalog-search-photo{border:0;background:color-mix(in srgb,var(--pink-accent) 14%,transparent);color:var(--pink-accent);width:34px;height:34px;flex:0 0 34px;border-radius:11px;display:flex;align-items:center;justify-content:center;padding:0}
   .dl-catalog-search-photo svg{width:19px;height:19px;color:inherit}
+
+  .dl-crop{position:fixed;inset:0;z-index:100000;background:#000;display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none}
+  .dl-crop-top{padding:calc(12px + env(safe-area-inset-top)) 16px 8px;color:#fff;font-size:14px;text-align:center;opacity:.9}
+  .dl-crop-stage{position:relative;flex:1;overflow:hidden;touch-action:none}
+  .dl-crop-stage img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;pointer-events:none;will-change:transform}
+  .dl-crop-frame{position:absolute;border:2px solid #fff;border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,.62);pointer-events:none}
+  .dl-crop-frame:before,.dl-crop-frame:after{content:"";position:absolute;background:rgba(255,255,255,.35)}
+  .dl-crop-frame:before{left:33.3%;right:33.3%;top:0;bottom:0;border-left:1px solid rgba(255,255,255,.35);border-right:1px solid rgba(255,255,255,.35);background:none}
+  .dl-crop-frame:after{top:33.3%;bottom:33.3%;left:0;right:0;border-top:1px solid rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.35);background:none}
+  .dl-crop-ratios{display:flex;gap:8px;justify-content:center;padding:10px 12px 4px;flex-wrap:wrap}
+  .dl-crop-ratios button{border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px}
+  .dl-crop-ratios button.active{background:#fff;color:#000;border-color:#fff}
+  .dl-crop-bottom{display:flex;gap:10px;padding:8px 16px calc(14px + env(safe-area-inset-bottom))}
+  .dl-crop-bottom button{flex:1;border:0;border-radius:14px;padding:13px;font:inherit;font-weight:600;font-size:15px}
+  .dl-crop-bottom .cancel{background:rgba(255,255,255,.16);color:#fff}
+  .dl-crop-bottom .ok{background:var(--pink-accent,#e0559a);color:#fff;flex:1.6}
   .dl-photo-banner{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:15px;background:var(--surface);box-shadow:0 3px 12px rgba(0,0,0,.05)}
   .dl-photo-banner img{width:46px;height:46px;border-radius:11px;object-fit:cover;flex:0 0 46px}
   .dl-photo-banner .t{flex:1;min-width:0;font-size:13px;line-height:1.35}.dl-photo-banner .t b{display:block;font-size:14px}
@@ -9501,7 +9517,7 @@ window.addEventListener('unhandledrejection', (e) => {
     const photoInput = wrap.querySelector('#dl-catalog-photo-input');
     photoBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); hapticSelection(); photoInput.click(); });
     photoInput.addEventListener('click', e => e.stopPropagation());
-    photoInput.addEventListener('change', () => { const f = photoInput.files && photoInput.files[0]; photoInput.value = ''; if (f) runCatalogPhotoSearch(f); });
+    photoInput.addEventListener('change', () => { const f = photoInput.files && photoInput.files[0]; photoInput.value = ''; if (f) startPhotoSearch(f); });
     clear.addEventListener('click', () => { input.value = ''; catalogSearchQuery = ''; clearCatalogPhotoSearch(true); clear.classList.remove('visible'); catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); input.focus(); });
   }
 
@@ -9578,6 +9594,7 @@ window.addEventListener('unhandledrejection', (e) => {
     if (!silent) { catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); }
   }
   window.clearCatalogPhotoSearch = () => clearCatalogPhotoSearch(false);
+  window.recropCatalogPhoto = () => { const f = catalogPhotoSearch && catalogPhotoSearch.file; if (f) startPhotoSearch(f); };
 
   // Уменьшаем фото до 384 px на телефоне — быстрее загрузка и не тратим трафик
   function downscalePhoto(file, maxSide) {
@@ -9597,7 +9614,91 @@ window.addEventListener('unhandledrejection', (e) => {
     });
   }
 
-  async function runCatalogPhotoSearch(file) {
+
+  // ===== Кадрирование: приближение (щипок / колесо), перетаскивание, рамка с пропорциями =====
+  function openPhotoCropper(file) {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(undefined); };
+      img.onload = () => {
+        const nw = img.naturalWidth, nh = img.naturalHeight;
+        const root = document.createElement('div'); root.className = 'dl-crop';
+        root.innerHTML = '<div class="dl-crop-top">Приблизьте и сдвиньте фото так, чтобы кукла была в рамке</div><div class="dl-crop-stage"><div class="dl-crop-frame"></div></div>' +
+          '<div class="dl-crop-ratios"><button data-r="0" class="active">Всё фото</button><button data-r="1">1:1</button><button data-r="0.75">3:4</button><button data-r="1.3333">4:3</button></div>' +
+          '<div class="dl-crop-bottom"><button type="button" class="cancel">Отмена</button><button type="button" class="ok">Найти</button></div>';
+        document.body.appendChild(root);
+        const stage = root.querySelector('.dl-crop-stage'), frame = root.querySelector('.dl-crop-frame');
+        img.draggable = false; stage.insertBefore(img, frame);
+        let fx = 0, fy = 0, fw = 0, fh = 0, sc = 1, tx = 0, ty = 0, ratio = 0;
+        const minScale = () => Math.max(fw / nw, fh / nh);
+        const clamp = () => {
+          sc = Math.min(Math.max(sc, minScale()), minScale() * 8);
+          tx = Math.min(fx, Math.max(fx + fw - nw * sc, tx));
+          ty = Math.min(fy, Math.max(fy + fh - nh * sc, ty));
+        };
+        const paint = () => { img.style.transform = `translate(${tx}px,${ty}px) scale(${sc})`; };
+        const layout = (keep) => {
+          const W = stage.clientWidth, H = stage.clientHeight, m = 18;
+          const r = ratio || (nw / nh);
+          let w = W - 2 * m, h = w / r;
+          if (h > H - 2 * m) { h = H - 2 * m; w = h * r; }
+          fw = Math.round(w); fh = Math.round(h); fx = Math.round((W - fw) / 2); fy = Math.round((H - fh) / 2);
+          frame.style.cssText = `left:${fx}px;top:${fy}px;width:${fw}px;height:${fh}px`;
+          if (!keep) { sc = minScale(); tx = fx + (fw - nw * sc) / 2; ty = fy + (fh - nh * sc) / 2; }
+          clamp(); paint();
+        };
+        layout(false);
+        const zoomAt = (cx, cy, k) => {
+          const ns = Math.min(Math.max(sc * k, minScale()), minScale() * 8), f = ns / sc;
+          tx = cx - (cx - tx) * f; ty = cy - (cy - ty) * f; sc = ns; clamp(); paint();
+        };
+        const pts = new Map(); let last = null;
+        stage.addEventListener('pointerdown', e => { stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); last = null; });
+        stage.addEventListener('pointermove', e => {
+          if (!pts.has(e.pointerId)) return;
+          const prev = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+          const rect = stage.getBoundingClientRect();
+          if (pts.size === 1) { tx += e.clientX - prev[0]; ty += e.clientY - prev[1]; clamp(); paint(); }
+          else if (pts.size === 2) {
+            const [a, b] = [...pts.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+            const cx = (a[0] + b[0]) / 2 - rect.left, cy = (a[1] + b[1]) / 2 - rect.top;
+            if (last) { tx += cx - last.cx; ty += cy - last.cy; if (last.d > 0) zoomAt(cx, cy, d / last.d); else { clamp(); paint(); } }
+            last = { d, cx, cy };
+          }
+        });
+        const up = e => { pts.delete(e.pointerId); last = null; };
+        stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+        stage.addEventListener('wheel', e => { e.preventDefault(); const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.12 : 1 / 1.12); }, { passive: false });
+        stage.addEventListener('dblclick', e => { const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, 1.6); });
+        root.querySelectorAll('.dl-crop-ratios button').forEach(b => b.addEventListener('click', () => {
+          root.querySelectorAll('.dl-crop-ratios button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active'); ratio = parseFloat(b.dataset.r) || 0; layout(false);
+        }));
+        const close = (val) => { window.removeEventListener('resize', onResize); root.remove(); URL.revokeObjectURL(url); resolve(val); };
+        const onResize = () => layout(true); window.addEventListener('resize', onResize);
+        root.querySelector('.cancel').addEventListener('click', () => close(null));
+        root.querySelector('.ok').addEventListener('click', () => {
+          // вырезаем область рамки из исходного фото и ужимаем до 384 px
+          const sx = (fx - tx) / sc, sy = (fy - ty) / sc, sw = fw / sc, sh = fh / sc;
+          const k = Math.min(1, 384 / Math.max(sw, sh));
+          const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(sw * k)); c.height = Math.max(1, Math.round(sh * k));
+          const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+          c.toBlob(b => close(b ? { blob: b, preview: c.toDataURL('image/jpeg', 0.6) } : null), 'image/jpeg', 0.88);
+        });
+      };
+      img.src = url;
+    });
+  }
+
+  async function startPhotoSearch(file) {
+    const cropped = await openPhotoCropper(file);
+    if (cropped === null) return;                       // «Отмена»
+    runCatalogPhotoSearch(file, cropped || undefined);  // undefined — не открылось, ищем по целому фото
+  }
+
+  async function runCatalogPhotoSearch(file, cropped) {
     clearCatalogPhotoSearch(true);
     const input = document.getElementById('dl-catalog-search');
     if (input) { input.value = ''; catalogSearchQuery = ''; document.getElementById('dl-catalog-search-clear')?.classList.remove('visible'); }
@@ -9606,8 +9707,8 @@ window.addEventListener('unhandledrejection', (e) => {
     catalogGridShownCount = CATALOG_GRID_BATCH;
     renderGrid();
     try {
-      const { blob, preview } = await downscalePhoto(file, 384);
-      state.preview = preview; renderGrid();
+      const { blob, preview } = cropped || await downscalePhoto(file, 384);
+      state.preview = preview; state.file = file; renderGrid();
       for (let attempt = 0; attempt < 150 && !state.cancelled; attempt++) {
         const fd = new FormData(); fd.append('photo', blob, 'photo.jpg');
         const res = await fetch(API_BASE + '/api/catalog/photo_search', { method: 'POST', headers: DL_PWA.authHeaders(), body: fd });
@@ -9642,7 +9743,7 @@ window.addEventListener('unhandledrejection', (e) => {
     const ps = catalogPhotoSearch;
     return `<div class="dl-photo-banner">${ps.preview ? `<img src="${escapeAttr(ps.preview)}" alt="">` : ''}
       <div class="t"><b>Похожие на ваше фото</b><span>${ps.state === 'wait' ? escapeHtml(ps.msg) : 'Сначала самые похожие'}</span></div>
-      <button type="button" onclick="clearCatalogPhotoSearch()">Сбросить</button></div>`;
+      ${ps.file ? '<button type="button" onclick="recropCatalogPhoto()">Рамка</button>' : ''}<button type="button" onclick="clearCatalogPhotoSearch()">Сбросить</button></div>`;
   }
 
   function visibleProducts() {
