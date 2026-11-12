@@ -9608,19 +9608,20 @@ window.addEventListener('unhandledrejection', (e) => {
     try {
       const { blob, preview } = await downscalePhoto(file, 384);
       state.preview = preview; renderGrid();
-      for (let attempt = 0; attempt < 25 && !state.cancelled; attempt++) {
+      for (let attempt = 0; attempt < 150 && !state.cancelled; attempt++) {
         const fd = new FormData(); fd.append('photo', blob, 'photo.jpg');
         const res = await fetch(API_BASE + '/api/catalog/photo_search', { method: 'POST', headers: DL_PWA.authHeaders(), body: fd });
         if (res.status === 429) throw new Error('Слишком много запросов — подождите минуту');
         const data = await res.json().catch(() => null);
-        if (!res.ok || !data?.ok) throw new Error('Не удалось выполнить поиск');
+        if (!res.ok || !data?.ok) throw new Error(data?.error === 'numpy_missing' ? 'Поиск по фото ещё не настроен на сервере' : 'Не удалось выполнить поиск');
         if (state.cancelled) return;
         state.ids = (data.results || []).map(r => String(r.id));
-        if (data.indexing && attempt < 24) {
-          // Каталог ещё «запоминает» фото (после обновления товаров) — показываем промежуточный результат и повторяем
+        if (data.indexing && attempt < 149) {
+          // Сервер «запоминает» фото каталога порциями (один раз после обновления товаров) — повторяем, пока не закончит
           state.msg = `Готовлю поиск: ${data.indexed} из ${data.total} фото…`;
+          state.ids = [];
           renderGrid();
-          await new Promise(r => setTimeout(r, 3000));
+          await new Promise(r => setTimeout(r, 400));
           continue;
         }
         state.state = 'done'; renderGrid(); return;
