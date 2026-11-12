@@ -1991,6 +1991,16 @@
   .dl-catalog-search input::placeholder{color:var(--text-secondary);opacity:.85}
   .dl-catalog-search-clear{border:0;background:transparent;color:var(--text-secondary);padding:6px;display:none;align-items:center;justify-content:center}
   .dl-catalog-search-clear.visible{display:flex}
+  .dl-catalog-search-photo{border:0;background:color-mix(in srgb,var(--pink-accent) 14%,transparent);color:var(--pink-accent);width:34px;height:34px;flex:0 0 34px;border-radius:11px;display:flex;align-items:center;justify-content:center;padding:0}
+  .dl-catalog-search-photo svg{width:19px;height:19px;color:inherit}
+  .dl-photo-banner{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:10px 12px;border:1px solid var(--border);border-radius:15px;background:var(--surface);box-shadow:0 3px 12px rgba(0,0,0,.05)}
+  .dl-photo-banner img{width:46px;height:46px;border-radius:11px;object-fit:cover;flex:0 0 46px}
+  .dl-photo-banner .t{flex:1;min-width:0;font-size:13px;line-height:1.35}.dl-photo-banner .t b{display:block;font-size:14px}
+  .dl-photo-banner .t span{color:var(--text-secondary)}
+  .dl-photo-banner button{border:0;background:transparent;color:var(--pink-accent);font:inherit;font-weight:600;font-size:13px;padding:6px}
+  .dl-photo-wait{display:flex;flex-direction:column;align-items:center;gap:10px;padding:34px 16px;text-align:center;color:var(--text-secondary);font-size:14px}
+  .dl-photo-spin{width:30px;height:30px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--pink-accent);animation:dlps .8s linear infinite}
+  @keyframes dlps{to{transform:rotate(360deg)}}
   .dl-catalog-search-hint{font-size:11px;color:var(--text-secondary);margin:-5px 2px 10px;line-height:1.4}
   @media(prefers-reduced-motion:no-preference){.dl-catalog-search{transition:border-color .18s,box-shadow .18s}.dl-catalog-search:focus-within{border-color:var(--pink-accent);box-shadow:0 0 0 3px rgba(217,140,139,.12)}}
 </style>
@@ -9266,6 +9276,7 @@ window.addEventListener('unhandledrejection', (e) => {
   let catalogCategory = 'all';       // главная категория
   let catalogSubCategory = 'all';    // подкатегория внутри главной
   let catalogMoreObserver = null;
+  let catalogPhotoSearch = null;     // { ids:[...], preview:dataURL, state:'wait'|'done'|'error', msg }
   let catalogCatRank = {};           // порядок категорий из админки: id → место (главная, затем её подкатегории)
 
   const isOOS = p => p && p.in_stock === false;
@@ -9474,18 +9485,24 @@ window.addEventListener('unhandledrejection', (e) => {
     if (!catalog || !intro) return;
     const wrap = document.createElement('div');
     wrap.className = 'dl-catalog-search-wrap';
-    wrap.innerHTML = '<label class="dl-catalog-search" for="dl-catalog-search"><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg><input id="dl-catalog-search" type="search" autocomplete="off" enterkeyhint="search" placeholder="Найти куклу, персонажа или коллекцию…" aria-label="Поиск по каталогу"><button type="button" class="dl-catalog-search-clear" id="dl-catalog-search-clear" aria-label="Очистить поиск"><svg class="icon"><use href="#icon-x"/></svg></button></label><div class="dl-catalog-search-hint">Можно искать на русском или английском. Например: Дракулаура, Draculaura, Monster High.</div>';
+    wrap.innerHTML = '<label class="dl-catalog-search" for="dl-catalog-search"><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg><input id="dl-catalog-search" type="search" autocomplete="off" enterkeyhint="search" placeholder="Найти куклу, персонажа или коллекцию…" aria-label="Поиск по каталогу"><button type="button" class="dl-catalog-search-clear" id="dl-catalog-search-clear" aria-label="Очистить поиск"><svg class="icon"><use href="#icon-x"/></svg></button><button type="button" class="dl-catalog-search-photo" id="dl-catalog-photo-btn" aria-label="Поиск по фото" title="Поиск по фото"><svg class="icon"><use href="#icon-camera"/></svg></button><input type="file" id="dl-catalog-photo-input" accept="image/*" hidden></label><div class="dl-catalog-search-hint">Можно искать на русском или английском. Например: Дракулаура, Draculaura, Monster High. Или нажмите на камеру — найдём похожую куклу по фото.</div>';
     intro.insertAdjacentElement('afterend', wrap);
     const input = wrap.querySelector('#dl-catalog-search');
     const clear = wrap.querySelector('#dl-catalog-search-clear');
     let raf = 0;
     input.addEventListener('input', () => {
       catalogSearchQuery = normalizeCatalogSearch(input.value);
+      if (catalogPhotoSearch && input.value) clearCatalogPhotoSearch(true);
       clear.classList.toggle('visible', !!input.value);
       if (raf) cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => { catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); });
     });
-    clear.addEventListener('click', () => { input.value = ''; catalogSearchQuery = ''; clear.classList.remove('visible'); catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); input.focus(); });
+    const photoBtn = wrap.querySelector('#dl-catalog-photo-btn');
+    const photoInput = wrap.querySelector('#dl-catalog-photo-input');
+    photoBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); hapticSelection(); photoInput.click(); });
+    photoInput.addEventListener('click', e => e.stopPropagation());
+    photoInput.addEventListener('change', () => { const f = photoInput.files && photoInput.files[0]; photoInput.value = ''; if (f) runCatalogPhotoSearch(f); });
+    clear.addEventListener('click', () => { input.value = ''; catalogSearchQuery = ''; clearCatalogPhotoSearch(true); clear.classList.remove('visible'); catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); input.focus(); });
   }
 
   /* ---------- Категории ---------- */
@@ -9553,7 +9570,82 @@ window.addEventListener('unhandledrejection', (e) => {
     return list.map((p, i) => [p, i]).sort((a, b) => (rank(a[0]) - rank(b[0])) || (a[1] - b[1])).map(x => x[0]);
   }
 
+  /* ---------- Поиск по фото ---------- */
+  function clearCatalogPhotoSearch(silent) {
+    if (!catalogPhotoSearch) return;
+    catalogPhotoSearch.cancelled = true;
+    catalogPhotoSearch = null;
+    if (!silent) { catalogGridShownCount = CATALOG_GRID_BATCH; renderCategoryChips(); renderGrid(); }
+  }
+  window.clearCatalogPhotoSearch = () => clearCatalogPhotoSearch(false);
+
+  // Уменьшаем фото до 384 px на телефоне — быстрее загрузка и не тратим трафик
+  function downscalePhoto(file, maxSide) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        c.toBlob(b => b ? resolve({ blob: b, preview: c.toDataURL('image/jpeg', 0.6) }) : reject(new Error('blob')), 'image/jpeg', 0.85);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image')); };
+      img.src = url;
+    });
+  }
+
+  async function runCatalogPhotoSearch(file) {
+    clearCatalogPhotoSearch(true);
+    const input = document.getElementById('dl-catalog-search');
+    if (input) { input.value = ''; catalogSearchQuery = ''; document.getElementById('dl-catalog-search-clear')?.classList.remove('visible'); }
+    const state = { ids: [], preview: '', state: 'wait', msg: 'Ищу похожие куклы…', cancelled: false };
+    catalogPhotoSearch = state;
+    catalogGridShownCount = CATALOG_GRID_BATCH;
+    renderGrid();
+    try {
+      const { blob, preview } = await downscalePhoto(file, 384);
+      state.preview = preview; renderGrid();
+      for (let attempt = 0; attempt < 25 && !state.cancelled; attempt++) {
+        const fd = new FormData(); fd.append('photo', blob, 'photo.jpg');
+        const res = await fetch(API_BASE + '/api/catalog/photo_search', { method: 'POST', headers: DL_PWA.authHeaders(), body: fd });
+        if (res.status === 429) throw new Error('Слишком много запросов — подождите минуту');
+        const data = await res.json().catch(() => null);
+        if (!res.ok || !data?.ok) throw new Error('Не удалось выполнить поиск');
+        if (state.cancelled) return;
+        state.ids = (data.results || []).map(r => String(r.id));
+        if (data.indexing && attempt < 24) {
+          // Каталог ещё «запоминает» фото (после обновления товаров) — показываем промежуточный результат и повторяем
+          state.msg = `Готовлю поиск: ${data.indexed} из ${data.total} фото…`;
+          renderGrid();
+          await new Promise(r => setTimeout(r, 3000));
+          continue;
+        }
+        state.state = 'done'; renderGrid(); return;
+      }
+    } catch (e) {
+      if (state.cancelled) return;
+      state.state = 'error'; state.msg = e?.message && !/^NETWORK|blob|image/.test(e.message) ? e.message : 'Не получилось обработать фото. Попробуйте другое.';
+      renderGrid();
+    }
+  }
+
+  function photoSearchProducts() {
+    const byId = new Map(catalogCache.map(p => [String(p.id), p]));
+    return catalogPhotoSearch.ids.map(id => byId.get(id)).filter(Boolean);
+  }
+
+  function photoBannerHTML() {
+    const ps = catalogPhotoSearch;
+    return `<div class="dl-photo-banner">${ps.preview ? `<img src="${escapeAttr(ps.preview)}" alt="">` : ''}
+      <div class="t"><b>Похожие на ваше фото</b><span>${ps.state === 'wait' ? escapeHtml(ps.msg) : 'Сначала самые похожие'}</span></div>
+      <button type="button" onclick="clearCatalogPhotoSearch()">Сбросить</button></div>`;
+  }
+
   function visibleProducts() {
+    if (catalogPhotoSearch && catalogPhotoSearch.state !== 'error') return photoSearchProducts();
     let products = catalogCache;
     if (catalogCategory !== 'all') {
       if (catalogSubCategory !== 'all') {
@@ -9587,13 +9679,26 @@ window.addEventListener('unhandledrejection', (e) => {
     }
     const items = visibleProducts();
     const shown = items.slice(0, catalogGridShownCount);
+    if (catalogPhotoSearch) {
+      const ps = catalogPhotoSearch;
+      if (ps.state === 'error') {
+        list.innerHTML = photoBannerHTML().replace('Похожие на ваше фото', 'Поиск по фото').replace('Сначала самые похожие', escapeHtml(ps.msg));
+        return;
+      }
+      if (!items.length) {
+        list.innerHTML = photoBannerHTML() + (ps.state === 'wait'
+          ? `<div class="dl-photo-wait"><div class="dl-photo-spin"></div><div>${escapeHtml(ps.msg)}</div></div>`
+          : `<div class="empty-state"><h3>Похожих кукол не нашлось</h3><p>Попробуйте сфотографировать куклу целиком на светлом фоне или отправьте скриншот с сайта.</p></div>`);
+        return;
+      }
+    }
     if (!items.length) {
       list.innerHTML = catalogSearchQuery
         ? `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другое название, имя персонажа или английское написание.</p><button class="btn btn-secondary" onclick="document.getElementById('dl-catalog-search').value='';document.getElementById('dl-catalog-search').dispatchEvent(new Event('input',{bubbles:true}));selectCatalogCategory('all')">Сбросить поиск</button></div>`
         : `<div class="empty-state"><h3>В этой категории пока пусто</h3><p>Загляните позже или посмотрите все куклы.</p><button class="btn btn-secondary" onclick="selectCatalogCategory('all')">Все куклы</button></div>`;
       return;
     }
-    list.innerHTML = `<div class="catalog-grid">${shown.map(catalogCardHTML).join('')}</div>` +
+    list.innerHTML = (catalogPhotoSearch ? photoBannerHTML() : '') + `<div class="catalog-grid">${shown.map(catalogCardHTML).join('')}</div>` +
       (shown.length < items.length ? `<button type="button" class="btn btn-secondary btn-block catalog-load-more" onclick="loadMoreCatalogProducts()">Показать ещё (${items.length - shown.length})</button>` : '');
     bindCatalogGalleries(list);
     stripAfterInsert(list);
@@ -9619,7 +9724,8 @@ window.addEventListener('unhandledrejection', (e) => {
   };
 
   window.selectCatalogCategory = function (id) {
-    if (String(id) === String(catalogCategory)) return;
+    if (catalogPhotoSearch) clearCatalogPhotoSearch(true);
+    else if (String(id) === String(catalogCategory)) return;
     catalogCategory = String(id);
     catalogSubCategory = 'all';
     catalogGridShownCount = CATALOG_GRID_BATCH;
@@ -9630,7 +9736,8 @@ window.addEventListener('unhandledrejection', (e) => {
   };
 
   window.selectCatalogSubCategory = function (id) {
-    if (String(id) === String(catalogSubCategory)) return;
+    if (catalogPhotoSearch) clearCatalogPhotoSearch(true);
+    else if (String(id) === String(catalogSubCategory)) return;
     catalogSubCategory = String(id);
     catalogGridShownCount = CATALOG_GRID_BATCH;
     hapticSelection();
